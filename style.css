@@ -1336,3 +1336,143 @@ p { color: var(--text-muted); font-size: 0.95rem; line-height: 1.5; }
         margin-bottom: -20px;
     }
 }
+
+/* --- Perfil Editor & Preview v4.0.0 --- */
+.profile-editor-layout {
+    display: grid;
+    grid-template-columns: 1.2fr 0.8fr;
+    gap: 30px;
+    align-items: start;
+}
+
+@media (max-width: 900px) {
+    .profile-editor-layout {
+        grid-template-columns: 1fr;
+    }
+    .preview-card-container {
+        order: -1; /* Preview arriba en móvil */
+        margin-bottom: 20px;
+    }
+}
+
+.preview-card-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: sticky;
+    top: 0;
+}
+
+/* Tarjeta FUT Gigante (Detail & Preview) */
+.player-card-fut.large {
+    width: 240px;
+    height: 320px;
+    background: linear-gradient(135deg, #1a1a1a 0%, #050505 100%);
+    border: 2px solid var(--primary);
+    border-radius: 12px;
+    position: relative;
+    box-shadow: 0 20px 50px rgba(0,0,0,0.8), 0 0 30px var(--primary-glow);
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    overflow: visible;
+}
+
+.player-card-fut.large .dorsal-large {
+    position: absolute;
+    top: 15px;
+    left: 20px;
+    font-size: 3.5rem;
+    font-weight: 900;
+    color: var(--primary);
+    line-height: 0.8;
+    z-index: 10;
+    text-shadow: 3px 3px 6px rgba(0,0,0,0.9);
+}
+
+.player-card-fut.large .pos-large {
+    position: absolute;
+    top: 75px;
+    left: 22px;
+    font-size: 1.2rem;
+    font-weight: 800;
+    color: #fff;
+    z-index: 10;
+    background: var(--primary);
+    padding: 2px 8px;
+    border-radius: 4px;
+}
+
+.player-card-fut.large .player-img-large {
+    position: absolute;
+    top: 10%;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 95%;
+    height: 75%;
+    z-index: 5;
+}
+
+.player-card-fut.large .player-img-large svg {
+    width: 100%;
+    height: 100%;
+    filter: drop-shadow(0 10px 20px rgba(0,0,0,0.8));
+}
+
+.player-card-fut.large .name-banner-large {
+    position: absolute;
+    bottom: 25px;
+    left: 0;
+    width: 100%;
+    background: linear-gradient(to right, transparent, rgba(0,0,0,0.95) 15%, rgba(0,0,0,0.95) 85%, transparent);
+    padding: 10px 0;
+    z-index: 15;
+    text-align: center;
+}
+
+.player-card-fut.large .name-banner-large h2 {
+    font-size: 1.6rem;
+    font-weight: 900;
+    color: #fff;
+    text-transform: uppercase;
+    margin: 0;
+    letter-spacing: 1px;
+}
+
+/* Animación Pulse para Preview */
+.pulse-border {
+    animation: pulseGlow 2s infinite;
+}
+
+@keyframes pulseGlow {
+    0% { box-shadow: 0 0 10px var(--primary-glow); }
+    50% { box-shadow: 0 0 30px var(--primary-glow); }
+    100% { box-shadow: 0 0 10px var(--primary-glow); }
+}
+
+/* Modal de Perfil Específico */
+#profile-modal .jb-dialog {
+    background: radial-gradient(circle at top, #222, #050505);
+    border: 1px solid var(--primary);
+}
+
+.modal-stat-box {
+    background: rgba(255,255,255,0.03);
+    border: 1px solid var(--glass-border);
+    padding: 15px;
+    border-radius: 12px;
+}
+
+.modal-stat-box span {
+    display: block;
+    font-size: 1.5rem;
+    font-weight: 900;
+    color: var(--primary);
+}
+
+.modal-stat-box label {
+    font-size: 0.6rem;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    font-weight: 700;
+}

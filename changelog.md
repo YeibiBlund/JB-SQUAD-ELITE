@@ -1,5 +1,20 @@
 # Changelog - JB-SQUAD
 
+## [v4.0.0] - 2026-04-06 (ERA DE AUTOGESTIÓN)
+### Añadido
+- **Modelo de Gestión Descentralizada**: Transición completa a un sistema donde los jugadores crean sus propias fichas de forma independiente.
+- **Vínculo Atómico con Supabase**: Integración de `user_id` en la tabla `players`, vinculando cada ficha al `auth.uid()` del usuario real.
+- **Onboarding Inteligente**: Sistema de detección de ficha inexistente que redirige automáticamente al usuario a "MI FICHA" tras unirse a un club.
+- **Gestión de Manager Restringida**: El Manager ahora actúa como supervisor, perdiendo la capacidad de crear fichas ajenas pero ganando el control de expulsión real.
+- **Sistema de Expulsión (Terminar Contratos)**: Lógica para desvincular un usuario del club eliminando su membresía y su ficha de forma segura.
+- **UUID de Base de Datos**: Migración de IDs temporales a UUIDs nativos de Postgres para garantizar la integridad referencial.
+
+### Corregido
+- **Bug de Permisos RLS**: Implementación de políticas de seguridad en Supabase para permitir que cada usuario gestione únicamente su perfil.
+- **Sincronización de Stats**: Actualizado el motor de renderizado y cálculo para soportar la nueva estructura de datos anidada en Supabase.
+- **Error de Referencia Nula (Añadir +)**: Corregido el fallo al intentar modificar el botón de fichaje para jugadores sin rol.
+
+
 ## [v3.4.0] - 2026-04-06
 ### Añadido
 - **Sistema de Avatares "Elite"**: Galería de 8 siluetas personalizables para cada jugador siguiendo la estética dorada de la app.

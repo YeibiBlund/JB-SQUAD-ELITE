@@ -723,9 +723,10 @@ document.addEventListener('DOMContentLoaded', () => {
             item.className = 'avatar-item' + (av.id === 1 ? ' selected' : '');
             item.innerHTML = av.svg;
             item.onclick = () => {
-                document.querySelectorAll('.avatar-item').forEach(el => el.classList.remove('selected'));
+                document.querySelectorAll('.avatar-item').forEach(i => i.classList.remove('selected'));
                 item.classList.add('selected');
                 document.getElementById('selected-avatar-id').value = av.id;
+                updatePlayerPreview(); // Actualización en vivo
             };
             gallery.appendChild(item);
         });
@@ -923,6 +924,12 @@ document.addEventListener('DOMContentLoaded', () => {
             alert('¡Ficha actualizada con éxito!');
             location.reload(); // Recargamos para actualizar cache global
         });
+
+        // Listeners para Previsualización en Vivo
+        ['playerName', 'dorsal', 'primaryPos'].forEach(id => {
+            const el = document.getElementById(id);
+            if (el) el.addEventListener('input', updatePlayerPreview);
+        });
     }
 
     // --- Renderizado de Jugadores y Tabla ---
@@ -1018,6 +1025,12 @@ document.addEventListener('DOMContentLoaded', () => {
         sortedPlayers.forEach(player => {
             const playerRow = document.createElement('div');
             playerRow.className = 'player-table-row fade-in';
+            playerRow.style.cursor = 'pointer';
+            playerRow.onclick = (e) => {
+                // No abrir perfil si se pulsa el botón de borrar
+                if (e.target.closest('button')) return;
+                showPlayerProfile(player.id);
+            };
             const badgeColor = getPositionColorClass(player.primaryPos);
             
             const pj = player.stats?.official?.matches || 0;
@@ -2030,4 +2043,57 @@ document.addEventListener('DOMContentLoaded', () => {
         const p = state.players.find(p => p.id == id);
         return p ? p.name.split(' ')[0].toUpperCase() : '';
     }
+
+    // --- FUNCIONES DE PERFIL ELITE ---
+
+    function updatePlayerPreview() {
+        const previewContainer = document.getElementById('live-player-preview');
+        if (!previewContainer) return;
+
+        const name = document.getElementById('playerName').value || 'TU NOMBRE';
+        const dorsal = document.getElementById('dorsal').value || '00';
+        const pos = document.getElementById('primaryPos').value || '??';
+        const avatarId = parseInt(document.getElementById('selected-avatar-id').value) || 1;
+        const avatar = AVATARS.find(av => av.id === avatarId);
+
+        previewContainer.className = 'player-card-fut large pulse-border';
+        previewContainer.innerHTML = `
+            <div class="dorsal-large">${dorsal}</div>
+            <div class="pos-large">${pos}</div>
+            <div class="player-img-large">${avatar ? avatar.svg : ''}</div>
+            <div class="name-banner-large">
+                <h2 style="font-size: ${name.length > 10 ? '1.1rem' : '1.5rem'}">${name.toUpperCase()}</h2>
+            </div>
+        `;
+    }
+
+    window.showPlayerProfile = (id) => {
+        const player = state.players.find(p => p.id === id || p.id == id);
+        if (!player) return;
+
+        const avatar = AVATARS.find(av => av.id === (player.avatarID || player.avatar_id || 1));
+        const modal = document.getElementById('profile-modal');
+        const content = document.getElementById('profile-modal-content');
+        const statsBox = document.getElementById('profile-modal-stats');
+
+        content.innerHTML = `
+            <div class="player-card-fut large" style="margin: 0 auto; box-shadow: 0 0 40px var(--primary-glow);">
+                <div class="dorsal-large">${player.dorsal || '00'}</div>
+                <div class="pos-large">${player.primaryPos || '??'}</div>
+                <div class="player-img-large">${avatar ? avatar.svg : ''}</div>
+                <div class="name-banner-large">
+                    <h2 style="font-size: ${player.name.length > 10 ? '1.1rem' : '1.5rem'}">${player.name.toUpperCase()}</h2>
+                </div>
+            </div>
+        `;
+
+        const s = player.stats?.official || { matches: 0, goals: 0, assists: 0 };
+        statsBox.innerHTML = `
+            <div class="modal-stat-box"><label>PARTIDOS</label><span>${s.matches}</span></div>
+            <div class="modal-stat-box"><label>GOLES</label><span>${s.goals}</span></div>
+            <div class="modal-stat-box"><label>ASISTS</label><span>${s.assists}</span></div>
+        `;
+
+        modal.style.display = 'flex';
+    };
 });
