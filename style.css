@@ -703,16 +703,13 @@ p { color: var(--text-muted); font-size: 0.95rem; line-height: 1.5; }
 }
 
 .player-card-img {
+    width: 100%;
+    height: 100%;
     position: absolute;
-    top: 16%;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 90%;
-    height: 65%;
-    z-index: 2;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    top: 0;
+    left: 0;
+    z-index: 5;
+    pointer-events: none;
 }
 
 .player-card-img svg, 
@@ -722,6 +719,8 @@ p { color: var(--text-muted); font-size: 0.95rem; line-height: 1.5; }
     object-fit: contain;
     object-position: center top;
     filter: drop-shadow(0 5px 15px rgba(0,0,0,0.5));
+    mask-image: linear-gradient(to bottom, black 80%, transparent 100%);
+    -webkit-mask-image: linear-gradient(to bottom, black 80%, transparent 100%);
 }
 
 /* Efecto desvanecido inferior para la imagen */
@@ -1407,12 +1406,12 @@ p { color: var(--text-muted); font-size: 0.95rem; line-height: 1.5; }
 
 .player-card-fut.large .player-img-large {
     position: absolute;
-    top: 10%;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 95%;
-    height: 75%;
+    top: 2%;
+    left: 0;
+    width: 100%;
+    height: 90%;
     z-index: 5;
+    pointer-events: none;
 }
 
 .player-card-fut.large .player-img-large svg, 
@@ -1421,8 +1420,10 @@ p { color: var(--text-muted); font-size: 0.95rem; line-height: 1.5; }
     height: 100%;
     object-fit: contain;
     object-position: center top;
-    filter: drop-shadow(0 10px 20px rgba(0,0,0,0.8));
+    filter: drop-shadow(0 15px 30px rgba(0,0,0,0.8));
     transition: transform 0.2s ease-out;
+    mask-image: linear-gradient(to bottom, black 85%, transparent 100%);
+    -webkit-mask-image: linear-gradient(to bottom, black 85%, transparent 100%);
 }
 
 .player-card-fut.large .name-banner-large {
