@@ -1307,9 +1307,14 @@ document.addEventListener('DOMContentLoaded', () => {
                     scaleX = 0.9;
                 }
 
+                const photo = player.photo_url;
+                const pScale = player.photo_scale || 1.0;
+
                 slotEl.innerHTML = `
                     <div class="dorsal-small">${player.dorsal}</div>
-                    <div class="player-card-img">${avatar ? avatar.svg : ''}</div>
+                    <div class="player-card-img" style="overflow: hidden; display: flex; align-items: center; justify-content: center;">
+                        ${photo ? `<img src="${photo}" style="width: 100%; height: 100%; object-fit: cover; transform: scale(${pScale})">` : (avatar ? avatar.svg : '')}
+                    </div>
                     <h4 title="${player.name}" style="
                         font-size: ${fontSize} !important; 
                         letter-spacing: ${letterSpacing} !important; 
@@ -1379,9 +1384,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
             const avatar = AVATARS.find(av => av.id === (player.avatarId || 1));
 
+            const photo = player.photo_url;
+            const pScale = player.photo_scale || 1.0;
+
             card.innerHTML = `
-                <div class="roster-card-avatar" style="width: 30px; height: 30px; margin-right: 10px; opacity: 0.8;">
-                    ${avatar ? avatar.svg : ''}
+                <div class="roster-card-avatar" style="width: 30px; height: 30px; margin-right: 10px; opacity: 0.8; overflow: hidden; display: flex; align-items: center; justify-content: center; border-radius: 4px; background: rgba(0,0,0,0.2);">
+                    ${photo ? `<img src="${photo}" style="width: 100%; height: 100%; object-fit: cover; transform: scale(${pScale})">` : (avatar ? avatar.svg : '')}
                 </div>
                 <div class="roster-card-pos">${player.primaryPos}</div>
                 <div class="roster-card-name">${player.name}</div>
@@ -1450,10 +1458,13 @@ document.addEventListener('DOMContentLoaded', () => {
             else if (player.secondaryPos && player.secondaryPos.includes(requiredPos)) card.classList.add('match-secondary');
             else card.classList.add('dimmed');
 
-            const avatar = AVATARS.find(av => av.id === (player.avatarId || 1));
+            const avatar = AVATARS.find(av => av.id === (player.avatarId || player.avatar_id || 1));
+            const photo = player.photo_url;
+            const pScale = player.photo_scale || 1.0;
+
             card.innerHTML = `
-                <div class="roster-card-avatar" style="width: 30px; height: 30px; margin-right: 10px;">
-                    ${avatar ? avatar.svg : ''}
+                <div class="roster-card-avatar" style="width: 30px; height: 30px; margin-right: 10px; overflow: hidden; display: flex; align-items: center; justify-content: center; border-radius: 4px; background: rgba(0,0,0,0.2);">
+                    ${photo ? `<img src="${photo}" style="width: 100%; height: 100%; object-fit: cover; transform: scale(${pScale})">` : (avatar ? avatar.svg : '')}
                 </div>
                 <div class="roster-card-pos">${player.primaryPos}</div>
                 <div class="roster-card-name">${player.name}</div>
