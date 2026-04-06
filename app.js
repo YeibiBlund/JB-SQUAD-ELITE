@@ -305,7 +305,17 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    function hideAppLoader() {
+        const loader = document.getElementById('app-loader');
+        if (loader) {
+            loader.classList.add('loader-hidden');
+            // Eliminar del DOM tras la transición para liberar memoria
+            setTimeout(() => loader.remove(), 1000);
+        }
+    }
+
     async function loadTeamData() {
+        console.log(">>> [BOOT v4.3.0] Iniciando sincronización élite...");
         if (!state.team) return;
 
         // Cargar Jugadores del Equipo
@@ -419,8 +429,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 document.body.appendChild(alertMsg);
                 setTimeout(() => alertMsg.remove(), 5000);
             }
-            console.log(">>> [BOOT v4.2.3] Aterrizaje final ejecutado.");
-        }, 100);
+            console.log(">>> [BOOT v4.3.0] Aterrizaje final ejecutado. Ocultando loader...");
+            hideAppLoader();
+        }, 300); // Un poco más de margen para asegurar renderizado suave
     }
 
     function switchAuthView(viewName) {
