@@ -53,33 +53,56 @@
     </section>
 
     <!-- TEAM SELECTOR: Crear o Unirse -->
-    <section id="view-team-select" class="view" style="display: none; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; padding: 20px;">
-        <h2 class="gradient-text" style="font-size: 2rem; margin-bottom: 2rem; text-align: center;">Configura tu <br>Ecosistema</h2>
+    <section id="view-team-select" class="view" style="display: none; flex-direction: column; align-items: center; justify-content: flex-start; min-height: 100vh; padding: 40px 20px; overflow-y: auto;">
+        <h2 class="gradient-text" style="font-size: 2.5rem; margin-bottom: 0.5rem; text-align: center; font-weight: 900;">JB-SQUAD</h2>
+        <p style="color: var(--text-muted); font-size: 0.8rem; margin-bottom: 3rem; text-transform: uppercase; letter-spacing: 4px;">Configura tu Ecosistema</p>
         
-        <div style="display: grid; gap: 20px; width: 100%; max-width: 400px;">
-            <!-- Crear Equipo -->
-            <div class="card-elite" style="padding: 25px; border: 1px solid var(--primary);">
-                <h3 style="color: var(--primary); margin-bottom: 15px;">Fundar un Club</h3>
-                <p style="font-size: 0.75rem; color: var(--text-muted); margin-bottom: 20px;">Crea tu propio equipo y conviértete en el Manager Principal.</p>
-                <form id="create-team-form">
-                    <input type="text" id="new-team-name" placeholder="Nombre de tu Club" required style="margin-bottom: 15px;">
-                    <button type="submit" class="btn-gold">Crear Equipo</button>
-                </form>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 30px; width: 100%; max-width: 1000px;">
+            
+            <!-- Columna Izquierda: Acciones -->
+            <div style="display: flex; flex-direction: column; gap: 20px;">
+                <!-- Crear Equipo -->
+                <div class="card-elite" style="padding: 30px; border: 1px solid var(--primary); background: rgba(240, 165, 0, 0.03);">
+                    <h3 style="color: var(--primary); margin-bottom: 10px; font-size: 1.2rem;">Fundar un Club</h3>
+                    <p style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 25px; line-height: 1.4;">Crea tu propio equipo y asume el mando como Manager Principal.</p>
+                    <form id="create-team-form">
+                        <div class="form-group">
+                            <input type="text" id="new-team-name" placeholder="Nombre de tu Club" required>
+                        </div>
+                        <button type="submit" class="btn-gold" style="width: 100%;">Fundar Ahora</button>
+                    </form>
+                </div>
+
+                <!-- Unirse Manual -->
+                <div class="card-elite" style="padding: 30px;">
+                    <h3 style="margin-bottom: 10px; font-size: 1.2rem;">Búsqueda Directa</h3>
+                    <p style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 25px; line-height: 1.4;">¿Sabes el nombre exacto? Búscalo aquí directamente.</p>
+                    <form id="join-team-form">
+                        <div class="form-group">
+                            <input type="text" id="search-team-name" placeholder="Nombre del Club..." required>
+                        </div>
+                        <button type="submit" class="btn-gold" style="background: rgba(255,255,255,0.05); color: #fff; border-color: rgba(255,255,255,0.2); width: 100%;">Buscar y Solicitar</button>
+                    </form>
+                </div>
             </div>
 
-            <p style="text-align: center; color: var(--text-muted); font-size: 0.8rem;">— O —</p>
-
-            <!-- Unirse a Equipo -->
-            <div class="card-elite" style="padding: 25px;">
-                <h3 style="margin-bottom: 15px;">Unirse a un Club</h3>
-                <p style="font-size: 0.75rem; color: var(--text-muted); margin-bottom: 20px;">Busca el nombre de un club existente para solicitar el alta.</p>
-                <form id="join-team-form">
-                    <input type="text" id="search-team-name" placeholder="Buscar Club..." required style="margin-bottom: 15px;">
-                    <button type="submit" class="btn-gold" style="background: rgba(255,255,255,0.05); color: #fff; border-color: rgba(255,255,255,0.2);">Buscar y Solicitar</button>
-                </form>
+            <!-- Columna Derecha: Explorador -->
+            <div class="card-elite" style="padding: 30px; display: flex; flex-direction: column;">
+                <h3 style="margin-bottom: 10px; font-size: 1.2rem; display: flex; align-items: center; gap: 10px;">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M21 21L15 15M17 10C17 13.866 13.866 17 10 17C6.13401 17 3 13.866 3 10C3 6.13401 6.13401 3 10 3C13.866 3 17 6.13401 17 10Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                    Explorar Clubes
+                </h3>
+                <p style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 25px;">Únete a una comunidad activa.</p>
+                
+                <!-- Lista de clubes disponibles -->
+                <div id="available-clubs-list" style="display: flex; flex-direction: column; gap: 12px; overflow-y: auto; max-height: 400px; padding-right: 5px;">
+                    <!-- Se llena dinámicamente -->
+                    <p style="color: var(--text-muted); font-size: 0.8rem; text-align: center; padding: 20px;">Cargando clubes...</p>
+                </div>
             </div>
+
         </div>
-        <button id="btn-logout-temp" style="margin-top: 30px; background: none; border: none; color: var(--text-muted); text-decoration: underline; cursor: pointer; font-size: 0.8rem;">Cerrar Sesión</button>
+        <button id="btn-logout-temp" style="margin-top: 40px; background: none; border: none; color: var(--text-muted); text-decoration: underline; cursor: pointer; font-size: 0.8rem; opacity: 0.6; transition: 0.3s;" onmouseover="this.style.opacity=1" onmouseout="this.style.opacity=0.6">Cerrar Sesión</button>
     </section>
 
     <!-- Main App Content -->

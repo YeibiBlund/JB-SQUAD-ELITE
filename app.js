@@ -228,7 +228,9 @@ document.addEventListener('DOMContentLoaded', () => {
             };
 
             if (!membership) {
+                console.log(">>> Usuario sin club, cargando explorador...");
                 switchAuthView('team-select');
+                await fetchAvailableClubs(); // Cargar clubes disponibles
             } else {
                 state.team = membership.teams;
                 switchAuthView('main');
@@ -453,19 +455,105 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (tErr) {
             submitBtn.disabled = false;
-            submitBtn.textContent = 'Crear Equipo';
+            submitBtn.textContent = 'Fundar Ahora';
             return alert('Error al crear equipo: ' + tErr.message);
         }
 
-        await supabase.from('memberships').insert({
+        console.log(">>> Equipo creado, insertando membresía MANAGER...");
+        const { error: mErr } = await supabase.from('memberships').insert({
             user_id: state.user.auth.id,
             team_id: team.id,
             role: 'manager'
         });
 
-        alert(`¡Club ${teamName} fundado! Bienvenido Manager.`);
+        if (mErr) {
+            submitBtn.disabled = false;
+            submitBtn.textContent = 'Fundar Ahora';
+            return alert('Error al asignar rol de Manager: ' + mErr.message);
+        }
+
+        alert(`¡Club ${teamName} fundado con éxito! Bienvenido, Manager.`);
         location.reload();
     };
+
+    async function fetchAvailableClubs() {
+        const listContainer = document.getElementById('available-clubs-list');
+        if (!listContainer) return;
+
+        console.log(">>> Solicitando lista de clubes...");
+        const { data: teams, error } = await supabase.from('teams').select('*').order('created_at', { ascending: false }).limit(20);
+
+        if (error) {
+            listContainer.innerHTML = `<p style="color: #ff4d4d; font-size: 0.8rem; text-align: center;">Error al cargar clubes</p>`;
+            return;
+        }
+
+        if (!teams || teams.length === 0) {
+            listContainer.innerHTML = `<p style="color: var(--text-muted); font-size: 0.8rem; text-align: center; padding: 20px;">No hay clubes registrados aún.</p>`;
+            return;
+        }
+
+        renderClubBrowser(teams);
+    }
+
+    function renderClubBrowser(teams) {
+        const listContainer = document.getElementById('available-clubs-list');
+        listContainer.innerHTML = '';
+
+        teams.forEach(team => {
+            const card = document.createElement('div');
+            card.className = 'card-elite';
+            card.style.cssText = `
+                padding: 15px; 
+                display: flex; 
+                justify-content: space-between; 
+                align-items: center;
+                background: rgba(255,255,255,0.02);
+                border: 1px solid rgba(255,255,255,0.05);
+                transition: 0.3s;
+            `;
+            
+            card.innerHTML = `
+                <div>
+                    <h4 style="margin-bottom: 4px; font-size: 0.95rem; color: #fff;">${team.name}</h4>
+                    <p style="font-size: 0.7rem; color: var(--text-muted);">Fundado el ${new Date(team.created_at).toLocaleDateString()}</p>
+                </div>
+                <button class="join-btn btn-gold" data-id="${team.id}" data-name="${team.name}" style="padding: 8px 16px; font-size: 0.75rem; min-width: 80px;">UNIRSE</button>
+            `;
+
+            card.onmouseover = () => card.style.borderColor = 'var(--primary)';
+            card.onmouseout = () => card.style.borderColor = 'rgba(255,255,255,0.05)';
+
+            const joinBtn = card.querySelector('.join-btn');
+            joinBtn.onclick = async () => {
+                const teamId = joinBtn.dataset.id;
+                const teamName = joinBtn.dataset.name;
+                
+                const confirmed = await window.jbConfirm(`¿Quieres solicitar unirte al club ${teamName.toUpperCase()}?`);
+                if (confirmed) {
+                    joinBtn.disabled = true;
+                    joinBtn.textContent = '...';
+                    
+                    const { error: mErr } = await supabase.from('memberships').insert({
+                        user_id: state.user.auth.id,
+                        team_id: teamId,
+                        role: 'jugador'
+                    });
+
+                    if (mErr) {
+                        alert('Error al unirse: ' + mErr.message);
+                        joinBtn.disabled = false;
+                        joinBtn.textContent = 'UNIRSE';
+                    } else {
+                        alert(`¡Bienvenido a ${teamName}!`);
+                        location.reload();
+                    }
+                }
+            };
+
+            listContainer.appendChild(card);
+        });
+    }
 
     document.getElementById('join-team-form').onsubmit = async (e) => {
         e.preventDefault();
