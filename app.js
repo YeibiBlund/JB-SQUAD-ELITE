@@ -321,6 +321,8 @@ document.addEventListener('DOMContentLoaded', () => {
             dorsal: p.dorsal,
             photo_url: p.photo_url,
             photo_scale: p.photo_scale,
+            photo_x: p.photo_x,
+            photo_y: p.photo_y,
             stats: p.stats // Ahora stats es el objeto completo de la DB
         }));
 
