@@ -244,7 +244,8 @@ document.addEventListener('DOMContentLoaded', () => {
         const { data: teams, error } = await supabase.from('teams').select('*').order('created_at', { ascending: false }).limit(20);
 
         if (error) {
-            listContainer.innerHTML = `<p style="color: #ff4d4d; font-size: 0.8rem; text-align: center;">Error al cargar clubes</p>`;
+            console.error(">>> Error cargando clubes:", error);
+            listContainer.innerHTML = `<p style="color: #ff4d4d; font-size: 0.8rem; text-align: center;">Error: ${error.message}</p>`;
             return;
         }
 
