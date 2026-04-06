@@ -893,8 +893,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 .filter(v => v !== "" && v !== primaryPosSelect.value);
 
             const newPlayer = {
-                id: state.userPlayer ? state.userPlayer.id : Date.now(),
-                user_id: state.user.auth.id, // VÍNCULO OBLIGATORIO
+                user_id: state.user.auth.id,
                 team_id: state.team.id,
                 name: document.getElementById('playerName').value,
                 console_id: document.getElementById('consoleID').value,
@@ -907,6 +906,11 @@ document.addEventListener('DOMContentLoaded', () => {
                     friendly: { matches: 0, goals: 0, assists: 0, mvps: 0 }
                 }
             };
+
+            // Si ya existe ficha, incluir el ID para actualizar (upsert)
+            if (state.userPlayer) {
+                newPlayer.id = state.userPlayer.id;
+            }
 
             const { error: insErr } = await supabase.from('players').upsert(newPlayer);
             
