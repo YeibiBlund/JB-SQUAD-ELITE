@@ -2083,7 +2083,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 <div class="pos-large">${player.primaryPos || '??'}</div>
                 <div class="player-img-large">${avatar ? avatar.svg : ''}</div>
                 <div class="name-banner-large">
-                    <h2 style="font-size: ${player.name.length > 10 ? '1.1rem' : '1.5rem'}">${player.name.toUpperCase()}</h2>
+                    <h2 style="font-size: ${(player.name || '').length > 10 ? '1.1rem' : '1.5rem'}">${(player.name || 'SIN NOMBRE').toUpperCase()}</h2>
                 </div>
             </div>
         `;
@@ -2107,8 +2107,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (totalPlayersEl) totalPlayersEl.textContent = state.players.length;
         if (totalSessionsEl) totalSessionsEl.textContent = state.sessions.length;
-        if (displayUser) displayUser.textContent = state.user.profile.username.toUpperCase();
-        if (displayTeam) displayTeam.textContent = state.team.name.toUpperCase();
+        
+        const username = state.user?.profile?.username || 'JUGADOR';
+        const teamName = state.team?.name || 'MI EQUIPO';
+
+        if (displayUser) displayUser.textContent = username.toUpperCase();
+        if (displayTeam) displayTeam.textContent = teamName.toUpperCase();
 
         if (scorersListEl) {
             scorersListEl.innerHTML = '';
