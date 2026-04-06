@@ -182,43 +182,35 @@ document.addEventListener('DOMContentLoaded', () => {
         setupAuthHandlers();
     }
 
-    let isHandlingSession = false; // Guard para evitar múltiples llamadas simultáneas
+    let isHandlingSession = false; 
     async function handleUserSession(authUser) {
+        // ESCUDO INSTANTÁNEO: Bloqueamos antes de cualquier proceso asíncrono
         if (isHandlingSession) return;
         isHandlingSession = true;
 
         try {
-            console.log(">>> INICIO handleUserSession para:", authUser.email);
+            console.log(">>> Procesando sesión única para:", authUser.email);
             
-            // 1. Cargar Perfil
-            console.log(">>> Intentando cargar perfil...");
-            let { data: profile, error: pErr } = await supabase.from('profiles').select('*').eq('id', authUser.id).maybeSingle();
+            // 1. Perfil
+            let { data: profile } = await supabase.from('profiles').select('*').eq('id', authUser.id).maybeSingle();
             
-            if (pErr) console.error(">>> ERROR en perfil:", pErr.message);
-
             if (!profile) {
-                console.log(">>> Perfil no encontrado, creando uno nuevo...");
                 const username = authUser.user_metadata?.full_name || authUser.email.split('@')[0];
                 const { data: newProfile, error: insErr } = await supabase.from('profiles').insert({ 
                     id: authUser.id, 
                     full_name: username 
                 }).select().maybeSingle();
                 
-                if (insErr) {
-                    console.error(">>> ERROR creando perfil:", insErr);
-                    // Si el error es 409 (ya existe), re-intentamos cargar
-                    if (insErr.code === '23505') {
-                        let { data: retryProfile } = await supabase.from('profiles').select('*').eq('id', authUser.id).maybeSingle();
-                        profile = retryProfile;
-                    }
+                if (insErr && insErr.code === '23505') {
+                    let { data: retryProfile } = await supabase.from('profiles').select('*').eq('id', authUser.id).maybeSingle();
+                    profile = retryProfile;
                 } else {
                     profile = newProfile;
                 }
             }
             
-            // 2. Cargar Membresía
-            console.log(">>> Intentando cargar membresía...");
-            let { data: membership, error: mErr } = await supabase.from('memberships').select('*, teams(*)').eq('user_id', authUser.id).maybeSingle();
+            // 2. Membresía
+            let { data: membership } = await supabase.from('memberships').select('*, teams(*)').eq('user_id', authUser.id).maybeSingle();
             
             state.user = { 
                 auth: authUser,
@@ -228,9 +220,8 @@ document.addEventListener('DOMContentLoaded', () => {
             };
 
             if (!membership) {
-                console.log(">>> Usuario sin club, cargando explorador...");
                 switchAuthView('team-select');
-                await fetchAvailableClubs(); // Cargar clubes disponibles
+                await fetchAvailableClubs(); 
             } else {
                 state.team = membership.teams;
                 switchAuthView('main');
@@ -238,10 +229,62 @@ document.addEventListener('DOMContentLoaded', () => {
                 await loadTeamData();
             }
         } catch (err) {
-            console.error(">>> FALLO CATASTRÓFICO:", err);
+            console.error(">>> Error en flujo de sesión:", err);
         } finally {
-            isHandlingSession = false;
+            // Liberamos el escudo solo después de terminar todo el proceso
+            // isHandlingSession = false; // Mantenemos el bloqueo durante la vida de la carga inicial
         }
+    }
+
+    async function fetchAvailableClubs() {
+        const listContainer = document.getElementById('available-clubs-list');
+        if (!listContainer) return;
+
+        console.log(">>> Cargando explorador de clubes...");
+        const { data: teams, error } = await supabase.from('teams').select('*').order('created_at', { ascending: false }).limit(20);
+
+        if (error) {
+            listContainer.innerHTML = `<p style="color: #ff4d4d; font-size: 0.8rem; text-align: center;">Error al cargar clubes</p>`;
+            return;
+        }
+
+        if (!teams || teams.length === 0) {
+            listContainer.innerHTML = `<p style="color: var(--text-muted); font-size: 0.8rem; text-align: center; padding: 20px;">No hay clubes registrados aún.</p>`;
+            return;
+        }
+
+        renderClubBrowser(teams);
+    }
+
+    function renderClubBrowser(teams) {
+        const listContainer = document.getElementById('available-clubs-list');
+        listContainer.innerHTML = '';
+
+        teams.forEach(team => {
+            const card = document.createElement('div');
+            card.className = 'card-elite';
+            card.style.cssText = `padding: 15px; display: flex; justify-content: space-between; align-items: center; background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05); transition: 0.3s; margin-bottom: 8px;`;
+            card.innerHTML = `<div><h4 style="margin-bottom: 4px; font-size: 0.95rem; color: #fff;">${team.name}</h4><p style="font-size: 0.7rem; color: var(--text-muted);">Fundado el ${new Date(team.created_at).toLocaleDateString()}</p></div><button class="join-btn btn-gold" style="padding: 8px 16px; font-size: 0.75rem; min-width: 80px;">UNIRSE</button>`;
+
+            const joinBtn = card.querySelector('.join-btn');
+            joinBtn.onclick = async () => {
+                const confirmed = await window.jbConfirm(`¿Quieres solicitar unirte al club ${team.name.toUpperCase()}?`);
+                if (confirmed) {
+                    joinBtn.disabled = true;
+                    joinBtn.textContent = '...';
+                    const { error: mErr } = await supabase.from('memberships').insert({ user_id: state.user.auth.id, team_id: team.id, role: 'jugador' });
+                    if (mErr) {
+                        alert('Error al unirse: ' + mErr.message);
+                        joinBtn.disabled = false;
+                        joinBtn.textContent = 'UNIRSE';
+                    } else {
+                        alert(`¡Bienvenido a ${team.name}!`);
+                        location.reload();
+                    }
+                }
+            };
+            listContainer.appendChild(card);
+        });
     }
 
     async function loadTeamData() {
