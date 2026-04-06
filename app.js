@@ -183,26 +183,49 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     async function handleUserSession(authUser) {
-        // 1. Cargar Perfil
-        let { data: profile } = await supabase.from('profiles').select('*').eq('id', authUser.id).single();
-        
-        // 2. Cargar Membresía
-        let { data: membership } = await supabase.from('memberships').select('*, teams(*)').eq('user_id', authUser.id).single();
+        try {
+            console.log("Manejando sesión para:", authUser.email);
+            
+            // 1. Cargar Perfil (con manejo de error si no existe)
+            let { data: profile, error: pErr } = await supabase.from('profiles').select('*').eq('id', authUser.id).maybeSingle();
+            
+            if (pErr) console.error("Error cargando perfil:", pErr);
 
-        state.user = { 
-            auth: authUser,
-            profile: profile,
-            membership: membership,
-            role: membership ? membership.role : null 
-        };
+            // Si por alguna razón no hay perfil, lo creamos ahora (seguridad extra)
+            if (!profile) {
+                const username = authUser.user_metadata?.full_name || authUser.email.split('@')[0];
+                const { data: newProfile } = await supabase.from('profiles').insert({ 
+                    id: authUser.id, 
+                    full_name: username 
+                }).select().single();
+                profile = newProfile;
+            }
+            
+            // 2. Cargar Membresía
+            let { data: membership, error: mErr } = await supabase.from('memberships').select('*, teams(*)').eq('user_id', authUser.id).maybeSingle();
+            
+            if (mErr) console.error("Error cargando membresía:", mErr);
 
-        if (!membership) {
-            switchAuthView('team-select');
-        } else {
-            state.team = membership.teams;
-            await loadTeamData();
-            switchAuthView('main');
-            applyRolePermissions();
+            state.user = { 
+                auth: authUser,
+                profile: profile,
+                membership: membership,
+                role: membership ? membership.role : null 
+            };
+
+            if (!membership) {
+                console.log("Usuario sin club, enviando a selector.");
+                switchAuthView('team-select');
+            } else {
+                console.log("Usuario con club:", membership.teams.name);
+                state.team = membership.teams;
+                await loadTeamData();
+                switchAuthView('main');
+                applyRolePermissions();
+            }
+        } catch (err) {
+            console.error("Fallo crítico en handleUserSession:", err);
+            alert("Error al cargar la sesión. Intenta recargar la página.");
         }
     }
 
@@ -276,11 +299,19 @@ document.addEventListener('DOMContentLoaded', () => {
         const teamSelect = document.getElementById('view-team-select');
         const mainApp = document.getElementById('main-app');
 
-        [authView, teamSelect, mainApp].forEach(v => v.style.display = 'none');
+        // Reset all views to hidden
+        if (authView) authView.style.setProperty('display', 'none', 'important');
+        if (teamSelect) teamSelect.style.setProperty('display', 'none', 'important');
+        if (mainApp) mainApp.style.setProperty('display', 'none', 'important');
 
-        if (viewName === 'auth') authView.style.display = 'flex';
-        if (viewName === 'team-select') teamSelect.style.display = 'flex';
-        if (viewName === 'main') mainApp.style.display = 'block';
+        // Show the target view
+        if (viewName === 'auth' && authView) {
+            authView.style.setProperty('display', 'flex', 'important');
+        } else if (viewName === 'team-select' && teamSelect) {
+            teamSelect.style.setProperty('display', 'flex', 'important');
+        } else if (viewName === 'main' && mainApp) {
+            mainApp.style.setProperty('display', 'block', 'important');
+        }
     }
 
     function applyRolePermissions() {
@@ -331,14 +362,20 @@ document.addEventListener('DOMContentLoaded', () => {
 
     loginForm.onsubmit = async (e) => {
         e.preventDefault();
+        const submitBtn = loginForm.querySelector('button[type="submit"]');
+        const originalText = submitBtn.textContent;
+        submitBtn.disabled = true;
+        submitBtn.textContent = 'Entrando...';
+
         const username = document.getElementById('login-username').value.trim();
         const pass = document.getElementById('login-password').value;
-        
-        // Generar pseudo-email para Supabase Auth
         const email = `${username.toLowerCase()}@jb.club`;
         
         const { error } = await supabase.auth.signInWithPassword({ email, password: pass });
+        
         if (error) {
+            submitBtn.disabled = false;
+            submitBtn.textContent = originalText;
             if (error.message.includes('Email not confirmed')) {
                 alert('ERROR CRÍTICO: Debes desactivar "Confirmación de Email" en tu Panel de Supabase (Authentication -> Providers -> Email).');
             } else {
@@ -349,7 +386,18 @@ document.addEventListener('DOMContentLoaded', () => {
 
     regForm.onsubmit = async (e) => {
         e.preventDefault();
-        const username = document.getElementById('reg-username').value.trim();
+        const usernameInput = document.getElementById('reg-username');
+        const username = usernameInput.value.trim();
+        
+        if (username.includes('@')) {
+            return alert('ERROR: El nombre de usuario no puede contener el símbolo "@". Usa solo texto o números.');
+        }
+
+        const submitBtn = regForm.querySelector('button[type="submit"]');
+        const originalText = submitBtn.textContent;
+        submitBtn.disabled = true;
+        submitBtn.textContent = 'Creando Cuenta...';
+
         const pass = document.getElementById('reg-password').value;
         const email = `${username.toLowerCase()}@jb.club`;
         
@@ -359,48 +407,89 @@ document.addEventListener('DOMContentLoaded', () => {
             options: { data: { full_name: username } }
         });
 
-        if (error) return alert('Error en el registro: ' + error.message);
+        if (error) {
+            submitBtn.disabled = false;
+            submitBtn.textContent = originalText;
+            return alert('Error en el registro: ' + error.message);
+        }
         
         if (data.user) {
-            // Crear perfil inmediatamente
-            const { error: pErr } = await supabase.from('profiles').insert({ 
-                id: data.user.id, 
-                full_name: username 
-            });
-            
-            if (pErr) console.error('Error creando perfil:', pErr);
-            
-            alert('¡Cuenta creada! Ahora inicia sesión con tus datos.');
-            location.reload();
+            await supabase.from('profiles').insert({ id: data.user.id, full_name: username });
+            alert('¡Cuenta creada con éxito! Iniciando sesión...');
+            // Tras registrarse, el login es automático por Supabase, 
+            // así que onAuthStateChange se encargará del resto.
         }
     };
 
     document.getElementById('create-team-form').onsubmit = async (e) => {
         e.preventDefault();
-        const teamName = document.getElementById('new-team-name').value.trim();
-        
-        if (!state.user || !state.user.auth) return alert('Sesión no encontrada. Reintenta.');
+        const submitBtn = e.target.querySelector('button');
+        submitBtn.disabled = true;
+        submitBtn.textContent = 'Fundando Club...';
 
-        // 1. Crear Equipo
+        const teamName = document.getElementById('new-team-name').value.trim();
+        if (!state.user?.auth) return alert('Sesión no encontrada.');
+
         const { data: team, error: tErr } = await supabase.from('teams').insert({ 
             name: teamName, 
             owner_id: state.user.auth.id 
         }).select().single();
 
-        if (tErr) return alert('Error al crear equipo: ' + tErr.message);
+        if (tErr) {
+            submitBtn.disabled = false;
+            submitBtn.textContent = 'Crear Equipo';
+            return alert('Error al crear equipo: ' + tErr.message);
+        }
 
-        // 2. Crear Membresía como MANAGER
-        const { error: mErr } = await supabase.from('memberships').insert({
+        await supabase.from('memberships').insert({
             user_id: state.user.auth.id,
             team_id: team.id,
             role: 'manager'
         });
 
-        if (mErr) return alert('Error de membresía: ' + mErr.message);
-
-        // 3. Pequeña espera para asegurar persistencia antes de recargar
-        alert(`¡Club ${teamName} fundado con éxito!`);
+        alert(`¡Club ${teamName} fundado! Bienvenido Manager.`);
         location.reload();
+    };
+
+    document.getElementById('join-team-form').onsubmit = async (e) => {
+        e.preventDefault();
+        const submitBtn = e.target.querySelector('button');
+        const searchQuery = document.getElementById('search-team-name').value.trim();
+        
+        submitBtn.disabled = true;
+        submitBtn.textContent = 'Buscando...';
+
+        // 1. Buscar equipo por nombre (case-insensitive)
+        const { data: teams, error } = await supabase.from('teams')
+            .select('*')
+            .ilike('name', searchQuery);
+
+        if (error || !teams.length) {
+            submitBtn.disabled = false;
+            submitBtn.textContent = 'Buscar y Solicitar';
+            return alert('No se ha encontrado ningún club con ese nombre.');
+        }
+
+        const targetTeam = teams[0];
+        const confirmJoin = await window.jbConfirm(`¿Quieres unirte a ${targetTeam.name.toUpperCase()}?`);
+        
+        if (confirmJoin) {
+            const { error: mErr } = await supabase.from('memberships').insert({
+                user_id: state.user.auth.id,
+                team_id: targetTeam.id,
+                role: 'jugador' // Por defecto entra como jugador
+            });
+
+            if (mErr) {
+                alert('Error al unirte: ' + mErr.message);
+            } else {
+                alert(`¡Solicitud aceptada! Ya eres miembro de ${targetTeam.name}.`);
+                location.reload();
+            }
+        }
+        
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Buscar y Solicitar';
     };
 
         document.getElementById('btn-global-logout').onclick = () => supabase.auth.signOut();
