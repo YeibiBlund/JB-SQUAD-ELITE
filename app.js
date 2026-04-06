@@ -319,6 +319,8 @@ document.addEventListener('DOMContentLoaded', () => {
             primaryPos: p.primary_pos,
             secondaryPos: p.secondary_pos,
             dorsal: p.dorsal,
+            photo_url: p.photo_url,
+            photo_scale: p.photo_scale,
             stats: p.stats // Ahora stats es el objeto completo de la DB
         }));
 
@@ -360,7 +362,10 @@ document.addEventListener('DOMContentLoaded', () => {
             document.getElementById('playerName').value = state.userPlayer.name || '';
             document.getElementById('consoleID').value = state.userPlayer.consoleID || '';
             document.getElementById('dorsal').value = state.userPlayer.dorsal || '';
-            // Posiciones y avatar se pueden mejorar luego
+            if (state.userPlayer.photo_scale) {
+                document.getElementById('photoScale').value = state.userPlayer.photo_scale;
+                document.getElementById('photo-scale-value').textContent = state.userPlayer.photo_scale.toFixed(2);
+            }
         }
         
         updateTeamHeader();
@@ -901,6 +906,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 dorsal: document.getElementById('dorsal').value,
                 primary_pos: primaryPosSelect.value,
                 secondary_pos: [...new Set(secondaryPositions)].slice(0, 3),
+                photo_url: currentPhotoBase64 || (state.userPlayer ? state.userPlayer.photo_url : null),
+                photo_scale: parseFloat(document.getElementById('photoScale')?.value || 1.0),
                 avatar_id: parseInt(document.getElementById('selected-avatar-id').value) || 1,
                 stats: state.userPlayer ? state.userPlayer.stats : { 
                     official: { matches: 0, goals: 0, assists: 0, mvps: 0 },
@@ -926,12 +933,40 @@ document.addEventListener('DOMContentLoaded', () => {
             location.reload(); // Recargamos para actualizar cache global
         });
 
+        // Listeners para Foto y Escalado
+        const photoInput = document.getElementById('playerPhoto');
+        const scaleInput = document.getElementById('photoScale');
+
+        if (photoInput) {
+            photoInput.addEventListener('change', (e) => {
+                const file = e.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = (event) => {
+                        currentPhotoBase64 = event.target.result;
+                        updatePlayerPreview();
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
+        }
+
+        if (scaleInput) {
+            scaleInput.addEventListener('input', (e) => {
+                const val = parseFloat(e.target.value).toFixed(2);
+                document.getElementById('photo-scale-value').textContent = val;
+                updatePlayerPreview();
+            });
+        }
+
         // Listeners para Previsualización en Vivo
         ['playerName', 'dorsal', 'primaryPos'].forEach(id => {
             const el = document.getElementById(id);
             if (el) el.addEventListener('input', updatePlayerPreview);
         });
     }
+
+    let currentPhotoBase64 = null; // Variable temporal para la carga
 
     // --- Renderizado de Jugadores y Tabla ---
     function getPositionColorClass(pos) {
@@ -1037,14 +1072,16 @@ document.addEventListener('DOMContentLoaded', () => {
             const pj = player.stats?.official?.matches || 0;
             const gl = player.stats?.official?.goals || 0;
             const ast = player.stats?.official?.assists || 0;
-            const avatar = AVATARS.find(av => av.id === (player.avatarId || 1));
+            const avatar = AVATARS.find(av => av.id === (player.avatarId || player.avatar_id || 1));
+            const photo = player.photo_url;
+            const pScale = player.photo_scale || 1.0;
 
             const isAdmin = state.user.role === 'manager' || state.user.role === 'capitan';
             const isSelf = player.user_id === state.user.auth.id;
 
             playerRow.innerHTML = `
-                <div class="player-avatar-mini" style="width: 35px; height: 35px; margin: 0 auto; background: rgba(0,0,0,0.2); border-radius: 5px; border: 1px solid var(--glass-border); display: flex; align-items: center; justify-content: center; padding: 2px;">
-                    ${avatar ? avatar.svg : ''}
+                <div class="player-avatar-mini" style="width: 35px; height: 35px; margin: 0 auto; background: rgba(0,0,0,0.2); border-radius: 5px; border: 1px solid var(--glass-border); display: flex; align-items: center; justify-content: center; padding: 2px; overflow: hidden;">
+                    ${photo ? `<img src="${photo}" style="width:100%; height:100%; object-fit:cover; transform:scale(${pScale})">` : (avatar ? avatar.svg : '')}
                 </div>
                 <div style="display:flex; flex-direction:column; justify-content:center; overflow:hidden;">
                     <div style="display: flex; align-items: center; gap: 6px; overflow:hidden;">
@@ -2054,6 +2091,10 @@ document.addEventListener('DOMContentLoaded', () => {
         const name = document.getElementById('playerName').value || 'TU NOMBRE';
         const dorsal = document.getElementById('dorsal').value || '00';
         const pos = document.getElementById('primaryPos').value || '??';
+        const scale = document.getElementById('photoScale')?.value || 1.0;
+        
+        // Prioridad: Foto recién subida > Foto guardada > Avatar
+        const photo = currentPhotoBase64 || (state.userPlayer ? state.userPlayer.photo_url : null);
         const avatarId = parseInt(document.getElementById('selected-avatar-id').value) || 1;
         const avatar = AVATARS.find(av => av.id === avatarId);
 
@@ -2061,7 +2102,9 @@ document.addEventListener('DOMContentLoaded', () => {
         previewContainer.innerHTML = `
             <div class="dorsal-large">${dorsal}</div>
             <div class="pos-large">${pos}</div>
-            <div class="player-img-large">${avatar ? avatar.svg : ''}</div>
+            <div class="player-img-large">
+                ${photo ? `<img src="${photo}" style="transform: scale(${scale})">` : (avatar ? avatar.svg : '')}
+            </div>
             <div class="name-banner-large">
                 <h2 style="font-size: ${name.length > 10 ? '1.1rem' : '1.5rem'}">${name.toUpperCase()}</h2>
             </div>
@@ -2077,11 +2120,16 @@ document.addEventListener('DOMContentLoaded', () => {
         const content = document.getElementById('profile-modal-content');
         const statsBox = document.getElementById('profile-modal-stats');
 
+        const photo = player.photo_url;
+        const scale = player.photo_scale || 1.0;
+
         content.innerHTML = `
             <div class="player-card-fut large" style="margin: 0 auto; box-shadow: 0 0 40px var(--primary-glow);">
                 <div class="dorsal-large">${player.dorsal || '00'}</div>
                 <div class="pos-large">${player.primaryPos || '??'}</div>
-                <div class="player-img-large">${avatar ? avatar.svg : ''}</div>
+                <div class="player-img-large">
+                    ${photo ? `<img src="${photo}" style="transform: scale(${scale})">` : (avatar ? avatar.svg : '')}
+                </div>
                 <div class="name-banner-large">
                     <h2 style="font-size: ${(player.name || '').length > 10 ? '1.1rem' : '1.5rem'}">${(player.name || 'SIN NOMBRE').toUpperCase()}</h2>
                 </div>
@@ -2121,6 +2169,8 @@ document.addEventListener('DOMContentLoaded', () => {
             const scorers = state.players
                 .map(p => ({
                     name: p.name,
+                    photo: p.photo_url,
+                    scale: p.photo_scale || 1.0,
                     avatar: AVATARS.find(av => av.id === (p.avatarID || p.avatar_id || 1)),
                     totalGoals: (p.stats?.official?.goals || 0) + (p.stats?.friendly?.goals || 0)
                 }))
@@ -2137,7 +2187,9 @@ document.addEventListener('DOMContentLoaded', () => {
                     row.style.cssText = 'padding: 8px 12px; margin: 0; display: flex; align-items: center; gap: 12px; border-color: rgba(240,165,0,0.1);';
                     row.innerHTML = `
                         <span style="font-size: 0.8rem; font-weight: 900; color: var(--primary); width: 15px;">${i+1}</span>
-                        <div style="width: 25px; height: 25px; background: rgba(0,0,0,0.2); border-radius: 4px; padding: 2px;">${s.avatar ? s.avatar.svg : ''}</div>
+                        <div style="width: 25px; height: 25px; background: rgba(0,0,0,0.2); border-radius: 4px; padding: 2px; overflow: hidden; display: flex; align-items: center; justify-content: center;">
+                            ${s.photo ? `<img src="${s.photo}" style="width:100%; height:100%; object-fit:cover; transform:scale(${s.scale})">` : (s.avatar ? s.avatar.svg : '')}
+                        </div>
                         <span style="font-size: 0.75rem; font-weight: 800; flex: 1;">${s.name.toUpperCase()}</span>
                         <span style="font-size: 0.75rem; font-weight: 900; color: var(--primary);">${s.totalGoals} <small style="font-size:0.5rem;">GLS</small></span>
                     `;
