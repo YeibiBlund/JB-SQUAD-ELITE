@@ -312,14 +312,14 @@ document.addEventListener('DOMContentLoaded', () => {
         const { data: dbPlayers } = await supabase.from('players').select('*').eq('team_id', state.team.id);
         if (dbPlayers) state.players = dbPlayers.map(p => ({
             id: p.id,
+            user_id: p.user_id, // Sincronizado
             name: p.name,
             consoleID: p.console_id,
             avatarID: p.avatar_id,
             primaryPos: p.primary_pos,
             secondaryPos: p.secondary_pos,
             dorsal: p.dorsal,
-            official: p.stats.official,
-            friendly: p.stats.friendly
+            stats: p.stats // Ahora stats es el objeto completo de la DB
         }));
 
         // Cargar Sesiones
@@ -352,10 +352,33 @@ document.addEventListener('DOMContentLoaded', () => {
             isActive: t.is_active
         }));
 
+        // Detectar mi ficha (AUTOGESTIÓN)
+        state.userPlayer = state.players.find(p => p.user_id === state.user.auth.id);
+        
+        if (state.userPlayer) {
+            // Auto-rellenar formulario si ya existe ficha
+            document.getElementById('playerName').value = state.userPlayer.name || '';
+            document.getElementById('consoleID').value = state.userPlayer.consoleID || '';
+            document.getElementById('dorsal').value = state.userPlayer.dorsal || '';
+            // Posiciones y avatar se pueden mejorar luego
+        }
+        
         updateTeamHeader();
         renderPlayers();
         renderSessions();
         renderTacticsList();
+
+        // 3. Flujo de Onboarding para Jugadores sin ficha
+        if (state.user.role === 'jugador' && !state.userPlayer) {
+            console.log(">>> Jugador sin ficha detectado. Redirigiendo a creación...");
+            switchView('add-player');
+            const alertMsg = document.createElement('div');
+            alertMsg.className = 'card-elite fade-in';
+            alertMsg.style.cssText = 'position:fixed; top:20px; right:20px; z-index:9999; padding:15px; border-color:var(--primary);';
+            alertMsg.innerHTML = '<p style="font-size:0.8rem; font-weight:800; color:var(--primary);">⚠️ CREA TU FICHA PARA JUGAR</p>';
+            document.body.appendChild(alertMsg);
+            setTimeout(() => alertMsg.remove(), 5000);
+        }
 
         // Inicializar componentes UI
         populatePositionSelects();
@@ -404,7 +427,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Modificar botones específicos
         const btnAddPlayer = document.getElementById('btn-go-to-add-player');
-        if (btnAddPlayer) btnAddPlayer.style.display = isAdmin ? 'flex' : 'none';
+        if (btnAddPlayer) {
+            // El Manager NO puede añadir jugadores manualmente, solo el propietario de su ficha
+            btnAddPlayer.style.display = (isAdmin && role !== 'jugador') ? 'none' : 'flex';
+            if (role === 'jugador') {
+                btnAddPlayer.querySelector('span').textContent = 'MI FICHA';
+            }
+        }
 
         const btnNewSession = document.getElementById('btn-new-session');
         if (btnNewSession) btnNewSession.style.display = isAdmin ? 'flex' : 'none';
@@ -845,35 +874,45 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function setupFormHandlers() {
         // Registro del Club
-        // Registration Form (Obsoleto) removido en favor de setupAuthHandlers
-
-        // Fichaje de Jugador
-        playerForm.addEventListener('submit', (e) => {
+        // Fichaje de Jugador (Autogestión)
+        playerForm.addEventListener('submit', async (e) => {
             e.preventDefault();
             
+            const submitBtn = e.target.querySelector('button');
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Guardando Ficha...';
+
             const secondaryPositions = Array.from(secondaryPosSelects)
                 .map(s => s.value)
                 .filter(v => v !== "" && v !== primaryPosSelect.value);
 
             const newPlayer = {
-                id: Date.now(),
+                id: state.userPlayer ? state.userPlayer.id : Date.now(),
+                user_id: state.user.auth.id, // VÍNCULO OBLIGATORIO
+                team_id: state.team.id,
                 name: document.getElementById('playerName').value,
-                consoleID: document.getElementById('consoleID').value,
+                console_id: document.getElementById('consoleID').value,
                 dorsal: document.getElementById('dorsal').value,
-                primaryPos: primaryPosSelect.value,
-                secondaryPos: [...new Set(secondaryPositions)].slice(0, 3),
-                avatarId: parseInt(document.getElementById('selected-avatar-id').value) || 1,
-                official: { matches: 0, goals: 0, assists: 0, mvps: 0 },
-                friendly: { matches: 0, goals: 0, assists: 0, mvps: 0 }
+                primary_pos: primaryPosSelect.value,
+                secondary_pos: [...new Set(secondaryPositions)].slice(0, 3),
+                avatar_id: parseInt(document.getElementById('selected-avatar-id').value) || 1,
+                stats: state.userPlayer ? state.userPlayer.stats : { 
+                    official: { matches: 0, goals: 0, assists: 0, mvps: 0 },
+                    friendly: { matches: 0, goals: 0, assists: 0, mvps: 0 }
+                }
             };
 
-            state.players.push(newPlayer);
-            savePlayerCloud(newPlayer);
+            const { error: insErr } = await supabase.from('players').upsert(newPlayer);
             
-            playerForm.reset();
-            updateTeamHeader();
-            renderPlayers();
-            switchView('plantilla'); 
+            if (insErr) {
+                alert('Error al guardar ficha: ' + insErr.message);
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Confirmar Ficha';
+                return;
+            }
+
+            alert('¡Ficha actualizada con éxito!');
+            location.reload(); // Recargamos para actualizar cache global
         });
     }
 
@@ -978,6 +1017,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const avatar = AVATARS.find(av => av.id === (player.avatarId || 1));
 
             const isAdmin = state.user.role === 'manager' || state.user.role === 'capitan';
+            const isSelf = player.user_id === state.user.auth.id;
 
             playerRow.innerHTML = `
                 <div class="player-avatar-mini" style="width: 35px; height: 35px; margin: 0 auto; background: rgba(0,0,0,0.2); border-radius: 5px; border: 1px solid var(--glass-border); display: flex; align-items: center; justify-content: center; padding: 2px;">
@@ -996,7 +1036,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 <div class="stat-cell cell-center" style="font-size: 0.8rem;">${gl}</div>
                 <div class="stat-cell cell-center" style="font-size: 0.8rem;">${ast}</div>
                 <div style="display: flex; justify-content: flex-end;">
-                    ${isAdmin ? `<button class="btn-delete-row" title="Borrar Jugador" onclick="window.confirmDelete('${player.id}')">🗑️</button>` : ''}
+                    ${(isAdmin || isSelf) ? `<button class="btn-delete-row" title="Abandonar/Expulsar" onclick="window.confirmDelete('${player.id}')">🗑️</button>` : ''}
                 </div>
             `;
             playerList.appendChild(playerRow);
@@ -1446,16 +1486,29 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     window.confirmDelete = async (id) => {
-        const agreed = await window.jbConfirm('¿TERMINAR CONTRATO DE ESTE JUGADOR?');
+        const player = state.players.find(p => p.id === id);
+        if (!player) return;
+
+        const isManager = state.user.role === 'manager';
+        const isSelf = player.user_id === state.user.auth.id;
+
+        if (!isManager && !isSelf) {
+            return alert('Solo el Manager o tú mismo podéis realizar esta acción.');
+        }
+
+        const agreed = await window.jbConfirm(isManager ? `¿DESVINCULAR A ${player.name.toUpperCase()} DEL CLUB?` : '¿QUIERES ABANDONAR EL CLUB?');
+        
         if (agreed) {
-            const playerIndex = state.players.findIndex(p => p.id === id);
-            if (playerIndex !== -1) {
-                state.players.splice(playerIndex, 1);
-                await savePlayerCloud(null);
-                renderPlayers();
-                updateTeamHeader();
-                renderPitch(); 
-            }
+            // 1. Eliminar membresía (Echar del club)
+            const { error: memErr } = await supabase.from('memberships').delete().eq('user_id', player.userId || id).eq('team_id', state.team.id);
+            
+            if (memErr) return alert('Error al expulsar: ' + memErr.message);
+
+            // 2. Opcionalmente eliminar ficha (Solo si el usuario lo decide, para el MVP lo borramos)
+            await supabase.from('players').delete().eq('id', id);
+
+            alert(isManager ? 'Contrato terminado.' : 'Has abandonado el club.');
+            location.reload();
         }
     };
 
