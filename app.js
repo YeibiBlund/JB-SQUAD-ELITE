@@ -368,18 +368,6 @@ document.addEventListener('DOMContentLoaded', () => {
         renderSessions();
         renderTacticsList();
 
-        // 3. Flujo de Onboarding para Jugadores sin ficha
-        if (state.user.role === 'jugador' && !state.userPlayer) {
-            console.log(">>> Jugador sin ficha detectado. Redirigiendo a creación...");
-            switchView('add-player');
-            const alertMsg = document.createElement('div');
-            alertMsg.className = 'card-elite fade-in';
-            alertMsg.style.cssText = 'position:fixed; top:20px; right:20px; z-index:9999; padding:15px; border-color:var(--primary);';
-            alertMsg.innerHTML = '<p style="font-size:0.8rem; font-weight:800; color:var(--primary);">⚠️ CREA TU FICHA PARA JUGAR</p>';
-            document.body.appendChild(alertMsg);
-            setTimeout(() => alertMsg.remove(), 5000);
-        }
-
         // Inicializar componentes UI
         populatePositionSelects();
         renderAvatarGallery();
@@ -391,6 +379,21 @@ document.addEventListener('DOMContentLoaded', () => {
         
         // Setup Eventos Globales
         setupEventListeners();
+
+        // Mostrar vista de Inicio por defecto
+        switchView('home');
+
+        // Flujo de Onboarding para Jugadores sin ficha (después de todo lo demás)
+        if (state.user.role === 'jugador' && !state.userPlayer) {
+            console.log(">>> Jugador sin ficha detectado. Redirigiendo a creación...");
+            switchView('add-player');
+            const alertMsg = document.createElement('div');
+            alertMsg.className = 'card-elite fade-in';
+            alertMsg.style.cssText = 'position:fixed; top:20px; right:20px; z-index:9999; padding:15px; border-color:var(--primary);';
+            alertMsg.innerHTML = '<p style="font-size:0.8rem; font-weight:800; color:var(--primary);">⚠️ CREA TU FICHA PARA JUGAR</p>';
+            document.body.appendChild(alertMsg);
+            setTimeout(() => alertMsg.remove(), 5000);
+        }
     }
 
     function switchAuthView(viewName) {
