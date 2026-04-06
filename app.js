@@ -383,9 +383,9 @@ document.addEventListener('DOMContentLoaded', () => {
         // Mostrar vista de Inicio por defecto
         switchView('home');
 
-        // Flujo de Onboarding para Jugadores sin ficha (después de todo lo demás)
-        if (state.user.role === 'jugador' && !state.userPlayer) {
-            console.log(">>> Jugador sin ficha detectado. Redirigiendo a creación...");
+        // Onboarding: Si CUALQUIER usuario no tiene ficha, redirigir a crearla
+        if (!state.userPlayer) {
+            console.log(">>> Usuario sin ficha detectado. Redirigiendo a creación...");
             switchView('add-player');
             const alertMsg = document.createElement('div');
             alertMsg.className = 'card-elite fade-in';
@@ -428,17 +428,13 @@ document.addEventListener('DOMContentLoaded', () => {
             el.style.display = isAdmin ? 'block' : 'none';
         });
 
-        // Modificar botones específicos
+        // Botón "Mi Ficha" — visible para TODOS (Manager también juega)
         const btnAddPlayer = document.getElementById('btn-go-to-add-player');
         if (btnAddPlayer) {
-            if (isAdmin) {
-                // Manager no crea jugadores manualmente
-                btnAddPlayer.style.display = 'none';
-            } else {
-                // Jugador: mostrar botón "Mi Ficha"
-                btnAddPlayer.style.display = 'flex';
-                const spanEl = btnAddPlayer.querySelector('span');
-                if (spanEl) spanEl.textContent = 'MI FICHA';
+            btnAddPlayer.style.display = 'flex';
+            const spanEl = btnAddPlayer.querySelector('span');
+            if (spanEl) {
+                spanEl.textContent = state.userPlayer ? 'EDITAR FICHA' : 'MI FICHA';
             }
         }
 
