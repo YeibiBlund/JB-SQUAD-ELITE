@@ -367,6 +367,7 @@ document.addEventListener('DOMContentLoaded', () => {
         renderPlayers();
         renderSessions();
         renderTacticsList();
+        renderHomeDashboard();
 
         // Inicializar componentes UI
         populatePositionSelects();
@@ -2067,7 +2068,7 @@ document.addEventListener('DOMContentLoaded', () => {
         `;
     }
 
-    window.showPlayerProfile = (id) => {
+    function showPlayerProfile(id) {
         const player = state.players.find(p => p.id === id || p.id == id);
         if (!player) return;
 
@@ -2095,5 +2096,50 @@ document.addEventListener('DOMContentLoaded', () => {
         `;
 
         modal.style.display = 'flex';
-    };
+    }
+
+    function renderHomeDashboard() {
+        const totalPlayersEl = document.getElementById('stats-total-players');
+        const totalSessionsEl = document.getElementById('stats-total-sessions');
+        const scorersListEl = document.getElementById('home-top-scorers-list');
+        const displayUser = document.getElementById('display-user-welcome');
+        const displayTeam = document.getElementById('display-team-welcome');
+
+        if (totalPlayersEl) totalPlayersEl.textContent = state.players.length;
+        if (totalSessionsEl) totalSessionsEl.textContent = state.sessions.length;
+        if (displayUser) displayUser.textContent = state.user.profile.username.toUpperCase();
+        if (displayTeam) displayTeam.textContent = state.team.name.toUpperCase();
+
+        if (scorersListEl) {
+            scorersListEl.innerHTML = '';
+            
+            // Calcular Goles Totales (Oficial + Amistoso)
+            const scorers = state.players
+                .map(p => ({
+                    name: p.name,
+                    avatar: AVATARS.find(av => av.id === (p.avatarID || p.avatar_id || 1)),
+                    totalGoals: (p.stats?.official?.goals || 0) + (p.stats?.friendly?.goals || 0)
+                }))
+                .filter(s => s.totalGoals > 0)
+                .sort((a, b) => b.totalGoals - a.totalGoals)
+                .slice(0, 3);
+
+            if (scorers.length === 0) {
+                scorersListEl.innerHTML = '<p style="font-size:0.7rem; text-align:center; opacity:0.5;">No hay datos de goles registrados todavía.</p>';
+            } else {
+                scorers.forEach((s, i) => {
+                    const row = document.createElement('div');
+                    row.className = 'card-elite';
+                    row.style.cssText = 'padding: 8px 12px; margin: 0; display: flex; align-items: center; gap: 12px; border-color: rgba(240,165,0,0.1);';
+                    row.innerHTML = `
+                        <span style="font-size: 0.8rem; font-weight: 900; color: var(--primary); width: 15px;">${i+1}</span>
+                        <div style="width: 25px; height: 25px; background: rgba(0,0,0,0.2); border-radius: 4px; padding: 2px;">${s.avatar ? s.avatar.svg : ''}</div>
+                        <span style="font-size: 0.75rem; font-weight: 800; flex: 1;">${s.name.toUpperCase()}</span>
+                        <span style="font-size: 0.75rem; font-weight: 900; color: var(--primary);">${s.totalGoals} <small style="font-size:0.5rem;">GLS</small></span>
+                    `;
+                    scorersListEl.appendChild(row);
+                });
+            }
+        }
+    }
 });
