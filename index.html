@@ -243,6 +243,32 @@
                         </div>
                     </div>
                 </div>
+
+                <!-- TABLA DE ESTADÍSTICAS ELITE (Debajo de la ficha) -->
+                <div id="profile-stats-container" class="card-elite fade-in" style="margin-top: 2rem; padding: 25px;">
+                    <h2 style="font-size: 1.1rem; margin-bottom: 20px; border-left: 3px solid var(--primary); padding-left: 15px;">RENDIMIENTO <span class="gradient-text">TEMPORADA</span></h2>
+                    <div class="stats-table-wrapper">
+                        <table class="stats-elite-table">
+                            <thead>
+                                <tr>
+                                    <th>CATEGORÍA</th>
+                                    <th>PJ</th>
+                                    <th>GOLES</th>
+                                    <th>ASIST.</th>
+                                    <th>MVP</th>
+                                </tr>
+                            </thead>
+                            <tbody id="profile-stats-body">
+                                <!-- Inyectado dinámicamente -->
+                            </tbody>
+                            <tfoot>
+                                <tr id="profile-stats-footer">
+                                    <!-- Totales -->
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                </div>
             </section>
 
             <!-- VIEW: Tacticas (Selection & Field) -->
@@ -445,7 +471,11 @@
                     <span class="icon">🏠</span>
                     INICIO
                 </button>
-                <button class="nav-btn active" data-view="plantilla">
+                <button class="nav-btn" data-view="add-player">
+                    <span class="icon">👤</span>
+                    MI FICHA
+                </button>
+                <button class="nav-btn" data-view="plantilla">
                     <span class="icon">👥</span>
                     PLANTILLA
                 </button>

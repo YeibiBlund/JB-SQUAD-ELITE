@@ -386,16 +386,20 @@ document.addEventListener('DOMContentLoaded', () => {
         // Setup Eventos Globales
         setupEventListeners();
 
-        // Mostrar vista de Inicio por defecto
-        switchView('home');
-
-        // Onboarding: Si CUALQUIER usuario no tiene ficha, redirigir a crearla
-        if (!state.userPlayer) {
-            console.log(">>> Usuario sin ficha detectado. Redirigiendo a creación...");
+        // Redirección forzada a 'Mi Perfil' (v4.2.3)
+        // Usamos un pequeño delay para asegurar que todos los componentes UI se han renderizado
+        setTimeout(() => {
             switchView('add-player');
+            if (state.userPlayer) renderPlayerStats(state.userPlayer);
+            console.log(">>> [BOOT v4.2.3] Aterrizaje final en Mi Perfil ejecutado.");
+        }, 100);
+
+        // Onboarding si no tiene ficha
+        if (!state.userPlayer) {
+            console.log(">>> Usuario sin ficha. Mostrando editor...");
             const alertMsg = document.createElement('div');
-            alertMsg.className = 'card-elite fade-in';
-            alertMsg.style.cssText = 'position:fixed; top:20px; right:20px; z-index:9999; padding:15px; border-color:var(--primary);';
+            alertMsg.className = 'card-elite fade-in shadow-premium';
+            alertMsg.style.cssText = 'position:fixed; top:20px; right:20px; z-index:9999; padding:15px; border:1px solid var(--primary); background: rgba(0,0,0,0.9);';
             alertMsg.innerHTML = '<p style="font-size:0.8rem; font-weight:800; color:var(--primary);">⚠️ CREA TU FICHA PARA JUGAR</p>';
             document.body.appendChild(alertMsg);
             setTimeout(() => alertMsg.remove(), 5000);
@@ -1623,11 +1627,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
         btnConfirmSessionStart.addEventListener('click', () => {
             sessionStartModal.style.display = 'none';
+            const selectedType = document.querySelector('input[name="sessionType"]:checked')?.value || 'friendly';
+            
             const newSession = {
                 id: Date.now(),
                 date: new Date().toLocaleDateString(),
                 matches: [],
                 mvpId: null,
+                type: selectedType,
                 status: 'active'
             };
             state.sessions.push(newSession);
@@ -2016,28 +2023,42 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     async function finalizeMatch() {
+        if (!state.activeSession) return;
+        const mType = state.activeSession.type === 'official' ? 'official' : 'friendly';
+        currentMatch.type = mType; // Asegurar consistencia
+
+        const initStats = (p) => {
+            if (!p.stats) p.stats = { official: { goals: 0, assists: 0, matches: 0 }, friendly: { goals: 0, assists: 0, matches: 0 } };
+            if (!p.stats.official) p.stats.official = { goals: 0, assists: 0, matches: 0 };
+            if (!p.stats.friendly) p.stats.friendly = { goals: 0, assists: 0, matches: 0 };
+            if (p.mvp_count === undefined) p.mvp_count = 0;
+        };
+
         // Actualizar estadísticas globales
         for (let ev of currentMatch.events) {
             const scorer = state.players.find(p => p.id == ev.scorerId);
             const assistant = state.players.find(p => p.id == ev.assistantId);
             
             if (scorer) {
-                scorer.stats[currentMatch.type].goals++;
+                initStats(scorer);
+                scorer.stats[mType].goals++;
                 await savePlayerCloud(scorer);
             }
             if (assistant) {
-                assistant.stats[currentMatch.type].assists++;
+                initStats(assistant);
+                assistant.stats[mType].assists++;
                 await savePlayerCloud(assistant);
             }
         }
 
-        // Contar partido jugado para los de la selección (relevantPlayers)
-        // Usamos la misma lógica que en el picker: los de la táctica
+        // PJ (Partidos Jugados) para la alineación activa
+        const lastTactic = state.savedTactics.find(t => t.id === state.activeTacticId);
         if (lastTactic) {
-            const assignedIds = Object.values(lastTactic.assignments);
+            const assignedIds = Object.values(lastTactic.assignments).map(id => id.toString());
             for (let p of state.players) {
-                if (assignedIds.includes(p.id.toString()) || assignedIds.includes(p.id)) {
-                    p.stats[currentMatch.type].matches++;
+                if (assignedIds.includes(p.id.toString())) {
+                    initStats(p);
+                    p.stats[mType].matches++;
                     await savePlayerCloud(p);
                 }
             }
@@ -2080,27 +2101,26 @@ document.addEventListener('DOMContentLoaded', () => {
         overlay.querySelector('#btn-no-mvp').onclick = () => finishSession(null, overlay);
     }
 
-    async function finishSession(mvpId, modalEl) {
-        if (modalEl) document.body.removeChild(modalEl);
+    async function finishSession(mvpId, overlay) {
+        if (overlay) overlay.remove();
         
-        if (mvpId) {
-            const player = state.players.find(p => p.id == mvpId);
-            if (player) {
-                // ...
-                const hasOfficial = state.activeSession.matches.some(m => m.type === 'official');
-                if (hasOfficial) player.stats.official.mvps++;
-                else player.stats.friendly.mvps++;
-                
-                state.activeSession.mvpId = mvpId;
-                await savePlayerCloud(player);
+        if (state.activeSession) {
+            state.activeSession.mvpId = mvpId;
+            state.activeSession.status = 'closed';
+            
+            if (mvpId) {
+                const mvpPlayer = state.players.find(p => p.id == mvpId);
+                if (mvpPlayer) {
+                    mvpPlayer.mvp_count = (mvpPlayer.mvp_count || 0) + 1;
+                    await savePlayerCloud(mvpPlayer);
+                }
             }
+            
+            await saveSessionCloud(state.activeSession);
+            state.activeSession = null;
+            localStorage.removeItem('jb_active_session');
         }
-
-        state.activeSession.status = 'closed';
-        await saveSessionCloud(state.activeSession);
-        state.activeSession = null;
         
-        await window.jbConfirm('¡Jornada finalizada y archivada!');
         renderSessions();
         renderPlayers();
         switchView('jornadas');
@@ -2117,6 +2137,7 @@ document.addEventListener('DOMContentLoaded', () => {
     function updatePlayerPreview() {
         const previewContainer = document.getElementById('live-player-preview');
         if (!previewContainer) return;
+        if (state.userPlayer) renderPlayerStats(state.userPlayer);
 
         const name = document.getElementById('playerName').value || 'TU NOMBRE';
         const dorsal = document.getElementById('dorsal').value || '00';
@@ -2138,6 +2159,50 @@ document.addEventListener('DOMContentLoaded', () => {
             <div class="name-banner-large">
                 <h2 style="font-size: ${name.length > 10 ? '1.1rem' : '1.5rem'}">${name.toUpperCase()}</h2>
             </div>
+        `;
+    }
+
+    function renderPlayerStats(player) {
+        const tbody = document.getElementById('profile-stats-body');
+        const tfooter = document.getElementById('profile-stats-footer');
+        if (!tbody || !player) return;
+
+        const stats = player.stats || {
+            official: { goals: 0, assists: 0, matches: 0 },
+            friendly: { goals: 0, assists: 0, matches: 0 }
+        };
+        const mvp = player.mvp_count || 0;
+
+        const off = stats.official || { goals: 0, assists: 0, matches: 0 };
+        const fri = stats.friendly || { goals: 0, assists: 0, matches: 0 };
+
+        tbody.innerHTML = `
+            <tr class="row-official">
+                <td><span class="stat-category-tag tag-off">OFICIAL</span></td>
+                <td>${off.matches || 0}</td>
+                <td>${off.goals || 0}</td>
+                <td>${off.assists || 0}</td>
+                <td>-</td>
+            </tr>
+            <tr class="row-friendly">
+                <td><span class="stat-category-tag tag-fri">AMISTOSO</span></td>
+                <td>${fri.matches || 0}</td>
+                <td>${fri.goals || 0}</td>
+                <td>${fri.assists || 0}</td>
+                <td>-</td>
+            </tr>
+        `;
+
+        const totalPJ = (off.matches || 0) + (fri.matches || 0);
+        const totalG = (off.goals || 0) + (fri.goals || 0);
+        const totalA = (off.assists || 0) + (fri.assists || 0);
+
+        tfooter.innerHTML = `
+            <td>TOTAL TEMPORADA</td>
+            <td>${totalPJ}</td>
+            <td>${totalG}</td>
+            <td>${totalA}</td>
+            <td style="color:var(--primary); font-weight:900;">⭐ ${mvp}</td>
         `;
     }
 

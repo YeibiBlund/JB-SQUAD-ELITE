@@ -1513,6 +1513,65 @@ p { color: var(--text-muted); font-size: 0.95rem; line-height: 1.5; }
     50% { box-shadow: 0 0 30px var(--primary-glow); }
     100% { box-shadow: 0 0 10px var(--primary-glow); }
 }
+/* Stats Table Elite */
+.stats-table-wrapper {
+    overflow-x: auto;
+    border-radius: 8px;
+    background: rgba(0,0,0,0.2);
+}
+
+.stats-elite-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-family: 'Outfit', sans-serif;
+    color: #fff;
+}
+
+.stats-elite-table th {
+    background: rgba(240, 165, 0, 0.1);
+    color: var(--primary);
+    text-align: left;
+    padding: 12px 15px;
+    font-size: 0.7rem;
+    letter-spacing: 1.5px;
+    font-weight: 900;
+    text-transform: uppercase;
+}
+
+.stats-elite-table td {
+    padding: 15px;
+    border-bottom: 1px solid rgba(255,255,255,0.03);
+    font-size: 0.9rem;
+    font-weight: 600;
+}
+
+.stats-elite-table tr:hover {
+    background: rgba(255,165,0,0.03);
+}
+
+.stats-elite-table .row-official {
+    border-left: 3px solid var(--primary);
+}
+
+.stats-elite-table .row-friendly {
+    border-left: 3px solid #888;
+}
+
+.stats-elite-table tfoot td {
+    background: rgba(255,255,255,0.02);
+    font-weight: 900;
+    color: var(--primary);
+    border-top: 1.5px solid rgba(240,165,0,0.3);
+}
+
+.stat-category-badge {
+    padding: 3px 8px;
+    border-radius: 4px;
+    font-size: 0.65rem;
+    font-weight: 800;
+}
+.badge-official { background: var(--primary); color: #000; }
+.badge-friendly { background: #333; color: #fff; }
 
 /* Modal de Perfil Específico */
 #profile-modal .jb-dialog {
