@@ -1316,15 +1316,9 @@ document.addEventListener('DOMContentLoaded', () => {
                         ${photo ? `<img src="${photo}" style="width: 100%; height: 100%; object-fit: cover; object-position: top; transform: scale(${pScale})">` : (avatar ? avatar.svg : '')}
                     </div>
                     <h4 title="${player.name}" style="
-                        font-size: ${fontSize} !important; 
-                        letter-spacing: ${letterSpacing} !important; 
-                        transform: scaleX(${scaleX}); 
-                        white-space: nowrap; 
-                        display: block; 
                         width: 100%;
                         text-align: center;
                         transform-origin: center center;
-                        position: relative;
                         z-index: 10;
                     ">${displayName}</h4>
                     <div class="slot-pos">${slot.pos}</div>
@@ -1332,7 +1326,7 @@ document.addEventListener('DOMContentLoaded', () => {
             } else {
                 slotEl.innerHTML = `
                     <span class="plus-icon">+</span>
-                    <div class="slot-pos">${slot.pos}</div>
+                    <div class="slot-pos" style="bottom: -22px; background: rgba(0,0,0,0.5); color: #fff;">${slot.pos}</div>
                 `;
             }
 

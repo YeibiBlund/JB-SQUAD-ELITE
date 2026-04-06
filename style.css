@@ -737,7 +737,7 @@ p { color: var(--text-muted); font-size: 0.95rem; line-height: 1.5; }
 
 .tactical-slot.filled h4 {
     position: absolute;
-    bottom: 14px;
+    bottom: 5px;
     left: 0;
     z-index: 10;
     background: linear-gradient(to right, transparent 0%, rgba(0,0,0,0.9) 20%, rgba(0,0,0,0.9) 80%, transparent 100%);
@@ -751,8 +751,10 @@ p { color: var(--text-muted); font-size: 0.95rem; line-height: 1.5; }
 }
 
 .tactical-slot.filled .slot-pos {
-    bottom: -8px;
+    bottom: -22px;
     z-index: 15;
+    background: var(--primary);
+    color: #000;
 }
 
 /* Tactic Option Selection */
