@@ -165,14 +165,20 @@ document.addEventListener('DOMContentLoaded', () => {
     // 3. Inicialización
     init();
 
+    let lastUpdate = 0;
     async function init() {
         if (!supabase) return;
 
-        // Escuchar cambios de autenticación
         supabase.auth.onAuthStateChange(async (event, session) => {
-            if (event === 'SIGNED_IN' || event === 'INITIAL_SESSION') {
-                if (session) await handleUserSession(session.user);
+            const now = Date.now();
+            if (now - lastUpdate < 500) return; // Filtro de 500ms
+            
+            if ((event === 'SIGNED_IN' || event === 'INITIAL_SESSION') && session) {
+                lastUpdate = now;
+                await new Promise(r => setTimeout(r, 100)); // Delay para estabilizar
+                await handleUserSession(session.user);
             } else if (event === 'SIGNED_OUT') {
+                lastUpdate = now;
                 state.user = null;
                 state.team = null;
                 switchAuthView('auth');
