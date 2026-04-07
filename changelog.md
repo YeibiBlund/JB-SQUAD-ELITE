@@ -1,6 +1,11 @@
 # Changelog - JB-SQUAD
 <br>
 
+## [v11.0.0] - 2026-04-07
+### Corregido (Broadcast Giant Calibration)
+- **Eliminación de Restricciones de Tamaño**: Se han desactivado las propiedades `max-width` y `max-height` heredadas que impedían que las cartas de la exportación alcanzaran su tamaño gigante (200x280px).
+- **Ajuste de Composición Vertical**: Desplazamiento de toda la formación táctica 10px hacia la base de la imagen para un balance visual superior y cercanía al Scorebug.
+
 ## [v10.0.0] - 2026-04-07
 ### Añadido (Broadcast Giant Elite Overhaul)
 - **Escalado Masivo de Cartas**: Aumento del tamaño de las cartas a 200px x 280px para una presencia dominante y profesional en la exportación final.

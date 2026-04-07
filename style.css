@@ -2151,12 +2151,14 @@ p { color: var(--text-muted); font-size: 0.95rem; line-height: 1.5; }
 }
 
 .export-matchday-wrapper .pitch-container {
-    width: 1040px !important; /* Más grande */
+    width: 1040px !important;
     height: 1300px !important;
     transform: none !important;
     background: transparent !important;
     border: none !important;
     box-shadow: none !important;
+    position: relative !important;
+    top: 10px !important; /* Desplazamiento hacia abajo solicitado */
 }
 
 .export-matchday-wrapper .pitch-lines,
@@ -2175,10 +2177,12 @@ p { color: var(--text-muted); font-size: 0.95rem; line-height: 1.5; }
     display: none !important;
 }
 
-/* Cartall Tactica Mirror v10.0 (Broadcast Giant) */
+/* Cartall Tactica Mirror v11.0 (Broadcast Giant) */
 .export-matchday-wrapper .tactical-slot.filled {
     width: 200px !important;
     height: 280px !important;
+    max-width: none !important; /* Eliminada restricción de base */
+    max-height: none !important; /* Eliminada restricción de base */
     background: linear-gradient(135deg, #1a1a1a 0%, #0a0a0a 100%) !important;
     border: 2px solid var(--primary) !important;
     border-radius: 8px !important;
