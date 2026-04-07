@@ -1,6 +1,12 @@
 # Changelog - JB-SQUAD
 <br>
 
+## [v8.0.0] - 2026-04-07
+### Añadido (Emerald Pure Elite Overhaul)
+- **Fondo de Césped Profesional Puro**: Sustitución total de la imagen de fondo por una textura de césped de estadio HD (`emerald_grass.png`), eliminando elementos humanos o distracciones para un acabado minimalista y pro.
+- **Líneas HD de Alta Visibilidad**: Las marcas del campo (áreas, círculo, cal) ahora son más gruesas (3px) y cuentan con un efecto de brillo para resaltar sobre la textura del césped.
+- **Calibración de Contraste**: Ajuste de capas para que el color verde esmeralda sea el protagonista sin comprometer la legibilidad de las cartas de jugador.
+
 ## [v7.0.0] - 2026-04-07
 ### Añadido (Social Elite Ultra-Pro Overhaul)
 - **Fondo Fotográfico Real**: Integración de la imagen `stadium_bg.png` como telón de fondo para una estética de broadcast auténtica.

@@ -2050,8 +2050,8 @@ p { color: var(--text-muted); font-size: 0.95rem; line-height: 1.5; }
     height: 1350px;
     background: #000;
     background-image: 
-        linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4)),
-        url('stadium_bg.png'); /* Fondo fotográfico real */
+        linear-gradient(rgba(0,0,0,0.1), rgba(0,0,0,0.1)), /* Capa muy sutil de oscurecimiento */
+        url('emerald_grass.png'); /* Fondo de césped puro */
     background-size: cover;
     background-position: center;
     display: flex;
@@ -2163,8 +2163,9 @@ p { color: var(--text-muted); font-size: 0.95rem; line-height: 1.5; }
 .export-matchday-wrapper .pitch-midline,
 .export-matchday-wrapper .pitch-circle,
 .export-matchday-wrapper .pitch-penalty {
-    border-color: rgba(255, 255, 255, 0.2) !important;
-    border-width: 2px !important;
+    border-color: rgba(255, 255, 255, 0.45) !important;
+    border-width: 3px !important;
+    filter: drop-shadow(0 0 5px rgba(255,255,255,0.2)) !important; /* Brillo HD */
 }
 
 .export-matchday-wrapper .pitch-midline {
