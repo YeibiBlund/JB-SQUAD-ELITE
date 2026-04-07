@@ -1,6 +1,21 @@
 # Changelog - JB-SQUAD
 <br>
 
+## [v4.6.0] - 2026-04-07
+### Corregido
+- **Fallo Crítico de Persistencia**: Reparada la función `saveTacticsCloud` en `app.js`. Ahora se incluye el `team_id` en el `upsert` de Supabase, lo que garantiza que las tácticas se guarden y recuperen correctamente por club tras recargar la página.
+
+### Añadido
+- **Rediseño Mobile Elite (Optimización de Espacio)**:
+    - **Navegación Rectangular Fija**: Sustituida la navegación flotante por una barra rectangular fija en la base (360px-430px) para maximizar el área de visualización.
+    - **Iconografía y Tipografía Adaptativa**: Reducidos los tamaños de iconos y etiquetas en el menú inferior para mayor discreción.
+    - **Cabecera Global Compacta**: Reducción de paddings y tamaños de fuente en el header para liberar espacio vertical.
+    - **Campo Táctico Expandido**: Aumentada la altura del campo (`pitch-container`) y el tamaño de las tarjetas de los jugadores para aprovechar el espacio ganado.
+- **Refinamiento de Nombres (Mobile-First)**:
+    - Nueva lógica de escalado ultra-agresivo en `app.js` que ajusta dinámicamente `scaleX` y `letter-spacing` para que nombres largos quepan íntegros en las cartas tácticas sin mostrar puntos suspensivos ("...").
+
+
+
 ## [v4.5.2] - 2026-04-07
 ### Corregido
 - **Restauración de Escritorio (PC)**:
