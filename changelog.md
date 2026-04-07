@@ -1,12 +1,16 @@
 # Changelog - JB-SQUAD
 <br>
 
-## [v4.5.1] - 2026-04-07
+## [v4.5.2] - 2026-04-07
 ### Corregido
-- **Reducción Agresiva de Tipografía Táctica**:
-    - Se ha bajado el tamaño de fuente base para nombres en el campo móvil a `0.55rem` (JS) y `0.5rem` (CSS).
-    - Implementación de un escalado horizontal ultra-compacto para nombres largos, permitiendo que quepen en slots reducidos sin ser dominantes.
-    - Ajuste de `max-width` al `105%` para un aspecto más ceñido a la carta del jugador.
+- **Restauración de Escritorio (PC)**:
+    - Se ha devuelto la tipografía de los nombres en PC a su tamaño original (`0.85rem`), eliminando la regresión que los hacía ver demasiado pequeños.
+- **Escalado Inteligente Device-Aware (Móvil)**:
+    - Implementación de lógica en `app.js` que detecta dinámicamente si el usuario está en móvil (`window.innerWidth < 1024`).
+    - En móviles, se aplica una base de `0.65rem` con un factor de `scaleX` progresivo. Esto permite que nombres cortos como "ALBER" se vean con buen tamaño y nombres largos como "KRATINHOS" se ajusten sin cortarse.
+    - Se ha ampliado el `max-width` del nombre en móvil al `115%` para evitar recortes prematuros y mejorar la estética de la tarjeta.
+
+## [v4.5.1] - 2026-04-07
 
 ## [v4.5.0] - 2026-04-07
 

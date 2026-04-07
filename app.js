@@ -735,11 +735,12 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     async function saveTacticsCloud() {
-        if (!supabase) return;
+        if (!supabase || !state.team) return;
         // Upsert masivo de tácticas (o individualmente si se prefiere)
         for (let t of state.savedTactics) {
             await supabase.from('tactics').upsert({
                 id: t.id,
+                team_id: state.team.id, // FIX: Vincular al equipo actual
                 name: t.name,
                 formation: t.formation,
                 assignments: t.assignments,
@@ -747,6 +748,7 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         }
     }
+
 
     async function deleteSessionCloud(sessionId) {
         if (!supabase) return;
@@ -1373,30 +1375,30 @@ document.addEventListener('DOMContentLoaded', () => {
                 const isMobile = window.innerWidth < 1024;
                 
                 // Valores base según dispositivo
-                let fontSize = isMobile ? '0.65rem' : '0.85rem';
+                let fontSize = isMobile ? '0.6rem' : '0.85rem';
                 let letterSpacing = '0px';
                 let scaleX = 1;
 
                 const nameLength = displayName.length;
 
-                // Lógica de escalado inteligente
+                // Lógica de escalado inteligente ELITE v4.6.0
                 if (isMobile) {
                     if (nameLength >= 15) {
-                        fontSize = '0.4rem';
+                        fontSize = '0.38rem';
                         letterSpacing = '-0.8px';
-                        scaleX = 0.75;
+                        scaleX = 0.7;
                     } else if (nameLength >= 12) {
-                        fontSize = '0.5rem';
+                        fontSize = '0.45rem';
                         letterSpacing = '-0.5px';
-                        scaleX = 0.8;
+                        scaleX = 0.75;
                     } else if (nameLength >= 10) {
-                        fontSize = '0.58rem';
+                        fontSize = '0.52rem';
                         letterSpacing = '-0.3px';
-                        scaleX = 0.85;
+                        scaleX = 0.8;
                     } else if (nameLength >= 8) {
-                        fontSize = '0.62rem';
+                        fontSize = '0.58rem';
                         letterSpacing = '-0.1px';
-                        scaleX = 0.95;
+                        scaleX = 0.9;
                     }
                 } else {
                     // Escalado para PC (más conservador)
@@ -1408,6 +1410,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         scaleX = 0.9;
                     }
                 }
+
 
 
 
