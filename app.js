@@ -1370,32 +1370,31 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
 
                 const displayName = (player.name || '').toUpperCase();
-                let fontSize = '0.75rem'; // Bajado de 0.85rem para asegurar que quepa por defecto
+                let fontSize = '0.55rem'; // Bajado de 0.75rem para una estética mucho más minimalista
                 let letterSpacing = '0px';
                 let scaleX = 1;
 
                 const nameLength = displayName.length;
 
                 if (nameLength >= 15) {
-                    fontSize = '0.4rem';
-                    letterSpacing = '-1px';
+                    fontSize = '0.35rem';
+                    letterSpacing = '-0.8px';
                     scaleX = 0.7;
                 } else if (nameLength >= 12) {
-                    fontSize = '0.5rem';
-                    letterSpacing = '-0.7px';
+                    fontSize = '0.4rem';
+                    letterSpacing = '-0.5px';
                     scaleX = 0.75;
                 } else if (nameLength >= 10) {
-                    fontSize = '0.6rem';
-                    letterSpacing = '-0.4px';
+                    fontSize = '0.48rem';
+                    letterSpacing = '-0.3px';
                     scaleX = 0.85;
                 } else if (nameLength >= 7) {
-                    fontSize = '0.7rem';
-                    letterSpacing = '-0.2px';
-                    scaleX = 0.9;
-                } else if (nameLength >= 5) {
-                    fontSize = '0.75rem';
-                    letterSpacing = '0px';
+                    fontSize = '0.52rem';
+                    letterSpacing = '-0.1px';
+                    scaleX = 0.95;
                 }
+                // Los nombres cortos ya heredan el 0.55rem base
+
 
 
 

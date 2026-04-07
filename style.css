@@ -770,15 +770,16 @@ p { color: var(--text-muted); font-size: 0.95rem; line-height: 1.5; }
     .tactical-slot.filled h4 {
         bottom: 2px;
         padding: 2px 0;
-        font-size: 0.55rem; /* Reducción adicional del base */
-        letter-spacing: -0.2px;
+        font-size: 0.5rem; /* Unificado con el mínimo de JS */
+        letter-spacing: -0.1px;
         background: linear-gradient(to right, transparent, rgba(0,0,0,0.85) 15%, rgba(0,0,0,0.85) 85%, transparent);
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
-        max-width: 120%; /* Permitir que el nombre respire un poco más fuera del slot */
+        max-width: 105%; /* Más compacto */
         margin: 0 auto;
     }
+
 
     .tactical-slot.filled .slot-pos {
         bottom: -18px;
