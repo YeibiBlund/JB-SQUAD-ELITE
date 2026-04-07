@@ -1,6 +1,18 @@
 # Changelog - JB-SQUAD
 <br>
 
+## [v4.4.0] - 2026-04-07
+### Añadido
+- **Optimización Táctica Mobile-First Elite**:
+    - **Ocultación de Dorsales**: Implementada la eliminación visual del número del jugador en el campo para dispositivos móviles mediante Media Queries avanzadas, priorizando la claridad del avatar y el nombre por encima de datos secundarios.
+    - **Refinamiento de Tipografía Táctica**: Ajuste del tamaño de fuente (`0.65rem`) y banners de nombres en móvil para garantizar cero solapamientos entre slots adyacentes, siguiendo el estilo visual de FC Mobile.
+    - **Jerarquía de Posiciones**: Reducción de escala y reposicionamiento de las etiquetas de posición (`.slot-pos`) en móviles para una composición más equilibrada.
+
+### Corregido
+- **Error de Renderizado de Nombres**: Se ha activado la lógica de escalado inteligente de nombres en `app.js` que estaba calculada pero no aplicada al DOM. Ahora los nombres largos se escalan y ajustan su `letter-spacing` automáticamente para mantenerse dentro de los límites de la carta.
+- **Inconsistencia de Bordes**: Suavizado del grosor de borde en slots tácticos para móviles para evitar un aspecto "tosco" en pantallas pequeñas.
+
+
 ## [v4.3.0] - 2026-04-06
 ### Añadido
 - **Evolución del Manual del Agente (`agents.md`)**:

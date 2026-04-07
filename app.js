@@ -1399,11 +1399,15 @@ document.addEventListener('DOMContentLoaded', () => {
                     <h4 title="${player.name}" style="
                         width: 100%;
                         text-align: center;
+                        font-size: ${fontSize};
+                        letter-spacing: ${letterSpacing};
+                        transform: scaleX(${scaleX});
                         transform-origin: center center;
                         z-index: 10;
                     ">${displayName}</h4>
                     <div class="slot-pos">${slot.pos}</div>
                 `;
+
             } else {
                 slotEl.innerHTML = `
                     <span class="plus-icon">+</span>

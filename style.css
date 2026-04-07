@@ -757,6 +757,32 @@ p { color: var(--text-muted); font-size: 0.95rem; line-height: 1.5; }
     color: #000;
 }
 
+/* Mobile Optimizations for Tactical Field Detalle */
+@media (max-width: 1023px) {
+    .tactical-slot.filled .dorsal-small {
+        display: none !important; /* Ocultar número en móvil por petición del usuario */
+    }
+    
+    .tactical-slot.filled {
+        border-width: 1px; /* Un poco más fino en móvil */
+    }
+
+    .tactical-slot.filled h4 {
+        bottom: 2px;
+        padding: 2px 0;
+        font-size: 0.65rem !important; /* Forzar tamaño más pequeño en móvil */
+        letter-spacing: 0;
+        background: linear-gradient(to right, transparent, rgba(0,0,0,0.85) 15%, rgba(0,0,0,0.85) 85%, transparent);
+    }
+
+    .tactical-slot.filled .slot-pos {
+        bottom: -18px;
+        font-size: 0.55rem;
+        padding: 2px 5px;
+    }
+}
+
+
 /* Tactic Option Selection */
 .tactic-option {
     padding: 16px;
