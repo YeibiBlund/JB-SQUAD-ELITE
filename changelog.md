@@ -1,6 +1,14 @@
 # Changelog - JB-SQUAD
 <br>
 
+## [v4.8.0] - 2026-04-07
+### Añadido
+- **Exportación de Tácticas (Matchday Image)**: Nueva funcionalidad para generar y descargar imágenes profesionales de la alineación.
+    - **Captura de Alta Fidelidad**: Integración de `html2canvas` para renderizar el campo táctico en resolución 1080x1350 (ideal para redes sociales).
+    - **Matchday Graphic**: El diseño incluye automáticamente el nombre del club, la hora del partido y la formación sobre un fondo de estadio atmosférico.
+    - **Selector de Hora Elite**: Modal personalizado para indicar la hora de la jornada antes de la descarga, manteniendo la regla de "Cero Modales Nativos".
+    - **Botón de Acción Rápida**: Acceso directo desde la cabecera de la pizarra táctica.
+
 ## [v4.7.0] - 2026-04-07
 ### Corregido
 - **Error 400 en Supabase**: Se ha resuelto el fallo al guardar tácticas asegurando que los IDs de nuevas tácticas se generen como UUIDs válidos en lugar de timestamps numéricos.

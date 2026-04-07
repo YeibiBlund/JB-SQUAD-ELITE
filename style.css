@@ -1622,6 +1622,10 @@ p { color: var(--text-muted); font-size: 0.95rem; line-height: 1.5; }
         padding: 8px 12px !important;
         font-size: 0.7rem !important;
     }
+    #btn-export-tactic {
+        padding: 8px 10px !important;
+        font-size: 0.65rem !important;
+    }
 }
 
 /* --- Perfil Editor & Preview v4.0.0 --- */
@@ -2036,4 +2040,98 @@ p { color: var(--text-muted); font-size: 0.95rem; line-height: 1.5; }
     0% { transform: translateX(-100%); }
     50% { transform: translateX(100%); }
     100% { transform: translateX(-100%); }
+}
+/* --- EXPORT MATCHDAY STYLES v4.8.0 --- */
+.export-matchday-wrapper {
+    position: fixed;
+    top: -5000px; /* Off-screen */
+    left: -5000px;
+    width: 1080px; /* Resolución Instagram/Social Media */
+    height: 1350px;
+    background: #050505;
+    background-image: 
+        radial-gradient(circle at 50% 0%, rgba(240, 165, 0, 0.15) 0%, transparent 70%),
+        url('https://images.unsplash.com/photo-1574629810360-7efbbe195018?q=80&w=1080&auto=format&fit=crop'); /* Fondo de estadio sutil */
+    background-size: cover;
+    background-position: center;
+    display: flex;
+    flex-direction: column;
+    padding: 60px;
+    color: #fff;
+    font-family: 'Outfit', sans-serif;
+    z-index: -1000;
+}
+
+.export-header {
+    text-align: center;
+    margin-bottom: 40px;
+}
+
+.export-team-name {
+    font-size: 4rem;
+    font-weight: 900;
+    letter-spacing: -2px;
+    margin: 0;
+    text-transform: uppercase;
+}
+
+.export-match-info {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--primary);
+    text-transform: uppercase;
+    letter-spacing: 5px;
+    margin-top: 10px;
+}
+
+.export-pitch-area {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    padding: 20px;
+}
+
+.export-footer {
+    text-align: center;
+    margin-top: 40px;
+    opacity: 0.8;
+}
+
+.export-footer p {
+    font-size: 1.2rem;
+    font-weight: 800;
+    letter-spacing: 4px;
+    color: #fff;
+}
+
+/* Modificaciones específicas para la captura */
+.export-matchday-wrapper .pitch-container {
+    max-width: none !important;
+    max-height: none !important;
+    width: 900px !important;
+    height: 1100px !important;
+    transform: none !important;
+    border: 3px solid rgba(255,255,255,0.1);
+}
+
+.export-matchday-wrapper .tactical-slot {
+    width: 140px !important;
+    height: 180px !important;
+}
+
+.export-matchday-wrapper .player-card-img {
+    width: 120px !important;
+    height: 120px !important;
+}
+
+.export-matchday-wrapper h4 {
+    font-size: 1.2rem !important;
+    margin-top: 10px !important;
+}
+
+.export-matchday-wrapper .slot-pos {
+    font-size: 1rem !important;
+    padding: 4px 12px !important;
 }

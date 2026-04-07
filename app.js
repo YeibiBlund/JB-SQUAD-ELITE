@@ -138,8 +138,15 @@ document.addEventListener('DOMContentLoaded', () => {
     const btnCreateTactic = document.getElementById('btn-create-tactic');
     const btnBackToTacticsList = document.getElementById('btn-back-to-tactics-list');
     const btnSaveTactic = document.getElementById('btn-save-tactic');
+    const btnExportTactic = document.getElementById('btn-export-tactic');
     const savedTacticsList = document.getElementById('saved-tactics-list');
     const newTacticNameInput = document.getElementById('newTacticName');
+
+    // Modal Exportación (v4.8.0)
+    const exportTimeModal = document.getElementById('export-time-modal');
+    const btnConfirmExport = document.getElementById('btn-confirm-export');
+    const exportMatchTimeInput = document.getElementById('export-match-time');
+    const closeExportTime = document.getElementById('close-export-time');
 
     // Modal Nueva Jornada
     const sessionStartModal = document.getElementById('session-start-modal');
@@ -1223,6 +1230,20 @@ document.addEventListener('DOMContentLoaded', () => {
             handleTacticViewDisplay();
         });
 
+        // Exportar Táctica (v4.8.0)
+        btnExportTactic.addEventListener('click', () => {
+            exportTimeModal.style.display = 'flex';
+        });
+
+        closeExportTime.addEventListener('click', () => {
+            exportTimeModal.style.display = 'none';
+        });
+
+        btnConfirmExport.addEventListener('click', () => {
+            exportTimeModal.style.display = 'none';
+            exportTacticAsImage();
+        });
+
         // Configurar Zona de Drop para volver al Banquillo Completo
         const rosterPanel = document.getElementById('tactic-roster-panel');
         if (rosterPanel) {
@@ -1340,6 +1361,7 @@ document.addEventListener('DOMContentLoaded', () => {
         
         if (headerTacticInfo) headerTacticInfo.style.display = 'flex';
         if (btnSaveTactic) btnSaveTactic.style.display = 'block';
+        if (btnExportTactic) btnExportTactic.style.display = 'block';
         
         renderPitch();
     }
@@ -2504,4 +2526,76 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
     }
+
+    // --- FUNCIÓN DE EXPORTACIÓN ELITE v4.8.0 ---
+    async function exportTacticAsImage() {
+        const activeTactic = state.savedTactics.find(t => t.id === state.activeTacticId);
+        if (!activeTactic) return;
+
+        const teamNameText = (state.team ? state.team.name : 'Mi Club').toUpperCase();
+        const matchTimeText = exportMatchTimeInput.value || '23:00';
+        
+        // 1. Crear el contenedor Off-screen
+        const wrapper = document.createElement('div');
+        wrapper.className = 'export-matchday-wrapper';
+        
+        wrapper.innerHTML = `
+            <div class="export-header">
+                <p class="export-match-info">MATCHDAY • ${matchTimeText}</p>
+                <h1 class="export-team-name gradient-text">${teamNameText}</h1>
+            </div>
+            <div class="export-pitch-area">
+                <!-- El campo se clonará aquí -->
+            </div>
+            <div class="export-footer">
+                <p>LINEUP: ${activeTactic.formation}</p>
+            </div>
+        `;
+        
+        document.body.appendChild(wrapper);
+        const pitchAreaElement = wrapper.querySelector('.export-pitch-area');
+        
+        // 2. Clonar el campo y renderizarlo
+        // Usamos el ID original 'football-pitch' ya que 'pitch' es la const que lo referencia
+        const pitchClone = pitch.cloneNode(true);
+        pitchClone.id = 'pitch-clone-export';
+        // Quitar estilos de control si los hubiera
+        pitchClone.style.transform = 'none';
+        pitchAreaElement.appendChild(pitchClone);
+        
+        // Forzamos un pequeño delay para asegurar renderizado
+        await new Promise(r => setTimeout(r, 200));
+
+        try {
+            const canvas = await html2canvas(wrapper, {
+                useCORS: true,
+                allowTaint: true,
+                backgroundColor: '#050505',
+                scale: 2, // Alta calidad
+                logging: false
+            });
+
+            // 3. Descargar
+            const link = document.createElement('a');
+            link.download = `MATCHDAY_${teamNameText.replace(/\s+/g, '_')}_${matchTimeText.replace(':', 'h')}.png`;
+            link.href = canvas.toDataURL('image/png');
+            link.click();
+            
+        } catch (err) {
+            console.error("Error al exportar:", err);
+            window.jbConfirm("Error al generar la imagen. Por favor, inténtalo de nuevo.");
+        } finally {
+            // 4. Limpieza
+            document.body.removeChild(wrapper);
+        }
+    }
+
+    // Inicialización final
+    setupNav();
+    setupAuth();
+    setupTeamSelectors();
+    setupPlantillaHandlers();
+    setupTacticHandlers();
+    setupSessionHandlers();
+    setupMatchHandlers();
 });

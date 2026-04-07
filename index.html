@@ -11,6 +11,7 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <link rel="stylesheet" href="style.css">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 </head>
 <body>
     <!-- SPLASH SCREEN / APP LOADER (v4.3.0) -->
@@ -137,6 +138,7 @@
             </div>
             
             <div style="display: flex; gap: 10px;">
+                <button id="btn-export-tactic" style="display: none; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: #fff; padding: 10px 15px; border-radius: 6px; font-size: 0.8rem; font-weight: 700; cursor: pointer;">📥 EXPORTAR</button>
                 <button id="btn-save-tactic" style="display: none; background: rgba(240, 165, 0, 0.1); border: 1px solid var(--primary); color: var(--primary); padding: 10px 20px; border-radius: 6px; font-size: 0.8rem; font-weight: 700; cursor: pointer; text-transform: uppercase;">Guardar</button>
                 <button id="btn-global-logout" title="Cerrar Sesión" style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1); color: #F44336; padding: 10px; border-radius: 6px; cursor: pointer;">🚪</button>
             </div>
@@ -655,16 +657,21 @@
         </div>
     </div>
 
-    <!-- MODAL DE PERFIL DETALLADO -->
-    <div id="profile-modal" class="jb-dialog-overlay" style="display: none;">
-        <div class="jb-dialog card-elite" style="max-width: 450px; text-align: center; padding: 40px;">
-            <button class="jb-dialog-close" onclick="document.getElementById('profile-modal').style.display='none'">×</button>
-            <div id="profile-modal-content" class="fade-in">
-                <!-- Tarjeta FUT Gigante se inyecta aquí -->
+        </div>
+    </div>
+
+    <!-- MODAL HORA EXPORTACIÓN (v4.8.0) -->
+    <div id="export-time-modal" class="modal-overlay" style="display: none;">
+        <div class="modal-content" style="max-width: 400px; text-align: center;">
+            <div class="modal-header">
+                <h2>HORA DE <span class="gradient-text">LA JORNADA</span></h2>
+                <button id="close-export-time" class="btn-close">✕</button>
             </div>
-            <div id="profile-modal-stats" style="margin-top: 30px; display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px;">
-                <!-- Stats oficiales -->
+            <p style="color: var(--text-muted); font-size: 0.8rem; margin: 15px 0;">Indica la hora para la imagen del Matchday</p>
+            <div class="form-group">
+                <input type="time" id="export-match-time" value="23:00" style="font-size: 2rem; text-align: center; background: rgba(0,0,0,0.3); border: 1px solid var(--primary); color: var(--primary); font-weight: 900;">
             </div>
+            <button id="btn-confirm-export" class="btn-gold" style="margin-top: 25px;">GENERAR IMAGEN</button>
         </div>
     </div>
 
