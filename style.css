@@ -2151,14 +2151,16 @@ p { color: var(--text-muted); font-size: 0.95rem; line-height: 1.5; }
 }
 
 .export-matchday-wrapper .pitch-container {
-    width: 1040px !important;
-    height: 1300px !important;
+    width: 100% !important; /* Expansión total para evitar cortes */
+    height: 100% !important;
     transform: none !important;
     background: transparent !important;
     border: none !important;
     box-shadow: none !important;
-    position: relative !important;
-    top: 10px !important; /* Desplazamiento hacia abajo solicitado */
+    position: absolute !important;
+    top: 0 !important;
+    left: 0 !important;
+    overflow: visible !important; /* Permitir que las cartas respiren fuera del límite */
 }
 
 .export-matchday-wrapper .pitch-lines,
@@ -2199,7 +2201,11 @@ p { color: var(--text-muted); font-size: 0.95rem; line-height: 1.5; }
     background: rgba(0,0,0,0.8) !important;
     color: rgba(255,255,255,0.7) !important;
     border-color: rgba(255,255,255,0.3) !important;
-    bottom: -32px !important; /* Posición debajo de la carta */
+    top: 10px !important; /* Posición superior derecha */
+    right: 10px !important;
+    bottom: auto !important;
+    left: auto !important;
+    transform: none !important;
 }
 
 /* Cartall Tactica Mirror v12.0 (Broadcast Balanced) */
@@ -2268,18 +2274,20 @@ p { color: var(--text-muted); font-size: 0.95rem; line-height: 1.5; }
 .export-matchday-wrapper .slot-pos {
     display: block !important;
     position: absolute !important;
-    bottom: -32px !important; /* Claramente debajo de la carta */
-    left: 50% !important;
-    transform: translateX(-50%) !important;
+    top: 10px !important; /* Esquina superior derecha inside */
+    right: 10px !important;
+    bottom: auto !important;
+    left: auto !important;
+    transform: none !important;
     background: #000 !important;
     color: var(--primary) !important;
-    padding: 3px 14px !important;
-    font-size: 0.9rem !important;
+    padding: 2px 10px !important;
+    font-size: 0.75rem !important;
     font-weight: 950 !important;
     z-index: 30 !important;
     border-radius: 4px !important;
     border: 1.5px solid var(--primary) !important;
-    box-shadow: 0 5px 15px rgba(0,0,0,0.8) !important;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.8) !important;
     white-space: nowrap !important;
     text-transform: uppercase !important;
 }

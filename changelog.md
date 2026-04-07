@@ -1,6 +1,12 @@
 # Changelog - JB-SQUAD
 <br>
 
+## [v15.0.0] - 2026-04-07
+### Corregido (Infinite Pitch Elite)
+- **Eliminación de Recortes de Borde**: Desactivación del `overflow: hidden` y expansión del área táctica al 100% del canvas de exportación. Ahora el Portero y los extremos pueden ocupar los bordes sin cortarse.
+- **Reubicación de Posición 'Top-Right'**: La etiqueta de posición se ha movido al interior de la carta, en la esquina superior derecha, logrando un look de cromo profesional y despejando la base para el nombre.
+- **Márgenes de Seguridad HD**: Re-calibración de las coordenadas de la 3-1-4-2 para asegurar que, aunque las cartas estén en el borde, mantengan una distancia de cortesía respecto al límite físico de la imagen.
+
 ## [v14.0.0] - 2026-04-07
 ### Corregido (Formation Precision Elite)
 - **Calibración Táctica (3-1-4-2)**: Reubicación de coordenadas para maximizar el espacio entre cartas. Se han ensanchado las bandas (MI/MD) y se ha desplazado verticalmente el bloque defensivo hacia la base para evitar solapamientos.
