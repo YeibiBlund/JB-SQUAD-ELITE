@@ -1370,30 +1370,44 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
 
                 const displayName = (player.name || '').toUpperCase();
-                let fontSize = '0.55rem'; // Bajado de 0.75rem para una estética mucho más minimalista
+                const isMobile = window.innerWidth < 1024;
+                
+                // Valores base según dispositivo
+                let fontSize = isMobile ? '0.65rem' : '0.85rem';
                 let letterSpacing = '0px';
                 let scaleX = 1;
 
                 const nameLength = displayName.length;
 
-                if (nameLength >= 15) {
-                    fontSize = '0.35rem';
-                    letterSpacing = '-0.8px';
-                    scaleX = 0.7;
-                } else if (nameLength >= 12) {
-                    fontSize = '0.4rem';
-                    letterSpacing = '-0.5px';
-                    scaleX = 0.75;
-                } else if (nameLength >= 10) {
-                    fontSize = '0.48rem';
-                    letterSpacing = '-0.3px';
-                    scaleX = 0.85;
-                } else if (nameLength >= 7) {
-                    fontSize = '0.52rem';
-                    letterSpacing = '-0.1px';
-                    scaleX = 0.95;
+                // Lógica de escalado inteligente
+                if (isMobile) {
+                    if (nameLength >= 15) {
+                        fontSize = '0.4rem';
+                        letterSpacing = '-0.8px';
+                        scaleX = 0.75;
+                    } else if (nameLength >= 12) {
+                        fontSize = '0.5rem';
+                        letterSpacing = '-0.5px';
+                        scaleX = 0.8;
+                    } else if (nameLength >= 10) {
+                        fontSize = '0.58rem';
+                        letterSpacing = '-0.3px';
+                        scaleX = 0.85;
+                    } else if (nameLength >= 8) {
+                        fontSize = '0.62rem';
+                        letterSpacing = '-0.1px';
+                        scaleX = 0.95;
+                    }
+                } else {
+                    // Escalado para PC (más conservador)
+                    if (nameLength >= 15) {
+                        fontSize = '0.6rem';
+                        scaleX = 0.8;
+                    } else if (nameLength >= 12) {
+                        fontSize = '0.7rem';
+                        scaleX = 0.9;
+                    }
                 }
-                // Los nombres cortos ya heredan el 0.55rem base
 
 
 

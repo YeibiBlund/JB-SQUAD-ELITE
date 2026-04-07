@@ -1,17 +1,14 @@
 # Changelog - JB-SQUAD
 <br>
 
-## [v4.5.0] - 2026-04-07
-### Añadido
-- **Rediseño del Banquillo (Rejilla Elite)**:
-    - Transformación del listado vertical de jugadores en una cuadrícula compacta de 4 columnas para dispositivos móviles.
-    - Estructura de carta vertical en el banquillo: Avatar en la parte superior, nombre centrado y badge de posición en la base.
-    - Optimización de espacio mediante la ocultación de estadísticas secundarias y dorsales en la vista de rejilla móvil.
-
+## [v4.5.1] - 2026-04-07
 ### Corregido
-- **Ajuste Milimétrico de Nombres en Campo**:
-    - Se ha incrementado el ancho máximo permitido para los nombres en el campo táctico (`max-width: 120%`), eliminando los puntos suspensivos en nombres como "ALBER".
-    - El motor de escalado en `app.js` ahora es un 15% más agresivo con las escalas horizontales (`scaleX`) y reduce el tamaño base a `0.75rem`, garantizando que incluso en pantallas de 360px los nombres quepan sin cortarse.
+- **Reducción Agresiva de Tipografía Táctica**:
+    - Se ha bajado el tamaño de fuente base para nombres en el campo móvil a `0.55rem` (JS) y `0.5rem` (CSS).
+    - Implementación de un escalado horizontal ultra-compacto para nombres largos, permitiendo que quepen en slots reducidos sin ser dominantes.
+    - Ajuste de `max-width` al `105%` para un aspecto más ceñido a la carta del jugador.
+
+## [v4.5.0] - 2026-04-07
 
 ## [v4.4.1] - 2026-04-07
 
