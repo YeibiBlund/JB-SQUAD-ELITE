@@ -1,6 +1,12 @@
 # Changelog - JB-SQUAD
 <br>
 
+## [v19.0.0] - 2026-04-07
+### Corregido (Broadcast Cinematic Wide)
+- **Escalado Radical a 1600px**: Cambio estructural del contenedor táctico para forzar un espaciado horizontal idéntico al del dashboard. Esto permite que las cartas tengan "aire" y no se toquen entre sí.
+- **Alineación de Cal Maestro (-230px)**: Uso de un offset negativo para clavar el centro táctico con el círculo central del estadio en la imagen de fondo.
+- **Sincronización Total de Formación**: Re-calibración de las coordenadas de la 3-1-4-2 bajo la nueva escala gigante, logrando una distribución equilibrada de banda a banda.
+
 ## [v18.0.0] - 2026-04-07
 ### Corregido (Broadcast Wide Horizon)
 - **Espaciado Táctico Maestro**: Ampliación del ancho del contenedor a `1180px` para "estirar" las posiciones horizontalmente. Esto replica el espaciado del dashboard, eliminando el amontonamiento en el centro.
