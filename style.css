@@ -2172,9 +2172,33 @@ p { color: var(--text-muted); font-size: 0.95rem; line-height: 1.5; }
     background: rgba(255, 255, 255, 0.1) !important;
 }
 
-/* Ocultar slots vacíos en la exportación */
-.export-matchday-wrapper .tactical-slot:not(.filled) {
-    display: none !important;
+/* Slots Vacíos en Exportación v13.0 (Mirror Dashboard) */
+.export-matchday-wrapper .tactical-slot {
+    width: 150px !important;
+    height: 210px !important;
+    max-width: none !important;
+    max-height: none !important;
+    background: rgba(0, 0, 0, 0.4) !important;
+    backdrop-filter: blur(5px) !important;
+    border: 1.5px dashed rgba(255, 255, 255, 0.2) !important;
+    border-radius: 8px !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+    position: absolute !important;
+}
+
+.export-matchday-wrapper .tactical-slot .plus-icon {
+    font-size: 2.5rem !important;
+    color: var(--primary) !important;
+    opacity: 0.3 !important;
+}
+
+.export-matchday-wrapper .tactical-slot:not(.filled) .slot-pos {
+    background: rgba(0,0,0,0.6) !important;
+    color: rgba(255,255,255,0.6) !important;
+    border-color: rgba(255,255,255,0.2) !important;
 }
 
 /* Cartall Tactica Mirror v12.0 (Broadcast Balanced) */

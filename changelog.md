@@ -1,6 +1,11 @@
 # Changelog - JB-SQUAD
 <br>
 
+## [v13.0.0] - 2026-04-07
+### Añadido (Full Formation Export)
+- **Visibilidad de Formación Completa**: Se ha eliminado la restricción que ocultaba los slots vacíos. Ahora, la exportación muestra todas las posiciones tácticas de la formación elegida, incluso si no tienen jugadores asignados.
+- **Estilo de Slot Vacío Mirror**: Implementación de un diseño de "esqueleto" (borde discontinuo, fondo translúcido e icono '+') para los slots vacíos, manteniendo la coherencia visual con el panel táctico.
+
 ## [v12.0.0] - 2026-04-07
 ### Corregido (Broadcast Balanced Elite)
 - **Punto de Equilibrio de Escala**: Re-ajuste del tamaño de las cartas a 150px x 210px. Este tamaño es el "sweet spot" que mantiene un gran impacto visual sin provocar solapamientos en formaciones cerradas (como la 3-1-4-2).
