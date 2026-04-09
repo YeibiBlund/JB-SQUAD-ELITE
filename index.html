@@ -392,20 +392,21 @@
                 </div><!-- /tacticas-initial-selection -->
 
                 <!-- Sub-vista: Campo Táctico (Visualización/Edición) -->
-                <div id="tacticas-field-view" class="tacticas-split-layout">
+                <div id="tacticas-field-view">
                     <!-- Barra de Controles de Diseño Personalizado -->
-                    <div id="custom-tactic-controls" style="display: none; justify-content: space-between; align-items: center; width: 100%; grid-column: 1 / -1; margin-bottom: 10px; background: rgba(0,0,0,0.3); padding: 10px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.05);">
+                    <div id="custom-tactic-controls" style="display: none; justify-content: space-between; align-items: center; width: 100%; margin-bottom: 15px; background: rgba(0,0,0,0.4); padding: 12px 20px; border-radius: 12px; border: 1px solid var(--primary); backdrop-filter: blur(10px); box-shadow: 0 4px 20px rgba(0,0,0,0.5); z-index: 100;">
                         <div style="display: flex; flex-direction: column;">
-                            <span style="font-size: 0.6rem; color: var(--primary); font-weight: 800; letter-spacing: 1px;">MODO EDICIÓN</span>
-                            <span style="font-size: 0.5rem; color: var(--text-muted);">ARRASTRA LOS JUGADORES PARA PERSONALIZAR SU POSICIÓN</span>
+                            <span style="font-size: 0.65rem; color: var(--primary); font-weight: 900; letter-spacing: 2px; text-transform: uppercase;">Modo Diseño Libre</span>
+                            <span style="font-size: 0.55rem; color: var(--text-muted); font-weight: 500;">ARRASTRA LOS JUGADORES PARA PERSONALIZAR TU ESTRATEGIA</span>
                         </div>
-                        <div style="display: flex; gap: 10px;">
-                             <button id="btn-reset-positions" class="btn-action" style="padding: 5px 15px; font-size: 0.7rem; color: #fff; border-color: rgba(255,255,255,0.1);">RESET</button>
-                             <button id="btn-save-custom-positions" class="btn-gold" style="padding: 5px 20px; font-size: 0.7rem; width: auto; font-weight: 800;">GUARDAR DISEÑO</button>
+                        <div style="display: flex; gap: 12px;">
+                             <button id="btn-reset-positions" class="btn-cancel" style="padding: 6px 15px; font-size: 0.7rem; color: #fff; border-color: rgba(255,255,255,0.1); background: rgba(255,255,255,0.05);">RESET</button>
+                             <button id="btn-save-custom-positions" class="btn-gold" style="padding: 8px 25px; font-size: 0.75rem; width: auto; font-weight: 900; letter-spacing: 1px;">GUARDAR DISEÑO</button>
                         </div>
                     </div>
-                    
-                    <div class="pitch-container" id="football-pitch">
+
+                    <div class="tacticas-split-layout">
+                        <div class="pitch-container" id="football-pitch">
                         <div class="pitch-lines">
                             <div class="pitch-midline"></div>
                             <div class="pitch-circle"></div>
