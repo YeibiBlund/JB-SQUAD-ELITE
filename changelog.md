@@ -1,6 +1,11 @@
 # Changelog - JB-SQUAD
 <br>
 
+## [v20.4.1-NATIVE] - 2026-04-09
+### Corregido (Renderizado Táctico Fiel)
+- **Eliminación de Distorsiones en Exportación**: Se ha eliminado la hoja de estilos artificial que forzaba el formato de "cartas grandes" en las capturas. Ahora la foto respeta rigurosamente el diseño, tamaño, escala y posiciones originales de las piezas en la pizarra.
+- **Encuadre Absoluto del Portero**: Redimensionado el campo interno de la captura para que mida siempre 1085px de alto exactos, garantizando que entra con total holgura dentro del marco (salvando de los márgenes a los porteros).
+
 ## [v20.4.0-REAL] - 2026-04-09
 ### Ajustado (Restauración Oficial)
 - **Fondo Emerald Pitch**: Restaurada la imagen oficial `emerald_pitch.png` como fondo de exportación para máxima fidelidad.

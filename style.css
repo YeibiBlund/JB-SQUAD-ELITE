@@ -2214,11 +2214,11 @@ body.editing-tactic .tactical-slot {
 }
 
 .export-matchday-wrapper .pitch-container {
-    width: 100% !important;
-    height: 100% !important;
-    max-width: 900px !important;
+    width: 700px !important; /* Menos ancho para evitar corte de altura */
+    height: 1085px !important; /* 700 * 1.55, cabe perfecto en el vertical */
+    max-width: none !important;
     max-height: none !important;
-    aspect-ratio: 1 / 1.55 !important; /* Fidelidad total a la pizarra XL */
+    aspect-ratio: 1 / 1.55 !important;
     transform: none !important;
     background: transparent !important;
     border: none !important;
@@ -2236,123 +2236,7 @@ body.editing-tactic .tactical-slot {
     display: none !important; /* Usar las líneas reales de emerald_pitch.png */
 }
 
-/* Slots Vacíos en Exportación v13.0 (Mirror Dashboard) */
-.export-matchday-wrapper .tactical-slot {
-    width: 150px !important;
-    height: 210px !important;
-    max-width: none !important;
-    max-height: none !important;
-    background: rgba(0, 0, 0, 0.4) !important;
-    backdrop-filter: blur(5px) !important;
-    border: 1.5px dashed rgba(255, 255, 255, 0.2) !important;
-    border-radius: 8px !important;
-    display: flex !important;
-    flex-direction: column !important;
-    align-items: center !important;
-    justify-content: center !important;
-    position: absolute !important;
-}
 
-.export-matchday-wrapper .tactical-slot .plus-icon {
-    font-size: 2.5rem !important;
-    color: var(--primary) !important;
-    opacity: 0.3 !important;
-}
-
-.export-matchday-wrapper .tactical-slot:not(.filled) .slot-pos {
-    background: rgba(0,0,0,0.8) !important;
-    color: rgba(255,255,255,0.7) !important;
-    border-color: rgba(255,255,255,0.3) !important;
-    top: 10px !important; /* Posición superior derecha */
-    right: 10px !important;
-    bottom: auto !important;
-    left: auto !important;
-    transform: none !important;
-}
-
-/* Cartall Tactica Mirror v12.0 (Broadcast Balanced) */
-.export-matchday-wrapper .tactical-slot.filled {
-    width: 150px !important;
-    height: 210px !important;
-    max-width: none !important;
-    max-height: none !important;
-    background: linear-gradient(135deg, #1a1a1a 0%, #0a0a0a 100%) !important;
-    border: 2px solid var(--primary) !important;
-    border-radius: 8px !important;
-    box-shadow: 0 15px 35px rgba(0,0,0,0.8) !important;
-    display: flex !important;
-    flex-direction: column !important;
-    justify-content: flex-end !important;
-    padding: 0 !important;
-    overflow: visible !important;
-    position: absolute !important;
-}
-
-.export-matchday-wrapper .player-card-img {
-    width: 100% !important;
-    height: 100% !important; 
-    border-radius: 6px !important;
-    position: absolute !important;
-    top: 0 !important;
-    left: 0 !important;
-    overflow: hidden !important;
-    mask-image: linear-gradient(to bottom, black 75%, transparent 100%);
-    z-index: 5 !important;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-}
-
-.export-matchday-wrapper h4 {
-    display: block !important;
-    position: relative !important;
-    bottom: 22px !important;
-    left: 0 !important;
-    width: 100% !important;
-    background: transparent !important;
-    color: #fff !important;
-    font-size: 1.15rem !important; /* Re-balanceado */
-    font-weight: 800 !important;
-    text-align: center !important;
-    margin: 0 !important;
-    z-index: 10 !important;
-    text-shadow: 2px 2px 4px rgba(0,0,0,1) !important;
-    text-transform: uppercase !important;
-}
-
-.export-matchday-wrapper .dorsal-small {
-    display: block !important;
-    position: absolute !important;
-    top: 10px !important;
-    left: 10px !important;
-    background: transparent !important;
-    color: var(--primary) !important;
-    font-size: 1.45rem !important; /* Re-balanceado */
-    font-weight: 950 !important;
-    z-index: 20 !important;
-    text-shadow: 2px 2px 5px rgba(0,0,0,1) !important;
-}
-
-.export-matchday-wrapper .slot-pos {
-    display: block !important;
-    position: absolute !important;
-    top: 10px !important; /* Esquina superior derecha inside */
-    right: 10px !important;
-    bottom: auto !important;
-    left: auto !important;
-    transform: none !important;
-    background: #000 !important;
-    color: var(--primary) !important;
-    padding: 2px 10px !important;
-    font-size: 0.75rem !important;
-    font-weight: 950 !important;
-    z-index: 30 !important;
-    border-radius: 4px !important;
-    border: 1.5px solid var(--primary) !important;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.8) !important;
-    white-space: nowrap !important;
-    text-transform: uppercase !important;
-}
 /* --- ESCRITORIO ÉLITE: SIDEBAR LAYOUT (v5.1.0 - Glass Reflect) --- */
 @media (min-width: 1024px) {
     .bottom-nav {
