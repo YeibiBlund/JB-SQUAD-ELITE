@@ -2721,11 +2721,16 @@ document.addEventListener('DOMContentLoaded', () => {
         const pitchAreaElement = wrapper.querySelector('.export-pitch-area');
         
         // 2. Clonar el campo y renderizarlo
-        // Usamos el ID original 'football-pitch' ya que 'pitch' es la const que lo referencia
         const pitchClone = pitch.cloneNode(true);
         pitchClone.id = 'pitch-clone-export';
-        // Quitar estilos de control si los hubiera
+        
+        // Limpieza de UI en el clon (v20.3.0)
+        pitchClone.querySelectorAll('.slot-control-panel, .btn-delete-slot, #btn-modify-drawing').forEach(el => el.remove());
+        
+        // Quitar estilos de control si los hubiera y forzar centrado
         pitchClone.style.transform = 'none';
+        pitchClone.style.margin = '0 auto';
+        
         pitchAreaElement.appendChild(pitchClone);
         
         // Forzamos un pequeño delay para asegurar renderizado

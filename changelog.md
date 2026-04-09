@@ -1,6 +1,14 @@
 # Changelog - JB-SQUAD
 <br>
 
+## [v20.3.0-PHOTO] - 2026-04-09
+### Añadido (Exportación de Alta Fidelidad)
+- **Captura Espejo Automática**: El sistema de exportación ahora replica exactamente la proporción y disposición de la pizarra táctica XL.
+- **Centrado Inteligente**: Implementado un layout basado en Flexbox que centra el campo automáticamente en el marco de la imagen.
+- **Fondo Elite Integrado**: La imagen exportada ahora incluye el fondo reglamentario con rayas y sombras dinámicas.
+- **Limpieza de Interfaz**: Se eliminan automáticamente los botones de edición y controles del clon del campo para generar una imagen limpia y profesional.
+- **Resolución Optimizada**: Marco de exportación fijado en 1080x1350 para máxima calidad en RRSS.
+
 ## [v20.2.1-FIX] - 2026-04-09
 ### Ajustado (Blindaje Total)
 - **Cierre de Brecha en Slots**: Corregido el error que permitía abrir el modal de gestión en slots ocupados mientras se editaba el dibujo táctico.

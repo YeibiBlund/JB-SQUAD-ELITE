@@ -2110,18 +2110,16 @@ body.editing-tactic .tactical-slot {
     left: -5000px;
     width: 1080px;
     height: 1350px;
-    background: #000;
-    background-image: 
-        linear-gradient(rgba(0,0,0,0.1), rgba(0,0,0,0.1)),
-        url('emerald_pitch.png'); /* Césped con líneas reales integradas */
-    background-size: cover;
-    background-position: center;
+    position: fixed;
+    top: -5000px; /* Lejos del viewport */
+    left: 0;
     display: flex;
     flex-direction: column;
     color: #fff;
     font-family: 'Outfit', sans-serif;
     z-index: -1000;
     overflow: hidden;
+    background: #050505; /* Fondo base */
 }
 
 .export-broadcast-container {
@@ -2130,6 +2128,16 @@ body.editing-tactic .tactical-slot {
     display: flex;
     flex-direction: column;
     position: relative;
+    /* Fondo de campo Elite replicado */
+    background: #1a4d1a;
+    background-image: 
+        repeating-linear-gradient(180deg, 
+            rgba(0,0,0,0.1) 0px, 
+            rgba(0,0,0,0.1) 80px, 
+            transparent 80px, 
+            transparent 160px
+        ),
+        radial-gradient(circle at center, transparent 30%, rgba(0,0,0,0.4) 100%);
 }
 
 .export-pitch-area {
@@ -2138,25 +2146,26 @@ body.editing-tactic .tactical-slot {
     display: flex;
     justify-content: center;
     align-items: center;
-    padding-top: 200px; /* Espacio para el scorebug superior */
+    padding: 200px 50px 100px 50px;
+    position: relative;
 }
 
 .export-scorebug-banner {
     position: absolute;
-    top: 50px; /* Reubicación en la parte superior */
+    top: 50px;
     left: 60px;
     right: 60px;
-    background: rgba(0, 0, 0, 0.7);
-    backdrop-filter: blur(15px);
-    border: 1.5px solid rgba(240, 165, 0, 0.4);
-    border-left: 10px solid var(--primary);
-    padding: 25px 45px;
+    background: rgba(0, 0, 0, 0.85);
+    backdrop-filter: blur(25px);
+    border: 2px solid var(--primary);
+    border-left: 15px solid var(--primary);
+    padding: 30px 50px;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    box-shadow: 0 30px 60px rgba(0,0,0,0.6);
-    border-radius: 4px;
-    z-index: 50;
+    box-shadow: 0 40px 80px rgba(0,0,0,0.8);
+    border-radius: 8px;
+    z-index: 100;
 }
 
 .scorebug-team-name {
@@ -2214,15 +2223,18 @@ body.editing-tactic .tactical-slot {
 }
 
 .export-matchday-wrapper .pitch-container {
-    width: 1020px !important; /* Expansión horizontal para centrado maestro */
-    height: 920px !important;
+    width: 100% !important;
+    height: 100% !important;
+    max-width: 900px !important;
+    max-height: none !important;
+    aspect-ratio: 1 / 1.55 !important; /* Fidelidad total a la pizarra XL */
     transform: none !important;
     background: transparent !important;
     border: none !important;
     box-shadow: none !important;
-    position: absolute !important;
-    top: 260px !important; /* Alineado tras gradas y marcador */
-    left: 30px !important; /* Centrado compensado */
+    position: relative !important;
+    top: auto !important;
+    left: auto !important;
     overflow: visible !important;
 }
 
@@ -2230,11 +2242,8 @@ body.editing-tactic .tactical-slot {
 .export-matchday-wrapper .pitch-midline,
 .export-matchday-wrapper .pitch-circle,
 .export-matchday-wrapper .pitch-penalty {
-    display: none !important; /* Ocultar para usar líneas del fondo */
-}
-
-.export-matchday-wrapper .pitch-midline {
-    background: rgba(255, 255, 255, 0.1) !important;
+    display: block !important;
+    border-color: rgba(255, 255, 255, 0.3) !important;
 }
 
 /* Slots Vacíos en Exportación v13.0 (Mirror Dashboard) */
