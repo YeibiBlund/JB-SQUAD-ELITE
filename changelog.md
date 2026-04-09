@@ -1,6 +1,10 @@
 # Changelog - JB-SQUAD
 <br>
 
+## [v20.4.2-HOTFIX] - 2026-04-09
+### Corregido (Persistencia de Diseño)
+- **Guardado en la Nube de Custom Positions**: Solucionado un error de sincronización donde los cambios de posición realizados en el modo "Modificar Dibujo" no se enviaban a la base de datos, provocando que se perdieran al refrescar la página.
+
 ## [v20.4.1-NATIVE] - 2026-04-09
 ### Corregido (Renderizado Táctico Fiel)
 - **Eliminación de Distorsiones en Exportación**: Se ha eliminado la hoja de estilos artificial que forzaba el formato de "cartas grandes" en las capturas. Ahora la foto respeta rigurosamente el diseño, tamaño, escala y posiciones originales de las piezas en la pizarra.

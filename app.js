@@ -783,6 +783,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 name: t.name,
                 formation: t.formation,
                 assignments: t.assignments || {},
+                custom_positions: t.customPositions || {},
                 is_active: t.isActive || false
             };
 
