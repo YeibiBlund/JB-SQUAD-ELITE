@@ -1,6 +1,12 @@
 # Changelog - JB-SQUAD
 <br>
 
+## [v20.2.0-PURE] - 2026-04-09
+### Añadido (Blindaje de Modos)
+- **Bloqueo de Gestión en Edición**: Mientras el modo "Modificar Dibujo" está activo, se deshabilitan todas las funciones de gestión de plantilla (arrastre del banquillo y clics en slots).
+- **Feedback Visual de Bloqueo**: El panel del banquillo muestra un estado oscurecido con un aviso de "GESTIÓN BLOQUEADA" durante el diseño táctico.
+- **Prevención de Errores de Arrastre**: Se desactiva el `draggable` de las fichas de los jugadores cuando se está editando la estructura de la formación.
+
 ## [v20.1.0-ELITE] - 2026-04-09
 ### Ajustado (Refinamiento Estético Desktop)
 - **Sidebar Glassmorphism**: Rediseño de la barra lateral con fondo translúcido (25px blur) e indicador de sección integrado.

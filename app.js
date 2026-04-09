@@ -1356,8 +1356,10 @@ document.addEventListener('DOMContentLoaded', () => {
             btnEditBoard.style.display = 'none';
             btnSaveDesign.style.display = 'block';
             btnResetDesign.style.display = 'block';
-            // Opcional: Feedback visual de que estamos editando
             document.body.classList.add('editing-tactic');
+            // Bloqueo visual del banquillo
+            document.getElementById('tactic-roster-panel')?.classList.add('locked');
+            renderPitch(); // Re-renderizar para aplicar bloqueos de clics
         });
 
         btnSaveDesign?.addEventListener('click', async () => {
@@ -1368,6 +1370,9 @@ document.addEventListener('DOMContentLoaded', () => {
             btnSaveDesign.style.display = 'none';
             btnResetDesign.style.display = 'none';
             document.body.classList.remove('editing-tactic');
+            document.getElementById('tactic-roster-panel')?.classList.remove('locked');
+            renderPitch();
+            renderRosterPanel(); 
         });
 
         btnResetDesign?.addEventListener('click', async () => {
@@ -1484,6 +1489,15 @@ document.addEventListener('DOMContentLoaded', () => {
             slotEl.style.top = `${customPos.y}%`;
             slotEl.dataset.slotId = slot.id;
 
+            // BLOQUEO DE GESTIÓN: Si estamos editando posiciones, desactivar clics de cambio de jugador
+            slotEl.onclick = (e) => {
+                if (state.isEditingPositions) {
+                    e.stopPropagation();
+                    return;
+                }
+                renderPlayerModal(slot.pos);
+            };
+
             // --- Lógica de Arrastre de Posiciones (v19.2.0 - Separada por Modos) ---
             if (targetPitch === pitch) {
                 let isDragging = false;
@@ -1535,11 +1549,15 @@ document.addEventListener('DOMContentLoaded', () => {
                 slotEl.classList.add('filled');
                 
                 if (targetPitch === pitch) {
-                    slotEl.draggable = true;
-                    slotEl.addEventListener('dragstart', e => {
-                        draggedSourceSlotId = slot.id;
-                        e.dataTransfer.setData('text/plain', player.id);
-                    });
+                    // BLOQUEO: Solo permitir arrastrar jugador si NO estamos editando dibujo
+                    slotEl.draggable = !state.isEditingPositions;
+                    
+                    if (slotEl.draggable) {
+                        slotEl.addEventListener('dragstart', e => {
+                            draggedSourceSlotId = slot.id;
+                            e.dataTransfer.setData('text/plain', player.id);
+                        });
+                    }
                 }
 
                 const displayName = (player.name || '').toUpperCase();
@@ -1699,8 +1717,14 @@ document.addEventListener('DOMContentLoaded', () => {
                 <div class="roster-card-rating">${player.dorsal}</div>
             `;
 
-            // Drag Start
+            // Drag Start (v20.2.0 - Solo si no está bloqueado)
+            card.draggable = !state.isEditingPositions;
+            
             card.addEventListener('dragstart', e => {
+                if (state.isEditingPositions) {
+                    e.preventDefault();
+                    return;
+                }
                 e.dataTransfer.setData('text/plain', player.id);
             });
 

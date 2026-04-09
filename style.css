@@ -1000,6 +1000,31 @@ p { color: var(--text-muted); font-size: 0.95rem; line-height: 1.5; }
     display: flex;
     flex-direction: column;
     box-shadow: -5px 0 30px rgba(0,0,0,0.5), inset 0 0 20px rgba(240, 165, 0, 0.05);
+    transition: all 0.4s ease;
+}
+
+.roster-panel.locked {
+    opacity: 0.4;
+    filter: grayscale(1);
+    pointer-events: none;
+    position: relative;
+}
+
+.roster-panel.locked::after {
+    content: 'GESTIÓN BLOQUEADA';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) rotate(-5deg);
+    background: rgba(244, 67, 54, 0.9);
+    color: #fff;
+    padding: 10px 20px;
+    font-size: 0.8rem;
+    font-weight: 900;
+    border-radius: 4px;
+    letter-spacing: 2px;
+    box-shadow: 0 0 20px rgba(244, 67, 54, 0.4);
+    z-index: 100;
 }
 
 .roster-grid {
