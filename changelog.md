@@ -1,6 +1,13 @@
 # Changelog - JB-SQUAD
 <br>
 
+## [v20.4.0-REAL] - 2026-04-09
+### Ajustado (Restauración Oficial)
+- **Fondo Emerald Pitch**: Restaurada la imagen oficial `emerald_pitch.png` como fondo de exportación para máxima fidelidad.
+- **Corrección de Encuadre**: Ajustada la altura del lienzo (1440px) y los márgenes internos para asegurar que el **Portero (POR)** sea plenamente visible.
+- **Scorebug Compacto**: Rediseño del marcador superior para que sea más elegante y no tape a los delanteros en formaciones ofensivas.
+- **Renderizado Sincronizado**: Aumentado el tiempo de preparación de la captura para garantizar la carga de todos los assets gráficos.
+
 ## [v20.3.0-PHOTO] - 2026-04-09
 ### Añadido (Exportación de Alta Fidelidad)
 - **Captura Espejo Automática**: El sistema de exportación ahora replica exactamente la proporción y disposición de la pizarra táctica XL.

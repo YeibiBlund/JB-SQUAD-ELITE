@@ -2733,8 +2733,8 @@ document.addEventListener('DOMContentLoaded', () => {
         
         pitchAreaElement.appendChild(pitchClone);
         
-        // Forzamos un pequeño delay para asegurar renderizado
-        await new Promise(r => setTimeout(r, 200));
+        // Forzamos un delay suficiente para asegurar renderizado del fondo y fuentes (v20.4.0)
+        await new Promise(r => setTimeout(r, 500));
 
         try {
             const canvas = await html2canvas(wrapper, {
