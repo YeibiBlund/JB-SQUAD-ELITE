@@ -1,6 +1,11 @@
 # Changelog - JB-SQUAD
 <br>
 
+## [v20.4.4-STABLE] - 2026-04-09
+### Corregido (Alineación Fotográfica)
+- **Eliminación de Distorsión en Nombres y Posiciones**: Se ha sustituido el modificador `transform: scale()` (que corrompía la posición interna de los textos y etiquetas al exportar en imagen) por un aumento volumétrico orgánico del contenedor `(+30% cqw)`.
+- **Integridad Interna de la Carta**: Al expandirse el "envoltorio" de la carta orgánicamente, la fotografía de los jugadores, la etiqueta de posición amarilla (`.slot-pos`) y el nombre (`h4`) se posicionan de nuevo simétricamente en el centro sin colapsar entre ellos.
+
 ## [v20.4.3-BOOST] - 2026-04-09
 ### Ajustado (Realce Fotográfico)
 - **Escalado de Cartas en Exportación**: Aumentado el tamaño global de las cartas un 30% `scale(1.3)` exclusivamente para la captura en imagen, haciéndolas mucho más legibles y protagonistas respecto al tamaño masivo del estadio de fondo.
