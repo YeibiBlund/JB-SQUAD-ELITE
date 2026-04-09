@@ -1,6 +1,11 @@
 # Changelog - JB-SQUAD
 <br>
 
+## [v20.4.3-BOOST] - 2026-04-09
+### Ajustado (Realce Fotográfico)
+- **Escalado de Cartas en Exportación**: Aumentado el tamaño global de las cartas un 30% `scale(1.3)` exclusivamente para la captura en imagen, haciéndolas mucho más legibles y protagonistas respecto al tamaño masivo del estadio de fondo.
+- **Sombreado Premium**: Añadido un anillo de sombra oscura e iluminación ámbar `box-shadow` detrás de las descripciones tácticas para darles un aspecto tridimensional sobre el césped 2D de la foto.
+
 ## [v20.4.2-HOTFIX] - 2026-04-09
 ### Corregido (Persistencia de Diseño)
 - **Guardado en la Nube de Custom Positions**: Solucionado un error de sincronización donde los cambios de posición realizados en el modo "Modificar Dibujo" no se enviaban a la base de datos, provocando que se perdieran al refrescar la página.
