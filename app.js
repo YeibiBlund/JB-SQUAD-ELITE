@@ -492,15 +492,10 @@ document.addEventListener('DOMContentLoaded', () => {
             el.style.display = isAdmin ? 'block' : 'none';
         });
 
-        // Asegurar visibilidad de botones de acción específicos
-        const btnNewSession = document.getElementById('btn-new-session');
+        // Asegurar visibilidad de botones de acción específicos (usando variables globales de scope)
         if (btnNewSession) btnNewSession.style.display = isAdmin ? 'flex' : 'none';
-
-        const btnAddMatch = document.getElementById('btn-add-match');
         if (btnAddMatch) btnAddMatch.style.display = isAdmin ? 'block' : 'none';
-
-        const finalizeContainer = document.getElementById('session-finalize-container');
-        if (finalizeContainer) finalizeContainer.style.display = isAdmin ? 'block' : 'none';
+        if (sessionFinalizeContainer) sessionFinalizeContainer.style.display = isAdmin ? 'block' : 'none';
 
         // Botón "Mi Ficha" — visible para TODOS (Manager también juega)
         const btnAddPlayer = document.getElementById('btn-go-to-add-player');
@@ -512,8 +507,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
 
-        const btnNewSession = document.getElementById('btn-new-session');
-        if (btnNewSession) btnNewSession.style.display = isAdmin ? 'flex' : 'none';
+
 
         // Rol Badge removido del top header. Sekarang se maneja en el Dashboard de forma limpia.
     }
