@@ -2752,6 +2752,10 @@ document.addEventListener('DOMContentLoaded', () => {
         const winRatioBarD = document.getElementById('win-ratio-bar-d');
         const winRatioBarL = document.getElementById('win-ratio-bar-l');
         const formStreakContainer = document.getElementById('form-streak-container');
+        
+        const scorersListEl = document.getElementById('home-top-scorers-list');
+        const displayUser = document.getElementById('display-user-welcome');
+        const displayTeam = document.getElementById('display-team-welcome');
 
         if (totalPlayersEl) totalPlayersEl.textContent = state.players.length;
         if (totalSessionsEl) totalSessionsEl.textContent = state.sessions.length;
