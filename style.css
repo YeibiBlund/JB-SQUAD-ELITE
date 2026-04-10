@@ -82,8 +82,8 @@ body {
 
 @media (min-width: 1024px) {
     .app-wrapper {
-        max-width: none; /* Dejar que crezca con el sidebar */
-        margin: 0;
+        max-width: 1400px; /* Evita el estiramiento infinito de la app en ultrawide */
+        margin: 0 auto;
         padding-left: 110px; /* Espacio para el sidebar fijo */
         padding-right: 40px;
         width: 100%;
@@ -246,6 +246,37 @@ p { color: var(--text-muted); font-size: 0.95rem; line-height: 1.5; }
 
 .card-elite:active {
     transform: scale(0.98);
+}
+
+/* Dashboard Desktop Divergent Layout */
+.dashboard-desktop-layout {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+@media (min-width: 1024px) {
+    .dashboard-desktop-layout {
+        flex-direction: row;
+        align-items: flex-start;
+        gap: 25px;
+    }
+    .dash-col-main {
+        flex: 2;
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+    }
+    .dash-col-side {
+        flex: 1.2;
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+    }
+    
+    .card-elite {
+        box-shadow: 0 5px 20px rgba(0,0,0,0.4);
+    }
 }
 
 /* Onboarding */

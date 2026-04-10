@@ -2755,15 +2755,18 @@ document.addEventListener('DOMContentLoaded', () => {
         
         const scorersListEl = document.getElementById('home-top-scorers-list');
         const displayUser = document.getElementById('display-user-welcome');
+        const displayRole = document.getElementById('display-user-role');
         const displayTeam = document.getElementById('display-team-welcome');
 
         if (totalPlayersEl) totalPlayersEl.textContent = state.players.length;
         if (totalSessionsEl) totalSessionsEl.textContent = state.sessions.length;
         
         const username = state.user?.profile?.username || 'JUGADOR';
+        const role = state.user?.role || 'JUGADOR';
         const teamName = state.team?.name || 'MI EQUIPO';
 
         if (displayUser) displayUser.textContent = username.toUpperCase();
+        if (displayRole) displayRole.textContent = role.toUpperCase();
         if (displayTeam) displayTeam.textContent = teamName.toUpperCase();
 
         // --- 1. TOP GOLEADORES ---

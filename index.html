@@ -169,73 +169,83 @@
             
             <!-- VIEW: Home (Dashboard) -->
             <section id="view-home" class="view">
-                <div class="card-elite">
-                    <h1>Bienvenido, <span id="display-user-welcome" class="gradient-text">Capitán</span></h1>
-                    <p>Gestiona tu plantilla y tácticas de <span id="display-team-welcome">tu club</span> desde la palma de tu mano.</p>
-                </div>
-                
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
-                    <div class="card-elite">
-                        <span style="font-size: 1.5rem; color: var(--primary);">👤</span>
-                        <h2 id="stats-total-players" style="font-size: 1.2rem; margin-top:10px;">0</h2>
-                        <p style="font-size: 0.7rem;">JUGADORES</p>
-                    </div>
-                    <div class="card-elite">
-                        <span style="font-size: 1.5rem; color: var(--primary);">🏆</span>
-                        <h2 id="stats-total-sessions" style="font-size: 1.2rem; margin-top:10px;">0</h2>
-                        <p style="font-size: 0.7rem;">JORNADAS</p>
-                    </div>
-                </div>
-
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px;">
-                    <!-- WIDGET: TOP GOLEADORES -->
-                    <div class="card-elite" style="padding: 15px;">
-                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
-                            <span style="font-size: 0.6rem; font-weight: 800; letter-spacing: 1px;">MÁXIMOS GOLEADORES</span>
-                            <span style="font-size: 0.6rem; color: var(--primary);">TOP 3 ⚽</span>
+                <div class="dashboard-desktop-layout">
+                    
+                    <!-- COLUMNA PRINCIPAL (Izquierda, 2/3 ancho en desktop) -->
+                    <div class="dash-col-main">
+                        <div class="card-elite welcome-card">
+                            <h1 style="font-size: 2.2rem; display: flex; align-items: baseline; gap: 10px;">
+                                <span id="display-user-welcome" class="gradient-text">JUGADOR</span> 
+                                <span id="display-user-role" style="font-size: 0.8rem; background: rgba(240, 165, 0, 0.15); color: var(--primary); padding: 5px 10px; border-radius: 6px; letter-spacing: 1px; font-weight: 900; text-transform: uppercase;">RANGO</span>
+                            </h1>
+                            <p style="font-size: 1.1rem; opacity: 0.9; margin-top: 5px;">Gestiona tu plantilla y tácticas de <span id="display-team-welcome" style="font-weight:bold; color:white;">tu club</span> desde la palma de tu mano.</p>
                         </div>
-                        <div id="home-top-scorers-list" style="display: flex; flex-direction: column; gap: 8px;">
-                            <!-- TOP 3 inyectados aquí -->
+                        
+                        <div class="card-elite" style="padding: 25px;">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                                <span style="font-size: 0.85rem; font-weight: 800; letter-spacing: 1.5px; color: var(--text-muted);">RATIO DE VICTORIAS</span>
+                                <span id="win-ratio-text" style="font-size: 1.2rem; font-weight: 900; color: var(--primary);">0%</span>
+                            </div>
+                            <!-- Barra estilizada premium (Dorado, Gris medio, Gris oscuro) -->
+                            <div style="width: 100%; height: 18px; background: rgba(0,0,0,0.8); border-radius: 9px; overflow: hidden; display: flex; box-shadow: inset 0 2px 5px rgba(0,0,0,0.5);">
+                                <div id="win-ratio-bar-w" style="height: 100%; background: linear-gradient(90deg, #d48a00, var(--primary)); width: 0%; transition: width 1s ease;"></div>
+                                <div id="win-ratio-bar-d" style="height: 100%; background: #444; width: 0%; transition: width 1s ease; border-left: 1px solid rgba(0,0,0,0.5);"></div>
+                                <div id="win-ratio-bar-l" style="height: 100%; background: #222; width: 0%; transition: width 1s ease; border-left: 1px solid rgba(0,0,0,0.5);"></div>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; margin-top: 10px; font-size: 0.75rem; font-weight: 800;">
+                                <span id="win-ratio-w-val" style="color: var(--primary);">0 V</span>
+                                <span id="win-ratio-d-val" style="color: #888;">0 E</span>
+                                <span id="win-ratio-l-val" style="color: #444;">0 D</span>
+                            </div>
+                        </div>
+
+                        <div class="card-elite" style="padding: 25px;">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                                <span style="font-size: 0.85rem; font-weight: 800; letter-spacing: 1.5px; color: var(--text-muted);">RACHA (ÚLTIMOS 5)</span>
+                            </div>
+                            <div id="form-streak-container" style="display: flex; gap: 15px; justify-content: center;">
+                                <!-- Insignias dinámicas de racha -->
+                                <span style="opacity:0.5; font-size:0.8rem;">Sin datos registrados</span>
+                            </div>
                         </div>
                     </div>
 
-                    <!-- WIDGET: TOP ASISTENTES -->
-                    <div class="card-elite" style="padding: 15px;">
-                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
-                            <span style="font-size: 0.6rem; font-weight: 800; letter-spacing: 1px;">MÁXIMOS ASISTENTES</span>
-                            <span style="font-size: 0.6rem; color: var(--primary);">TOP 3 👟</span>
+                    <!-- COLUMNA LATERAL (Derecha, 1/3 ancho en desktop) -->
+                    <div class="dash-col-side">
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                            <div class="card-elite" style="text-align: center; padding: 25px 15px;">
+                                <span style="font-size: 2rem; color: var(--primary);">👥</span>
+                                <h2 id="stats-total-players" style="font-size: 1.8rem; margin-top:15px; color: white;">0</h2>
+                                <p style="font-size: 0.75rem; font-weight: 800; letter-spacing: 1px; margin-top: 5px;">JUGADORES</p>
+                            </div>
+                            <div class="card-elite" style="text-align: center; padding: 25px 15px;">
+                                <span style="font-size: 2rem; color: var(--primary);">🏆</span>
+                                <h2 id="stats-total-sessions" style="font-size: 1.8rem; margin-top:15px; color: white;">0</h2>
+                                <p style="font-size: 0.75rem; font-weight: 800; letter-spacing: 1px; margin-top: 5px;">JORNADAS</p>
+                            </div>
                         </div>
-                        <div id="home-top-assists-list" style="display: flex; flex-direction: column; gap: 8px;">
-                            <!-- TOP 3 inyectados aquí -->
+
+                        <div class="card-elite" style="padding: 20px;">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; padding-bottom: 15px; border-bottom: 1px solid rgba(255,255,255,0.05);">
+                                <span style="font-size: 0.75rem; font-weight: 800; letter-spacing: 1.5px; color: var(--text-muted);">TOP GOLEADORES</span>
+                                <span style="font-size: 0.75rem; color: var(--primary);">Top 3 ⚽</span>
+                            </div>
+                            <div id="home-top-scorers-list" style="display: flex; flex-direction: column; gap: 10px;">
+                                <!-- Inyectados por JS -->
+                            </div>
+                        </div>
+
+                        <div class="card-elite" style="padding: 20px;">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; padding-bottom: 15px; border-bottom: 1px solid rgba(255,255,255,0.05);">
+                                <span style="font-size: 0.75rem; font-weight: 800; letter-spacing: 1.5px; color: var(--text-muted);">TOP ASISTENTES</span>
+                                <span style="font-size: 0.75rem; color: var(--primary);">Top 3 👟</span>
+                            </div>
+                            <div id="home-top-assists-list" style="display: flex; flex-direction: column; gap: 10px;">
+                                <!-- Inyectados por JS -->
+                            </div>
                         </div>
                     </div>
-                </div>
-
-                <div class="card-elite" style="margin-top: 10px;">
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-                        <span style="font-size: 0.7rem; font-weight: 800; letter-spacing: 1px;">RATIO DE VICTORIAS</span>
-                        <span id="win-ratio-text" style="font-size: 0.8rem; font-weight: 900; color: var(--primary);">0%</span>
-                    </div>
-                    <div style="width: 100%; height: 10px; background: rgba(0,0,0,0.5); border-radius: 5px; overflow: hidden; display: flex;">
-                        <div id="win-ratio-bar-w" style="height: 100%; background: #4CAF50; width: 0%;"></div>
-                        <div id="win-ratio-bar-d" style="height: 100%; background: #FFC107; width: 0%;"></div>
-                        <div id="win-ratio-bar-l" style="height: 100%; background: #F44336; width: 0%;"></div>
-                    </div>
-                    <div style="display: flex; justify-content: space-between; margin-top: 5px; font-size: 0.6rem; color: var(--text-muted);">
-                        <span id="win-ratio-w-val">0 V</span>
-                        <span id="win-ratio-d-val">0 E</span>
-                        <span id="win-ratio-l-val">0 D</span>
-                    </div>
-                </div>
-
-                <div class="card-elite" style="margin-top: 10px; padding: 15px;">
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-                        <span style="font-size: 0.7rem; font-weight: 800; letter-spacing: 1px;">RACHA (ÚLTIMOS 5)</span>
-                    </div>
-                    <div id="form-streak-container" style="display: flex; gap: 8px; justify-content: center;">
-                        <!-- V = Verde, E = Amarillo, D = Rojo -->
-                        <span style="opacity:0.5; font-size:0.7rem;">Sin datos registrados</span>
-                    </div>
+                    
                 </div>
             </section>
 

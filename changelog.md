@@ -1,6 +1,14 @@
 # Changelog - JB-SQUAD
 <br>
 
+## [v22.0.0-DESKTOP] - 2026-04-12
+### Añadido (Desktop UX Elite)
+- **Layout Divergente (Bento Box)**: Diseño web reescrito con enfoque dual. Ahora, en pantallas grandes (más de 1024px de ancho), el Dashboard abandona el estiramiento móvil antiestético y se distribuye en dos sobrias columnas asimétricas protegidas por un `max-width` dinámico.
+  - Columna Izquierda (Ancha): Bienvenida, Barra de Win Ratio premium y Rachas.
+  - Columna Derecha (Estrecha): Tarjetas cuadradas de Totales (Jugadores/Jornadas) y los contadores top (Goleadores y Asistentes).
+- **Personalidad Extendida**: El banner principal de bienvenida ahora extrae el rol asíncrono del sistema (ej: `[MANAGER]`, `[CAPITÁN]`) para mostrar el rango jerárquico junto al nombre en una placa flotante.
+- **Ratio Premium**: La barra de análisis ha sido engrosada. Las victorias ahora brillan en métrica corporativa (`linear-gradient dorado`), mientra que tanto empates como derrotas se oscurecen en la escala de grises para darle mayor seriedad al dato visual.
+
 ## [v21.1.0-UX] - 2026-04-12
 ### Añadido (Dashboard & Widgets)
 - **Dashboard Mejorado**: Se ha rediseñado la vista principal (`🏠 INICIO`) añadiendo tres componentes analíticos vitales:
