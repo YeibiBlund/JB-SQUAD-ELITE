@@ -3163,7 +3163,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 
                 slotEl.innerHTML = `
                     <div class="player-card-img-export"></div>
-                    <div class="dorsal-export">${player.number || ''}</div>
+                    <div class="dorsal-export">${player.dorsal || ''}</div>
                     <h4 class="name-export">${escapeHTML(player.name).toUpperCase()}</h4>
                     <div class="pos-badge-export">${slotData.pos}</div>
                 `;

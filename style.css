@@ -2202,7 +2202,7 @@ body.editing-tactic .tactical-slot {
 
 /* El contenedor del campo (Re-centrado manual) */
 .pitch-container-export {
-    width: 800px; 
+    width: 960px; 
     height: 1100px;
     position: absolute;
     top: 0;
@@ -2224,7 +2224,6 @@ body.editing-tactic .tactical-slot {
     background: linear-gradient(135deg, #121212 0%, #000 100%);
     border: 2.5px solid var(--primary);
     box-shadow: 0 35px 70px rgba(0,0,0,0.85);
-    overflow: hidden;
 }
 
 /* Renderizado de Foto (Absolute Forced) */
