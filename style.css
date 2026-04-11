@@ -2160,22 +2160,20 @@ body.editing-tactic .tactical-slot {
     100% { transform: translateX(-100%); }
 }
 /* --- EXPORT MATCHDAY STYLES v4.8.1 (Elite Dark Aesthetic) --- */
-/* --- EXPORT MATCHDAY STYLES v21.0.0 (Pixel-Perfect Elite) --- */
+/* --- STANDALONE EXPORT v23.5.0 (Bulletproof Broadcast) --- */
 .export-matchday-wrapper {
     width: 1080px;
     height: 1440px;
     position: fixed;
     top: -5000px;
     left: 0;
-    display: flex;
-    flex-direction: column;
-    color: #fff;
-    font-family: 'Outfit', sans-serif;
     z-index: -1000;
-    overflow: hidden;
-    background: #050505 url('emerald_pitch.png') no-repeat center center;
+    background: #000 url('emerald_pitch.png') no-repeat center center;
     background-size: cover;
     filter: contrast(105%) brightness(90%);
+    font-family: 'Outfit', sans-serif;
+    color: #fff;
+    overflow: hidden;
 }
 
 .export-matchday-wrapper::after {
@@ -2191,174 +2189,171 @@ body.editing-tactic .tactical-slot {
     width: 1080px;
     height: 1440px;
     position: relative;
-    display: flex;
-    flex-direction: column;
 }
 
-/* Centrado Matemático del Campo */
 .export-pitch-area {
-    position: absolute;
-    top: 220px; /* Debajo del marcador */
-    left: 0;
     width: 1080px;
     height: 1100px;
+    position: absolute;
+    top: 240px;
+    left: 0;
     display: flex;
     justify-content: center;
     align-items: center;
 }
 
-.export-matchday-wrapper .pitch-container {
-    width: 800px !important;
-    height: 1100px !important;
-    position: relative !important;
-    margin: 0 !important;
-    background: transparent !important;
-    border: none !important;
-    box-shadow: none !important;
-    transform: none !important;
-    overflow: visible !important;
+/* El contenedor del campo reconstruido */
+.pitch-container-export {
+    width: 900px; /* Ancho real del campo sobre la textura */
+    height: 1100px;
+    position: relative;
+    background: transparent;
 }
 
-.export-matchday-wrapper .pitch-lines,
-.export-matchday-wrapper .pitch-midline,
-.export-matchday-wrapper .pitch-circle,
-.export-matchday-wrapper .pitch-penalty {
-    display: none !important;
+/* Carta Táctica de Gran Formato */
+.tactical-slot-export {
+    position: absolute;
+    width: 180px;
+    height: 240px;
+    transform: translate(-50%, -50%);
+    background: rgba(0,0,0,0.3);
+    border-radius: 12px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
 }
 
-/* --- Cartas Tácticas de Píxel Fijo (v21.0.0) --- */
-.export-matchday-wrapper .tactical-slot {
-    width: 155px !important;
-    height: 205px !important;
-    transform: translate(-50%, -50%) !important;
-    border-radius: 12px !important;
-    background: rgba(0,0,0,0.4);
-    transition: none !important;
+.tactical-slot-export.filled {
+    background: linear-gradient(135deg, #151515 0%, #000 100%);
+    border: 3px solid var(--primary);
+    box-shadow: 0 40px 80px rgba(0,0,0,0.9), 0 0 40px rgba(240, 165, 0, 0.2);
+    overflow: hidden;
 }
 
-.export-matchday-wrapper .tactical-slot.filled {
-    background: linear-gradient(135deg, #1a1a1a 0%, #050505 100%) !important;
-    border: 2.5px solid var(--primary) !important;
-    box-shadow: 0 30px 60px rgba(0,0,0,0.9), 0 0 30px rgba(240, 165, 0, 0.2) !important;
-    overflow: hidden !important;
+/* Contenedor de Imagen de Expansión Total */
+.player-card-img-export {
+    position: absolute;
+    top: 0; left: 0; width: 100%; height: 82%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    z-index: 1;
 }
 
-/* Contenedor de Imagen de Expansión y Centrado */
-.export-matchday-wrapper .player-card-img {
-    position: absolute !important;
-    top: 0;
+.player-card-img-export img,
+.player-card-img-export svg {
+    width: auto;
+    height: 110%;
+    min-width: 100%;
+    object-fit: cover;
+    object-position: center top;
+}
+
+/* Dorsal Premium */
+.dorsal-export {
+    position: absolute;
+    top: 10px;
+    left: 12px;
+    font-size: 28px;
+    font-weight: 950;
+    color: var(--primary);
+    z-index: 10;
+    text-shadow: 0 0 15px rgba(0,0,0,1);
+}
+
+/* Banner de Nombre (Pixel-Solid) */
+.name-export {
+    position: absolute;
+    bottom: 0;
     left: 0;
-    width: 100% !important;
-    height: 100% !important;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    overflow: hidden !important;
-    z-index: 1 !important;
+    width: 100%;
+    height: 52px;
+    background: linear-gradient(to top, #000 0%, rgba(0,0,0,0.9) 70%, transparent 100%);
+    color: #fff;
+    font-size: 22px;
+    font-weight: 950;
+    text-align: center;
+    text-transform: uppercase;
+    margin: 0;
+    padding-top: 14px;
+    z-index: 5;
+    white-space: nowrap;
+    overflow: hidden;
+    letter-spacing: -0.5px;
 }
 
-.export-matchday-wrapper .player-card-img img,
-.export-matchday-wrapper .player-card-img svg {
-    width: auto !important;
-    height: 115% !important; /* Ligeramente más alto para que sobresalga y rellene */
-    min-width: 100% !important;
-    object-fit: cover !important;
-    object-position: center top !important;
+/* Badge de Posición */
+.pos-badge-export {
+    position: absolute;
+    bottom: -15px;
+    background: var(--primary);
+    color: #000;
+    padding: 4px 20px;
+    border-radius: 6px;
+    font-size: 15px;
+    font-weight: 950;
+    text-transform: uppercase;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.8);
+    z-index: 20;
 }
 
-/* Banner de Nombre Elite (Pixel Fixed) */
-.export-matchday-wrapper .tactical-slot.filled h4 {
-    position: absolute !important;
-    bottom: 0 !important;
-    left: 0 !important;
-    width: 100% !important;
-    height: 48px !important;
-    margin: 0 !important;
-    padding: 12px 0 0 0 !important;
-    background: linear-gradient(to top, rgba(0,0,0,1) 0%, rgba(0,0,0,0.9) 80%, transparent 100%) !important;
-    color: #fff !important;
-    font-size: 20px !important; /* Tamaño fijo */
-    font-weight: 900 !important;
-    text-align: center !important;
-    text-transform: uppercase !important;
-    letter-spacing: -0.5px !important;
-    z-index: 10 !important;
-    white-space: nowrap !important;
-    overflow: hidden !important;
-    text-overflow: clip !important;
+/* Slots Vacíos Estéticos */
+.empty-pos-label {
+    font-size: 18px;
+    font-weight: 900;
+    color: rgba(255,255,255,0.15);
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    border: 2px dashed rgba(255,255,255,0.08);
+    width: 60px;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
 }
 
-.export-matchday-wrapper .dorsal-small {
-    position: absolute !important;
-    top: 10px !important;
-    left: 10px !important;
-    font-size: 24px !important;
-    font-weight: 950 !important;
-    color: var(--primary) !important;
-    z-index: 15 !important;
-    text-shadow: 0 0 10px rgba(0,0,0,0.8) !important;
-}
-
-.export-matchday-wrapper .slot-pos {
-    position: absolute !important;
-    bottom: -15px !important;
-    left: 50% !important;
-    transform: translateX(-50%) !important;
-    background: var(--primary) !important;
-    color: #000 !important;
-    padding: 4px 18px !important;
-    border-radius: 6px !important;
-    font-size: 14px !important;
-    font-weight: 900 !important;
-    text-transform: uppercase !important;
-    letter-spacing: 1px !important;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.6) !important;
-    z-index: 20 !important;
-}
-
-/* Header Scorebug Elite (Pixel Fixed) */
+/* Header Scorebug (Fijo) */
 .export-scorebug-banner {
     position: absolute;
     top: 60px;
     left: 80px;
     right: 80px;
-    height: 140px;
-    background: rgba(10, 10, 10, 0.85);
-    backdrop-filter: blur(25px);
-    border-left: 5px solid var(--primary);
-    padding: 0 50px;
+    height: 150px;
+    background: rgba(10, 10, 10, 0.8);
+    backdrop-filter: blur(30px);
+    border-left: 6px solid var(--primary);
+    padding: 0 60px;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    box-shadow: 0 50px 100px rgba(0,0,0,0.8);
-    border-radius: 8px;
+    box-shadow: 0 60px 120px rgba(0,0,0,0.9);
+    border-radius: 10px;
     z-index: 100;
 }
 
 .scorebug-team-name {
-    font-size: 60px !important;
+    font-size: 64px !important;
     font-weight: 950 !important;
     letter-spacing: -3px !important;
-    text-shadow: 0 4px 20px rgba(0,0,0,0.6) !important;
-}
-
-.scorebug-right {
-    text-align: right;
+    color: #fff;
 }
 
 .scorebug-matchday {
-    font-size: 28px !important;
+    font-size: 30px !important;
     color: var(--primary) !important;
     font-weight: 900 !important;
-    letter-spacing: 4px !important;
+    letter-spacing: 5px !important;
     margin-bottom: 5px !important;
 }
 
 .scorebug-formation {
-    font-size: 18px !important;
+    font-size: 20px !important;
     opacity: 0.6 !important;
     font-weight: 700 !important;
-    letter-spacing: 8px !important;
+    letter-spacing: 10px !important;
 }
 /* --- ESCRITORIO ÉLITE: SIDEBAR LAYOUT (v5.1.0 - Glass Reflect) --- */
 @media (min-width: 1024px) {

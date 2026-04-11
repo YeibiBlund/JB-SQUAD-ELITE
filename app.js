@@ -3062,50 +3062,64 @@ document.addEventListener('DOMContentLoaded', () => {
         document.body.appendChild(wrapper);
         const pitchAreaElement = wrapper.querySelector('.export-pitch-area');
         
-        // 2. Clonar el campo y sanearlo profundamente (v21.0.0 - Pixel Perfect)
-        const pitchClone = pitch.cloneNode(true);
-        pitchClone.id = 'pitch-clone-export';
+        // 2. Reconstrucción Manual del Campo (v23.1.0 - Bulletproof)
+        // En lugar de clonar el DOM (sucio), creamos un campo limpio desde los datos
+        const pitchExport = document.createElement('div');
+        pitchExport.className = 'pitch-container-export';
         
-        // Limpieza de UI persistente y residuos interactivos
-        pitchClone.querySelectorAll('.slot-control-panel, .btn-delete-slot, #btn-modify-drawing, .plus-icon').forEach(el => el.remove());
+        const formationSlots = FORMATIONS[activeTactic.formation] || [];
+        const assignments = activeTactic.assignments || {};
+        const customPositions = activeTactic.customPositions || {};
         
-        // Sanear cada slot para eliminar herencia de estilos dinámivos del móvil/desktop
-        pitchClone.querySelectorAll('.tactical-slot').forEach(slot => {
-            // Preservar la posición pero limpiar el resto de inline styles
-            const top = slot.style.top;
-            const left = slot.style.left;
-            slot.removeAttribute('style');
-            slot.style.top = top;
-            slot.style.left = left;
-
-            // Si el slot está lleno, limpiar el contenido interno para el CSS de exportación
-            if (slot.classList.contains('filled')) {
-                const nameTag = slot.querySelector('h4');
-                if (nameTag) {
-                    nameTag.removeAttribute('style');
-                    nameTag.textContent = nameTag.textContent.toUpperCase();
+        formationSlots.forEach(slotData => {
+            const slotEl = document.createElement('div');
+            slotEl.className = 'tactical-slot-export';
+            
+            // Posicionamiento (Priorizar customPositions si existen)
+            const posX = customPositions[slotData.id]?.x ?? slotData.x;
+            const posY = customPositions[slotData.id]?.y ?? slotData.y;
+            slotEl.style.left = `${posX}%`;
+            slotEl.style.top = `${posY}%`;
+            
+            const playerId = assignments[slotData.id];
+            const player = playerId ? state.players.find(p => p.id === playerId) : null;
+            
+            if (player) {
+                slotEl.classList.add('filled');
+                
+                // Construcción manual de la carta premium
+                let photoHTML = '';
+                if (player.photo_url) {
+                    // Aplicar calibración del usuario (zoom/desplazamiento)
+                    const scale = player.photo_scale || 1;
+                    const posXVal = player.photo_pos_x || 0;
+                    const posYVal = player.photo_pos_y || 0;
+                    photoHTML = `<img src="${player.photo_url}" style="transform: translate(${posXVal}px, ${posYVal}px) scale(${scale});">`;
+                } else if (player.avatar_id) {
+                    const avatar = AVATARS.find(a => a.id === player.avatar_id);
+                    photoHTML = avatar ? avatar.svg : AVATARS[0].svg;
+                } else {
+                    photoHTML = AVATARS[0].svg;
                 }
-
-                const imgTag = slot.querySelector('.player-card-img img, .player-card-img svg');
-                // IMPORTANTE: NO eliminar el transform del imgTag porque contiene la calibración del usuario
-                // Pero sí nos aseguramos de que no tenga anchos/altos raros inyectados
-                if (imgTag) {
-                    imgTag.style.width = '100%';
-                    imgTag.style.height = '100%';
-                }
+                
+                slotEl.innerHTML = `
+                    <div class="player-card-img-export">${photoHTML}</div>
+                    <div class="dorsal-export">${player.number || ''}</div>
+                    <h4 class="name-export">${escapeHTML(player.name).toUpperCase()}</h4>
+                    <div class="pos-badge-export">${slotData.pos}</div>
+                `;
             } else {
-                // Slots vacíos: Sutiliza extrema
-                slot.style.opacity = '0.2';
-                slot.style.border = '1px dashed rgba(255,255,255,0.1)';
+                // Slot vacío: Solo la etiqueta de posición tenue
+                slotEl.innerHTML = `<div class="empty-pos-label">${slotData.pos}</div>`;
             }
+            
+            pitchExport.appendChild(slotEl);
         });
         
-        // Neutralizar contenedor de pitch
-        pitchClone.removeAttribute('style');
-        pitchAreaElement.appendChild(pitchClone);
+        pitchAreaElement.appendChild(pitchExport);
         
-        // Forzamos un delay suficiente para asegurar renderizado del fondo y fuentes (v20.5.0)
-        await new Promise(r => setTimeout(r, 1000));
+        // Forzamos un delay suficiente para asegurar renderizado del fondo y fuentes
+        await new Promise(r => setTimeout(r, 1200));
 
         try {
             const canvas = await html2canvas(wrapper, {
