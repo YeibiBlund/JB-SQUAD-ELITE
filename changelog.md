@@ -1,13 +1,13 @@
 # Changelog - JB-SQUAD
 <br>
 
-## [v25.0.0] - 2026-04-12
-### Añadido (Bulletproof Image Coverage)
-- **Motor de Renderizado por Fondo (CSS Background)**: Migración total de etiquetas `<img>` a `background-image` en la exportación. Esta técnica garantiza que la imagen se expanda proporcionalmente (`cover`) cubriendo el 100% de la carta sin fallos de renderizado de `html2canvas`.
-- **Persistencia de Calibración 2.0**: Adaptada la lógica de zoom y desplazamiento del usuario al nuevo sistema de fondos, manteniendo la fidelidad del encuadre elegido.
-- **Cero Márgenes Internos**: Se ha forzado la cobertura total para eliminar los espacios negros accidentales que aparecían dentro de la carta.
+## [v26.0.0] - 2026-04-12
+### Solucionado (No-Flex Absolute Architecture)
+- **Eliminación Total de Flexbox**: Se ha erradicado `display: flex` de toda la lógica de exportación. Esta es la solución definitiva al bug de "Miniaturas" en `html2canvas`, que colapsaba el tamaño de las imágenes al procesar contenedores flex con transformaciones.
+- **Anclaje Absoluto Quirúrgico**: Todos los elementos de la carta (Foto, Nombre, Posición) usan ahora posicionamiento absoluto puro (`top:0, left:0, width:100%, height:100%`), obligando al motor de renderizado a ocupar todo el espacio disponible.
+- **Normalización de Transformaciones**: Ajustado el `transform-origin` y la jerarquía de capas para asegurar que el zoom del usuario no desplace la imagen fuera de los límites de la carta.
 
-## [v23.0.0] - 2026-04-12
+## [v25.0.0] - 2026-04-12
 ### Rediseño (Táctica Móvil Definitivo)
 - **Barra Táctica Móvil Nativa**: Nuevo componente `mobile-tactic-topbar` exclusivo para móvil dentro de la vista de tácticas. Muestra nombre y formación, con cada botón en fila individual y estética premium.
 - **Cero Scroll Doble**: `app-wrapper` y `view-tacticas` en `overflow: hidden` en móvil, eliminando las dobles barras de scroll.

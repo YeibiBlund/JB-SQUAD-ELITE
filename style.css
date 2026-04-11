@@ -2160,7 +2160,7 @@ body.editing-tactic .tactical-slot {
     100% { transform: translateX(-100%); }
 }
 /* --- EXPORT MATCHDAY STYLES v4.8.1 (Elite Dark Aesthetic) --- */
-/* --- STANDALONE EXPORT v23.5.0 (Bulletproof Broadcast) --- */
+/* --- STANDALONE EXPORT v26.0.0 (No-Flex Final) --- */
 .export-matchday-wrapper {
     width: 1080px;
     height: 1440px;
@@ -2191,58 +2191,59 @@ body.editing-tactic .tactical-slot {
     position: relative;
 }
 
+/* Área del campo (No-Flex centering) */
 .export-pitch-area {
     width: 1080px;
     height: 1100px;
     position: absolute;
     top: 240px;
     left: 0;
-    display: flex;
-    justify-content: center;
-    align-items: center;
 }
 
-/* El contenedor del campo reconstruido */
+/* El contenedor del campo (Re-centrado manual) */
 .pitch-container-export {
-    width: 900px; /* Ancho real del campo sobre la textura */
+    width: 800px; 
     height: 1100px;
-    position: relative;
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
     background: transparent;
 }
 
-/* Carta Táctica de Gran Formato (Ajustada) */
+/* Carta Táctica (No-Flex Architecture) */
 .tactical-slot-export {
     position: absolute;
     width: 150px;
     height: 205px;
     transform: translate(-50%, -50%);
-    background: rgba(0,0,0,0.3);
+    background: rgba(0,0,0,0.2);
     border-radius: 10px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
 }
 
 .tactical-slot-export.filled {
-    background: linear-gradient(135deg, #151515 0%, #000 100%);
+    background: linear-gradient(135deg, #121212 0%, #000 100%);
     border: 2.5px solid var(--primary);
-    box-shadow: 0 35px 70px rgba(0,0,0,0.85), 0 0 30px rgba(240, 165, 0, 0.15);
+    box-shadow: 0 35px 70px rgba(0,0,0,0.85);
     overflow: hidden;
 }
 
-/* Contenedor de Imagen de Expansión Total */
+/* Renderizado de Foto (Absolute Forced) */
 .player-card-img-export {
     position: absolute;
-    top: 0; left: 0; width: 100%; height: 100%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+    top: 0; 
+    left: 0; 
+    width: 100%; 
+    height: 100%;
+    background: #000;
     overflow: hidden;
     z-index: 1;
 }
 
 .player-photo-render {
+    position: absolute;
+    top: 0;
+    left: 0;
     width: 100%;
     height: 100%;
     background-size: cover;
@@ -2251,32 +2252,26 @@ body.editing-tactic .tactical-slot {
     transform-origin: center center;
 }
 
-.player-card-img-export svg {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-}
-
 /* Dorsal Premium */
 .dorsal-export {
     position: absolute;
     top: 8px;
     left: 10px;
-    font-size: 24px;
+    font-size: 26px;
     font-weight: 950;
     color: var(--primary);
     z-index: 10;
-    text-shadow: 0 0 12px rgba(0,0,0,1);
+    text-shadow: 0 0 15px rgba(0,0,0,1);
 }
 
-/* Banner de Nombre (Pixel-Solid) */
+/* Banner de Nombre (Pure Absolute) */
 .name-export {
     position: absolute;
     bottom: 0;
     left: 0;
     width: 100%;
     height: 44px;
-    background: linear-gradient(to top, #000 0%, rgba(0,0,0,0.95) 80%, transparent 100%);
+    background: linear-gradient(to top, #000 0%, rgba(0,0,0,0.95) 85%, transparent 100%);
     color: #fff;
     font-size: 19px;
     font-weight: 950;
@@ -2290,13 +2285,15 @@ body.editing-tactic .tactical-slot {
     letter-spacing: -0.5px;
 }
 
-/* Badge de Posición */
+/* Badge de Posición (Pure Absolute) */
 .pos-badge-export {
     position: absolute;
     bottom: -15px;
+    left: 50%;
+    transform: translateX(-50%);
     background: var(--primary);
     color: #000;
-    padding: 4px 20px;
+    padding: 4px 18px;
     border-radius: 6px;
     font-size: 15px;
     font-weight: 950;
@@ -2305,20 +2302,17 @@ body.editing-tactic .tactical-slot {
     z-index: 20;
 }
 
-/* Slots Vacíos Estéticos */
+/* Slots Vacíos Estéticos (No-Flex) */
 .empty-pos-label {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
     font-size: 18px;
     font-weight: 900;
-    color: rgba(255,255,255,0.15);
+    color: rgba(255,255,255,0.1);
     text-transform: uppercase;
     letter-spacing: 2px;
-    border: 2px dashed rgba(255,255,255,0.08);
-    width: 60px;
-    height: 60px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 50%;
 }
 
 /* Header Scorebug (Fijo) */
