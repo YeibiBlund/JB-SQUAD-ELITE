@@ -1,6 +1,12 @@
 # Changelog - JB-SQUAD
 <br>
 
+## [v22.6.0] - 2026-04-12
+### Corregido (Mitigación de Recursión RLS)
+- **Estrategia de Guardado Directo**: Sustitución de `upsert` por operaciones de `.update().eq('id', id)` dirigidas. Al evitar la lógica de "comprobación de existencia" de upsert, se reduce la probabilidad de disparar recursiones infinitas en las políticas de seguridad de Supabase.
+- **Throttle Secuencial**: Añadido un retardo de 150ms entre cada guardado de jugador durante la finalización del partido. Esto evita picos de concurrencia que saturan el motor de políticas RLS.
+- **Forzado de Caché**: Actualización a versión `?v=22.6.0` en el script principal.
+
 ## [v22.5.0] - 2026-04-12
 ### Corregido (Sincronización Avanzada & UUID)
 - **Normalización de IDs**: Implementada lógica de limpieza de IDs. La aplicación ahora detecta IDs temporales (Timestamps) y permite que Supabase genere UUIDs válidos, sincronizándolos de vuelta a la app local tras el primer guardado.

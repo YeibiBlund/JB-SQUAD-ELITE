@@ -767,16 +767,17 @@ document.addEventListener('DOMContentLoaded', () => {
                 stats: player.stats || { official: { goals: 0, assists: 0, matches: 0 }, friendly: { goals: 0, assists: 0, matches: 0 } }
             };
 
-            // Solo enviar ID si es UUID (string largo con guiones). Si es numérico, omitimos para que Supabase genere UUID.
+            let result;
             if (typeof player.id === 'string' && player.id.includes('-')) {
-                payload.id = player.id;
+                // UPDATE Directo: Menos propenso a recursión en RLS que upsert
+                result = await supabase.from('players').update(payload).eq('id', player.id).select();
+            } else {
+                // INSERT Directo
+                result = await supabase.from('players').insert(payload).select();
             }
 
-            const { data, error } = await supabase.from('players').upsert(payload).select();
-            if (error) throw error;
-            
-            // Sincronizar ID de vuelta si cambió
-            if (data && data[0]) player.id = data[0].id;
+            if (result.error) throw result.error;
+            if (result.data && result.data[0]) player.id = result.data[0].id;
         } catch (err) {
             console.error(">>> [ERROR] savePlayerCloud:", err.message);
         }
@@ -793,16 +794,16 @@ document.addEventListener('DOMContentLoaded', () => {
                 mvp_id: session.mvpId
             };
 
+            let result;
             if (typeof session.id === 'string' && session.id.includes('-')) {
-                payload.id = session.id;
+                result = await supabase.from('sessions').update(payload).eq('id', session.id).select();
+            } else {
+                result = await supabase.from('sessions').insert(payload).select();
             }
 
-            const { data, error } = await supabase.from('sessions').upsert(payload).select();
-            if (error) throw error;
-
-            // Sincronizar ID de vuelta (CRÍTICO para evitar duplicados en el próximo upsert)
-            if (data && data[0]) {
-                const newUuid = data[0].id;
+            if (result.error) throw result.error;
+            if (result.data && result.data[0]) {
+                const newUuid = result.data[0].id;
                 session.id = newUuid;
                 if (state.activeSession && (state.activeSession === session || state.activeSession.date === session.date)) {
                     state.activeSession.id = newUuid;
@@ -2516,9 +2517,11 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
 
-        // 3. Persistencia en la Nube optimizada (Secuencial para evitar saturar RLS)
+        // 3. Persistencia en la Nube optimizada (Secuencial con delay para mitigar recursión RLS)
         for (let p of playersToSave) {
             await savePlayerCloud(p);
+            // Dar un respiro a las políticas de Postgres (150ms)
+            await new Promise(resolve => setTimeout(resolve, 150));
         }
 
         state.activeSession.matches.push(currentMatch);
