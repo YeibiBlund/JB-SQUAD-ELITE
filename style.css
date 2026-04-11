@@ -2387,7 +2387,7 @@ body.editing-tactic .tactical-slot {
 
     .bottom-nav .nav-content {
         flex-direction: column !important;
-        justify-content: flex-start !important;
+        justify-content: center !important; /* Centrado vertical para balance premium */
         gap: 15px !important; /* Más juntos para cohesión */
         width: 90% !important;
     }
@@ -2850,6 +2850,13 @@ body.editing-tactic .tactical-slot {
         max-width: 1200px !important;
         margin: 0 auto !important;
     }
+
+    /* Expansión Selectiva: Solo Mi Equipo v31.3.0 */
+    #view-mi-equipo {
+        max-width: 100% !important;
+        padding-left: 20px !important;
+        padding-right: 20px !important;
+    }
 }
 
 /* ============================================================ */
@@ -3013,9 +3020,26 @@ body.editing-tactic .tactical-slot {
     gap: 12px;
 }
 
+/* Estilos de Tabla de Miembros v31.3.0 */
+.member-table-header {
+    display: grid;
+    grid-template-columns: 40px 1fr 80px 40px 40px 40px auto;
+    align-items: center;
+    gap: 15px;
+    padding: 10px 15px;
+    background: rgba(255,255,255,0.05);
+    border-radius: 8px;
+    margin-bottom: 5px;
+    font-size: 0.6rem;
+    font-weight: 800;
+    color: var(--text-muted);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+}
+
 .member-admin-row {
     display: grid;
-    grid-template-columns: auto 1fr auto;
+    grid-template-columns: 40px 1fr 80px 40px 40px 40px auto;
     align-items: center;
     gap: 15px;
     padding: 12px 15px;
@@ -3024,6 +3048,25 @@ body.editing-tactic .tactical-slot {
     border-radius: 12px;
     transition: 0.3s;
 }
+
+@media (min-width: 1024px) {
+    .member-table-header, .member-admin-row {
+        grid-template-columns: 50px 1.5fr 1fr 80px 80px 80px 160px;
+    }
+}
+
+.member-stat-cell {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-weight: 800;
+    color: #fff;
+    font-size: 0.8rem;
+}
+
+.member-stat-cell.pj { color: var(--text-muted); }
+.member-stat-cell.g { color: var(--primary); }
+.member-stat-cell.a { color: #fff; }
 
 .member-admin-row:hover {
     background: rgba(255,255,255,0.04);

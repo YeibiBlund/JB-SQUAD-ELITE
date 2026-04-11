@@ -3348,7 +3348,19 @@ document.addEventListener('DOMContentLoaded', () => {
         members.sort((a, b) => (roleOrder[a.role] || 99) - (roleOrder[b.role] || 99));
 
         document.getElementById('member-count-badge').textContent = `${members.length} MIEMBROS`;
-        membersListContainer.innerHTML = '';
+        
+        // Limpiar e Inyectar Encabezado
+        membersListContainer.innerHTML = `
+            <div class="member-table-header">
+                <div></div> <!-- Avatar -->
+                <div>JUGADOR</div>
+                <div>RANGO</div>
+                <div style="text-align:center;">PJ</div>
+                <div style="text-align:center;">G</div>
+                <div style="text-align:center;">A</div>
+                <div style="text-align:right;">ACCIONES</div>
+            </div>
+        `;
 
         const isManager = state.user.role === 'manager';
 
@@ -3357,6 +3369,12 @@ document.addEventListener('DOMContentLoaded', () => {
             const avatar = playerCard ? AVATARS.find(av => av.id === (playerCard.avatarID || playerCard.avatar_id || 1)) : AVATARS[0];
             const photo = playerCard?.photo_url;
             
+            // Cálculo de estadísticas consolidadas
+            const stats = playerCard?.stats || { official: { matches: 0, goals: 0, assists: 0 }, friendly: { matches: 0, goals: 0, assists: 0 } };
+            const totalPJ = (stats.official?.matches || 0) + (stats.friendly?.matches || 0);
+            const totalG = (stats.official?.goals || 0) + (stats.friendly?.goals || 0);
+            const totalA = (stats.official?.assists || 0) + (stats.friendly?.assists || 0);
+
             const row = document.createElement('div');
             row.className = 'member-admin-row';
             
@@ -3366,9 +3384,14 @@ document.addEventListener('DOMContentLoaded', () => {
                 </div>
                 <div class="member-admin-info">
                     <h4>${escapeHTML(m.profiles?.full_name?.toUpperCase() || 'ANÓNIMO')}</h4>
+                </div>
+                <div>
                     <span class="member-role-badge role-${m.role}">${m.role.toUpperCase()}</span>
                 </div>
-                <div class="member-admin-actions">
+                <div class="member-stat-cell pj">${totalPJ}</div>
+                <div class="member-stat-cell g">${totalG}</div>
+                <div class="member-stat-cell a">${totalA}</div>
+                <div class="member-admin-actions" style="text-align:right;">
                     ${isManager && m.user_id !== state.user.auth.id ? `
                         <select class="role-selector-elite" data-user-id="${m.user_id}">
                             <option value="jugador" ${m.role === 'jugador' ? 'selected' : ''}>JUGADOR</option>
