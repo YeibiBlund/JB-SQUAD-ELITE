@@ -1,6 +1,19 @@
 # Changelog - JB-SQUAD
 <br>
 
+## [v29.0.0] - 2026-04-12
+### Mejoras en Experiencia de Usuario (UX)
+- **Migración de Perfiles a Pantalla Completa**: Se ha eliminado el modal pop-up que se mostraba al pulsar sobre un jugador en la plantilla. Ahora, el sistema redirige dinámicamente a una vista inmersiva de pantalla completa (basada en el diseño de "Mi Perfil Elite").
+- **Unificación de Componentes**: Eliminación de código redundante y modales obsoletos (`profile-modal`) para optimizar el rendimiento y la consistencia visual.
+- **Control de Seguridad (RBAC)**: Implementación de permisos granulares en el perfil de jugador. El botón "EDITAR FICHA" ahora es inteligente: solo se muestra si el usuario logueado es **Manager** o si es el **dueño** de la propia ficha. Los jugadores estándar no pueden editar perfiles de compañeros.
+- **Títulos de Vista Dinámicos**: El encabezado de perfil ahora se adapta automáticamente mostrando el nombre del jugador consultado.
+
+## [v28.2.0] - 2026-04-12
+### Solucionado (Estética y Diseño Táctico Final)
+- **Corrección de Dorsales Inexistentes**: Sustitución de variable de base de datos errónea (`player.number` por `player.dorsal`) que causaba la desaparición del número en la exportación.
+- **Liberación de Badges Recortados**: Se ha retirado el candado estricto `overflow: hidden` del contenedor principal de la carta. Dado que el render de foto (con el nativo Canvas) ya tiene definidos sus recortes matemáticos propios, retirar esto permite que el badge "MC" asome naturalmente fuera de la carta sin cortarse por la mitad inferior.
+- **Formación Desahogada (Widened Pitch)**: El contenedor invisible táctil que agrupa las coordenadas ha pasado de un ancho restrictivo (`800px`) a uno panorámico (`960px`). Esto permite que los extremos se peguen más a la línea de banda y que los centrales y mediocentros tengan más huecos transpirables entre ellos dentro del export de 1080px.
+
 ## [v28.0.0] - 2026-04-12
 ### Solucionado (HTML5 Native Canvas Engine & Bounds Hotfix)
 - **Bypass de Bug en Motor de Captura**: Se ha reescrito por completo el pipeline de renderizado de las fotos para la exportación. En lugar de confiar en que `html2canvas` interprete correctamente el CSS (`object-fit`, `transform`, etc.) -el cual tiene bugs letales confirmados que causaban el efecto miniatura-, ahora usamos el estándar nativo de dibujo de HTML5 (`CanvasRenderingContext2D`).

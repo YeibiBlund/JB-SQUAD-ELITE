@@ -272,10 +272,10 @@
                 </div>
             </section>
 
-            <!-- VIEW: Mi Perfil (ESTADÍSTICAS Y CARTA) -->
+            <!-- VIEW: Perfil de Jugador Dinámico (ESTADÍSTICAS Y CARTA) -->
             <section id="view-my-profile" class="view">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
-                    <h1>Mi <span class="gradient-text">Perfil Elite</span></h1>
+                    <h1 id="profile-header-title">Mi <span class="gradient-text">Perfil Elite</span></h1>
                     <button id="btn-edit-my-ficha" class="btn-gold" style="width: auto; padding: 10px 20px;">✍️ EDITAR FICHA</button>
                 </div>
 
@@ -681,9 +681,6 @@
             </div>
         </div>
     </div>
-    </div>
-
-    <!-- Modal Nueva Jornada (Confirmación Táctica) -->
     <div id="session-start-modal" class="modal-overlay" style="display: none;">
         <div class="modal-content" style="max-width: 450px;">
             <div class="modal-header">
@@ -778,20 +775,6 @@
         </div>
     </div>
 
-    <!-- Modal Perfil de Jugador (Plantilla) -->
-    <div id="profile-modal" class="modal-overlay" style="display: none;">
-        <div class="jb-dialog modal-content" style="max-width: 320px; text-align: center; padding: 30px;">
-            <div class="modal-header" style="position: absolute; top: 10px; right: 10px;">
-                <button onclick="document.getElementById('profile-modal').style.display='none'" class="btn-close">✕</button>
-            </div>
-            <div id="profile-modal-content" style="margin-top: 10px;">
-                <!-- Card renderizada por JS -->
-            </div>
-            <div id="profile-modal-stats" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 20px;">
-                <!-- Stats renderizadas por JS -->
-            </div>
-        </div>
-    </div>
     <!-- MODAL HORA EXPORTACIÓN (v4.8.0) -->
     <div id="export-time-modal" class="modal-overlay" style="display: none;">
         <div class="modal-content" style="max-width: 400px; text-align: center;">

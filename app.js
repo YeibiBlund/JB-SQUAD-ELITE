@@ -444,7 +444,7 @@ document.addEventListener('DOMContentLoaded', () => {
         setTimeout(() => {
             if (state.userPlayer) {
                 switchView('home'); // Prioridad al Dashboard para usuarios registrados
-                renderMyProfile(state.userPlayer); 
+                viewPlayerProfileDetail(state.userPlayer.id); 
             } else {
                 switchView('add-player'); // Flujo de bienvenida para nuevos registros
                 console.log(">>> Usuario sin ficha. Mostrando editor...");
@@ -1014,11 +1014,9 @@ document.addEventListener('DOMContentLoaded', () => {
             btnBackToProfile.addEventListener('click', () => switchView('my-profile'));
         }
 
-        if (btnGoToAddPlayer) {
             btnGoToAddPlayer.addEventListener('click', () => {
                 if (state.userPlayer) {
-                    switchView('my-profile');
-                    renderMyProfile(state.userPlayer);
+                    viewPlayerProfileDetail(state.userPlayer.id);
                 } else {
                     switchView('add-player');
                 }
@@ -1258,7 +1256,7 @@ document.addEventListener('DOMContentLoaded', () => {
             playerRow.onclick = (e) => {
                 // No abrir perfil si se pulsa el botón de borrar
                 if (e.target.closest('button')) return;
-                showPlayerProfile(player.id);
+                viewPlayerProfileDetail(player.id);
             };
             const badgeColor = getPositionColorClass(player.primaryPos);
             
@@ -2710,7 +2708,41 @@ document.addEventListener('DOMContentLoaded', () => {
         `;
     }
 
-    function renderMyProfile(player) {
+    function viewPlayerProfileDetail(playerId) {
+        const player = state.players.find(p => p.id === playerId);
+        if (!player) return;
+
+        // Actualizar título dinámico
+        const titleEl = document.getElementById('profile-header-title');
+        if (titleEl) {
+            const isMe = state.userPlayer && state.userPlayer.id === player.id;
+            titleEl.innerHTML = isMe ? `Mi <span class="gradient-text">Perfil Elite</span>` : `Perfil | <span class="gradient-text">${escapeHTML(player.name.toUpperCase())}</span>`;
+        }
+
+        // Control de permisos para el botón Editar
+        const btnEdit = document.getElementById('btn-edit-my-ficha');
+        if (btnEdit) {
+            // Solo manager puede editar otros perfiles. El dueño también puede editar el suyo.
+            const isAdmin = state.user.role === 'manager';
+            const isSelf = state.userPlayer && state.userPlayer.id === player.id;
+            
+            if (isAdmin || isSelf) {
+                btnEdit.style.display = 'block';
+                // Asegurarnos de que el botón de editar sepa qué jugador editar
+                btnEdit.onclick = () => {
+                    populatePlayerForm(player);
+                    switchView('add-player');
+                };
+            } else {
+                btnEdit.style.display = 'none';
+            }
+        }
+
+        renderPlayerProfileDetail(player);
+        switchView('my-profile');
+    }
+
+    function renderPlayerProfileDetail(player) {
         if (!player) return;
         const profileCard = document.getElementById('my-profile-card');
         const profileConsoleId = document.getElementById('profile-console-id');
@@ -2831,40 +2863,7 @@ document.addEventListener('DOMContentLoaded', () => {
         `;
     }
 
-    function showPlayerProfile(id) {
-        const player = state.players.find(p => p.id === id || p.id == id);
-        if (!player) return;
 
-        const avatar = AVATARS.find(av => av.id === (player.avatarID || player.avatar_id || 1));
-        const modal = document.getElementById('profile-modal');
-        const content = document.getElementById('profile-modal-content');
-        const statsBox = document.getElementById('profile-modal-stats');
-
-        const photo = player.photo_url;
-        const transform = getPlayerTransform(player);
-
-        content.innerHTML = `
-            <div class="player-card-fut large" style="margin: 0 auto; box-shadow: 0 0 40px var(--primary-glow);">
-                <div class="dorsal-large">${player.dorsal || '00'}</div>
-                <div class="pos-large">${player.primaryPos || '??'}</div>
-                <div class="player-img-large">
-                    ${photo ? `<img src="${photo}" style="transform: ${transform}; object-position: top;">` : (avatar ? avatar.svg : '')}
-                </div>
-                <div class="name-banner-large">
-                    <h2 style="font-size: ${(player.name || '').length > 10 ? '1.1rem' : '1.5rem'}">${escapeHTML((player.name || 'SIN NOMBRE').toUpperCase())}</h2>
-                </div>
-            </div>
-        `;
-
-        const s = player.stats?.official || { matches: 0, goals: 0, assists: 0 };
-        statsBox.innerHTML = `
-            <div class="modal-stat-box"><label>PARTIDOS</label><span>${s.matches}</span></div>
-            <div class="modal-stat-box"><label>GOLES</label><span>${s.goals}</span></div>
-            <div class="modal-stat-box"><label>ASISTS</label><span>${s.assists}</span></div>
-        `;
-
-        modal.style.display = 'flex';
-    }
 
     function renderHomeDashboard() {
         const totalPlayersEl = document.getElementById('stats-total-players');
