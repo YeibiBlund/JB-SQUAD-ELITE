@@ -1,6 +1,11 @@
 # Changelog - JB-SQUAD
 <br>
 
+## [v27.0.0] - 2026-04-12
+### Solucionado (Pixel-Forced Img & Calibration Bug)
+- **Corrección de Variables de Calibración**: Se ha corregido un bug crítico de mapeo de datos donde el script de exportación intentaba leer `photo_pos_x` en lugar de la variable real guardada en base de datos (`photo_x`).
+- **Anclaje en Píxeles Duros (`<img>` Fixed)**: El motor de captura `html2canvas` sufre un bug conocido al renderizar transformaciones en contenedores de tamaño porcentual (`100%`). Se ha solucionado inyectando una etiqueta `<img>` convencional con el tamaño absoluto forzado inline (`150px x 205px`), eliminando definitivamente el efecto "Miniatura".
+
 ## [v26.0.0] - 2026-04-12
 ### Solucionado (No-Flex Absolute Architecture)
 - **Eliminación Total de Flexbox**: Se ha erradicado `display: flex` de toda la lógica de exportación. Esta es la solución definitiva al bug de "Miniaturas" en `html2canvas`, que colapsaba el tamaño de las imágenes al procesar contenedores flex con transformaciones.

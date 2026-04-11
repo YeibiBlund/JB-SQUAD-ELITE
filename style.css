@@ -2240,16 +2240,13 @@ body.editing-tactic .tactical-slot {
     z-index: 1;
 }
 
-.player-photo-render {
+.player-card-img-export svg {
     position: absolute;
     top: 0;
     left: 0;
-    width: 100%;
-    height: 100%;
-    background-size: cover;
-    background-position: center top;
-    background-repeat: no-repeat;
-    transform-origin: center center;
+    width: 150px;
+    height: 205px;
+    object-fit: cover;
 }
 
 /* Dorsal Premium */

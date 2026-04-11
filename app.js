@@ -3090,12 +3090,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 // Construcción manual de la carta premium
                 let photoHTML = '';
                 if (player.photo_url) {
-                    // Aplicar calibración del usuario (zoom/desplazamiento)
+                    // Aplicar calibración del usuario (zoom/desplazamiento) - CORRECCIÓN DE VARIABLES
                     const scale = player.photo_scale || 1;
-                    const posXVal = player.photo_pos_x || 0;
-                    const posYVal = player.photo_pos_y || 0;
-                    // v25.0.0: Usamos background-image para máxima estabilidad en html2canvas
-                    photoHTML = `<div class="player-photo-render" style="background-image: url('${player.photo_url}'); transform: translate(${posXVal}px, ${posYVal}px) scale(${scale});"></div>`;
+                    const posXVal = player.photo_x || 0;
+                    const posYVal = player.photo_y || 0;
+                    // v27.0.0: Renderizado duro por píxeles para evitar colapsos porcentuales en html2canvas
+                    photoHTML = `<img src="${player.photo_url}" style="position: absolute; top: 0; left: 0; width: 150px; height: 205px; object-fit: cover; object-position: center top; transform: translate(${posXVal}px, ${posYVal}px) scale(${scale}); transform-origin: center center;">`;
                 } else if (player.avatar_id) {
                     const avatar = AVATARS.find(a => a.id === player.avatar_id);
                     photoHTML = avatar ? avatar.svg : AVATARS[0].svg;
