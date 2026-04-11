@@ -1280,8 +1280,8 @@ p { color: var(--text-muted); font-size: 0.95rem; line-height: 1.5; }
 }
 
 .header-crest-container {
-    width: 36px;
-    height: 36px;
+    width: 60px;
+    height: 60px;
     background: rgba(0,0,0,0.3);
     border: 2px solid var(--glass-border);
     border-radius: 50%;
@@ -1796,6 +1796,10 @@ body.editing-tactic .tactical-slot {
     #global-header {
         margin-bottom: 10px !important;
         padding: 5px 0 !important;
+    }
+    .header-crest-container {
+        width: 44px !important;
+        height: 44px !important;
     }
     #display-team-name {
         font-size: 1.1rem !important;

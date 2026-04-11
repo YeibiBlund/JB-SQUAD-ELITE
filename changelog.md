@@ -4,6 +4,7 @@
 ## [v31.8.0] - 2026-04-12
 ### Añadido: Integración de Escudo en Cabecera Global
 - **Branding Dinámico**: Inserción del escudo del club en el `#global-header`, visible en todas las secciones de la aplicación para reforzar la identidad del equipo.
+- **Ajuste Estético (Circular)**: Refinado el contenedor del logo a un formato circular (`border-radius: 50%`) siguiendo los estándares de diseño de apps de élite.
 - **Renderizado Adaptable**: La cabecera ahora detecta automáticamente si el club tiene un escudo definido; de lo contrario, muestra un placeholder arquitectónico (🛡️) manteniendo la estética premium.
 - **Sincronización en Tiempo Real**: Al actualizar el escudo desde el panel de gestión ("Mi Equipo"), la cabecera superior se refresca instantáneamente sin recargas.
 - **Optimización Mobile-First**: Estructura de cabecera reorganizada para evitar solapamientos en dispositivos móviles, escalando el logo proporcionalmente.
