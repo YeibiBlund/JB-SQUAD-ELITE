@@ -489,9 +489,10 @@ document.addEventListener('DOMContentLoaded', () => {
         const isAdmin = role === 'manager' || role === 'capitan';
         const isManager = role === 'manager';
         
-        // Elementos que solo ven Admins (Manager/Capitán)
+        // Elementos que solo ven Managers
         document.querySelectorAll('[data-role-required="manager"]').forEach(el => {
-            el.style.display = isManager ? 'block' : 'none';
+            const displayType = el.id === 'btn-mgmt-team-shortcut' ? 'flex' : 'block';
+            el.style.display = isManager ? displayType : 'none';
         });
 
         // Asegurar visibilidad de botones de acción específicos (usando variables globales de scope)
@@ -1052,6 +1053,11 @@ document.addEventListener('DOMContentLoaded', () => {
                     switchView('add-player');
                 }
             });
+        }
+
+        const btnTeamMgmtShortcut = document.getElementById('btn-mgmt-team-shortcut');
+        if (btnTeamMgmtShortcut) {
+            btnTeamMgmtShortcut.addEventListener('click', () => switchView('mi-equipo'));
         }
 
         const btnBackToProfile = document.getElementById('btn-back-to-profile');
