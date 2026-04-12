@@ -2961,8 +2961,7 @@ body.editing-tactic .tactical-slot {
     #view-mi-equipo, #view-my-profile, #view-convocatorias {
         max-width: 100% !important;
         margin: 0 !important;
-        padding-left: 20px !important;
-        padding-right: 20px !important;
+        padding: 40px 20px !important; /* Padding estandar elite */
     }
 }
 
@@ -3446,6 +3445,7 @@ body.editing-tactic .tactical-slot {
     .poll-active-card {
         max-width: 100% !important;
         padding: 40px;
+        margin: 0 !important;
     }
 
     .poll-main-layout {
