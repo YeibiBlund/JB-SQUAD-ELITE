@@ -2582,6 +2582,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 match.events.forEach(ev => {
                     eventsHTML += `
                         <div class="match-event-detail">
+                            <span>⚽ <strong>${getPlayerNameById(ev.scorerId)}</strong></span>
                             ${ev.assistantId ? `<span style="opacity: 0.6; font-style: italic;">👟 ${getPlayerNameById(ev.assistantId)}</span>` : ''}
                         </div>
                     `;
@@ -3728,8 +3729,6 @@ document.addEventListener('DOMContentLoaded', () => {
                                 <button class="min-btn ${myVote?.minutes_late === 60 ? 'active' : ''}" onclick="window.jbVote('late', 60)">+1h</button>
                             </div>
                         </div>
-
-                        ` : ''}
                     </div>
 
                     <!-- Panel Derecho: Resultados -->
