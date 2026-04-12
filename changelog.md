@@ -9,6 +9,7 @@
 - **Contraste de Badge de Posición**: Solucionado un bug en el modo móvil donde el texto de la posición de la carta (ej. "POR", "MCD") era de color negro puro sobre un fondo negro profundo, haciéndolo ilegible. Ahora el texto se renderiza en oro/ámbar eléctrico (`var(--primary)`) devolviendo la alta visibilidad a los roles tácticos.
 - **Badge de Posición Reubicado**: En móvil, el badge de posición (ej. "DC", "MCD", "POR") ya no se superpone en la esquina superior derecha tapando la imagen del jugador. Ahora aparece centrado debajo de cada carta como una pequeña etiqueta con borde dorado, liberando la visualización completa del avatar.
 - **Campo Táctico Más Alto**: Se ha cambiado el `aspect-ratio` del campo de `1/1.35` a `1/1.45`, generando más espacio vertical especialmente en la zona baja del campo para que la carta del portero no quede cortada por el borde inferior.
+- **Botones Tácticos Compactos**: Los botones "Dibujo", "Exportar" y "Guardar" del modo móvil ahora son horizontales e inline en vez de apilados verticalmente. Se ha reducido padding, gap y eliminado el `min-height`, ocupando aproximadamente la mitad de alto que antes.
 
 ## [v31.8.3] - 2026-04-12
 ### Corregido (Persistencia Botones Tácticos)
