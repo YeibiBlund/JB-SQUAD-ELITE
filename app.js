@@ -3594,7 +3594,7 @@ document.addEventListener('DOMContentLoaded', () => {
     async function fetchPollVotes(pollId) {
         const { data, error } = await supabase
             .from('availability_votes')
-            .select('*, profiles(id, full_name, avatar_id)')
+            .select('*, profiles(id, full_name, avatar_id, primary_pos)')
             .eq('poll_id', pollId);
 
 
@@ -3731,20 +3731,20 @@ document.addEventListener('DOMContentLoaded', () => {
                         <div class="poll-results-summary">
                             <div class="results-group">
                                 <div class="results-group-title">DISPONIBLES <span>${yesVotes.length}</span></div>
-                                <div class="results-avatars-flex">
-                                    ${yesVotes.map(v => renderVoterAvatar(v)).join('')}
+                                <div class="results-voters-list">
+                                    ${yesVotes.map(v => renderVoterRow(v)).join('')}
                                 </div>
                             </div>
                             <div class="results-group">
                                 <div class="results-group-title">LLEGAN TARDE <span>${lateVotes.length}</span></div>
-                                <div class="results-avatars-flex">
-                                    ${lateVotes.map(v => renderVoterAvatar(v)).join('')}
+                                <div class="results-voters-list">
+                                    ${lateVotes.map(v => renderVoterRow(v)).join('')}
                                 </div>
                             </div>
                             <div class="results-group">
                                 <div class="results-group-title">NO PUEDEN <span>${noVotes.length}</span></div>
-                                <div class="results-avatars-flex">
-                                    ${noVotes.map(v => renderVoterAvatar(v)).join('')}
+                                <div class="results-voters-list">
+                                    ${noVotes.map(v => renderVoterRow(v)).join('')}
                                 </div>
                             </div>
                         </div>
@@ -3756,18 +3756,28 @@ document.addEventListener('DOMContentLoaded', () => {
         renderPollHistory();
     }
 
-    function renderVoterAvatar(vote) {
-        const player = vote.profiles;
-        if (!player) return `<div class="voter-avatar-mini" title="Usuario desconocido">?</div>`;
+    function renderVoterRow(vote) {
+        const profile = vote.profiles;
+        if (!profile) return `<div class="voter-row empty">?</div>`;
         
-        // El sistema JB-SQUAD usa avatar_id para referenciar el array AVATARS
-        const avatar = AVATARS.find(av => av.id === (player.avatar_id || 1)) || AVATARS[0];
-        const lateLabel = vote.vote === 'late' ? `<span class="late-tag">+${vote.minutes_late}m</span>` : '';
+        const avatar = AVATARS.find(a => a.id === parseInt(profile.avatar_id)) || AVATARS[0];
+        const posClass = getPositionColorClass(profile.primary_pos);
         
+        let lateInfo = '';
+        if (vote.vote === 'late' && vote.minutes_late) {
+            lateInfo = `<span class="late-row-tag">+${vote.minutes_late}m</span>`;
+        }
+
         return `
-            <div class="voter-avatar-mini" title="${player.full_name || 'Desconocido'}">
-                <div class="voter-avatar-svg-container">${avatar.svg}</div>
-                ${lateLabel}
+            <div class="voter-row fade-in">
+                <div class="voter-row-avatar">
+                    <div class="voter-avatar-svg-container">${avatar.svg}</div>
+                </div>
+                <div class="voter-row-info">
+                    <span class="voter-row-name">${profile.full_name}</span>
+                    <span class="voter-row-pos ${posClass}">${profile.primary_pos || 'N/A'}</span>
+                </div>
+                ${lateInfo}
             </div>
         `;
     }
