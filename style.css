@@ -2558,7 +2558,63 @@ body.editing-tactic .tactical-slot {
         min-height: 100vh;
         padding-left: 130px; /* Ajuste para el nuevo ancho del sidebar */
     }
+
+    #btn-global-logout {
+        display: flex !important;
+    }
+
+    .mobile-logout-container {
+        display: none !important;
+    }
 }
+
+/* Lógica de Logout Mobile */
+@media (max-width: 1023px) {
+    #btn-global-logout {
+        display: none !important;
+    }
+
+    .mobile-logout-container {
+        display: block;
+        margin-top: 40px;
+        padding: 20px;
+        border-top: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .btn-logout-elite {
+        background: rgba(220, 38, 38, 0.1);
+        border: 1px solid #dc2626;
+        color: #dc2626;
+        width: 100%;
+        padding: 18px;
+        border-radius: 12px;
+        font-weight: 800;
+        font-family: 'Outfit', sans-serif;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 12px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+
+    .btn-logout-elite:active {
+        background: rgba(220, 38, 38, 0.2);
+        transform: scale(0.98);
+    }
+
+    .app-version-footer {
+        text-align: center;
+        font-size: 0.7rem;
+        color: var(--text-muted);
+        margin-top: 15px;
+        letter-spacing: 1px;
+        font-weight: 600;
+    }
+}
+
 
 /* --- SISTEMA DE TOASTS PREMIUM (v21.0.0) --- */
 #jb-toast-container {

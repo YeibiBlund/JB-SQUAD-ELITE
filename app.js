@@ -702,6 +702,8 @@ document.addEventListener('DOMContentLoaded', () => {
         };
 
         document.getElementById('btn-global-logout').onclick = handleLogout;
+        const btnProfileLogout = document.getElementById('btn-profile-logout');
+        if (btnProfileLogout) btnProfileLogout.onclick = handleLogout;
         document.getElementById('btn-logout-temp').onclick = handleLogout;
     }
 
@@ -2580,7 +2582,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 match.events.forEach(ev => {
                     eventsHTML += `
                         <div class="match-event-detail">
-                            <span>⚽ <strong>${getPlayerNameById(ev.scorerId)}</strong></span>
                             ${ev.assistantId ? `<span style="opacity: 0.6; font-style: italic;">👟 ${getPlayerNameById(ev.assistantId)}</span>` : ''}
                         </div>
                     `;
@@ -3111,7 +3112,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 .slice(0, 3);
 
             if (assistants.length === 0) {
-                assistsListEl.innerHTML = '<p style="font-size:0.7rem; text-align:center; opacity:0.5;">No hay datos registrados.</p>';
+                assistantsListEl.innerHTML = '<p style="font-size:0.7rem; text-align:center; opacity:0.5;">No hay datos registrados.</p>';
             } else {
                 assistants.forEach((s, i) => {
                     const row = document.createElement('div');
