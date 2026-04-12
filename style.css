@@ -3021,14 +3021,14 @@ body.editing-tactic .tactical-slot {
     }
 }
 
-/* --- Botones Elite v5.0 --- */
+/* --- Botones Elite v5.1 --- */
 .btn-elite {
-    background: var(--btn-gold);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    color: #000;
+    background: linear-gradient(135deg, #F0A500 0%, #C49102 100%);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: #000 !important;
     padding: 10px 20px;
     border-radius: 8px;
-    font-size: 0.8rem;
+    font-size: 0.75rem;
     font-weight: 800;
     text-transform: uppercase;
     letter-spacing: 1px;
