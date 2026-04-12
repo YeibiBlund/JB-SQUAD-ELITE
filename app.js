@@ -3721,7 +3721,7 @@ document.addEventListener('DOMContentLoaded', () => {
                             </button>
                             <button class="btn-vote vote-late ${myVote?.vote === 'late' ? 'active' : ''}" onclick="window.jbToggleLateSelector()">
                                 <span class="vote-icon">🕐</span>
-                                <span>TARDE</span>
+                                <span>LLEGO TARDE</span>
                             </button>
 
                             <div id="late-minutes-selector" class="minutes-selector" style="${myVote?.vote === 'late' ? 'display:flex;' : 'display:none;'}">

@@ -3448,22 +3448,28 @@ body.editing-tactic .tactical-slot {
         margin-bottom: 1rem !important;
     }
 
-    /* Botón Nueva más ancho y bajo */
+    /* Botón Nueva más ancho, bajo y centrado */
     #btn-new-poll {
         width: 100% !important;
         padding: 8px 0 !important;
         margin-top: 10px;
         font-size: 0.8rem !important;
+        display: flex !important;
+        justify-content: center !important;
+        align-items: center !important;
+        text-align: center !important;
     }
 
-    /* Layout Votos 2+1 */
-    .poll-vote-grid {
-        grid-template-columns: repeat(2, 1fr) !important;
+    /* Ocultar reloj en botón Llego Tarde mobile */
+    .btn-vote.vote-late .vote-icon {
+        display: none !important;
     }
 
     .btn-vote.vote-late {
         grid-column: span 2 !important;
         padding: 12px !important;
+        justify-content: center !important;
+        font-size: 0.75rem !important;
     }
 
     /* Secciones Colapsables */
@@ -3481,6 +3487,13 @@ body.editing-tactic .tactical-slot {
         display: flex;
         justify-content: space-between;
         align-items: center;
+        width: 100%;
+    }
+
+    /* Alinear contador a la derecha en cabecera */
+    .results-group-title span:nth-child(2) {
+        margin-left: auto;
+        margin-right: 15px;
     }
 
     .results-group-title::after {
@@ -3510,15 +3523,14 @@ body.editing-tactic .tactical-slot {
     .voter-row-info {
         flex-direction: row !important;
         align-items: center !important;
-        gap: 10px !important;
+        justify-content: space-between !important;
+        width: 100%;
     }
 
-    .voter-row-name {
-        font-size: 0.75rem !important;
-    }
-
+    /* Alinear posición a la derecha en la fila */
     .voter-row-pos {
         margin-top: 0 !important;
+        margin-left: auto !important;
         font-size: 0.6rem !important;
         padding: 1px 4px !important;
     }
