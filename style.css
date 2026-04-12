@@ -3445,6 +3445,32 @@ body.editing-tactic .tactical-slot {
     .minutes-selector {
         grid-column: span 3 !important;
     }
+
+    /* Lista de votantes compacta en móvil (sin imagen) */
+    .voter-row {
+        padding: 5px 10px !important;
+        gap: 8px !important;
+    }
+
+    .voter-row-avatar {
+        display: none !important;
+    }
+
+    .voter-row-info {
+        flex-direction: row !important;
+        align-items: center !important;
+        gap: 10px !important;
+    }
+
+    .voter-row-name {
+        font-size: 0.75rem !important;
+    }
+
+    .voter-row-pos {
+        margin-top: 0 !important;
+        font-size: 0.6rem !important;
+        padding: 1px 4px !important;
+    }
 }
 
 .btn-vote.vote-yes { border-color: #4CAF50; color: #4CAF50; }
