@@ -3752,7 +3752,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 </div>
             </div>
         `;
-        `;
 
         renderPollHistory();
     }

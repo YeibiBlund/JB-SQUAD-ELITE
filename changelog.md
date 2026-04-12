@@ -1,6 +1,12 @@
 # Changelog - JB-SQUAD
 <br>
 
+## [v32.0.0] - 2026-04-12
+### Añadido (Divergent Desktop Design)
+- **Layout Split-View para Convocatorias**: Rediseño completo de la sección de votación para PC. Ahora utiliza un sistema de dos paneles (L-Control / R-Resultados) que aprovecha todo el ancho de la pantalla (1100px), eliminando el aspecto de tarjeta móvil estirada.
+- **Historial Quad-Grid**: El historial de convocatorias pasadas en escritorio ahora se visualiza en una cuadrícula de dos columnas en lugar de una lista simple vertical.
+- **Sticky Side-Control**: El panel de votación se mantiene fijo (sticky) mientras se navega por la lista de resultados laterales en escritorio.
+
 ## [v31.9.0] - 2026-04-12
 ### Añadido (Sistema de Disponibilidad / Convocatorias)
 - **Módulo de Votación Nativa**: Se ha implementado un sistema completo de "¿Quién juega esta noche?" accesible desde la barra de navegación. Sustituye las encuestas de WhatsApp por una integración nativa en la app.
