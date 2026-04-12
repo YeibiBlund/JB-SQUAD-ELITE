@@ -4,7 +4,8 @@
 ## [v31.8.4] - 2026-04-12
 ### Ajustado (Optimización Mobile Viewport)
 - **Barra de Scroll Premium**: Se ha forzado globalmente la ocultación visual de la barra de scroll amarilla (`::-webkit-scrollbar`) en dispositivos móviles, ya que afeaba la experiencia táctil cruzando el campo táctico. Se mantiene el desplazamiento fluido nativo sin rastro visual.
-- **Centrado de Extremos (MI/MD)**: Se han modificado las coordenadas nativas en formaciones anchas (3-5-2, 3-4-1-2, 3-1-4-2). Los extremos y medios por banda se han acercado un `4%` más hacia el centro del campo para evitar que las tarjetas de los jugadores queden cortadas por los bordes laterales de la pantalla de los teléfonos.
+- **Centrado de Extremos (MI/MD)**: Se han modificado las coordenadas nativas en formaciones anchas (3-5-2, 3-4-1-2, 3-1-4-2). Los extremos y medios por banda se han acercado un `4%` más hacia el centro del campo.
+- **Escalado Inteligente del Terreno (Zoom Out)**: Se ha dejado de forzar el campo táctico a un 100% estricto del ancho (`calc(100% + 30px)`); ahora se renderiza a un `94%` absoluto y se autocentra (`margin: 0 auto`). Esto permite ganar unos píxeles de "respiro" en cada lateral, haciendo que el campo entero y los jugadores se vean ligeramente más pequeños y no choquen visualmente contra los biseles del teléfono, permitiendo posiciones en banda más cómodas incluso si la gente edita su propio dibujo.
 
 ## [v31.8.3] - 2026-04-12
 ### Corregido (Persistencia Botones Tácticos)

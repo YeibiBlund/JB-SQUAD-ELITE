@@ -2871,18 +2871,17 @@ body.editing-tactic .tactical-slot {
     }
 
     .pitch-container {
-        width: calc(100% + 30px) !important;
-        max-width: calc(100% + 30px);
-        margin-left: -15px !important;
-        margin-right: -15px !important;
-        border-radius: 0 !important;
-        border-left: none !important;
-        border-right: none !important;
+        width: 94% !important; /* Ligeramente más estrecho para no tocar el bisel de la pantalla */
+        margin: 0 auto !important; /* Centrado absoluto horizontal */
+        border-radius: var(--radius-md) !important;
+        border-left: 2px solid rgba(255,255,255,0.1) !important;
+        border-right: 2px solid rgba(255,255,255,0.1) !important;
         height: auto !important;
         max-height: none !important;
         aspect-ratio: 1 / 1.35;
         min-height: unset;
         flex: none;
+        container-type: inline-size;
     }
 
     /* ==== CARTAS CON NOMBRE INTEGRADO ==== */
