@@ -3441,6 +3441,18 @@ body.editing-tactic .tactical-slot {
     .minutes-selector {
         grid-column: span 3 !important;
     }
+
+    /* Botón WhatsApp más discreto en móvil */
+    .btn-share-wa {
+        width: auto !important;
+        max-width: fit-content;
+        margin: 15px auto 0 auto !important;
+        padding: 8px 15px !important;
+        font-size: 0.65rem !important;
+        border-radius: 20px !important;
+        background: rgba(37,211,102,0.05) !important;
+        opacity: 0.8;
+    }
 }
 
 .btn-vote.vote-yes { border-color: #4CAF50; color: #4CAF50; }
