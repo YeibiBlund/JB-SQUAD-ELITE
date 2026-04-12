@@ -3949,3 +3949,56 @@ body.editing-tactic .tactical-slot {
     text-shadow: 0 0 10px rgba(76, 175, 80, 1);
 }
 
+/* --- Reportes de Jornada Elite v34.0 --- */
+.report-layout-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 30px;
+}
+
+@media (min-width: 1024px) {
+    .report-layout-grid {
+        grid-template-columns: 1.2fr 1fr;
+    }
+}
+
+.report-pitch-column {
+    background: rgba(0,0,0,0.2);
+    padding: 15px;
+    border-radius: 15px;
+    border: 1px solid rgba(255,255,255,0.03);
+}
+
+.report-voters-scroll {
+    max-height: 400px;
+    overflow-y: auto;
+    padding-right: 10px;
+}
+
+/* Scrollbar personalizada para el reporte */
+.report-voters-scroll::-webkit-scrollbar { width: 4px; }
+.report-voters-scroll::-webkit-scrollbar-thumb { background: var(--primary); border-radius: 10px; }
+
+.poll-history-item {
+    background: rgba(255,255,255,0.03);
+    border: 1px solid var(--glass-border);
+    padding: 12px 15px;
+    border-radius: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.poll-history-item:hover {
+    background: rgba(240, 165, 0, 0.08);
+    border-color: var(--primary);
+    transform: translateX(5px);
+}
+
+.poll-history-item:active {
+    transform: scale(0.98);
+}
+
+

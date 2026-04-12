@@ -49,7 +49,8 @@ document.addEventListener('DOMContentLoaded', () => {
         // Contexto de alineación inteligente v33.0
         alignmentMode: {
             active: false,
-            voters: {} // userId -> status ('yes', 'no', 'late')
+            voters: {}, // userId -> status ('yes', 'no', 'late')
+            currentPollId: null // ID de la encuesta vinculada a la alineación actual
         }
     };
 
@@ -3266,6 +3267,22 @@ document.addEventListener('DOMContentLoaded', () => {
             </div>
         `;
         
+        // --- Persistencia Táctica vinculada a la jornada (v34.0) ---
+        if (state.alignmentMode.active && state.alignmentMode.currentPollId) {
+            console.log(">>> [LOG] Modo alineación detectado. Guardando snapshot en el historial...");
+            try {
+                const snapshot = {
+                    tactic_id: state.activeTacticId,
+                    formation: activeTactic.formation,
+                    assignments: activeTactic.assignments
+                };
+                await supabase.from('availability_polls').update({ final_alignment: snapshot }).eq('id', state.alignmentMode.currentPollId);
+                window.jbToast('Alineación guardada en el historial de la jornada', 'success');
+            } catch (snapErr) {
+                console.error(">>> [ERROR] Falló el guardado del snapshot:", snapErr);
+            }
+        }
+
         document.body.appendChild(wrapper);
         const pitchAreaElement = wrapper.querySelector('.export-pitch-area');
         
@@ -3844,25 +3861,153 @@ document.addEventListener('DOMContentLoaded', () => {
             .eq('team_id', state.team.id)
             .eq('status', 'closed')
             .order('created_at', { ascending: false })
-            .limit(5);
+            .limit(10); // Aumentamos límite para historial
 
         if (error) return;
+        const historyList = document.getElementById('polls-history-list');
+        if (!historyList) return;
         
         if (!data || data.length === 0) {
-            pollHistoryList.innerHTML = `<p style="font-size:0.7rem; opacity:0.4;">No hay convocatorias pasadas.</p>`;
+            historyList.innerHTML = `<p style="font-size:0.75rem; opacity:0.4; text-align:center; padding:20px;">No hay convocatorias pasadas.</p>`;
             return;
         }
 
-        pollHistoryList.innerHTML = data.map(p => `
-            <div class="poll-history-item">
-                <div>
-                    <strong>${p.title}</strong>
-                    <div style="font-size:0.65rem; opacity:0.6;">${new Date(p.created_at).toLocaleDateString()}</div>
+        historyList.innerHTML = data.map(p => `
+            <div class="poll-history-item fade-in" onclick="jbViewPollDetail('${p.id}')">
+                <div style="display: flex; flex-direction: column; gap: 4px;">
+                    <strong style="color: var(--primary); font-size: 0.85rem;">${p.title.toUpperCase()}</strong>
+                    <div style="font-size: 0.65rem; opacity: 0.6; letter-spacing: 1px;">
+                        📅 ${new Date(p.created_at).toLocaleDateString('es-ES', { day: '2-digit', month: 'long' })}
+                    </div>
                 </div>
-                <span class="poll-status-tag closed">FINALIZADA</span>
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    ${p.final_alignment ? '<span title="Tiene alineación guardada" style="font-size: 0.8rem;">📋</span>' : ''}
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="opacity: 0.5;"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                </div>
             </div>
         `).join('');
     }
+
+    window.jbViewPollDetail = async (id) => {
+        const overlay = document.getElementById('poll-detail-overlay');
+        const titleEl = document.getElementById('report-poll-title');
+        const dateEl = document.getElementById('report-poll-date');
+        const votersList = document.getElementById('report-voters-list');
+        const countYes = document.getElementById('report-count-yes');
+        const countLate = document.getElementById('report-count-late');
+        const countNo = document.getElementById('report-count-no');
+        const miniPitch = document.getElementById('report-mini-pitch');
+        const noTactic = document.getElementById('report-no-tactic');
+        const pitchContainer = document.getElementById('report-mini-pitch-container');
+
+        if (!overlay) return;
+        window.jbLoading.show('Generando reporte...');
+
+        // 1. Obtener datos de la encuesta y sus votos
+        const { data: poll, error: pollErr } = await supabase.from('availability_polls').select('*').eq('id', id).single();
+        const { data: votes, error: voteErr } = await supabase.from('availability_votes').select('*').eq('poll_id', id);
+
+        if (pollErr || !poll) {
+            window.jbToast('Error al cargar el reporte', 'error');
+            window.jbLoading.hide();
+            return;
+        }
+
+        // 2. Poblar Header
+        titleEl.textContent = poll.title.toUpperCase();
+        dateEl.textContent = `JORNADA DEL ${new Date(poll.created_at).toLocaleDateString('es-ES', { day: '2-digit', month: 'long', year: 'numeric' })}`;
+
+        // 3. Renderizar Votos
+        votersList.innerHTML = '';
+        const yesV = votes?.filter(v => v.vote === 'yes') || [];
+        const lateV = votes?.filter(v => v.vote === 'late') || [];
+        const noV = votes?.filter(v => v.vote === 'no') || [];
+
+        countYes.textContent = yesV.length;
+        countLate.textContent = lateV.length;
+        countNo.textContent = noV.length;
+
+        const allVotes = [...yesV, ...lateV, ...noV];
+        allVotes.forEach(vote => {
+            const player = state.players.find(p => p.user_id === vote.user_id);
+            const name = player ? player.name.toUpperCase() : 'DESCONOCIDO';
+            const icon = vote.vote === 'yes' ? '✅' : (vote.vote === 'late' ? '🕒' : '❌');
+            const color = vote.vote === 'yes' ? '#4CAF50' : (vote.vote === 'late' ? '#FF9800' : '#F44336');
+            
+            const row = document.createElement('div');
+            row.style.cssText = `display: flex; justify-content: space-between; align-items: center; padding: 8px 12px; background: rgba(255,255,255,0.02); border-radius: 6px; border: 1px solid rgba(255,255,255,0.03);`;
+            row.innerHTML = `
+                <span style="font-size: 0.75rem; font-weight: 800; color: #fff;">${name}</span>
+                <span style="color: ${color}; font-size: 0.8rem;">${icon} ${vote.vote === 'late' && vote.minutes_late ? `<small style="font-size:0.6rem;">+${vote.minutes_late}m</small>` : ''}</span>
+            `;
+            votersList.appendChild(row);
+        });
+
+        // 4. Renderizar Táctica (Si existe snapshot)
+        if (poll.final_alignment) {
+            noTactic.style.display = 'none';
+            pitchContainer.style.display = 'block';
+            
+            // Re-renderizamos en el contenedor del reporte
+            const snapshot = poll.final_alignment;
+            // Creamos un fake activeTactic para que renderPitch() lo use
+            const fakeTactic = {
+                formation: snapshot.formation,
+                assignments: snapshot.assignments,
+                customPositions: {}, // No guardamos posiciones dinámicas en el snapshot para evitar bugs
+                name: 'Snapshot Histórico'
+            };
+            
+            // Limpiar pizarra del reporte
+            Array.from(miniPitch.children).forEach(child => {
+                if (!child.classList.contains('pitch-lines')) miniPitch.removeChild(child);
+            });
+
+            const formation = FORMATIONS[fakeTactic.formation];
+            formation.forEach(slot => {
+                const slotEl = document.createElement('div');
+                slotEl.className = 'tactical-slot';
+                slotEl.style.left = `${slot.x}%`;
+                slotEl.style.top = `${slot.y}%`;
+                
+                const assignedId = fakeTactic.assignments[slot.id];
+                const player = state.players.find(p => p.id.toString() === assignedId?.toString());
+
+                if (player) {
+                    const status = votes.find(v => v.user_id === player.user_id)?.vote;
+                    if (status === 'yes') slotEl.classList.add('status-si');
+                    else if (status === 'late') slotEl.classList.add('status-late');
+                    else slotEl.classList.add('status-off');
+
+                    const avatar = AVATARS.find(av => av.id === (player.avatarId || player.avatar_id || 1));
+                    const transform = getPlayerTransform(player);
+                    
+                    slotEl.innerHTML = `
+                        <div class="player-card-fut small">
+                            <div class="player-avatar">
+                                ${player.photo_url ? `<img src="${player.photo_url}" style="transform: ${transform}">` : (avatar ? avatar.svg : '')}
+                            </div>
+                        </div>
+                    `;
+                } else {
+                    slotEl.innerHTML = `<div class="empty-slot">+</div>`;
+                }
+                miniPitch.appendChild(slotEl);
+            });
+
+        } else {
+            noTactic.style.display = 'flex';
+            pitchContainer.style.display = 'none';
+        }
+
+        overlay.style.display = 'flex';
+        window.jbLoading.hide();
+    };
+
+    // Close logic
+    document.getElementById('close-poll-detail')?.addEventListener('click', () => {
+        document.getElementById('poll-detail-overlay').style.display = 'none';
+    });
 
     // Exponer funciones globales para los onclick
     window.jbVote = (vote, minutes = 0) => votePoll(vote, minutes);
@@ -3879,14 +4024,15 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!dialog) return;
         dialog.style.display = 'flex';
 
-        const runClose = async (withAlignment = false) => {
+        const withAlignmentData = async (withAlignment) => {
             dialog.style.display = 'none';
             window.jbLoading.show('Archivando convocatoria...');
             
             // Si vamos a alinear, capturamos los votos y PREPARAMOS EL CAMPO
             if (withAlignment && state.activePoll && state.activePoll.votes) {
-                // 1. Activar Modo Alineación
+                // 1. Activar Modo Alineación y Vincular ID
                 state.alignmentMode.active = true;
+                state.alignmentMode.currentPollId = id; 
                 state.alignmentMode.voters = {};
                 state.activePoll.votes.forEach(v => {
                     if (v.user_id) state.alignmentMode.voters[v.user_id.toString()] = v.vote;

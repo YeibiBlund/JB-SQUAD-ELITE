@@ -872,8 +872,71 @@
         </div>
     </div>
 
+    <!-- Overlay de Detalle de Convocatoria Histórica (v34.0) -->
+    <div id="poll-detail-overlay" class="modal-overlay" style="display: none; z-index: 9998; padding: 15px;">
+        <div class="modal-content" style="max-width: 900px; width: 100%; height: 90vh; display: flex; flex-direction: column; padding: 0; overflow: hidden; background: linear-gradient(180deg, #111 0%, #050505 100%);">
+            
+            <!-- Header del Reporte -->
+            <div class="report-header" style="padding: 20px; border-bottom: 1px solid var(--glass-border); display: flex; justify-content: space-between; align-items: flex-start;">
+                <div>
+                    <h2 id="report-poll-title" class="gradient-text" style="font-size: 1.4rem; margin-bottom: 5px;">REPORTE DE JORNADA</h2>
+                    <p id="report-poll-date" style="font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 2px;">FECHA NO DISPONIBLE</p>
+                </div>
+                <button id="close-poll-detail" class="btn-close" style="position: static;">✕</button>
+            </div>
+
+            <!-- Cuerpo del Reporte (Scrollable) -->
+            <div class="report-body" style="flex: 1; overflow-y: auto; padding: 20px;">
+                <div class="report-layout-grid">
+                    
+                    <!-- Lado Izquierdo: Pizarra Táctica Histórica -->
+                    <div class="report-pitch-column">
+                        <h4 style="font-size: 0.7rem; color: var(--primary); margin-bottom: 15px; letter-spacing: 1px;">ALINEACIÓN UTILIZADA</h4>
+                        <div id="report-mini-pitch-container" style="background: rgba(0,0,0,0.3); border-radius: 12px; padding: 10px; border: 1px solid rgba(255,255,255,0.05);">
+                            <div id="report-mini-pitch" class="pitch-container" style="aspect-ratio: 2/3; height: auto; transform: scale(1); width: 100%;">
+                                <div class="pitch-lines">
+                                    <div class="pitch-midline"></div>
+                                    <div class="pitch-circle"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="report-no-tactic" style="display: none; height: 300px; align-items: center; justify-content: center; background: rgba(255,255,255,0.02); border: 1px dashed rgba(255,255,255,0.1); border-radius: 10px;">
+                            <p style="font-size: 0.7rem; opacity: 0.4;">Sin registro táctico para esta sesión.</p>
+                        </div>
+                    </div>
+
+                    <!-- Lado Derecho: Resultados de Asistencia -->
+                    <div class="report-votes-column">
+                        <h4 style="font-size: 0.7rem; color: var(--primary); margin-bottom: 15px; letter-spacing: 1px;">LISTA DE ASISTENCIA</h4>
+                        
+                        <div class="report-participation-summary" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 20px;">
+                            <div class="stat-pill" style="background: rgba(255,255,255,0.03); padding: 10px; border-radius: 8px; text-align: center; border: 1px solid rgba(255,255,255,0.05);">
+                                <span id="report-count-yes" style="color: #4CAF50; font-size: 1.2rem; display: block; font-weight: 900;">0</span>
+                                <label style="font-size: 0.5rem; opacity: 0.6; text-transform: uppercase;">SÍ</label>
+                            </div>
+                            <div class="stat-pill" style="background: rgba(255,255,255,0.03); padding: 10px; border-radius: 8px; text-align: center; border: 1px solid rgba(255,255,255,0.05);">
+                                <span id="report-count-late" style="color: #FF9800; font-size: 1.2rem; display: block; font-weight: 900;">0</span>
+                                <label style="font-size: 0.5rem; opacity: 0.6; text-transform: uppercase;">TARDE</label>
+                            </div>
+                            <div class="stat-pill" style="background: rgba(255,255,255,0.03); padding: 10px; border-radius: 8px; text-align: center; border: 1px solid rgba(255,255,255,0.05);">
+                                <span id="report-count-no" style="color: #F44336; font-size: 1.2rem; display: block; font-weight: 900;">0</span>
+                                <label style="font-size: 0.5rem; opacity: 0.6; text-transform: uppercase;">NO / SIN VOTO</label>
+                            </div>
+                        </div>
+
+                        <div id="report-voters-list" style="display: flex; flex-direction: column; gap: 8px;">
+                            <!-- Inyectado por JS -->
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Sistema Global de Diálogos (Confirm/Alert) -->
     <div id="jb-global-dialog" class="modal-overlay" style="display: none; z-index: 9999;">
+
         <div class="modal-content" style="max-width: 400px; text-align: center;">
             <div style="margin-bottom: 20px;">
                 <h2 id="jb-dialog-title" style="color: var(--primary); margin-bottom: 10px; font-size: 1.3rem; text-shadow: 0 0 10px var(--primary-glow);">ATENCIÓN</h2>
