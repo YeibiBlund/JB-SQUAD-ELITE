@@ -3688,61 +3688,70 @@ document.addEventListener('DOMContentLoaded', () => {
 
         activePollContainer.innerHTML = `
             <div class="poll-active-card fade-in">
-                <div class="poll-header">
-                    <div class="poll-info">
-                        <h2>${poll.title}</h2>
-                        <p>🕒 Hoy ${scheduledTime}</p>
+                <div class="poll-main-layout">
+                    <!-- Panel Izquierdo: Controles y Voto -->
+                    <div class="poll-left-side">
+                        <div class="poll-header">
+                            <div class="poll-info">
+                                <h2>${poll.title}</h2>
+                                <p>🕒 Hoy ${scheduledTime}</p>
+                            </div>
+                            ${isManagerOrCapitan ? `<button onclick="window.jbClosePoll('${poll.id}')" class="poll-status-tag open" style="cursor:pointer; border:none;">CERRAR</button>` : `<span class="poll-status-tag open">ABIERTA</span>`}
+                        </div>
+
+                        <div class="poll-vote-grid">
+                            <button class="btn-vote vote-yes ${myVote?.vote === 'yes' ? 'active' : ''}" onclick="window.jbVote('yes')">
+                                <span style="font-size: 1.5rem;">✅</span>
+                                <span>SÍ</span>
+                            </button>
+                            <button class="btn-vote vote-no ${myVote?.vote === 'no' ? 'active' : ''}" onclick="window.jbVote('no')">
+                                <span style="font-size: 1.5rem;">❌</span>
+                                <span>NO</span>
+                            </button>
+                            <button class="btn-vote vote-late ${myVote?.vote === 'late' ? 'active' : ''}" onclick="window.jbToggleLateSelector()">
+                                <span style="font-size: 1.5rem;">🕐</span>
+                                <span>TARDE</span>
+                            </button>
+
+                            <div id="late-minutes-selector" class="minutes-selector" style="${myVote?.vote === 'late' ? 'display:flex;' : 'display:none;'}">
+                                <button class="min-btn ${myVote?.minutes_late === 15 ? 'active' : ''}" onclick="window.jbVote('late', 15)">+15m</button>
+                                <button class="min-btn ${myVote?.minutes_late === 30 ? 'active' : ''}" onclick="window.jbVote('late', 30)">+30m</button>
+                                <button class="min-btn ${myVote?.minutes_late === 45 ? 'active' : ''}" onclick="window.jbVote('late', 45)">+45m</button>
+                                <button class="min-btn ${myVote?.minutes_late === 60 ? 'active' : ''}" onclick="window.jbVote('late', 60)">+1h</button>
+                            </div>
+                        </div>
+
+                        ${isManagerOrCapitan ? `
+                        <button onclick="window.jbSharePoll()" class="btn-share-wa">RE-ENVIAR A WHATSAPP</button>
+                        ` : ''}
                     </div>
-                    ${isManagerOrCapitan ? `<button onclick="window.jbClosePoll('${poll.id}')" class="poll-status-tag open" style="cursor:pointer; border:none;">CERRAR</button>` : `<span class="poll-status-tag open">ABIERTA</span>`}
-                </div>
 
-                <div class="poll-vote-grid">
-                    <button class="btn-vote vote-yes ${myVote?.vote === 'yes' ? 'active' : ''}" onclick="window.jbVote('yes')">
-                        <span style="font-size: 1.5rem;">✅</span>
-                        <span>SÍ</span>
-                    </button>
-                    <button class="btn-vote vote-no ${myVote?.vote === 'no' ? 'active' : ''}" onclick="window.jbVote('no')">
-                        <span style="font-size: 1.5rem;">❌</span>
-                        <span>NO</span>
-                    </button>
-                    <button class="btn-vote vote-late ${myVote?.vote === 'late' ? 'active' : ''}" onclick="window.jbToggleLateSelector()">
-                        <span style="font-size: 1.5rem;">🕐</span>
-                        <span>TARDE</span>
-                    </button>
-
-                    <div id="late-minutes-selector" class="minutes-selector" style="${myVote?.vote === 'late' ? 'display:flex;' : 'display:none;'}">
-                        <button class="min-btn ${myVote?.minutes_late === 15 ? 'active' : ''}" onclick="window.jbVote('late', 15)">+15m</button>
-                        <button class="min-btn ${myVote?.minutes_late === 30 ? 'active' : ''}" onclick="window.jbVote('late', 30)">+30m</button>
-                        <button class="min-btn ${myVote?.minutes_late === 45 ? 'active' : ''}" onclick="window.jbVote('late', 45)">+45m</button>
-                        <button class="min-btn ${myVote?.minutes_late === 60 ? 'active' : ''}" onclick="window.jbVote('late', 60)">+1h</button>
-                    </div>
-                </div>
-
-                <div class="poll-results-summary">
-                    <div class="results-group">
-                        <div class="results-group-title">DISPONIBLES <span>${yesVotes.length}</span></div>
-                        <div class="results-avatars-flex">
-                            ${yesVotes.map(v => renderVoterAvatar(v)).join('')}
+                    <!-- Panel Derecho: Resultados -->
+                    <div class="poll-right-side">
+                        <div class="poll-results-summary">
+                            <div class="results-group">
+                                <div class="results-group-title">DISPONIBLES <span>${yesVotes.length}</span></div>
+                                <div class="results-avatars-flex">
+                                    ${yesVotes.map(v => renderVoterAvatar(v)).join('')}
+                                </div>
+                            </div>
+                            <div class="results-group">
+                                <div class="results-group-title">LLEGAN TARDE <span>${lateVotes.length}</span></div>
+                                <div class="results-avatars-flex">
+                                    ${lateVotes.map(v => renderVoterAvatar(v)).join('')}
+                                </div>
+                            </div>
+                            <div class="results-group">
+                                <div class="results-group-title">NO PUEDEN <span>${noVotes.length}</span></div>
+                                <div class="results-avatars-flex">
+                                    ${noVotes.map(v => renderVoterAvatar(v)).join('')}
+                                </div>
+                            </div>
                         </div>
                     </div>
-                    <div class="results-group">
-                        <div class="results-group-title">LLEGAN TARDE <span>${lateVotes.length}</span></div>
-                        <div class="results-avatars-flex">
-                            ${lateVotes.map(v => renderVoterAvatar(v)).join('')}
-                        </div>
-                    </div>
-                    <div class="results-group">
-                        <div class="results-group-title">NO PUEDEN <span>${noVotes.length}</span></div>
-                        <div class="results-avatars-flex">
-                            ${noVotes.map(v => renderVoterAvatar(v)).join('')}
-                        </div>
-                    </div>
                 </div>
-                
-                ${isManagerOrCapitan ? `
-                <button onclick="window.jbSharePoll()" style="width:100%; margin-top:15px; background:rgba(37,211,102,0.1); color:#25D366; border:1px solid #25D366; padding:10px; border-radius:8px; font-weight:800; font-size:0.7rem;">RE-ENVIAR A WHATSAPP</button>
-                ` : ''}
             </div>
+        `;
         `;
 
         renderPollHistory();
