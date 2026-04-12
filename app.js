@@ -3594,7 +3594,7 @@ document.addEventListener('DOMContentLoaded', () => {
     async function fetchPollVotes(pollId) {
         const { data, error } = await supabase
             .from('availability_votes')
-            .select('*, profiles(id, full_name, avatar_url)')
+            .select('*, profiles(id, full_name, avatar_id)')
             .eq('poll_id', pollId);
 
 
@@ -3752,10 +3752,13 @@ document.addEventListener('DOMContentLoaded', () => {
         const player = vote.profiles;
         if (!player) return `<div class="voter-avatar-mini" title="Usuario desconocido">?</div>`;
         
-        const style = player.avatar_url ? `style="background-image: url('${player.avatar_url}');"` : '';
+        // El sistema JB-SQUAD usa avatar_id para referenciar el array AVATARS
+        const avatar = AVATARS.find(av => av.id === (player.avatar_id || 1)) || AVATARS[0];
         const lateLabel = vote.vote === 'late' ? `<span class="late-tag">+${vote.minutes_late}m</span>` : '';
+        
         return `
-            <div class="voter-avatar-mini" ${style} title="${player.full_name || 'Desconocido'}">
+            <div class="voter-avatar-mini" title="${player.full_name || 'Desconocido'}">
+                <div class="voter-avatar-svg-container">${avatar.svg}</div>
                 ${lateLabel}
             </div>
         `;
