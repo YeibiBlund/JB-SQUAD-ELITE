@@ -1,6 +1,10 @@
 # Changelog - JB-SQUAD
 <br>
 
+## [v31.8.2] - 2026-04-12
+### Ajustado (Layout Navbar Desktop)
+- **Alineación Vertical de Menú**: En la versión de escritorio, el grupo de botones de la barra de navegación lateral ya no se centra en el medio. Se han alineado a la parte superior (`flex-start`) aprovechando el alto completo de la pantalla, mientras que el botón de cerrar sesión (`SALIR`) ha sido empujado de manera aislada hasta la base final de la barra para evitar pulsaciones accidentales y equilibrar el diseño visual.
+
 ## [v31.8.1] - 2026-04-12
 ### Corregido (Alineación de Modales)
 - **Centrado de Diálogos Restaurado**: Solucionado un error sintáctico en `style.css` donde las propiedades Flexbox responsables de centrar los modales (`.modal-overlay`) se habían cortado y desplazado accidentalmente a otro identificador, provocando que todos los menús de diálogo aparecieran fijados en la esquina superior izquierda. Ahora todos los modales vuelven a emerger centrados armónicamente en el viewport.

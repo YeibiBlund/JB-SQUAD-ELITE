@@ -2468,9 +2468,14 @@ body.editing-tactic .tactical-slot {
 
     .bottom-nav .nav-content {
         flex-direction: column !important;
-        justify-content: center !important; /* Centrado vertical para balance premium */
+        justify-content: flex-start !important; /* Desde la parte superior */
         gap: 15px !important; /* Más juntos para cohesión */
         width: 90% !important;
+        height: 100% !important; /* Ocupar todo el contenedor vertical */
+    }
+
+    #btn-global-logout {
+        margin-top: auto !important; /* Empujar abajo del todo */
     }
 
     .nav-btn {
