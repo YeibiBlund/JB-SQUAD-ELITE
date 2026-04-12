@@ -1,6 +1,13 @@
 # Changelog - JB-SQUAD
 <br>
 
+## [v34.0.0] - 2026-04-12
+### Añadido (Historial Táctico y Convocatorias v3)
+- **Persistencia Táctica en Nube**: Trackeo activo del `currentPollId` al pasar del modo "Convocatoria" al modo "Alineación". Al exportar o guardar una táctica (`exportTacticAsImage`), la app genera un snapshot de la formación y la guarda permanentemente como JSONB (`final_alignment`) en esa jornada específica dentro de la tabla `availability_polls`.
+- **Motor de Historial Interactivo**: Integración del evento de click `jbViewPollDetail` sobre las jornadas archivadas en la pestaña "Convocatorias".
+- **Mini-Pizarra de Archivo**: Se implementa un renderizador autónomo que dibuja formaciones históricas (`report-mini-pitch`) utilizando los datos nativos de la base de datos sin afectar a la táctica actualmente activa en el sistema.
+- **Flujo Ininterrumpido**: Con esta actualización, el manager puede "Cerrar Convocatoria -> Alinear de cero -> Guardar" y disponer de un reporte táctico y de asistencias consultable de por vida.
+
 ## [v32.0.8] - 2026-04-12
 ### Mejorado (Navigation & UX)
 - **Nueva Iconografía**: Actualizado el icono de **VOTAR** en la navegación para distinguirlo visualmente de la sección de Plantilla.
