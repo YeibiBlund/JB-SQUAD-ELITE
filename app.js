@@ -1061,15 +1061,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
 
         // Botones especiales de transición
-        const btnEditMyFicha = document.getElementById('btn-edit-my-ficha');
-        if (btnEditMyFicha) {
-            btnEditMyFicha.addEventListener('click', () => {
-                if (state.userPlayer) {
-                    populatePlayerForm(state.userPlayer);
-                    switchView('add-player');
-                }
-            });
-        }
+
 
         const btnTeamMgmtShortcut = document.getElementById('btn-mgmt-team-shortcut');
         if (btnTeamMgmtShortcut) {
