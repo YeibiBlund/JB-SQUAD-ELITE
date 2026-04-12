@@ -128,6 +128,16 @@ document.addEventListener('DOMContentLoaded', () => {
     const btnAddMatch = document.getElementById('btn-add-match');
     const btnBackToSessions = document.getElementById('btn-back-to-sessions');
     const btnFinalizeSession = document.getElementById('btn-finalize-session');
+
+    // Elementos Convocatorias v31.9.0
+    const btnNewPoll = document.getElementById('btn-new-poll');
+    const newPollContainer = document.getElementById('new-poll-form-container');
+    const btnSavePoll = document.getElementById('btn-save-poll');
+    const btnCancelPoll = document.getElementById('btn-cancel-poll');
+    const activePollContainer = document.getElementById('active-poll-container');
+    const pollHistoryList = document.getElementById('polls-history-list');
+    const navPollBadge = document.getElementById('nav-poll-badge');
+
     
     // Live Match Elements
     const scoreHomeDisplay = document.getElementById('score-home');
@@ -486,20 +496,31 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function applyRolePermissions() {
-        const role = state.user.role || 'jugador';
+        if (!state.user || !state.user.role) return;
+        
+        const role = state.user.role.toLowerCase();
         const isAdmin = role === 'manager' || role === 'capitan';
         const isManager = role === 'manager';
         
-        // Elementos que solo ven Managers
-        document.querySelectorAll('[data-role-required="manager"]').forEach(el => {
-            const displayType = el.id === 'btn-mgmt-team-shortcut' ? 'flex' : 'block';
-            el.style.display = isManager ? displayType : 'none';
+        // Elementos con roles requeridos (soporta "manager,capitan")
+        document.querySelectorAll('[data-role-required]').forEach(el => {
+            const requiredRoles = el.getAttribute('data-role-required').toLowerCase().split(',');
+            const hasPermission = requiredRoles.includes(role);
+            
+            // Determinar display base
+            let displayType = 'block';
+            if (el.id === 'btn-new-poll' || el.id === 'btn-mgmt-team-shortcut' || el.classList.contains('btn-gold')) {
+                displayType = 'flex';
+            }
+            
+            el.style.display = hasPermission ? displayType : 'none';
         });
 
         // Asegurar visibilidad de botones de acción específicos (usando variables globales de scope)
         if (btnNewSession) btnNewSession.style.display = isAdmin ? 'flex' : 'none';
         if (btnAddMatch) btnAddMatch.style.display = isAdmin ? 'block' : 'none';
         if (sessionFinalizeContainer) sessionFinalizeContainer.style.display = isAdmin ? 'block' : 'none';
+        if (btnNewPoll) btnNewPoll.style.display = isAdmin ? 'flex' : 'none';
 
         // Botón "Mi Ficha" — visible para TODOS (Manager también juega)
         const btnAddPlayer = document.getElementById('btn-go-to-add-player');
@@ -1438,14 +1459,6 @@ document.addEventListener('DOMContentLoaded', () => {
         // Vaciar Equipo
         const btnEmptyTeam = document.getElementById('btn-empty-team');
     
-    // Elementos Convocatorias v31.9.0
-    const btnNewPoll = document.getElementById('btn-new-poll');
-    const newPollContainer = document.getElementById('new-poll-form-container');
-    const btnSavePoll = document.getElementById('btn-save-poll');
-    const btnCancelPoll = document.getElementById('btn-cancel-poll');
-    const activePollContainer = document.getElementById('active-poll-container');
-    const pollHistoryList = document.getElementById('polls-history-list');
-    const navPollBadge = document.getElementById('nav-poll-badge');
         if (btnEmptyTeam) {
             btnEmptyTeam.addEventListener('click', async () => {
                 const activeTactic = state.savedTactics.find(t => t.id === state.activeTacticId);
