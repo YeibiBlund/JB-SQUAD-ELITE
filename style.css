@@ -2917,6 +2917,7 @@ body.editing-tactic .tactical-slot {
         padding: 1px 4px !important;
         border-radius: 0 0 0 4px !important;
         background: rgba(0,0,0,0.85) !important;
+        color: var(--primary) !important;
         z-index: 20;
     }
 
