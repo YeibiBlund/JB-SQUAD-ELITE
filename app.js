@@ -3599,6 +3599,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
         if (error) console.error('Error votes:', error);
+        console.log(">>> [CONVOCATORIAS] Votos recuperados:", data);
         return data || [];
     }
 
@@ -3749,10 +3750,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function renderVoterAvatar(vote) {
         const player = vote.profiles;
+        if (!player) return `<div class="voter-avatar-mini" title="Usuario desconocido">?</div>`;
+        
         const style = player.avatar_url ? `style="background-image: url('${player.avatar_url}');"` : '';
         const lateLabel = vote.vote === 'late' ? `<span class="late-tag">+${vote.minutes_late}m</span>` : '';
         return `
-            <div class="voter-avatar-mini" ${style} title="${player.full_name}">
+            <div class="voter-avatar-mini" ${style} title="${player.full_name || 'Desconocido'}">
                 ${lateLabel}
             </div>
         `;
