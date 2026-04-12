@@ -1474,7 +1474,7 @@ document.addEventListener('DOMContentLoaded', () => {
         btnSavePoll?.addEventListener('click', async () => {
             const title = document.getElementById('poll-title').value.trim();
             const time = document.getElementById('poll-time').value;
-            if (!title) return window.jbToast.show('Ponle un título al evento 🏆', 'warning');
+            if (!title) return window.jbToast('Ponle un título al evento', 'warning');
             
             await createPoll(title, time);
             
@@ -3539,7 +3539,23 @@ document.addEventListener('DOMContentLoaded', () => {
         };
     }
 
-        // NUEVO: Actualizar cabecera global al instante
+    async function updateTeamCrest(base64) {
+        const { error } = await supabase
+            .from('teams')
+            .update({ crest_url: base64 })
+            .eq('id', state.team.id);
+
+        if (error) {
+            console.warn(">>> [SQL ERROR] No se pudo guardar en Supabase (falta columna crest_url). Usando LocalStorage Fallback.");
+            localStorage.setItem(`jb_crest_${state.team.id}`, base64);
+            state.team.crest_url_local = base64;
+            document.getElementById('team-crest-display').innerHTML = `<img src="${base64}" alt="Escudo">`;
+            window.jbToast('Escudo guardado localmente (Falta columna en DB)', 'info');
+        } else {
+            state.team.crest_url = base64;
+            document.getElementById('team-crest-display').innerHTML = `<img src="${base64}" alt="Escudo">`;
+            window.jbToast('¡Escudo actualizado con éxito!', 'success');
+        }
         updateTeamHeader();
     }
 
@@ -3565,10 +3581,7 @@ document.addEventListener('DOMContentLoaded', () => {
     async function fetchPollVotes(pollId) {
         const { data, error } = await supabase
             .from('availability_votes')
-            .select(`
-                *,
-                profiles:user_id (id, username, avatar_url, primary_pos)
-            `)
+            .select('*, profiles:user_id(id, username, avatar_url, primary_pos)')
             .eq('poll_id', pollId);
 
         if (error) console.error('Error votes:', error);
@@ -3595,10 +3608,10 @@ document.addEventListener('DOMContentLoaded', () => {
             .single();
 
         if (error) {
-            window.jbToast.show('Error al crear: ' + error.message, 'error');
+            window.jbToast('Error al crear: ' + error.message, 'error');
         } else {
             state.activePoll = data;
-            window.jbToast.show('¡Convocatoria creada!', 'success');
+            window.jbToast('¡Convocatoria creada!', 'success');
             sharePollWhatsApp(data);
             renderAvailabilityPanel();
         }
@@ -3618,9 +3631,9 @@ document.addEventListener('DOMContentLoaded', () => {
             }], { onConflict: 'poll_id,user_id' });
 
         if (error) {
-            window.jbToast.show('Error al votar: ' + error.message, 'error');
+            window.jbToast('Error al votar: ' + error.message, 'error');
         } else {
-            window.jbToast.show('¡Voto registrado!', 'success');
+            window.jbToast('¡Voto registrado!', 'success');
             renderAvailabilityPanel();
         }
     }
@@ -3656,7 +3669,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const lateVotes = votes.filter(v => v.vote === 'late');
         const noVotes = votes.filter(v => v.vote === 'no');
 
-        const scheduledTime = new Date(poll.scheduled_time).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        const scheduledTime = new Date(poll.scheduled_time).toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' });
 
         activePollContainer.innerHTML = `
             <div class="poll-active-card fade-in">
@@ -3712,7 +3725,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 </div>
                 
                 ${isManagerOrCapitan ? `
-                <button onclick="window.jbSharePoll('${poll.id}')" style="width:100%; margin-top:15px; background:rgba(37,211,102,0.1); color:#25D366; border:1px solid #25D366; padding:10px; border-radius:8px; font-weight:800; font-size:0.7rem;">RE-ENVIAR A WHATSAPP</button>
+                <button onclick="window.jbSharePoll()" style="width:100%; margin-top:15px; background:rgba(37,211,102,0.1); color:#25D366; border:1px solid #25D366; padding:10px; border-radius:8px; font-weight:800; font-size:0.7rem;">RE-ENVIAR A WHATSAPP</button>
                 ` : ''}
             </div>
         `;
@@ -3769,7 +3782,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const agreed = await window.jbConfirm('¿Seguro que quieres cerrar esta convocatoria? Ya no se podrán recibir más votos.');
         if (agreed) {
             await supabase.from('availability_polls').update({ status: 'closed' }).eq('id', id);
-            window.jbToast.show('Convocatoria cerrada y archivada', 'success');
+            window.jbToast('Convocatoria cerrada y archivada', 'success');
             renderAvailabilityPanel();
         }
     };
@@ -3838,9 +3851,11 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // Escuchar cambios de autenticación para activar el banner
-    const originalRenderHome = renderHome;
-    window.renderHome = async () => {
-        await originalRenderHome();
+    const originalRenderHomeDashboard = window.renderHomeDashboard || renderHomeDashboard;
+    window.renderHomeDashboard = async () => {
+        if (typeof originalRenderHomeDashboard === 'function') {
+            await originalRenderHomeDashboard();
+        }
         renderAvailabilityBanner();
         // Verificar si hay voto pendiente de enlace
         const pendingPoll = sessionStorage.getItem('pendingPollVote');
