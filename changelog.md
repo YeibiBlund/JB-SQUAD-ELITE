@@ -1,10 +1,13 @@
 # Changelog - JB-SQUAD
 <br>
 
+## [v35.0.2] - 2026-04-13 | 16:05
+### Corregido (Secuencia de Arranque)
+- **Restauración de Redirección Inteligente**: Se ha reubicado la lógica de orquestación de vista inicial (`home` vs `add-player`) dentro del flujo de autenticación modularizado.
+- **Habilitación de Funciones Globales**: Se han expuesto `switchView` y `viewPlayerProfileDetail` al objeto global `window` para permitir que el módulo `auth.js` controle la navegación tras la sincronización exitosa de datos.
+- **Cierre del Loader**: Se garantiza la ocultación del cargador ("SINCRO SERVIDOR ELITE") una vez finalizada la carga de datos del equipo.
+
 ## [v35.0.1] - 2026-04-13 | 16:00
-### Corregido (Hotfix: Ámbito Global)
-- **Resolución de Conflicto de Identificadores**: Se ha detectado una colisión entre la declaración `const supabase` del módulo de estado y el cargador global de la librería mediante CDN. Se ha migrado la inicialización al objeto `window.supabase` eliminando la declaración `const` protegida, lo que restaura el acceso universal al cliente de base de datos para todos los módulos.
-- **Estabilidad de Arranque**: Se soluciona el `TypeError` en el proceso de inicio que impedía cargar la sesión del usuario debido al fallo crítico en la carga del script de estado.
 
 ## [v35.0.0] - 2026-04-13 | 15:55
 ## [v34.1.2] - 2026-04-13 | 15:45

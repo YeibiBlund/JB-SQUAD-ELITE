@@ -218,7 +218,25 @@ async function handleUserSession(authUser) {
         if (membership) {
             window.state.team = membership.teams;
             switchAuthView('main');
-            await loadTeamData(); // Esta función se quedará en app.js o modulo de datos
+            await loadTeamData();
+            
+            // Redirección Inteligente (v35.0.2)
+            setTimeout(() => {
+                if (window.state.userPlayer) {
+                    window.switchView('home'); 
+                    window.viewPlayerProfileDetail(window.state.userPlayer.id); 
+                } else {
+                    window.switchView('add-player');
+                    console.log(">>> Usuario sin ficha. Mostrando editor...");
+                    const alertMsg = document.createElement('div');
+                    alertMsg.className = 'card-elite fade-in shadow-premium';
+                    alertMsg.style.cssText = 'position:fixed; top:20px; right:20px; z-index:9999; padding:15px; border:1px solid var(--primary); background: rgba(0,0,0,0.9);';
+                    alertMsg.innerHTML = '<p style="font-size:0.8rem; font-weight:800; color:var(--primary);">⚠️ CREA TU FICHA PARA JUGAR</p>';
+                    document.body.appendChild(alertMsg);
+                    setTimeout(() => alertMsg.remove(), 5000);
+                }
+                hideAppLoader();
+            }, 300);
         } else {
             switchAuthView('team-select');
             await fetchAvailableClubs(); 

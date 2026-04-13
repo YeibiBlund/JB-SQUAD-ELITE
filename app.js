@@ -205,7 +205,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- Lógica de Vistas ---
     // Lógica de Vistas (checkLoginState removido)
 
-    function switchView(viewId) {
+    window.switchView = function(viewId) {
         views.forEach(v => v.classList.remove('active-view'));
         const targetView = document.getElementById(`view-${viewId}`);
         if (targetView) {
@@ -2093,7 +2093,7 @@ document.addEventListener('DOMContentLoaded', () => {
         `;
     }
 
-    function viewPlayerProfileDetail(playerId) {
+    window.viewPlayerProfileDetail = function(playerId) {
         const player = state.players.find(p => p.id === playerId);
         if (!player) return;
 
