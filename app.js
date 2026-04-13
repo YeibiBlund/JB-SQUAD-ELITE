@@ -177,14 +177,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
 
-    function setupEventListeners() {
+    window.setupEventListeners = function() {
         // Mover los listeners aquí
         document.querySelectorAll('.nav-btn').forEach(btn => {
             btn.onclick = () => switchView(btn.dataset.view);
         });
     }
 
-    function renderAvatarGallery() {
+    window.renderAvatarGallery = function() {
         const gallery = document.getElementById('avatar-gallery');
         if (!gallery) return;
         gallery.innerHTML = '';
@@ -356,7 +356,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // --- Configuración de Navegación ---
-    function setupNavigation() {
+    window.setupNavigation = function() {
         navButtons.forEach(btn => {
             btn.addEventListener('click', () => {
                 const view = btn.getAttribute('data-view');
@@ -412,7 +412,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // --- Lógica de Formularios ---
-    function populatePositionSelects() {
+    window.populatePositionSelects = function() {
         const createOptions = (select) => {
             POSITIONS.forEach(pos => {
                 const opt = document.createElement('option');
@@ -426,7 +426,7 @@ document.addEventListener('DOMContentLoaded', () => {
         secondaryPosSelects.forEach(s => createOptions(s));
     }
 
-    function setupFormHandlers() {
+    window.setupFormHandlers = function() {
         // Registro del Club
         // Fichaje de Jugador (Autogestión)
         playerForm.addEventListener('submit', async (e) => {
@@ -577,7 +577,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    function setupTableSorting() {
+    window.setupTableSorting = function() {
         document.querySelectorAll('.th-sortable').forEach(th => {
             th.addEventListener('click', () => {
                 const key = th.getAttribute('data-sort');
@@ -666,7 +666,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // --- Lógica de Tácticas Múltiples ---
-    function setupTacticHandlers() {
+    window.setupTacticHandlers = function() {
         // Ir a Crear Táctica
         btnCreateTactic.addEventListener('click', () => {
             tacticasList.style.display = 'none';
@@ -1516,7 +1516,7 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     // --- LÓGICA DE JORNADAS Y PARTIDOS ---
-    function setupSessionHandlers() {
+    window.setupSessionHandlers = function() {
         btnNewSession.addEventListener('click', () => {
             const activeTactic = state.savedTactics.find(t => t.id === state.activeTacticId);
             if (sessionTacticName) {

@@ -1,5 +1,7 @@
-# Changelog - JB-SQUAD
-<br>
+## [v35.1.0] - 2026-04-13 | 16:10
+### Corregido (Interactividad de UI)
+- **Reactivación de Componentes**: Se han expuesto y vinculado nuevamente las funciones de configuración de la interfaz (`setupNavigation`, `setupEventListeners`, etc.) que habían quedado huérfanas tras la modularización.
+- **Ciclo de Vida de UI**: El módulo `js/data.js` ahora orquestra la reinicialización de los listeners de eventos inmediatamente después de cada sincronización exitosa de datos, garantizando que el Navbar, los formularios y la ordenación de tablas funcionen en todo momento.
 
 ## [v35.0.2] - 2026-04-13 | 16:05
 ### Corregido (Secuencia de Arranque)

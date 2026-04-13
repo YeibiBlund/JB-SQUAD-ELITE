@@ -75,6 +75,16 @@ async function loadTeamData() {
         if (typeof renderHomeDashboard === 'function') renderHomeDashboard();
         if (typeof renderAvailabilityBanner === 'function') renderAvailabilityBanner();
 
+        // Re-vincular componentes UI tras carga de datos
+        if (typeof populatePositionSelects === 'function') populatePositionSelects();
+        if (typeof renderAvatarGallery === 'function') renderAvatarGallery();
+        if (typeof setupNavigation === 'function') setupNavigation();
+        if (typeof setupFormHandlers === 'function') setupFormHandlers();
+        if (typeof setupTacticHandlers === 'function') setupTacticHandlers();
+        if (typeof setupSessionHandlers === 'function') setupSessionHandlers();
+        if (typeof setupTableSorting === 'function') setupTableSorting();
+        if (typeof setupEventListeners === 'function') setupEventListeners();
+
     } catch (err) {
         console.error(">>> [ERROR] loadTeamData:", err);
     }
