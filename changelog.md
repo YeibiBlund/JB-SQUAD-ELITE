@@ -1,6 +1,11 @@
 # Changelog - JB-SQUAD
 <br>
 
+## [v34.1.1] - 2026-04-13
+### Ajustado (Reporte de Convocatorias Históricas)
+- **Simplificación Visual de Titulares**: Se ha reemplazado la renderización de la *Mini-Pizarra* táctica en el modal de detalles de la convocatoria por una lista limpia y clara (`report-tactic-list`). 
+- **Explicación Técnica**: En lugar de inyectar las cartas en coordenadas porcentuales que sufrían deformaciones debido al _aspect-ratio_ anómalo de la caja, el sistema ahora lee el array de *slots* mapeado con las IDs asignadas (`snapshot.assignments`) e inyecta iterativamente los nombres, sus fotos (con fallback visual si no tienen) y un distintivo de la posición oficial en la que jugaron. Además, incluye un pequeño reborde coloreado que resume su status de asistencia (SÍ / TARDE).
+
 ## [v34.1.0] - 2026-04-12
 ### Añadido (Botones de Cierre de Jornada Nativos)
 - **Cerrar Jornada Contextual**: Implementación de botones dedicados ("ALINEAR" en Móvil y "✔️ CERRAR JORNADA" en PC) en la pizarra táctica. 

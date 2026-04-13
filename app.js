@@ -3934,7 +3934,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const countYes = document.getElementById('report-count-yes');
         const countLate = document.getElementById('report-count-late');
         const countNo = document.getElementById('report-count-no');
-        const miniPitch = document.getElementById('report-mini-pitch');
+        const tacticList = document.getElementById('report-tactic-list');
         const noTactic = document.getElementById('report-no-tactic');
         const pitchContainer = document.getElementById('report-mini-pitch-container');
 
@@ -3986,53 +3986,51 @@ document.addEventListener('DOMContentLoaded', () => {
             noTactic.style.display = 'none';
             pitchContainer.style.display = 'block';
             
-            // Re-renderizamos en el contenedor del reporte
+            // Re-renderizamos en el contenedor del reporte (Modo Lista)
             const snapshot = poll.final_alignment;
-            // Creamos un fake activeTactic para que renderPitch() lo use
-            const fakeTactic = {
-                formation: snapshot.formation,
-                assignments: snapshot.assignments,
-                customPositions: {}, // No guardamos posiciones dinámicas en el snapshot para evitar bugs
-                name: 'Snapshot Histórico'
-            };
-            
-            // Limpiar pizarra del reporte
-            Array.from(miniPitch.children).forEach(child => {
-                if (!child.classList.contains('pitch-lines')) miniPitch.removeChild(child);
-            });
-
-            const formation = FORMATIONS[fakeTactic.formation];
-            formation.forEach(slot => {
-                const slotEl = document.createElement('div');
-                slotEl.className = 'tactical-slot';
-                slotEl.style.left = `${slot.x}%`;
-                slotEl.style.top = `${slot.y}%`;
+            if (tacticList) {
+                tacticList.innerHTML = '';
                 
-                const assignedId = fakeTactic.assignments[slot.id];
-                const player = state.players.find(p => p.id.toString() === assignedId?.toString());
-
-                if (player) {
-                    const status = votes.find(v => v.user_id === player.user_id)?.vote;
-                    if (status === 'yes') slotEl.classList.add('status-si');
-                    else if (status === 'late') slotEl.classList.add('status-late');
-                    else slotEl.classList.add('status-off');
-
-                    const avatar = AVATARS.find(av => av.id === (player.avatarId || player.avatar_id || 1));
-                    const transform = getPlayerTransform(player);
-                    
-                    slotEl.innerHTML = `
-                        <div class="player-card-fut small">
-                            <div class="player-avatar">
-                                ${player.photo_url ? `<img src="${player.photo_url}" style="transform: ${transform}">` : (avatar ? avatar.svg : '')}
-                            </div>
-                        </div>
-                    `;
-                } else {
-                    slotEl.innerHTML = `<div class="empty-slot">+</div>`;
+                const formation = FORMATIONS[snapshot.formation];
+                if (formation) {
+                    formation.forEach(slot => {
+                        const assignedId = snapshot.assignments[slot.id];
+                        if (assignedId) {
+                            const player = state.players.find(p => p.id.toString() === assignedId.toString());
+                            if (player) {
+                                // Obtenemos el status para ver si jugó con badge verde o similar
+                                const status = votes?.find(v => v.user_id === player.user_id)?.vote;
+                                const statusColor = status === 'yes' ? '#4CAF50' : (status === 'late' ? '#FF9800' : 'rgba(255,255,255,0.2)');
+                                
+                                const avatar = AVATARS.find(av => av.id === (player.avatarId || player.avatar_id || 1)) || AVATARS[0];
+                                const posClass = getPositionColorClass(slot.pos) || '';
+                                
+                                const row = document.createElement('div');
+                                row.className = 'voter-row fade-in';
+                                row.style.cssText = `background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05); padding: 8px 12px; border-radius: 8px; display: flex; align-items: center; gap: 15px;`;
+                                
+                                row.innerHTML = \`
+                                    <div style="width: 38px; height: 38px; border-radius: 5px; overflow: hidden; background: #000; display: flex; align-items: center; justify-content: center; position: relative;">
+                                        \${player.photo_url ? \`<img src="\${player.photo_url}" style="width: 100%; height: 100%; object-fit: cover;">\` : \`<div style="width: 80%; height: 80%;">\${avatar.svg}</div>\`}
+                                        <div style="position: absolute; bottom: 0; left: 0; width: 100%; height: 3px; background: \${statusColor};"></div>
+                                    </div>
+                                    <div style="flex: 1; display: flex; flex-direction: column; justify-content: center;">
+                                        <span style="font-size: 0.85rem; font-weight: 800; color: #fff;">\${player.name.toUpperCase()}</span>
+                                    </div>
+                                    <div>
+                                        <span class="voter-row-pos \${posClass}" style="font-size: 0.75rem; padding: 4px 8px;">\${slot.pos}</span>
+                                    </div>
+                                \`;
+                                tacticList.appendChild(row);
+                            }
+                        }
+                    });
                 }
-                miniPitch.appendChild(slotEl);
-            });
-
+                
+                if (tacticList.children.length === 0) {
+                    tacticList.innerHTML = '<p style="font-size: 0.7rem; opacity: 0.5; text-align: center; margin-top: 20px;">Sin titulares asignados.</p>';
+                }
+            }
         } else {
             noTactic.style.display = 'flex';
             pitchContainer.style.display = 'none';

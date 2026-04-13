@@ -899,11 +899,9 @@
                     <div class="report-pitch-column">
                         <h4 style="font-size: 0.7rem; color: var(--primary); margin-bottom: 15px; letter-spacing: 1px;">ALINEACIÓN UTILIZADA</h4>
                         <div id="report-mini-pitch-container" style="background: rgba(0,0,0,0.3); border-radius: 12px; padding: 10px; border: 1px solid rgba(255,255,255,0.05);">
-                            <div id="report-mini-pitch" class="pitch-container" style="aspect-ratio: 2/3; height: auto; transform: scale(1); width: 100%;">
-                                <div class="pitch-lines">
-                                    <div class="pitch-midline"></div>
-                                    <div class="pitch-circle"></div>
-                                </div>
+                            <!-- Renderizado en formato lista para evitar deformaciones -->
+                            <div id="report-tactic-list" style="display: flex; flex-direction: column; gap: 8px; min-height: 200px;">
+                                <!-- Jugadores inyectados desde JS -->
                             </div>
                         </div>
                         <div id="report-no-tactic" style="display: none; height: 300px; align-items: center; justify-content: center; background: rgba(255,255,255,0.02); border: 1px dashed rgba(255,255,255,0.1); border-radius: 10px;">
