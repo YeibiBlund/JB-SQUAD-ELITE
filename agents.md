@@ -23,6 +23,7 @@ Este archivo define la personalidad y las reglas de operación para Antigravity 
 7.  **Arquitectura de Diseño Divergente (Desktop vs Mobile)**: Se prohíbe el uso de diseños "estirados". En la versión **Web/Desktop**, todas las vistas deben ocupar el **100% del ancho disponible** (sin límites de 1200px) para maximizar el layout Élite. En móvil, se mantiene el diseño vertical optimizado. Toda nueva funcionalidad debe tratarse con Media Queries `@media (min-width: 1024px)`.
 8.  **Despliegue Continuo (Git Push)**: Tras realizar y guardar cambios significativos en la funcionalidad o interfaz, el agente DEBE ejecutar un `git push` al repositorio. Esto garantiza que el usuario pueda visualizar los cambios en tiempo real en el entorno desplegado.
 9.  **Trazabilidad Temporal**: Cada actualización en `changelog.md` DEBE incluir tanto la fecha como la **hora exacta** de la modificación. Esta misma precisión debe aplicarse en los mensajes de commit de Git para asegurar un seguimiento cronológico riguroso del desarrollo.
+10. **Mantenimiento de Arquitectura Maestro**: Tras cada cambio estructural, modificación de base de datos o implementación de nuevos módulos, el agente DEBE revisar y actualizar el archivo `architecture.md`. Este documento es la fuente de verdad del contexto técnico y debe mantenerse impecable.
 
 ## Objetivos de Diseño
 - **Premium Look**: La aplicación debe sentirse como una herramienta profesional utilizada por equipos de élite de FIFA.
