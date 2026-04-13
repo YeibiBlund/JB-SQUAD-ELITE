@@ -448,6 +448,7 @@ document.addEventListener('DOMContentLoaded', () => {
         renderSessions();
         renderTacticsList();
         renderHomeDashboard();
+        renderAvailabilityBanner(); // Chequeo inicial de notificaciones de voto
 
         // Inicializar componentes UI
         populatePositionSelects();
@@ -1001,6 +1002,9 @@ document.addEventListener('DOMContentLoaded', () => {
         
         state.currentView = viewId;
         window.scrollTo(0, 0);
+
+        // Actualizar notificaciones de voto en el navbar en cada cambio de vista
+        renderAvailabilityBanner();
     }
 
     function handleTacticViewDisplay() {
@@ -4172,8 +4176,11 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!state.user || !state.team) return;
         
         const poll = await fetchActivePoll();
+        const pollBtn = document.querySelector('.nav-btn[data-view="convocatorias"]');
+
         if (!poll) {
             if (navPollBadge) navPollBadge.style.display = 'none';
+            if (pollBtn) pollBtn.classList.remove('nav-highlight');
             return;
         }
 
@@ -4182,27 +4189,31 @@ document.addEventListener('DOMContentLoaded', () => {
         
         if (!myVote) {
             if (navPollBadge) navPollBadge.style.display = 'block';
+            if (pollBtn) pollBtn.classList.add('nav-highlight');
             
-            // Mostrar banner flotante si aún no ha votado
-            const existingBanner = document.querySelector('.availability-banner');
-            if (!existingBanner) {
-                const banner = document.createElement('div');
-                banner.className = 'availability-banner shadow-premium';
-                banner.innerHTML = `
-                    <div style="display:flex; align-items:center; gap:10px;">
-                        <span style="font-size:1.2rem;">📋</span>
-                        <div>
-                            <p style="font-size:0.8rem; font-weight:800; margin:0;">CONVOCATORIA ABIERTA</p>
-                            <p style="font-size:0.6rem; opacity:0.8; margin:0;">${poll.title} - ${poll.scheduled_time.split('T')[1].substring(0,5)}</p>
+            // Mostrar banner flotante si aún no ha votado y estamos en Home
+            if (state.currentView === 'home') {
+                const existingBanner = document.querySelector('.availability-banner');
+                if (!existingBanner) {
+                    const banner = document.createElement('div');
+                    banner.className = 'availability-banner shadow-premium';
+                    banner.innerHTML = `
+                        <div style="display:flex; align-items:center; gap:10px;">
+                            <span style="font-size:1.2rem;">📋</span>
+                            <div>
+                                <p style="font-size:0.8rem; font-weight:800; margin:0;">CONVOCATORIA ABIERTA</p>
+                                <p style="font-size:0.6rem; opacity:0.8; margin:0;">${poll.title} - ${poll.scheduled_time.split('T')[1].substring(0,5)}</p>
+                            </div>
                         </div>
-                    </div>
-                    <button class="btn-gold" style="width:auto; padding:5px 15px; font-size:0.7rem;" onclick="this.parentElement.remove(); window.jbSwitchToPoll()">VOTAR</button>
-                `;
-                document.body.appendChild(banner);
-                window.jbSwitchToPoll = () => switchView('convocatorias');
+                        <button class="btn-gold" style="width:auto; padding:5px 15px; font-size:0.7rem;" onclick="this.parentElement.remove(); window.jbSwitchToPoll()">VOTAR NOW</button>
+                    `;
+                    document.body.appendChild(banner);
+                    window.jbSwitchToPoll = () => switchView('convocatorias');
+                }
             }
         } else {
             if (navPollBadge) navPollBadge.style.display = 'none';
+            if (pollBtn) pollBtn.classList.remove('nav-highlight');
         }
     }
 
