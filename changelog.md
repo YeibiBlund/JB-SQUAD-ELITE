@@ -1,6 +1,17 @@
 # Changelog - JB-SQUAD
 <br>
 
+## [v35.0.0] - 2026-04-13 | 15:55
+### Añadido (Arquitectura Modular Élite)
+- **Refactorización Masiva**: Se ha descompuesto el archivo monolítico `app.js` (>4,200 líneas) en un sistema de módulos independientes dentro del directorio `/js` para mejorar la mantenibilidad y escalabilidad.
+- **Nuevos Módulos**:
+  - `js/config.js`: Constantes de configuración, posiciones, alineaciones y avatares.
+  - `js/state.js`: Gestión del estado global reactivo y cliente Supabase.
+  - `js/utils.js`: Librería de utilidades, higienización e interfaz de diálogos/notificaciones (jbToast, jbConfirm).
+  - `js/auth.js`: Lógica de autenticación, gestión de sesiones y buscador de clubes.
+  - `js/data.js`: Motores de sincronización y persistencia con la nube.
+- **Explicación Técnica**: Se ha implementado un patrón de carga secuencial mediante etiquetas `<script>` en `index.html`, exponiendo las funciones críticas de renderizado (UI) al objeto global `window` en `app.js`. Esto permite que los módulos lógicos (como `data.js`) disparen actualizaciones de interfaz sin generar dependencias cíclicas complejas o requerir un empaquetador externo, preservando la compatibilidad con el despliegue actual.
+
 ## [v34.1.2] - 2026-04-13 | 15:45
 ### Añadido (Normas del Sistema)
 - **Regla de Oro #9**: Implementación de la trazabilidad temporal obligatoria. A partir de ahora, todas las entradas de cambios y mensajes de commit deben incluir la hora exacta para mejorar la auditoría del desarrollo.

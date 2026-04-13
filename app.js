@@ -3,104 +3,9 @@
 
 document.addEventListener('DOMContentLoaded', () => {
     // 1. Configuración de Datos y Estado
-    const POSITIONS = ['POR', 'DFC', 'CAD', 'CAI', 'LI', 'LD', 'MCD', 'MC', 'MVI', 'MVD', 'MD', 'MI', 'MCO', 'ED', 'EI', 'DC'];
-    
-    // 1. Funciones de Persistencia Segura e Higienización
-    function escapeHTML(str) {
-        if (!str) return '';
-        const map = {
-            '&': '&amp;',
-            '<': '&lt;',
-            '>': '&gt;',
-            '"': '&quot;',
-            "'": '&#039;'
-        };
-        return str.toString().replace(/[&<>"']/g, m => map[m]);
-    }
+    // 1. Configuración: Cargada desde js/config.js y js/state.js
+    // El objeto 'state' y 'supabase' ya están disponibles globalmente.
 
-    function getSafeStorage(key, defaultValue) {
-        const item = localStorage.getItem(key);
-        if (!item) return defaultValue;
-        try {
-            return JSON.parse(item);
-        } catch (e) {
-            // Manejo de datos antiguos (strings planos)
-            return item || defaultValue;
-        }
-    }
-
-    // Configuración de Supabase (Fuera para evitar re-inicializaciones)
-    const SUPABASE_URL = 'https://drzwawwlpsunprtfbytu.supabase.co';
-    const SUPABASE_KEY = 'sb_publishable_dJK1GrVDtroLy4zqHUwdfQ_QRIVCmi3';
-    const supabase = window.supabase ? window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY) : null;
-
-    let state = {
-        user: null,         // { profile, membership, role }
-        team: null,         // Datos del equipo actual
-        players: [],
-        savedTactics: [],
-        sessions: [],
-        activeSession: null,
-        activePoll: null, // Nuevo v31.9.0
-        activeTacticId: null,
-        currentView: 'auth',
-        isEditingPositions: false, 
-        editingPlayer: null,
-        // Contexto de alineación inteligente v33.0
-        alignmentMode: {
-            active: false,
-            voters: {}, // userId -> status ('yes', 'no', 'late')
-            currentPollId: null // ID de la encuesta vinculada a la alineación actual
-        }
-    };
-
-    const FORMATIONS = {
-        '4-4-2': [
-            { id: 'GK', pos: 'POR', x: 50, y: 92 },
-            { id: 'LD', pos: 'LD', x: 85, y: 70 }, { id: 'DFC1', pos: 'DFC', x: 62, y: 70 }, { id: 'DFC2', pos: 'DFC', x: 38, y: 70 }, { id: 'LI', pos: 'LI', x: 15, y: 70 },
-            { id: 'MD', pos: 'MD', x: 85, y: 44 }, { id: 'MC1', pos: 'MC', x: 62, y: 44 }, { id: 'MC2', pos: 'MC', x: 38, y: 44 }, { id: 'MI', pos: 'MI', x: 15, y: 44 },
-            { id: 'DC1', pos: 'DC', x: 62, y: 18 }, { id: 'DC2', pos: 'DC', x: 38, y: 18 }
-        ],
-        '4-2-3-1': [
-            { id: 'GK', pos: 'POR', x: 50, y: 92 },
-            { id: 'LD', pos: 'LD', x: 85, y: 72 }, { id: 'DFC1', pos: 'DFC', x: 62, y: 72 }, { id: 'DFC2', pos: 'DFC', x: 38, y: 72 }, { id: 'LI', pos: 'LI', x: 15, y: 72 },
-            { id: 'MCD1', pos: 'MCD', x: 65, y: 55 }, { id: 'MCD2', pos: 'MCD', x: 35, y: 55 },
-            { id: 'MD', pos: 'MD', x: 85, y: 36 }, { id: 'MCO', pos: 'MCO', x: 50, y: 36 }, { id: 'MI', pos: 'MI', x: 15, y: 36 },
-            { id: 'DC', pos: 'DC', x: 50, y: 16 }
-        ],
-        '3-5-2': [
-            { id: 'GK', pos: 'POR', x: 50, y: 92 },
-            { id: 'DFC1', pos: 'DFC', x: 75, y: 68 }, { id: 'DFC2', pos: 'DFC', x: 50, y: 68 }, { id: 'DFC3', pos: 'DFC', x: 25, y: 68 },
-            { id: 'MCD1', pos: 'MCD', x: 68, y: 51 }, { id: 'MCD2', pos: 'MCD', x: 32, y: 51 },
-            { id: 'MD', pos: 'MD', x: 86, y: 34 }, { id: 'MC', pos: 'MC', x: 50, y: 36 }, { id: 'MI', pos: 'MI', x: 14, y: 34 },
-            { id: 'DC1', pos: 'DC', x: 62, y: 15 }, { id: 'DC2', pos: 'DC', x: 38, y: 15 }
-        ],
-        '3-4-1-2': [
-            { id: 'GK', pos: 'POR', x: 50, y: 92 },
-            { id: 'DFC1', pos: 'DFC', x: 75, y: 72 }, { id: 'DFC2', pos: 'DFC', x: 50, y: 72 }, { id: 'DFC3', pos: 'DFC', x: 25, y: 72 },
-            { id: 'MD', pos: 'MD', x: 86, y: 51 }, { id: 'MC1', pos: 'MC', x: 62, y: 51 }, { id: 'MC2', pos: 'MC', x: 38, y: 51 }, { id: 'MI', pos: 'MI', x: 14, y: 51 },
-            { id: 'MCO', pos: 'MCO', x: 50, y: 32 },
-            { id: 'DC1', pos: 'DC', x: 62, y: 14 }, { id: 'DC2', pos: 'DC', x: 38, y: 14 }
-        ],
-        '3-1-4-2': [
-            { id: 'GK', pos: 'POR', x: 50, y: 92 },
-            { id: 'DFC1', pos: 'DFC', x: 75, y: 78 }, { id: 'DFC2', pos: 'DFC', x: 50, y: 78 }, { id: 'DFC3', pos: 'DFC', x: 25, y: 78 },
-            { id: 'MCD', pos: 'MCD', x: 50, y: 62 },
-            { id: 'MD', pos: 'MD', x: 86, y: 44 }, { id: 'MC1', pos: 'MC', x: 65, y: 44 }, { id: 'MC2', pos: 'MC', x: 35, y: 44 }, { id: 'MI', pos: 'MI', x: 14, y: 44 },
-            { id: 'DC1', pos: 'DC', x: 62, y: 16 }, { id: 'DC2', pos: 'DC', x: 38, y: 16 }
-        ]
-    };
-
-    const AVATARS = [
-        { id: 1, svg: `<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 2C6.48 2 2 6.48 2 12C2 17.52 6.48 22 12 22C17.52 22 22 17.52 22 12C22 6.48 17.52 2 12 2ZM12 6C13.66 6 15 7.34 15 9C15 10.66 13.66 12 12 12C10.34 12 9 10.66 9 9C9 7.34 10.34 6 12 6ZM12 20C9.11 20 6.57 18.52 5.12 16.32C5.16 14.04 8.72 12.8 12 12.8C15.26 12.8 18.84 14.04 18.88 16.32C17.43 18.52 14.89 20 12 20Z" fill="#F0A500"/></svg>` },
-        { id: 2, svg: `<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 12C14.21 12 16 10.21 16 8C16 5.79 14.21 4 12 4C9.79 4 8 5.79 8 8C8 10.21 9.79 12 12 12ZM12 14C9.33 14 4 15.34 4 18V20H20V18C20 15.34 14.67 14 12 14Z" fill="#F0A500"/></svg>` },
-        { id: 3, svg: `<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 2C6.48 2 2 6.48 2 12C2 17.52 6.48 22 12 22C17.52 22 22 17.52 22 12C22 6.48 17.52 2 12 2ZM12 5C13.66 5 15 6.34 15 8C15 9.66 13.66 11 12 11C10.34 11 9 9.66 9 8C9 6.34 10.34 5 12 5ZM12 19.2C9.5 19.2 7.29 17.92 6 15.98C6.03 13.99 10 12.9 12 12.9C13.99 12.9 17.97 13.99 18 15.98C16.71 17.92 14.5 19.2 12 19.2Z" fill="#FCA500"/></svg>` },
-        { id: 4, svg: `<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 14C15.3137 14 18 11.3137 18 8C18 4.68629 15.3137 2 12 2C8.68629 2 6 4.68629 6 8C6 11.3137 8.68629 14 12 14Z" fill="#F0A500"/><path d="M12 16C7.99 16 0 18.01 0 22V24H24V22C24 18.01 16.01 16 12 16Z" fill="#F0A500"/></svg>` },
-        { id: 5, svg: `<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 2C13.1 2 14 2.9 14 4C14 5.1 13.1 6 12 6C10.9 6 10 5.1 10 4C10 2.9 10.9 2 12 2ZM12 8C15.33 8 22 9.67 22 13V18H20V22H18V18H16V22H14V18H10V22H8V18H6V22H4V18H2V13C2 9.67 8.67 8 12 8Z" fill="#F0A500"/></svg>` },
-        { id: 6, svg: `<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 2C6.48 2 2 6.48 2 12C2 17.52 6.48 22 12 22C17.52 22 22 17.52 22 12C22 6.48 17.52 2 12 2ZM12 4C13.1 4 14 4.9 14 6C14 7.1 13.1 8 12 8C10.9 8 10 7.1 10 6C10 4.9 10.9 4 12 4ZM12 20C9.11 20 6.57 18.52 5.12 16.32C5.16 14.04 8.72 12.8 12 12.8C15.26 12.8 18.84 14.04 18.88 16.32C17.43 18.52 14.89 20 12 20Z" fill="#F0A500"/></svg>` },
-        { id: 7, svg: `<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="8" r="4" fill="#F0A500"/><path d="M20 19C20 16.24 16.42 14 12 14C7.58 14 4 16.24 4 19V20H20V19Z" fill="#F0A500"/></svg>` },
-        { id: 8, svg: `<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 2C6.48 2 2 6.48 2 12C2 17.52 6.48 22 12 22C17.52 22 22 17.52 22 12C22 6.48 17.52 2 12 2ZM12 6C13.66 6 15 7.34 15 9C15 10.66 13.66 12 12 12C10.34 12 9 10.66 9 9C9 7.34 10.34 6 12 6ZM12 20C9.11 20 6.57 18.52 5.12 16.32C5.16 14.04 8.72 12.8 12 12.8C15.26 12.8 18.84 14.04 18.88 16.32C17.43 18.52 14.89 20 12 20Z" fill="#B8860B"/></svg>` }
-    ];
 
     // 2. Elementos del DOM
     const views = document.querySelectorAll('.view');
@@ -202,34 +107,23 @@ document.addEventListener('DOMContentLoaded', () => {
     let selectedGoalScorerId = null;
     let selectedAssistantId = null;
 
-    // 3. Inicialización
+    // 3. Inicialización (Estado migrado a js/state.js)
     init();
-
-    let isHandlingSession = false; 
 
     async function init() {
         if (!supabase) return;
-
-        console.log(">>> [BOOT v3.0] Iniciando arranque limpio...");
-        
-        // 1. Obtener sesión actual síncronamente nada más cargar
+        console.log(">>> [BOOT v3.0] Iniciando arranque...");
         const { data: { session } } = await supabase.auth.getSession();
         
         if (session) {
-            console.log(">>> [BOOT v3.0] Sesión detectada en arranque.");
             await handleUserSession(session.user);
         } else {
-            console.log(">>> [BOOT v3.0] Sin sesión. Mostrando login.");
             switchAuthView('auth');
             hideAppLoader();
         }
 
-        // 2. Configurar escuchador solo para CAMBIOS futuros (LOGIN manual / LOGOUT / EXPIRACIÓN)
         supabase.auth.onAuthStateChange(async (event, session) => {
-            console.log(">>> [EVENTO AUTH]:", event);
-            
             if (event === 'SIGNED_IN' && !state.user) {
-                // Solo si no estamos ya procesándolo
                 if (session) await handleUserSession(session.user);
             } else if (event === 'SIGNED_OUT') {
                 state.user = null;
@@ -241,271 +135,9 @@ document.addEventListener('DOMContentLoaded', () => {
         setupAuthHandlers();
     }
 
-    async function handleUserSession(authUser) {
-        if (isHandlingSession) return;
-        isHandlingSession = true;
 
-        try {
-            // Limpiamos logs para no mostrar emails internos
-            const username = authUser.user_metadata?.full_name || authUser.email.split('@')[0];
-            console.log(">>> Entrando como:", username.toUpperCase());
-            
-            // 1. Perfil
-            let { data: profile } = await supabase.from('profiles').select('*').eq('id', authUser.id).maybeSingle();
-            
-            if (!profile) {
-                const { data: newProfile, error: insErr } = await supabase.from('profiles').insert({ 
-                    id: authUser.id, 
-                    full_name: username 
-                }).select().maybeSingle();
-                
-                if (insErr && insErr.code === '23505') {
-                    let { data: retryProfile } = await supabase.from('profiles').select('*').eq('id', authUser.id).maybeSingle();
-                    profile = retryProfile;
-                } else {
-                    profile = newProfile;
-                }
-            }
-            
-            // 2. Membresía
-            let { data: membership } = await supabase.from('memberships').select('*, teams(*)').eq('user_id', authUser.id).maybeSingle();
-            
-            state.user = { 
-                auth: authUser,
-                profile: profile,
-                membership: membership,
-                role: membership ? membership.role : null 
-            };
 
-            if (membership) {
-                console.log(">>> [BOOT] Equipo detectado. Sincronizando datos del club...");
-                state.team = membership.teams;
-                state.user.role = membership.role;
-                switchAuthView('main'); // <--- CRÍTICO: Oculta el login y muestra la app
-                await loadTeamData();
-            } else {
-                console.log(">>> [BOOT] Usuario sin club. Redirigiendo a Selección de Equipo...");
-                switchAuthView('team-select');
-                await fetchAvailableClubs(); 
-                hideAppLoader();
-            }
-        } catch (err) {
-            console.error(">>> Error de sesión:", err);
-        } finally {
-            // No resetear inmediatamente para evitar bucles de carga
-            setTimeout(() => { isHandlingSession = false; }, 2000);
-        }
-    }
-
-    async function fetchAvailableClubs() {
-        const listContainer = document.getElementById('available-clubs-list');
-        if (!listContainer) return;
-
-        console.log(">>> Cargando explorador de clubes...");
-        const { data: teams, error } = await supabase.from('teams').select('*').order('created_at', { ascending: false }).limit(20);
-
-        if (error) {
-            console.error(">>> Error cargando clubes:", error);
-            listContainer.innerHTML = `<p style="color: #ff4d4d; font-size: 0.8rem; text-align: center;">Error: ${error.message}</p>`;
-            return;
-        }
-
-        if (!teams || teams.length === 0) {
-            listContainer.innerHTML = `<p style="color: var(--text-muted); font-size: 0.8rem; text-align: center; padding: 20px;">No hay clubes registrados aún.</p>`;
-            return;
-        }
-
-        renderClubBrowser(teams);
-    }
-
-    function renderClubBrowser(teams) {
-        const listContainer = document.getElementById('available-clubs-list');
-        listContainer.innerHTML = '';
-
-        teams.forEach(team => {
-            const card = document.createElement('div');
-            card.className = 'card-elite';
-            card.style.cssText = `padding: 15px; display: flex; justify-content: space-between; align-items: center; background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05); transition: 0.3s; margin-bottom: 8px;`;
-            card.innerHTML = `<div><h4 style="margin-bottom: 4px; font-size: 0.95rem; color: #fff;">${escapeHTML(team.name)}</h4><p style="font-size: 0.7rem; color: var(--text-muted);">Fundado el ${new Date(team.created_at).toLocaleDateString()}</p></div><button class="join-btn btn-gold" style="padding: 8px 16px; font-size: 0.75rem; min-width: 80px;">UNIRSE</button>`;
-
-            const joinBtn = card.querySelector('.join-btn');
-            joinBtn.onclick = async () => {
-                const confirmed = await window.jbConfirm(`¿Quieres solicitar unirte al club ${team.name.toUpperCase()}?`);
-                if (confirmed) {
-                    joinBtn.disabled = true;
-                    joinBtn.textContent = '...';
-                    const { error: mErr } = await supabase.from('memberships').insert({ user_id: state.user.auth.id, team_id: team.id, role: 'jugador' });
-                    if (mErr) {
-                        window.jbToast('Error al unirse: ' + mErr.message, 'error');
-                        joinBtn.disabled = false;
-                        joinBtn.textContent = 'UNIRSE';
-                    } else {
-                        window.jbToast(`¡Bienvenido a ${team.name}!`, 'success');
-                        // Forzamos recarga para sincronizar sesión con membresía nueva
-                        setTimeout(() => window.location.reload(), 1500);
-                    }
-                }
-            };
-            listContainer.appendChild(card);
-        });
-    }
-
-    function hideAppLoader() {
-        const loader = document.getElementById('app-loader');
-        if (loader) {
-            loader.classList.add('loader-hidden');
-            // Eliminar del DOM tras la transición para liberar memoria
-            setTimeout(() => loader.remove(), 1000);
-        }
-    }
-
-    async function loadTeamData() {
-        console.log(">>> [BOOT v4.3.0] Iniciando sincronización élite...");
-        if (!state.team) return;
-
-        // Cargar Jugadores del Equipo
-        const { data: dbPlayers } = await supabase.from('players').select('*').eq('team_id', state.team.id);
-        if (dbPlayers) state.players = dbPlayers.map(p => ({
-            id: p.id,
-            user_id: p.user_id, // Sincronizado
-            name: p.name,
-            consoleID: p.console_id,
-            avatarID: p.avatar_id,
-            primaryPos: p.primary_pos,
-            secondaryPos: p.secondary_pos,
-            dorsal: p.dorsal,
-            photo_url: p.photo_url,
-            photo_scale: p.photo_scale,
-            photo_x: p.photo_x,
-            photo_y: p.photo_y,
-            stats: p.stats // Ahora stats es el objeto completo de la DB
-        }));
-
-        // Cargar Sesiones
-        const { data: dbSessions } = await supabase.from('sessions').select('*').eq('team_id', state.team.id);
-        if (dbSessions) {
-            state.sessions = dbSessions.filter(s => s.status === 'closed').map(s => ({
-                id: s.id,
-                date: s.date,
-                status: s.status,
-                mvpId: s.mvp_id,
-                matches: s.matches
-            }));
-            const active = dbSessions.find(s => s.status === 'active');
-            state.activeSession = active ? {
-                id: active.id,
-                date: active.date,
-                status: active.status,
-                mvpId: active.mvp_id,
-                matches: active.matches
-            } : null;
-        }
-
-        // Cargar Tácticas
-        const { data: dbTactics } = await supabase.from('tactics').select('*').eq('team_id', state.team.id);
-        if (dbTactics) state.savedTactics = dbTactics.map(t => ({
-            id: t.id,
-            name: t.name,
-            formation: t.formation,
-            assignments: t.assignments,
-            customPositions: t.custom_positions || {},
-            isActive: t.is_active
-        }));
-
-        // Detectar mi ficha (AUTOGESTIÓN)
-        state.userPlayer = state.players.find(p => p.user_id === state.user.auth.id);
-        
-        if (state.userPlayer) {
-            // Auto-rellenar formulario si ya existe ficha
-            document.getElementById('playerName').value = state.userPlayer.name || '';
-            document.getElementById('consoleID').value = state.userPlayer.consoleID || '';
-            document.getElementById('dorsal').value = state.userPlayer.dorsal || '';
-            
-            // Cargar preferencias de diseño si existen
-            if (state.userPlayer.photo_scale) {
-                const scaleEl = document.getElementById('photoScale');
-                const xEl = document.getElementById('photoX');
-                const yEl = document.getElementById('photoY');
-                
-                if (scaleEl) {
-                    scaleEl.value = state.userPlayer.photo_scale;
-                    document.getElementById('photo-scale-value').textContent = state.userPlayer.photo_scale.toFixed(2);
-                }
-                if (xEl) {
-                    xEl.value = state.userPlayer.photo_x || 0;
-                    document.getElementById('photo-x-value').textContent = state.userPlayer.photo_x || 0;
-                }
-                if (yEl) {
-                    yEl.value = state.userPlayer.photo_y || 0;
-                    document.getElementById('photo-y-value').textContent = state.userPlayer.photo_y || 0;
-                }
-            }
-        }
-        
-        updateTeamHeader();
-        applyRolePermissions(); // Restaurado: Aplica visibilidad de botones según rol
-        renderPlayers();
-        renderSessions();
-        renderTacticsList();
-        renderHomeDashboard();
-        renderAvailabilityBanner(); // Chequeo inicial de notificaciones de voto
-
-        // Inicializar componentes UI
-        populatePositionSelects();
-        renderAvatarGallery();
-        setupNavigation();
-        setupFormHandlers();
-        setupTacticHandlers();
-        setupSessionHandlers();
-        setupTableSorting();
-        
-        // Setup Eventos Globales
-        setupEventListeners();
-
-        // Redirección Inteligente (v22.2.0)
-        setTimeout(() => {
-            if (state.userPlayer) {
-                switchView('home'); // Prioridad al Dashboard para usuarios registrados
-                viewPlayerProfileDetail(state.userPlayer.id); 
-            } else {
-                switchView('add-player'); // Flujo de bienvenida para nuevos registros
-                console.log(">>> Usuario sin ficha. Mostrando editor...");
-                const alertMsg = document.createElement('div');
-                alertMsg.className = 'card-elite fade-in shadow-premium';
-                alertMsg.style.cssText = 'position:fixed; top:20px; right:20px; z-index:9999; padding:15px; border:1px solid var(--primary); background: rgba(0,0,0,0.9);';
-                alertMsg.innerHTML = '<p style="font-size:0.8rem; font-weight:800; color:var(--primary);">⚠️ CREA TU FICHA PARA JUGAR</p>';
-                document.body.appendChild(alertMsg);
-                setTimeout(() => alertMsg.remove(), 5000);
-            }
-            console.log(">>> [BOOT v4.3.0] Aterrizaje final ejecutado. Ocultando loader...");
-            hideAppLoader();
-        }, 300); // Un poco más de margen para asegurar renderizado suave
-    }
-
-    function switchAuthView(viewName) {
-        const authView = document.getElementById('view-auth');
-        const teamSelect = document.getElementById('view-team-select');
-        const mainApp = document.getElementById('main-app');
-
-        // Reset all views to hidden
-        if (authView) authView.style.setProperty('display', 'none', 'important');
-        if (teamSelect) teamSelect.style.setProperty('display', 'none', 'important');
-        if (mainApp) mainApp.style.setProperty('display', 'none', 'important');
-
-        // Show the target view
-        if (viewName === 'auth' && authView) {
-            console.log("Mostrando Auth View");
-            authView.style.setProperty('display', 'flex', 'important');
-        } else if (viewName === 'team-select' && teamSelect) {
-            console.log("Mostrando Team Select View");
-            teamSelect.style.setProperty('display', 'flex', 'important');
-        } else if (viewName === 'main' && mainApp) {
-            console.log("Mostrando Main App View");
-            mainApp.style.setProperty('display', 'block', 'important');
-        }
-    }
-
-    function applyRolePermissions() {
+    window.applyRolePermissions = function() {
         if (!state.user || !state.user.role) return;
         
         const role = state.user.role.toLowerCase();
@@ -543,384 +175,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    function setupAuthHandlers() {
-        const loginForm = document.getElementById('login-form');
-        const regForm = document.getElementById('register-form');
-        const tabs = document.querySelectorAll('.auth-tab');
 
-        tabs.forEach(tab => {
-            tab.onclick = () => {
-                tabs.forEach(t => t.classList.remove('active'));
-                tab.classList.add('active');
-                if (tab.dataset.tab === 'login') {
-                    loginForm.style.display = 'block';
-                    regForm.style.display = 'none';
-                } else {
-                    loginForm.style.display = 'none';
-                    regForm.style.display = 'block';
-                }
-            };
-        });
-
-    loginForm.onsubmit = async (e) => {
-        e.preventDefault();
-        const submitBtn = loginForm.querySelector('button[type="submit"]');
-        const originalText = submitBtn.textContent;
-        submitBtn.disabled = true;
-        submitBtn.textContent = 'Entrando...';
-
-        const username = document.getElementById('login-username').value.trim();
-        const pass = document.getElementById('login-password').value;
-        const email = `${username.toLowerCase()}@jb.club`;
-        
-        const { error } = await supabase.auth.signInWithPassword({ email, password: pass });
-        
-        if (error) {
-            submitBtn.disabled = false;
-            submitBtn.textContent = originalText;
-            if (error.message.includes('Email not confirmed')) {
-                window.jbToast('Debes desactivar "Confirmación de Email" en tu Panel de Supabase (Authentication -> Providers -> Email).', 'error', 6000);
-            } else {
-                window.jbToast('Error al entrar: ' + error.message, 'error');
-            }
-        }
-    };
-
-    regForm.onsubmit = async (e) => {
-        e.preventDefault();
-        const usernameInput = document.getElementById('reg-username');
-        const username = usernameInput.value.trim();
-        
-        if (username.includes('@')) {
-            window.jbToast('El nombre de usuario no puede contener el símbolo "@". Usa solo texto o números.', 'error');
-            return;
-        }
-
-        const submitBtn = regForm.querySelector('button[type="submit"]');
-        const originalText = submitBtn.textContent;
-        submitBtn.disabled = true;
-        submitBtn.textContent = 'Creando Cuenta...';
-
-        const pass = document.getElementById('reg-password').value;
-        const email = `${username.toLowerCase()}@jb.club`;
-        
-        const { data, error } = await supabase.auth.signUp({ 
-            email, 
-            password: pass,
-            options: { data: { full_name: username } }
-        });
-
-        if (error) {
-            submitBtn.disabled = false;
-            submitBtn.textContent = originalText;
-            window.jbToast('Error en el registro: ' + error.message, 'error');
-            return;
-        }
-        
-        if (data.user) {
-            await supabase.from('profiles').insert({ id: data.user.id, full_name: username });
-            window.jbToast('¡Cuenta creada con éxito! Iniciando sesión...', 'success');
-            // Tras registrarse, el login es automático por Supabase, 
-            // así que onAuthStateChange se encargará del resto.
-        }
-    };
-
-    document.getElementById('create-team-form').onsubmit = async (e) => {
-        e.preventDefault();
-        const submitBtn = e.target.querySelector('button');
-        submitBtn.disabled = true;
-        submitBtn.textContent = 'Fundando Club...';
-
-        const teamName = document.getElementById('new-team-name').value.trim();
-        if (!state.user?.auth) { window.jbToast('Sesión no encontrada.', 'error'); return; }
-
-        const { data: team, error: tErr } = await supabase.from('teams').insert({ 
-            name: teamName, 
-            owner_id: state.user.auth.id 
-        }).select().single();
-
-        if (tErr) {
-            submitBtn.disabled = false;
-            submitBtn.textContent = 'Fundar Ahora';
-            window.jbToast('Error al crear equipo: ' + tErr.message, 'error');
-            return;
-        }
-
-        console.log(">>> Equipo creado, insertando membresía MANAGER...");
-        const { error: mErr } = await supabase.from('memberships').insert({
-            user_id: state.user.auth.id,
-            team_id: team.id,
-            role: 'manager'
-        });
-
-        if (mErr) {
-            submitBtn.disabled = false;
-            submitBtn.textContent = 'Fundar Ahora';
-            window.jbToast('Error al asignar rol de Manager: ' + mErr.message, 'error');
-            return;
-        }
-
-        window.jbToast(`¡Club ${teamName} fundado con éxito! Bienvenido, Manager.`, 'success');
-        await handleUserSession(state.user.auth);
-    };
-
-    document.getElementById('join-team-form').onsubmit = async (e) => {
-        e.preventDefault();
-        const submitBtn = e.target.querySelector('button');
-        const searchQuery = document.getElementById('search-team-name').value.trim();
-        
-        submitBtn.disabled = true;
-        submitBtn.textContent = 'Buscando...';
-
-        // 1. Buscar equipo por nombre (case-insensitive)
-        const { data: teams, error } = await supabase.from('teams')
-            .select('*')
-            .ilike('name', searchQuery);
-
-        if (error || !teams.length) {
-            submitBtn.disabled = false;
-            submitBtn.textContent = 'Buscar y Solicitar';
-            window.jbToast('No se ha encontrado ningún club con ese nombre.', 'error');
-            return;
-        }
-
-        const targetTeam = teams[0];
-        const confirmJoin = await window.jbConfirm(`¿Quieres unirte a ${targetTeam.name.toUpperCase()}?`);
-        
-        if (confirmJoin) {
-            const { error: mErr } = await supabase.from('memberships').insert({
-                user_id: state.user.auth.id,
-                team_id: targetTeam.id,
-                role: 'jugador' // Por defecto entra como jugador
-            });
-
-            if (mErr) {
-                window.jbToast('Error al unirte: ' + mErr.message, 'error');
-            } else {
-                window.jbToast(`¡Solicitud aceptada! Ya eres miembro de ${targetTeam.name}.`, 'success');
-                // Forzamos recarga para sincronizar sesión con membresía nueva
-                setTimeout(() => window.location.reload(), 1500);
-            }
-        }
-        
-        submitBtn.disabled = false;
-        submitBtn.textContent = 'Buscar y Solicitar';
-    };
-
-        const handleLogout = async () => {
-            const ok = await window.jbConfirm("¿Estás seguro de que deseas cerrar la sesión actual?");
-            if (ok) supabase.auth.signOut();
-        };
-
-        document.getElementById('btn-global-logout').onclick = handleLogout;
-        const btnProfileLogout = document.getElementById('btn-profile-logout');
-        if (btnProfileLogout) btnProfileLogout.onclick = handleLogout;
-        document.getElementById('btn-logout-temp').onclick = handleLogout;
-    }
-
-    async function migrateToCloud() {
-        showLoadingState(true);
-        const localP = JSON.parse(localStorage.getItem('jb_players')) || [];
-        const localS = JSON.parse(localStorage.getItem('jb_sessions')) || [];
-        const localA = JSON.parse(localStorage.getItem('jb_active_session')) || [];
-        const localT = JSON.parse(localStorage.getItem('jb_tactics')) || [];
-        
-        // Subir Jugadores
-        for(let p of localP) {
-            await supabase.from('players').upsert({
-                id: p.id.toString().length < 20 ? undefined : p.id, // Supabase prefiere UUID, si es viejo lo dejamos que genere uno o lo ignoramos
-                name: p.name,
-                console_id: p.consoleID,
-                avatar_id: p.avatarID,
-                primary_pos: p.primaryPos,
-                secondary_pos: p.secondaryPos,
-                dorsal: p.dorsal,
-                stats: { official: p.stats?.official || p.official, friendly: p.stats?.friendly || p.friendly }
-            });
-        }
-        
-        // Subir Sesiones
-        const sessionsToMigrate = [...localS];
-        if (localA && localA.id) sessionsToMigrate.push(localA);
-        
-        for(let s of sessionsToMigrate) {
-            await supabase.from('sessions').upsert({
-                date: s.date,
-                status: s.status || 'closed',
-                matches: s.matches,
-                mvp_id: s.mvpId
-            });
-        }
-        
-        window.jbToast('Migración Completada con Éxito.', 'success');
-        await loadTeamData();
-    }
-
-    async function saveTacticsCloud() {
-        if (!supabase) return;
-        
-        // Preparar datos para upsert (v19.0.0 incluye custom_positions)
-        const tacticsToSave = state.savedTactics.map(t => ({
-            id: t.id,
-            name: t.name,
-            formation: t.formation,
-            assignments: t.assignments,
-            custom_positions: t.customPositions || {},
-            team_id: state.team.id,
-            is_active: t.id === state.activeTacticId
-        }));
-
-        const { error } = await supabase.from('tactics').upsert(tacticsToSave);
-        if (error) console.error('Error guardando tácticas:', error.message);
-    }
-
-    async function saveTeamCloud() {
-        if (!supabase) return;
-        await supabase.from('team_config').upsert({
-            id: 1,
-            name: state.team.name,
-            manager_name: state.team.manager
-        });
-    }
-
-    async function savePlayerCloud(player) {
-        if (!supabase || !state.team) return;
-        try {
-            const payload = {
-                team_id: state.team.id,
-                name: player.name,
-                console_id: player.consoleID,
-                avatar_id: player.avatarID,
-                primary_pos: player.primaryPos,
-                secondary_pos: player.secondaryPos,
-                dorsal: player.dorsal,
-                photo_url: player.photo_url,
-                photo_scale: player.photo_scale,
-                photo_x: player.photo_x,
-                photo_y: player.photo_y,
-                stats: player.stats || { official: { goals: 0, assists: 0, matches: 0 }, friendly: { goals: 0, assists: 0, matches: 0 } }
-            };
-
-            let result;
-            if (typeof player.id === 'string' && player.id.includes('-')) {
-                // UPDATE Directo: Menos propenso a recursión en RLS que upsert
-                result = await supabase.from('players').update(payload).eq('id', player.id).select();
-            } else {
-                // INSERT Directo
-                result = await supabase.from('players').insert(payload).select();
-            }
-
-            if (result.error) throw result.error;
-            if (result.data && result.data[0]) player.id = result.data[0].id;
-        } catch (err) {
-            console.error(">>> [ERROR] savePlayerCloud:", err.message);
-        }
-    }
-
-    async function saveSessionCloud(session) {
-        if (!supabase || !state.team) return;
-        try {
-            const payload = {
-                team_id: state.team.id,
-                date: session.date,
-                status: session.status,
-                matches: session.matches,
-                mvp_id: session.mvpId
-            };
-
-            let result;
-            if (typeof session.id === 'string' && session.id.includes('-')) {
-                result = await supabase.from('sessions').update(payload).eq('id', session.id).select();
-            } else {
-                result = await supabase.from('sessions').insert(payload).select();
-            }
-
-            if (result.error) throw result.error;
-            if (result.data && result.data[0]) {
-                const newUuid = result.data[0].id;
-                session.id = newUuid;
-                if (state.activeSession && (state.activeSession === session || state.activeSession.date === session.date)) {
-                    state.activeSession.id = newUuid;
-                }
-            }
-        } catch (err) {
-            console.error(">>> [ERROR] saveSessionCloud:", err.message);
-        }
-    }
-
-    async function saveTacticsCloud() {
-        if (!supabase || !state.team) return;
-        
-        for (let t of state.savedTactics) {
-            // Asegurar que el ID sea un string (UUID) para evitar el error 400
-            const payload = {
-                team_id: state.team.id,
-                name: t.name,
-                formation: t.formation,
-                assignments: t.assignments || {},
-                custom_positions: t.customPositions || {},
-                is_active: t.isActive || false
-            };
-
-            // Solo incluimos el ID si es un UUID válido (no un timestamp de Date.now())
-            if (typeof t.id === 'string' && t.id.length > 15) {
-                payload.id = t.id;
-            }
-
-            const { data, error } = await supabase.from('tactics').upsert(payload).select();
-            
-            if (error) {
-                console.error("Error al guardar táctica:", error);
-            } else if (data && data.length > 0 && typeof t.id !== 'string') {
-                // Si era una táctica nueva, actualizamos el ID local con el generado por el servidor
-                t.id = data[0].id;
-            }
-        }
-    }
-
-
-    async function deleteSessionCloud(sessionId) {
-        if (!supabase) return;
-        await supabase.from('sessions').delete().eq('id', sessionId);
-    }
-
-    async function deleteTacticCloud(tacticId) {
-        if (!supabase || !state.team) return;
-        try {
-            const { error } = await supabase.from('tactics').delete().eq('id', tacticId);
-            if (error) throw error;
-        } catch (err) {
-            console.error(">>> [ERROR] deleteTacticCloud:", err.message);
-            window.jbToast('Error al eliminar de la nube: ' + err.message, 'error');
-        }
-    }
-
-    async function setActiveTacticInDB(tacticId) {
-        if (!supabase || !state.team) return;
-        try {
-            // 1. Desactivar todas las del equipo
-            await supabase.from('tactics')
-                .update({ is_active: false })
-                .eq('team_id', state.team.id);
-
-            // 2. Activar la seleccionada
-            const { error } = await supabase.from('tactics')
-                .update({ is_active: true })
-                .eq('id', tacticId);
-
-            if (error) throw error;
-
-            // 3. Actualizar estado local
-            state.savedTactics.forEach(t => {
-                t.isActive = (t.id === tacticId);
-            });
-            state.activeTacticId = tacticId;
-            
-        } catch (err) {
-            console.error(">>> [ERROR] setActiveTacticInDB:", err.message);
-            window.jbToast('Error al activar táctica:', 'error');
-        }
-    }
 
     function setupEventListeners() {
         // Mover los listeners aquí
@@ -1070,7 +325,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    function updateTeamHeader() {
+    window.updateTeamHeader = function() {
         const teamNameLabel = document.getElementById('display-team-name');
         const userWelcome = document.getElementById('display-username'); // O el ID que corresponda
         const userNameHeader = document.getElementById('display-user-name');
@@ -1283,15 +538,6 @@ document.addEventListener('DOMContentLoaded', () => {
     let currentPhotoBase64 = null; // Variable temporal para la carga
 
     // --- Renderizado de Jugadores y Tabla ---
-    function getPositionColorClass(pos) {
-        if (!pos) return 'pos-gk'; // default
-        const p = pos.toUpperCase();
-        if (p === 'POR') return 'pos-gk';
-        if (['DFC', 'LI', 'LD', 'CAD', 'CAI'].includes(p)) return 'pos-def';
-        if (['MCD', 'MC', 'MCO', 'MI', 'MD', 'MVI', 'MVD'].includes(p)) return 'pos-mid';
-        if (['DC', 'ED', 'EI', 'SD', 'EXT'].includes(p)) return 'pos-fwd';
-        return 'pos-gk';
-    }
 
     function sortPlayersData(playersArray) {
         const positionOrder = ['POR', 'DFC', 'LD', 'LI', 'CAD', 'CAI', 'MCD', 'MC', 'MVI', 'MVD', 'MCO', 'EI', 'ED', 'DC'];
@@ -1356,7 +602,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    function renderPlayers() {
+    window.renderPlayers = function() {
         playerList.innerHTML = '';
         
         if (state.players.length === 0) {
@@ -1671,7 +917,7 @@ document.addEventListener('DOMContentLoaded', () => {
         mBtnSaveTactic?.addEventListener('click', () => btnSaveTactic?.click());
     }
 
-    function renderTacticsList() {
+    window.renderTacticsList = function() {
         savedTacticsList.innerHTML = '';
         
         if (state.savedTactics.length === 0) {
@@ -2232,112 +1478,6 @@ document.addEventListener('DOMContentLoaded', () => {
         renderPitch(); // Re-renderizará el campo y el banquillo actualizado
     }
 
-    // --- Funciones Globales ---
-    window.jbConfirm = (message) => {
-        return new Promise((resolve) => {
-            const dialog = document.getElementById('jb-global-dialog');
-            const msgEl = document.getElementById('jb-dialog-message');
-            const btnConfirm = document.getElementById('jb-dialog-btn-confirm');
-            const btnCancel = document.getElementById('jb-dialog-btn-cancel');
-
-            msgEl.innerText = message;
-            dialog.style.display = 'flex';
-
-            const closeDialog = (result) => {
-                dialog.style.display = 'none';
-                btnConfirm.onclick = null;
-                btnCancel.onclick = null;
-                resolve(result);
-            };
-
-            btnConfirm.onclick = () => closeDialog(true);
-            btnCancel.onclick = () => closeDialog(false);
-        });
-    };
-
-    // --- SISTEMA DE TOASTS PREMIUM (v21.0.0) ---
-    // Tipos: 'success', 'error', 'info'
-    window.jbToast = (message, type = 'info', duration = 3500) => {
-        const container = document.getElementById('jb-toast-container');
-        if (!container) return;
-
-        const icons = { success: '✅', error: '❌', info: '💡' };
-        const titles = { success: 'ÉXITO', error: 'ERROR', info: 'INFO' };
-
-        const toast = document.createElement('div');
-        toast.className = `jb-toast toast-${type}`;
-        toast.innerHTML = `
-            <div class="jb-toast-icon">${icons[type] || icons.info}</div>
-            <div class="jb-toast-body">
-                <div class="jb-toast-title">${titles[type] || titles.info}</div>
-                <div class="jb-toast-message">${escapeHTML(message)}</div>
-            </div>
-            <div class="jb-toast-progress" style="animation-duration: ${duration}ms;"></div>
-        `;
-
-        // Clic para cerrar manualmente
-        toast.onclick = () => dismissToast(toast);
-
-        container.appendChild(toast);
-
-        // Auto-dismiss
-        const timer = setTimeout(() => dismissToast(toast), duration);
-        toast._timer = timer;
-    };
-
-    function dismissToast(toast) {
-        if (toast._dismissed) return;
-        toast._dismissed = true;
-        clearTimeout(toast._timer);
-        toast.classList.add('toast-exit');
-        setTimeout(() => toast.remove(), 400);
-    }
-
-    // --- jbAlert: Reemplazo del alert() nativo (v21.0.0) ---
-    // Usa el mismo diálogo global pero oculta el botón cancelar
-    window.jbAlert = (message) => {
-        return new Promise((resolve) => {
-            const dialog = document.getElementById('jb-global-dialog');
-            const msgEl = document.getElementById('jb-dialog-message');
-            const btnConfirm = document.getElementById('jb-dialog-btn-confirm');
-            const btnCancel = document.getElementById('jb-dialog-btn-cancel');
-
-            msgEl.innerText = message;
-            btnCancel.style.display = 'none';
-            btnConfirm.textContent = 'ACEPTAR';
-            dialog.style.display = 'flex';
-
-            const closeDialog = () => {
-                dialog.style.display = 'none';
-                btnCancel.style.display = '';
-                btnConfirm.textContent = 'CONFIRMAR';
-                btnConfirm.onclick = null;
-                resolve();
-            };
-
-            btnConfirm.onclick = () => closeDialog();
-        });
-    };
-
-    // --- LOADING OVERLAY (v21.0.0) ---
-    let loadingTimeout = null;
-    window.jbLoading = {
-        show: (text = 'Sincronizando...') => {
-            const overlay = document.getElementById('jb-loading-overlay');
-            if (!overlay) return;
-            const textEl = overlay.querySelector('.jb-loading-text');
-            if (textEl) textEl.textContent = text;
-            overlay.classList.add('active');
-            // Safety timeout: ocultar tras 15s por si la operación falla silenciosamente
-            clearTimeout(loadingTimeout);
-            loadingTimeout = setTimeout(() => window.jbLoading.hide(), 15000);
-        },
-        hide: () => {
-            clearTimeout(loadingTimeout);
-            const overlay = document.getElementById('jb-loading-overlay');
-            if (overlay) overlay.classList.remove('active');
-        }
-    };
 
     window.confirmDelete = async (id) => {
         const player = state.players.find(p => p.id === id);
@@ -2469,7 +1609,7 @@ document.addEventListener('DOMContentLoaded', () => {
         btnSaveGoal.addEventListener('click', () => saveGoalEvent());
     }
 
-    function renderSessions() {
+    window.renderSessions = function() {
         sessionsList.innerHTML = '';
         if (state.sessions.length === 0 && !state.activeSession) {
             sessionsList.innerHTML = `
@@ -2913,21 +2053,9 @@ document.addEventListener('DOMContentLoaded', () => {
         switchView('jornadas');
     }
 
-    function getPlayerNameById(id) {
-        if (!id) return '';
-        const p = state.players.find(p => p.id == id);
-        return p ? p.name.split(' ')[0].toUpperCase() : '';
-    }
 
     // --- FUNCIONES DE PERFIL ELITE ---
 
-    function getPlayerTransform(player) {
-        if (!player) return 'scale(1)';
-        const s = player.photo_scale || 1.0;
-        const x = player.photo_x || 0;
-        const y = player.photo_y || 0;
-        return `translate(${x}px, ${y}px) scale(${s})`;
-    }
 
     function updatePlayerPreview() {
         const previewContainer = document.getElementById('live-player-preview');
@@ -3131,7 +2259,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
 
-    function renderHomeDashboard() {
+    window.renderHomeDashboard = function() {
         const totalPlayersEl = document.getElementById('stats-total-players');
         const totalSessionsEl = document.getElementById('stats-total-sessions');
         const assistsListEl = document.getElementById('home-top-assists-list');
@@ -4172,7 +3300,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    async function renderAvailabilityBanner() {
+    window.renderAvailabilityBanner = async function() {
         if (!state.user || !state.team) return;
         
         const poll = await fetchActivePoll();

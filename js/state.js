@@ -1,0 +1,29 @@
+/**
+ * JB-SQUAD ELITE: Estado Global y Configuración de Supabase
+ */
+
+// Configuración de Supabase
+const SUPABASE_URL = 'https://drzwawwlpsunprtfbytu.supabase.co';
+const SUPABASE_KEY = 'sb_publishable_dJK1GrVDtroLy4zqHUwdfQ_QRIVCmi3';
+const supabase = window.supabase ? window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY) : null;
+
+// Estado Global de la Aplicación
+window.state = {
+    user: null,         // { auth, profile, membership, role }
+    team: null,         // Datos del equipo actual
+    players: [],
+    savedTactics: [],
+    sessions: [],
+    activeSession: null,
+    activePoll: null, 
+    activeTacticId: null,
+    currentView: 'auth',
+    isEditingPositions: false, 
+    editingPlayer: null,
+    // Contexto de alineación inteligente
+    alignmentMode: {
+        active: false,
+        voters: {}, // userId -> status ('yes', 'no', 'late')
+        currentPollId: null 
+    }
+};
