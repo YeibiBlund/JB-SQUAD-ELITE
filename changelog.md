@@ -1,9 +1,9 @@
-## [v35.1.0] - 2026-04-13 | 16:10
-### Corregido (Interactividad de UI)
-- **Reactivación de Componentes**: Se han expuesto y vinculado nuevamente las funciones de configuración de la interfaz (`setupNavigation`, `setupEventListeners`, etc.) que habían quedado huérfanas tras la modularización.
-- **Ciclo de Vida de UI**: El módulo `js/data.js` ahora orquestra la reinicialización de los listeners de eventos inmediatamente después de cada sincronización exitosa de datos, garantizando que el Navbar, los formularios y la ordenación de tablas funcionen en todo momento.
+## [v35.1.1] - 2026-04-13 | 19:59
+### Corregido (Persistencia de Datos)
+- **Restauración de Operaciones Cloud**: Se han recuperado e integrado en `js/data.js` las funciones críticas que fueron omitidas durante la modularización inicial: `deleteTacticCloud`, `deleteSessionCloud`, `setActiveTacticInDB` y `saveTeamCloud`.
+- **Eliminación de ReferenceErrors**: Se garantiza que las llamadas desde la interfaz para borrar tácticas o jornadas se resuelven correctamente contra el cliente de Supabase.
 
-## [v35.0.2] - 2026-04-13 | 16:05
+## [v35.1.0] - 2026-04-13 | 16:10
 ### Corregido (Secuencia de Arranque)
 - **Restauración de Redirección Inteligente**: Se ha reubicado la lógica de orquestación de vista inicial (`home` vs `add-player`) dentro del flujo de autenticación modularizado.
 - **Habilitación de Funciones Globales**: Se han expuesto `switchView` y `viewPlayerProfileDetail` al objeto global `window` para permitir que el módulo `auth.js` controle la navegación tras la sincronización exitosa de datos.

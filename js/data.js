@@ -160,9 +160,72 @@ async function saveSessionCloud(session) {
             await supabase.from('sessions').update(payload).eq('id', session.id);
         } else {
             const { data } = await supabase.from('sessions').insert(payload).select();
-            if (data && data[0]) session.id = data[0].id;
         }
     } catch (err) {
         console.error(">>> [ERROR] saveSessionCloud:", err.message);
     }
+}
+
+/**
+ * Elimina una sesión de juego en Supabase.
+ */
+async function deleteSessionCloud(sessionId) {
+    if (!supabase) return;
+    await supabase.from('sessions').delete().eq('id', sessionId);
+}
+
+/**
+ * Elimina una táctica en Supabase.
+ */
+async function deleteTacticCloud(tacticId) {
+    if (!supabase || !state.team) return;
+    try {
+        const { error } = await supabase.from('tactics').delete().eq('id', tacticId);
+        if (error) throw error;
+    } catch (err) {
+        console.error(">>> [ERROR] deleteTacticCloud:", err.message);
+        window.jbToast('Error al eliminar de la nube: ' + err.message, 'error');
+    }
+}
+
+/**
+ * Marca una táctica como activa para el equipo en Supabase.
+ */
+async function setActiveTacticInDB(tacticId) {
+    if (!supabase || !state.team) return;
+    try {
+        // 1. Desactivar todas las del equipo
+        await supabase.from('tactics')
+            .update({ is_active: false })
+            .eq('team_id', state.team.id);
+
+        // 2. Activar la seleccionada
+        const { error } = await supabase.from('tactics')
+            .update({ is_active: true })
+            .eq('id', tacticId);
+
+        if (error) throw error;
+
+        // 3. Actualizar estado local
+        state.savedTactics.forEach(t => {
+            t.isActive = (t.id === tacticId);
+        });
+        state.activeTacticId = tacticId;
+        
+    } catch (err) {
+        console.error(">>> [ERROR] setActiveTacticInDB:", err.message);
+        window.jbToast('Error al activar táctica:', 'error');
+    }
+}
+
+/**
+ * Guarda/Actualiza la configuración del equipo.
+ */
+async function saveTeamCloud() {
+    if (!supabase || !state.team) return;
+    await supabase.from('teams').upsert({
+        id: state.team.id,
+        name: state.team.name,
+        manager_name: state.team.manager_name
+    });
 }
