@@ -4044,12 +4044,21 @@ document.addEventListener('DOMContentLoaded', () => {
                     const confirmed = await window.jbConfirm('¿Borrar esta jornada histórica de forma permanente?');
                     if (confirmed) {
                         window.jbLoading.show('Eliminando historial...');
-                        const { error: delErr } = await supabase.from('availability_polls').delete().eq('id', id);
+                        
+                        // 1. Borramos los votos huérfanos primero para evitar errores de Foreign Key Constraint si existen.
+                        await supabase.from('availability_votes').delete().eq('poll_id', id);
+
+                        // 2. Intentamos borrar la poll y forzamos a que nos devuelva la fila borrada (.select())
+                        const { data: delData, error: delErr } = await supabase.from('availability_polls').delete().eq('id', id).select();
                         window.jbLoading.hide();
+                        
                         if (delErr) {
-                            window.jbToast('Error: ' + delErr.message, 'error');
+                            window.jbToast('Error de Base de Datos: ' + delErr.message, 'error');
+                        } else if (!delData || delData.length === 0) {
+                            // Supabase RLS lo ha bloqueado en silencio.
+                            window.jbToast('Bloqueo de Seguridad RLS: Debes habilitar el DELETE en Supabase.', 'error');
                         } else {
-                            window.jbToast('Historial eliminado', 'success');
+                            window.jbToast('Historial eliminado con éxito', 'success');
                             overlay.style.display = 'none';
                             renderPollHistory();
                         }
