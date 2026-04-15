@@ -4269,4 +4269,19 @@ body.editing-tactic .tactical-slot {
     color: #000;
 }
 
+/* --- Ajuste de Tamaño Calendario Desktop v36.3 --- */
+@media (min-width: 1024px) {
+    #profile-attendance-container {
+        max-width: 450px;
+        margin: 2rem auto 0 auto;
+        padding: 20px !important;
+    }
+    .calendar-day {
+        font-size: 0.75rem;
+    }
+    .calendar-header {
+        margin-bottom: 15px;
+    }
+}
+
 
