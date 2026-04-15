@@ -3518,6 +3518,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (dateString === todayStr) cell.classList.add('today');
                 if (dayVote) cell.classList.add(`day-${dayVote}`);
                 
+                cell.textContent = d;
+                grid.appendChild(cell);
+            }
+
             // 6. Calcular y Renderizar Totales Mensuales (Solo Desktop)
             const statsList = document.getElementById('calendar-details-list');
             if (statsList) {
