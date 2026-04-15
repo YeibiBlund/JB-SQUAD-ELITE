@@ -335,6 +335,29 @@
                         </table>
                     </div>
                 </div>
+                
+                <!-- CALENDARIO DE ASISTENCIA (v36.3) -->
+                <div id="profile-attendance-container" class="card-elite fade-in" style="margin-top: 2rem; padding: 25px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                        <h2 style="font-size: 1.1rem; border-left: 3px solid var(--primary); padding-left: 15px;">HISTORIAL <span class="gradient-text">ASISTENCIA</span></h2>
+                        <div class="calendar-nav" style="display: flex; gap: 15px; align-items: center;">
+                            <button id="calendar-prev" class="btn-cal-nav">←</button>
+                            <span id="calendar-month-label" style="font-size: 0.8rem; font-weight: 800; text-transform: uppercase; min-width: 120px; text-align: center;">MES AÑO</span>
+                            <button id="calendar-next" class="btn-cal-nav">→</button>
+                        </div>
+                    </div>
+                    <div id="calendar-grid-header" class="calendar-grid-header">
+                        <span>L</span><span>M</span><span>X</span><span>J</span><span>V</span><span>S</span><span>D</span>
+                    </div>
+                    <div id="calendar-days-grid" class="calendar-days-grid">
+                        <!-- Inyectado dinámicamente -->
+                    </div>
+                    <div class="calendar-legend" style="margin-top: 20px; display: flex; gap: 15px; font-size: 0.6rem; opacity: 0.6; justify-content: center;">
+                        <div style="display:flex; align-items:center; gap:5px;"><span style="width:8px; height:8px; background:var(--success); border-radius:50%;"></span> DISPONIBLE</div>
+                        <div style="display:flex; align-items:center; gap:5px;"><span style="width:8px; height:8px; background:var(--primary); border-radius:50%;"></span> TARDE</div>
+                        <div style="display:flex; align-items:center; gap:5px;"><span style="width:8px; height:8px; background:var(--error); border-radius:50%;"></span> AUSENTE</div>
+                    </div>
+                </div>
 
                 <!-- Botón Salir (Solo Movil) -->
                 <div class="mobile-logout-container">

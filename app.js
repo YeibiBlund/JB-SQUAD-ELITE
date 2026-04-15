@@ -99,6 +99,30 @@ document.addEventListener('DOMContentLoaded', () => {
     const playerSelector = document.getElementById('player-selector-overlay');
     const selectorList = document.getElementById('selector-player-list');
 
+    // 2.1 Estado del Calendario (v36.3)
+    let currentCalendarDate = new Date();
+    
+    // Listeners para Navegación del Calendario
+    const btnCalPrev = document.getElementById('calendar-prev');
+    const btnCalNext = document.getElementById('calendar-next');
+    
+    if (btnCalPrev) {
+        btnCalPrev.onclick = () => {
+            currentCalendarDate.setMonth(currentCalendarDate.getMonth() - 1);
+            if (state.viewingPlayerForCalendar) {
+                window.renderPlayerCalendar(state.viewingPlayerForCalendar);
+            }
+        };
+    }
+    if (btnCalNext) {
+        btnCalNext.onclick = () => {
+            currentCalendarDate.setMonth(currentCalendarDate.getMonth() + 1);
+            if (state.viewingPlayerForCalendar) {
+                window.renderPlayerCalendar(state.viewingPlayerForCalendar);
+            }
+        };
+    }
+
     let activeSlotId = null;
     let draggedSourceSlotId = null;
     let sortConfig = { key: 'primaryPos', desc: false };
@@ -2175,6 +2199,11 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         renderPlayerStats(player);
+        
+        // Cargar Calendario (v36.3)
+        state.viewingPlayerForCalendar = player;
+        currentCalendarDate = new Date(); // Resetear al mes actual al abrir nuevo perfil
+        window.renderPlayerCalendar(player);
     }
 
     function populatePlayerForm(player) {
@@ -3410,6 +3439,92 @@ document.addEventListener('DOMContentLoaded', () => {
         if (pendingPoll) {
             sessionStorage.removeItem('pendingPollVote');
             switchView('convocatorias');
+        }
+    };
+
+    // --- CALENDARIO DE ASISTENCIA ELITE v36.3 ---
+    window.renderPlayerCalendar = async (player) => {
+        const grid = document.getElementById('calendar-days-grid');
+        const label = document.getElementById('calendar-month-label');
+        if (!grid || !player) return;
+
+        const year = currentCalendarDate.getFullYear();
+        const month = currentCalendarDate.getMonth();
+        
+        // 1. Mostrar Mes/Año
+        const monthNames = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"];
+        label.textContent = `${monthNames[month]} ${year}`;
+
+        // 2. Limpiar Grid y Mostrar Cargando
+        grid.innerHTML = '<div style="grid-column: span 7; padding: 20px; text-align: center; opacity: 0.4; font-size: 0.7rem;">Cargando historial...</div>';
+
+        if (!player.user_id) {
+            grid.innerHTML = '<div style="grid-column: span 7; padding: 20px; text-align: center; opacity: 0.4; font-size: 0.7rem;">Este jugador no tiene un Usuario vinculado.</div>';
+            return;
+        }
+
+        try {
+            // 3. Obtener Votos del Jugador con fecha de la encuesta
+            const { data: votes, error } = await supabase
+                .from('availability_votes')
+                .select(`
+                    vote,
+                    availability_polls (
+                        created_at
+                    )
+                `)
+                .eq('user_id', player.user_id);
+
+            if (error) throw error;
+
+            // 4. Mapear Votos por Fecha (Solo el primero por día)
+            const attendanceMap = new Map();
+            if (votes) {
+                const sortedVotes = votes
+                    .filter(v => v.availability_polls) 
+                    .sort((a, b) => 
+                        new Date(a.availability_polls.created_at) - new Date(b.availability_polls.created_at)
+                    );
+                
+                sortedVotes.forEach(v => {
+                    const dateStr = new Date(v.availability_polls.created_at).toDateString();
+                    if (!attendanceMap.has(dateStr)) {
+                        attendanceMap.set(dateStr, v.vote);
+                    }
+                });
+            }
+
+            // 5. Generar Grid del Calendario
+            grid.innerHTML = '';
+            const firstDay = new Date(year, month, 1).getDay();
+            const daysInMonth = new Date(year, month + 1, 0).getDate();
+            const offset = (firstDay === 0) ? 6 : firstDay - 1;
+
+            for (let i = 0; i < offset; i++) {
+                const empty = document.createElement('div');
+                empty.className = 'calendar-day';
+                grid.appendChild(empty);
+            }
+
+            const todayStr = new Date().toDateString();
+            for (let d = 1; d <= daysInMonth; d++) {
+                const dateObj = new Date(year, month, d);
+                const dateString = dateObj.toDateString();
+                const dayVote = attendanceMap.get(dateString);
+                
+                const cell = document.createElement('div');
+                cell.className = 'calendar-day has-date';
+                
+                if (dateString === todayStr) cell.classList.add('today');
+                if (dayVote) cell.classList.add(`day-${dayVote}`);
+                
+                cell.textContent = d;
+                grid.appendChild(cell);
+            }
+
+        } catch (err) {
+            console.error(">>> [CALENDARIO] Error:", err);
+            grid.innerHTML = '<div style="grid-column: span 7; padding: 20px; text-align: center; color: var(--error);">Error al cargar historial</div>';
         }
     };
 

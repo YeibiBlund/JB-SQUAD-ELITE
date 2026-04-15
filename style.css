@@ -4141,4 +4141,85 @@ body.editing-tactic .tactical-slot {
     background: var(--primary);
 }
 
+/* --- Calendario de Asistencia Elite v36.3 --- */
+.calendar-grid-header {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 5px;
+    text-align: center;
+    font-size: 0.65rem;
+    font-weight: 800;
+    color: var(--text-muted);
+    margin-bottom: 10px;
+}
+
+.calendar-days-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 5px;
+}
+
+.calendar-day {
+    aspect-ratio: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.75rem;
+    border-radius: 6px;
+    background: rgba(255,255,255,0.02);
+    border: 1px solid rgba(255,255,255,0.05);
+    transition: var(--transition);
+    color: rgba(255,255,255,0.3);
+}
+
+.calendar-day.has-date {
+    color: var(--text-main);
+}
+
+.calendar-day.today {
+    border-color: var(--primary);
+    background: rgba(240, 165, 0, 0.1);
+}
+
+.calendar-day.day-yes {
+    background: rgba(76, 175, 80, 0.2);
+    border-color: var(--success);
+    color: var(--success);
+    font-weight: 900;
+    box-shadow: inset 0 0 10px rgba(76, 175, 80, 0.1);
+}
+
+.calendar-day.day-late {
+    background: rgba(255, 152, 0, 0.2);
+    border-color: var(--primary);
+    color: var(--primary);
+    font-weight: 900;
+}
+
+.calendar-day.day-no {
+    background: rgba(244, 67, 54, 0.2);
+    border-color: var(--error);
+    color: var(--error);
+    font-weight: 900;
+}
+
+.btn-cal-nav {
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.1);
+    color: #fff;
+    width: 30px;
+    height: 30px;
+    border-radius: 6px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: var(--transition);
+}
+
+.btn-cal-nav:hover {
+    background: var(--primary);
+    color: #000;
+}
+
 
