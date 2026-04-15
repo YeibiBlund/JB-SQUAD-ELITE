@@ -338,24 +338,34 @@
                 
                 <!-- CALENDARIO DE ASISTENCIA (v36.3) -->
                 <div id="profile-attendance-container" class="card-elite fade-in" style="margin-top: 2rem; padding: 25px;">
-                    <div class="calendar-header">
-                        <h2 class="calendar-title">HISTORIAL <span class="gradient-text">ASISTENCIA</span></h2>
-                        <div class="calendar-nav">
-                            <button id="calendar-prev" class="btn-cal-nav">←</button>
-                            <span id="calendar-month-label">MES AÑO</span>
-                            <button id="calendar-next" class="btn-cal-nav">→</button>
+                    <div class="attendance-dual-layout">
+                        <!-- LADO IZQUIERDO: Calendario -->
+                        <div class="attendance-cal-column">
+                            <div class="calendar-header">
+                                <h2 class="calendar-title">HISTORIAL <span class="gradient-text">ASISTENCIA</span></h2>
+                                <div class="calendar-nav">
+                                    <button id="calendar-prev" class="btn-cal-nav">←</button>
+                                    <span id="calendar-month-label">MES AÑO</span>
+                                    <button id="calendar-next" class="btn-cal-nav">→</button>
+                                </div>
+                            </div>
+                            <div id="calendar-grid-header" class="calendar-grid-header">
+                                <span>L</span><span>M</span><span>X</span><span>J</span><span>V</span><span>S</span><span>D</span>
+                            </div>
+                            <div id="calendar-days-grid" class="calendar-days-grid">
+                                <!-- Inyectado dinámicamente -->
+                            </div>
+                            <div class="calendar-legend" style="margin-top: 20px; display: flex; gap: 15px; font-size: 0.6rem; opacity: 0.4; justify-content: center;">
+                                <div style="display:flex; align-items:center; gap:5px;"><span style="width:8px; height:8px; background:var(--success); border-radius:50%;"></span> DISPONIBLE</div>
+                                <div style="display:flex; align-items:center; gap:5px;"><span style="width:8px; height:8px; background:var(--primary); border-radius:50%;"></span> TARDE</div>
+                                <div style="display:flex; align-items:center; gap:5px;"><span style="width:8px; height:8px; background:var(--error); border-radius:50%;"></span> AUSENTE</div>
+                            </div>
                         </div>
-                    </div>
-                    <div id="calendar-grid-header" class="calendar-grid-header">
-                        <span>L</span><span>M</span><span>X</span><span>J</span><span>V</span><span>S</span><span>D</span>
-                    </div>
-                    <div id="calendar-days-grid" class="calendar-days-grid">
-                        <!-- Inyectado dinámicamente -->
-                    </div>
-                    <div class="calendar-legend" style="margin-top: 20px; display: flex; gap: 15px; font-size: 0.6rem; opacity: 0.6; justify-content: center;">
-                        <div style="display:flex; align-items:center; gap:5px;"><span style="width:8px; height:8px; background:var(--success); border-radius:50%;"></span> DISPONIBLE</div>
-                        <div style="display:flex; align-items:center; gap:5px;"><span style="width:8px; height:8px; background:var(--primary); border-radius:50%;"></span> TARDE</div>
-                        <div style="display:flex; align-items:center; gap:5px;"><span style="width:8px; height:8px; background:var(--error); border-radius:50%;"></span> AUSENTE</div>
+
+                        <!-- LADO DERECHO: Resumen Mensual (Solo Desktop) -->
+                        <div id="calendar-details-list" class="attendance-stats-column">
+                            <!-- Inyectado por JS -->
+                        </div>
                     </div>
                 </div>
 

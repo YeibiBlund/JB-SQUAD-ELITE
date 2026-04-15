@@ -3518,8 +3518,36 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (dateString === todayStr) cell.classList.add('today');
                 if (dayVote) cell.classList.add(`day-${dayVote}`);
                 
-                cell.textContent = d;
-                grid.appendChild(cell);
+            // 6. Calcular y Renderizar Totales Mensuales (Solo Desktop)
+            const statsList = document.getElementById('calendar-details-list');
+            if (statsList) {
+                let monthlyYes = 0, monthlyLate = 0, monthlyNo = 0;
+                
+                // Recorrer el mapa de asistencia y contar solo los de este mes/año
+                attendanceMap.forEach((vote, dateStr) => {
+                    const d = new Date(dateStr);
+                    if (d.getFullYear() === year && d.getMonth() === month) {
+                        if (vote === 'yes') monthlyYes++;
+                        else if (vote === 'late') monthlyLate++;
+                        else if (vote === 'no') monthlyNo++;
+                    }
+                });
+
+                statsList.innerHTML = `
+                    <h3 style="font-size: 0.8rem; letter-spacing: 1px; margin-bottom: 20px; color: var(--primary);">RESUMEN <span style="color:#fff;">${monthNames[month].toUpperCase()}</span></h3>
+                    <div class="month-stat-card">
+                        <span class="label">Disponibles (SÍ)</span>
+                        <span class="value" style="color: var(--success);">${monthlyYes}</span>
+                    </div>
+                    <div class="month-stat-card">
+                        <span class="label">Llegaron Tarde</span>
+                        <span class="value" style="color: var(--primary);">${monthlyLate}</span>
+                    </div>
+                    <div class="month-stat-card">
+                        <span class="label">Ausentes (NO)</span>
+                        <span class="value" style="color: var(--error);">${monthlyNo}</span>
+                    </div>
+                `;
             }
 
         } catch (err) {

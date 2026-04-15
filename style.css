@@ -4269,18 +4269,52 @@ body.editing-tactic .tactical-slot {
     color: #000;
 }
 
-/* --- Ajuste de Tamaño Calendario Desktop v36.3 --- */
+/* --- Ajuste de Diseño Dual Asistencia v36.4 --- */
 @media (min-width: 1024px) {
     #profile-attendance-container {
-        max-width: 450px;
-        margin: 2rem auto 0 auto;
-        padding: 20px !important;
+        max-width: 950px;
+        margin: 2rem auto;
+        padding: 30px !important;
     }
-    .calendar-day {
-        font-size: 0.75rem;
+    .attendance-dual-layout {
+        display: grid;
+        grid-template-columns: 1.2fr 0.8fr;
+        gap: 40px;
+        align-items: start;
     }
-    .calendar-header {
-        margin-bottom: 15px;
+    .attendance-stats-column {
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+        padding: 20px;
+        background: rgba(255,255,255,0.01);
+        border-radius: 16px;
+        border: 1px solid rgba(255,255,255,0.03);
+    }
+    .month-stat-card {
+        background: rgba(255,255,255,0.03);
+        border-radius: 12px;
+        padding: 15px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border: 1px solid rgba(255,255,255,0.05);
+    }
+    .month-stat-card .label {
+        font-size: 0.7rem;
+        font-weight: 800;
+        text-transform: uppercase;
+        color: var(--text-muted);
+    }
+    .month-stat-card .value {
+        font-size: 1.5rem;
+        font-weight: 900;
+    }
+}
+
+@media (max-width: 1023px) {
+    .attendance-stats-column {
+        display: none;
     }
 }
 
