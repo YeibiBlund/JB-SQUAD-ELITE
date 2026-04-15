@@ -4098,4 +4098,38 @@ body.editing-tactic .tactical-slot {
     transform: scale(0.98);
 }
 
+/* --- Reporte Histórico: Filtros de Asistencia v36.2 --- */
+.stat-pill {
+    cursor: pointer;
+    transition: var(--transition);
+    user-select: none;
+    position: relative;
+    overflow: hidden;
+}
+
+.stat-pill:hover {
+    background: rgba(255, 255, 255, 0.08) !important;
+    transform: translateY(-2px);
+}
+
+.stat-pill:active { transform: scale(0.95); }
+
+.stat-pill.active {
+    background: rgba(255, 255, 255, 0.1) !important;
+    border-color: var(--primary) !important;
+    box-shadow: 0 0 15px var(--primary-glow);
+}
+
+.stat-pill.active label {
+    color: var(--primary);
+    opacity: 1 !important;
+}
+
+.stat-pill.active::after {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 0; width: 100%; height: 2px;
+    background: var(--primary);
+}
+
 

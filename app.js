@@ -3078,31 +3078,49 @@ document.addEventListener('DOMContentLoaded', () => {
         titleEl.textContent = poll.title.toUpperCase();
         dateEl.textContent = `JORNADA DEL ${new Date(poll.created_at).toLocaleDateString('es-ES', { day: '2-digit', month: 'long', year: 'numeric' })}`;
 
-        // 3. Renderizar Votos
-        votersList.innerHTML = '';
-        const yesV = votes?.filter(v => v.vote === 'yes') || [];
-        const lateV = votes?.filter(v => v.vote === 'late') || [];
-        const noV = votes?.filter(v => v.vote === 'no') || [];
+        // 3. Poblar Contadores
+        countYes.textContent = votes?.filter(v => v.vote === 'yes').length || 0;
+        countLate.textContent = votes?.filter(v => v.vote === 'late').length || 0;
+        countNo.textContent = votes?.filter(v => v.vote === 'no').length || 0;
 
-        countYes.textContent = yesV.length;
-        countLate.textContent = lateV.length;
-        countNo.textContent = noV.length;
-
-        const allVotes = [...yesV, ...lateV, ...noV];
-        allVotes.forEach(vote => {
-            const player = state.players.find(p => p.user_id === vote.user_id);
-            const name = player ? player.name.toUpperCase() : 'DESCONOCIDO';
-            const icon = vote.vote === 'yes' ? '✅' : (vote.vote === 'late' ? '🕒' : '❌');
-            const color = vote.vote === 'yes' ? '#4CAF50' : (vote.vote === 'late' ? '#FF9800' : '#F44336');
+        // 4. Función de Renderizado Filtrado
+        const renderVotersList = (filterType) => {
+            votersList.innerHTML = '';
+            const filtered = votes?.filter(v => v.vote === filterType) || [];
             
-            const row = document.createElement('div');
-            row.style.cssText = `display: flex; justify-content: space-between; align-items: center; padding: 8px 12px; background: rgba(255,255,255,0.02); border-radius: 6px; border: 1px solid rgba(255,255,255,0.03);`;
-            row.innerHTML = `
-                <span style="font-size: 0.75rem; font-weight: 800; color: #fff;">${name}</span>
-                <span style="color: ${color}; font-size: 0.8rem;">${icon} ${vote.vote === 'late' && vote.minutes_late ? `<small style="font-size:0.6rem;">+${vote.minutes_late}m</small>` : ''}</span>
-            `;
-            votersList.appendChild(row);
+            // Actualizar estado activo en los pills
+            document.querySelectorAll('.stat-pill').forEach(p => p.classList.remove('active'));
+            document.getElementById(`pill-report-${filterType}`)?.classList.add('active');
+
+            if (filtered.length === 0) {
+                votersList.innerHTML = `<p style="font-size: 0.7rem; opacity: 0.4; text-align: center; padding: 20px;">Nadie en esta categoría.</p>`;
+                return;
+            }
+
+            filtered.forEach(vote => {
+                const player = state.players.find(p => p.user_id === vote.user_id);
+                const name = player ? player.name.toUpperCase() : 'DESCONOCIDO';
+                const icon = vote.vote === 'yes' ? '✅' : (vote.vote === 'late' ? '🕒' : '❌');
+                const color = vote.vote === 'yes' ? '#4CAF50' : (vote.vote === 'late' ? '#FF9800' : '#F44336');
+                
+                const row = document.createElement('div');
+                row.className = 'voter-row fade-in';
+                row.style.cssText = `display: flex; justify-content: space-between; align-items: center; padding: 8px 12px; background: rgba(255,255,255,0.02); border-radius: 6px; border: 1px solid rgba(255,255,255,0.03);`;
+                row.innerHTML = `
+                    <span style="font-size: 0.75rem; font-weight: 800; color: #fff;">${name}</span>
+                    <span style="color: ${color}; font-size: 0.8rem;">${icon} ${vote.vote === 'late' && vote.minutes_late ? `<small style="font-size:0.6rem;">+${vote.minutes_late}m</small>` : ''}</span>
+                `;
+                votersList.appendChild(row);
+            });
+        };
+
+        // 4. Configurar Listeners de Filtro
+        document.querySelectorAll('.stat-pill').forEach(pill => {
+            pill.onclick = () => renderVotersList(pill.dataset.status);
         });
+
+        // 5. Render Inicial (Por defecto: SÍ)
+        renderVotersList('yes');
 
         // 4. Renderizar Táctica (Si existe snapshot)
         if (poll.final_alignment) {

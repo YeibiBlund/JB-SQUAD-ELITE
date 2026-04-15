@@ -919,15 +919,15 @@
                         <h4 style="font-size: 0.7rem; color: var(--primary); margin-bottom: 15px; letter-spacing: 1px;">LISTA DE ASISTENCIA</h4>
                         
                         <div class="report-participation-summary" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 20px;">
-                            <div class="stat-pill" style="background: rgba(255,255,255,0.03); padding: 10px; border-radius: 8px; text-align: center; border: 1px solid rgba(255,255,255,0.05);">
+                            <div id="pill-report-yes" class="stat-pill active" data-status="yes">
                                 <span id="report-count-yes" style="color: #4CAF50; font-size: 1.2rem; display: block; font-weight: 900;">0</span>
                                 <label style="font-size: 0.5rem; opacity: 0.6; text-transform: uppercase;">SÍ</label>
                             </div>
-                            <div class="stat-pill" style="background: rgba(255,255,255,0.03); padding: 10px; border-radius: 8px; text-align: center; border: 1px solid rgba(255,255,255,0.05);">
+                            <div id="pill-report-late" class="stat-pill" data-status="late">
                                 <span id="report-count-late" style="color: #FF9800; font-size: 1.2rem; display: block; font-weight: 900;">0</span>
                                 <label style="font-size: 0.5rem; opacity: 0.6; text-transform: uppercase;">TARDE</label>
                             </div>
-                            <div class="stat-pill" style="background: rgba(255,255,255,0.03); padding: 10px; border-radius: 8px; text-align: center; border: 1px solid rgba(255,255,255,0.05);">
+                            <div id="pill-report-no" class="stat-pill" data-status="no">
                                 <span id="report-count-no" style="color: #F44336; font-size: 1.2rem; display: block; font-weight: 900;">0</span>
                                 <label style="font-size: 0.5rem; opacity: 0.6; text-transform: uppercase;">NO / SIN VOTO</label>
                             </div>
