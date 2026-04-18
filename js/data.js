@@ -313,10 +313,13 @@ async function sendTeamRequest(teamId) {
  */
 async function fetchTeamRequests(teamId) {
     if (!supabase) return [];
+    const tId = teamId || (window.state && window.state.team ? window.state.team.id : null);
+    if (!tId) return [];
+
     const { data, error } = await supabase
         .from('team_requests')
         .select('id, created_at, user_id')
-        .eq('team_id', teamId);
+        .eq('team_id', tId);
         
     if (error) {
         console.error(">>> [ERROR] fetchTeamRequests:", error.message);
@@ -335,24 +338,34 @@ async function fetchTeamRequests(teamId) {
 /**
  * Acepta una solicitud de fichaje.
  */
-async function acceptTeamRequest(requestId, userId, teamId) {
+async function acceptTeamRequest(requestId) {
     if (!supabase) return;
     try {
-        // 1. Crear la membresía
+        // 1. Obtener la solicitud para tener user_id y team_id
+        const { data: req, error: reqErr } = await supabase
+            .from('team_requests')
+            .select('*')
+            .eq('id', requestId)
+            .single();
+        
+        if (reqErr || !req) throw new Error("No se encontró la solicitud original.");
+
+        // 2. Crear la membresía
         const { error: memErr } = await supabase.from('memberships').insert({
-            user_id: userId,
-            team_id: teamId,
+            user_id: req.user_id,
+            team_id: req.team_id,
             role: 'jugador'
         });
         if (memErr) throw memErr;
 
-        // 2. Eliminar la solicitud
+        // 3. Eliminar la solicitud
         await supabase.from('team_requests').delete().eq('id', requestId);
         
         window.jbToast('Jugador aceptado en el club', 'success');
     } catch (err) {
         console.error(">>> [ERROR] acceptTeamRequest:", err.message);
         window.jbToast('Error al aceptar solicitud: ' + err.message, 'error');
+        throw err; // Re-lanzar para que app.js sepa que falló
     }
 }
 

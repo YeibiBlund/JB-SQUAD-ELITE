@@ -2717,11 +2717,22 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     async function renderJoinRequests() {
+        const panel = document.getElementById('team-requests-panel');
         const requestsContainer = document.getElementById('team-requests-list');
         const countBadge = document.getElementById('requests-count-badge');
-        if (!requestsContainer) return;
+        
+        if (!panel || !requestsContainer) return;
+
+        // Solo el Manager ve este panel
+        if (state.user?.role !== 'manager') {
+            panel.style.display = 'none';
+            return;
+        }
 
         const requests = await fetchTeamRequests();
+        
+        // Mostrar el panel ahora que sabemos que el usuario es Manager
+        panel.style.display = 'block';
         
         if (countBadge) {
             countBadge.textContent = requests.length > 0 ? `${requests.length} PENDIENTES` : '0 PENDIENTES';
