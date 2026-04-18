@@ -3014,19 +3014,22 @@ document.addEventListener('DOMContentLoaded', () => {
                     <h4>${escapeHTML(m.profiles?.full_name?.toUpperCase() || 'ANÓNIMO')}</h4>
                 </div>
                 <div>
-                    <span class="member-role-badge role-${m.role}">${m.role.toUpperCase()}</span>
+                    ${isManager && m.user_id !== state.user.auth.id ? `
+                        <select class="role-selector-elite" data-user-id="${m.user_id}">
+                            <option value="jugador" ${m.role === 'jugador' ? 'selected' : ''}>JUGADOR</option>
+                            <option value="capitan" ${m.role === 'capitan' ? 'selected' : ''}>CAPITÁN</option>
+                            <option value="manager" ${m.role === 'manager' ? 'selected' : ''}>MANAGER</option>
+                        </select>
+                    ` : `
+                        <span class="member-role-badge role-${m.role}">${m.role.toUpperCase()}</span>
+                    `}
                 </div>
                 <div class="member-stat-cell pj">${totalPJ}</div>
                 <div class="member-stat-cell g">${totalG}</div>
                 <div class="member-stat-cell a">${totalA}</div>
                 <div class="member-admin-actions" style="text-align:right;">
                     ${isManager && m.user_id !== state.user.auth.id ? `
-                        <div style="display:flex; justify-content:flex-end; align-items:center; gap:8px;">
-                            <select class="role-selector-elite" data-user-id="${m.user_id}">
-                                <option value="jugador" ${m.role === 'jugador' ? 'selected' : ''}>JUGADOR</option>
-                                <option value="capitan" ${m.role === 'capitan' ? 'selected' : ''}>CAPITÁN</option>
-                                <option value="manager" ${m.role === 'manager' ? 'selected' : ''}>MANAGER</option>
-                            </select>
+                        <div style="display:flex; justify-content:flex-end; align-items:center;">
                             <button class="btn-delete-row" style="width:28px; height:28px; font-size:0.7rem;" onclick="window.kickMemberFromAdmin('${m.user_id}', '${escapeHTML(m.profiles?.full_name || 'ANÓNIMO')}')" title="Expulsar del Club">🗑️</button>
                         </div>
                     ` : ''}
