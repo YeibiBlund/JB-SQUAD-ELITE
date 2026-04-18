@@ -2519,7 +2519,10 @@ body.editing-tactic .tactical-slot {
     height: 90px;
     width: 90px;
     object-fit: contain;
-    filter: drop-shadow(0 0 15px rgba(255,255,255,0.2));
+    border-radius: 50%;
+    background: #fff;
+    padding: 5px;
+    box-shadow: 0 0 20px rgba(255,255,255,0.3);
 }
 
 .scorebug-team-name {
@@ -2527,6 +2530,7 @@ body.editing-tactic .tactical-slot {
     font-weight: 950 !important;
     letter-spacing: -3px !important;
     color: #fff;
+    white-space: nowrap;
 }
 
 .scorebug-matchday {
