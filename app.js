@@ -693,7 +693,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- Renderizado de Jugadores y Tabla ---
 
     function sortPlayersData(playersArray) {
-        const positionOrder = ['POR', 'DFC', 'LD', 'LI', 'CAD', 'CAI', 'MCD', 'MC', 'MVI', 'MVD', 'MCO', 'EI', 'ED', 'DC'];
+        const positionOrder = ['POR', 'DFC', 'LD', 'CAD', 'LI', 'CAI', 'MCD', 'MC', 'MVI', 'MVD', 'MD', 'MI', 'MCO', 'EI', 'ED', 'DC'];
 
         return playersArray.sort((a, b) => {
             let valA = a[sortConfig.key];
