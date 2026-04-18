@@ -712,9 +712,21 @@ document.addEventListener('DOMContentLoaded', () => {
             btn.textContent = `⚙️ MIGRANDO ${i + 1}/${playersToMigrate.length}...`;
             
             try {
-                // 1. Convertir Base64 a Blob
-                const response = await fetch(player.photo_url);
-                const blob = await response.blob();
+                // 1. Convertir Base64 a Blob de forma manual (evita problemas de CSP con fetch)
+                const base64Data = player.photo_url.split(',')[1];
+                const mimeType = player.photo_url.split(',')[0].split(':')[1].split(';')[0];
+                const byteCharacters = atob(base64Data);
+                const byteArrays = [];
+                for (let offset = 0; offset < byteCharacters.length; offset += 512) {
+                    const slice = byteCharacters.slice(offset, offset + 512);
+                    const byteNumbers = new Array(slice.length);
+                    for (let i = 0; i < slice.length; i++) {
+                        byteNumbers[i] = slice.charCodeAt(i);
+                    }
+                    const byteArray = new Uint8Array(byteNumbers);
+                    byteArrays.push(byteArray);
+                }
+                const blob = new Blob(byteArrays, { type: mimeType });
                 
                 // 2. Comprimir un poco por si acaso (opcional pero recomendado)
                 // Usamos la utilidad compressImage que creamos antes
