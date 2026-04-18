@@ -9,6 +9,9 @@ async function loadTeamData() {
     console.log(">>> [DATOS] Iniciando sincronización élite...");
     
     try {
+        // Inicializar array de jugadores (v47.3 - Fix Sin Club)
+        window.state.players = [];
+
         // Cargar mi ficha (AUTOGESTIÓN) - SIEMPRE
         if (state.user && state.user.auth) {
             const { data: myPlayer } = await supabase
@@ -33,88 +36,94 @@ async function loadTeamData() {
                     photo_y: myPlayer.photo_y,
                     stats: myPlayer.stats
                 };
+                // Añadir a la lista general para que las vistas funcionen
+                window.state.players = [window.state.userPlayer];
             }
         }
 
-        // Si no hay equipo, salimos tras cargar la ficha personal
-        if (!state.team) {
-            if (typeof updateTeamHeader === 'function') updateTeamHeader();
-            if (typeof applyRolePermissions === 'function') applyRolePermissions();
-            if (typeof renderHomeDashboard === 'function') renderHomeDashboard();
-            return;
-        }
-        // 1. Cargar Jugadores
-        const { data: dbPlayers } = await supabase.from('players').select('*').eq('team_id', state.team.id);
-        if (dbPlayers) {
-            window.state.players = dbPlayers.map(p => ({
-                id: p.id,
-                user_id: p.user_id,
-                name: p.name,
-                consoleID: p.console_id,
-                avatarID: p.avatar_id,
-                primaryPos: p.primary_pos,
-                secondaryPos: p.secondary_pos,
-                dorsal: p.dorsal,
-                photo_url: p.photo_url,
-                photo_scale: p.photo_scale,
-                photo_x: p.photo_x,
-                photo_y: p.photo_y,
-                stats: p.stats
-            }));
+        // Si hay equipo, cargar el resto de la plantilla y datos
+        if (state.team) {
+            // 1. Cargar Jugadores (Excluyendo al usuario si ya se cargó para evitar duplicados)
+            const { data: dbPlayers } = await supabase
+                .from('players')
+                .select('*')
+                .eq('team_id', state.team.id)
+                .neq('user_id', state.user.auth.id);
+
+            if (dbPlayers) {
+                const otherPlayers = dbPlayers.map(p => ({
+                    id: p.id,
+                    user_id: p.user_id,
+                    name: p.name,
+                    consoleID: p.console_id,
+                    avatarID: p.avatar_id,
+                    primaryPos: p.primary_pos,
+                    secondaryPos: p.secondary_pos,
+                    dorsal: p.dorsal,
+                    photo_url: p.photo_url,
+                    photo_scale: p.photo_scale,
+                    photo_x: p.photo_x,
+                    photo_y: p.photo_y,
+                    stats: p.stats
+                }));
+                window.state.players = [...window.state.players, ...otherPlayers];
+            }
+
+            // 2. Cargar Sesiones
+            const { data: dbSessions } = await supabase.from('sessions').select('*').eq('team_id', state.team.id);
+            if (dbSessions) {
+                window.state.sessions = dbSessions.filter(s => s.status === 'closed').map(s => ({
+                    id: s.id,
+                    date: s.date,
+                    status: s.status,
+                    mvpId: s.mvp_id,
+                    matches: s.matches
+                }));
+                const active = dbSessions.find(s => s.status === 'active');
+                window.state.activeSession = active ? {
+                    id: active.id,
+                    date: active.date,
+                    status: active.status,
+                    mvpId: active.mvp_id,
+                    matches: active.matches
+                } : null;
+            }
+
+            // 3. Cargar Tácticas
+            const { data: dbTactics } = await supabase.from('tactics').select('*').eq('team_id', state.team.id);
+            if (dbTactics) {
+                window.state.savedTactics = dbTactics.map(t => ({
+                    id: t.id,
+                    name: t.name,
+                    formation: t.formation,
+                    assignments: t.assignments,
+                    customPositions: t.custom_positions || {},
+                    isActive: t.is_active
+                }));
+            }
         }
 
-        // 2. Cargar Sesiones
-        const { data: dbSessions } = await supabase.from('sessions').select('*').eq('team_id', state.team.id);
-        if (dbSessions) {
-            window.state.sessions = dbSessions.filter(s => s.status === 'closed').map(s => ({
-                id: s.id,
-                date: s.date,
-                status: s.status,
-                mvpId: s.mvp_id,
-                matches: s.matches
-            }));
-            const active = dbSessions.find(s => s.status === 'active');
-            window.state.activeSession = active ? {
-                id: active.id,
-                date: active.date,
-                status: active.status,
-                mvpId: active.mvp_id,
-                matches: active.matches
-            } : null;
-        }
-
-        // 3. Cargar Tácticas
-        const { data: dbTactics } = await supabase.from('tactics').select('*').eq('team_id', state.team.id);
-        if (dbTactics) {
-            window.state.savedTactics = dbTactics.map(t => ({
-                id: t.id,
-                name: t.name,
-                formation: t.formation,
-                assignments: t.assignments,
-                customPositions: t.custom_positions || {},
-                isActive: t.is_active
-            }));
-        }
-
-        // Detectar mi ficha (AUTOGESTIÓN)
-        window.state.userPlayer = window.state.players.find(p => p.user_id === state.user.auth.id);
-        
-        // Disparar eventos de actualización de UI (si las funciones existen)
+        // --- ACTUALIZACIÓN DE UI (SIEMPRE DISPONIBLE) ---
         if (typeof updateTeamHeader === 'function') updateTeamHeader();
         if (typeof applyRolePermissions === 'function') applyRolePermissions();
-        if (typeof renderPlayers === 'function') renderPlayers();
-        if (typeof renderSessions === 'function') renderSessions();
-        if (typeof renderTacticsList === 'function') renderTacticsList();
         if (typeof renderHomeDashboard === 'function') renderHomeDashboard();
-        if (typeof renderAvailabilityBanner === 'function') renderAvailabilityBanner();
-
-        // Re-vincular componentes UI tras carga de datos
+        
+        // Estas funciones deben ejecutarse aunque no haya equipo (para crear ficha)
         if (typeof populatePositionSelects === 'function') populatePositionSelects();
         if (typeof renderAvatarGallery === 'function') renderAvatarGallery();
+        
+        if (state.team) {
+            if (typeof renderPlayers === 'function') renderPlayers();
+            if (typeof renderSessions === 'function') renderSessions();
+            if (typeof renderTacticsList === 'function') renderTacticsList();
+            if (typeof renderAvailabilityBanner === 'function') renderAvailabilityBanner();
+            if (typeof setupTacticHandlers === 'function') setupTacticHandlers();
+            if (typeof setupSessionHandlers === 'function') setupSessionHandlers();
+        }
+
+        // Setup base
         if (typeof setupNavigation === 'function') setupNavigation();
         if (typeof setupFormHandlers === 'function') setupFormHandlers();
-        if (typeof setupTacticHandlers === 'function') setupTacticHandlers();
-        if (typeof setupSessionHandlers === 'function') setupSessionHandlers();
         if (typeof setupTableSorting === 'function') setupTableSorting();
         if (typeof setupEventListeners === 'function') setupEventListeners();
 

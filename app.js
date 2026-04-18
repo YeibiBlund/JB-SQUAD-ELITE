@@ -533,7 +533,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 newPlayer.id = targetPlayer.id;
             }
 
-            const { error: insErr } = await supabase.from('players').upsert(newPlayer);
+            const { error: insErr } = await supabase
+                .from('players')
+                .upsert(newPlayer, { onConflict: 'user_id' });
             
             if (insErr) {
                 window.jbToast('Error al guardar ficha: ' + insErr.message, 'error');
