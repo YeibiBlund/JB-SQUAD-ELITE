@@ -65,18 +65,42 @@ function setupAuthHandlers() {
                 return;
             }
 
+            const pass = document.getElementById('reg-password').value;
+            const inviteCode = document.getElementById('reg-invite-code').value.trim().toUpperCase();
+
             const submitBtn = regForm.querySelector('button[type="submit"]');
             const originalText = submitBtn.textContent;
             submitBtn.disabled = true;
-            submitBtn.textContent = 'Creando Cuenta...';
+            submitBtn.textContent = 'Verificando Invitación...';
 
-            const pass = document.getElementById('reg-password').value;
+            // 1. Validar Código de Invitación en Supabase (Sistema Privado)
+            const { data: invData, error: invErr } = await supabase
+                .from('invitations')
+                .select('*')
+                .eq('code', inviteCode)
+                .single();
+
+            if (invErr || !invData) {
+                submitBtn.disabled = false;
+                submitBtn.textContent = originalText;
+                window.jbToast('Código de invitación no válido o inexistente.', 'error');
+                return;
+            }
+
+            if (invData.used_count >= invData.max_uses) {
+                submitBtn.disabled = false;
+                submitBtn.textContent = originalText;
+                window.jbToast('Este código de invitación ya ha agotado todos sus usos.', 'error');
+                return;
+            }
+
+            submitBtn.textContent = 'Creando Cuenta...';
             const email = `${username.toLowerCase()}@jb.club`;
             
             const { data, error } = await supabase.auth.signUp({ 
                 email, 
                 password: pass,
-                options: { data: { full_name: username } }
+                options: { data: { full_name: username, invite_code: inviteCode } }
             });
 
             if (error) {
@@ -87,6 +111,9 @@ function setupAuthHandlers() {
             }
             
             if (data.user) {
+                // Registrar el uso de la invitación sumando +1 al contador
+                await supabase.from('invitations').update({ used_count: invData.used_count + 1 }).eq('id', invData.id);
+                // Crear el perfil
                 await supabase.from('profiles').insert({ id: data.user.id, full_name: username });
                 window.jbToast('¡Cuenta creada! Iniciando sesión...', 'success');
             }
