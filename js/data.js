@@ -284,3 +284,87 @@ async function deleteMemberCloud(userId) {
         window.jbToast('Error al eliminar miembro: ' + err.message, 'error');
     }
 }
+
+/**
+ * Envía una solicitud de fichaje a un equipo.
+ */
+async function sendTeamRequest(teamId) {
+    if (!supabase || !state.user) return { error: 'No autenticado' };
+    
+    // El UNIQUE(user_id) en BD se encarga de la restricción de 1 solicitud
+    const { data, error } = await supabase
+        .from('team_requests')
+        .insert({
+            user_id: state.user.auth.id,
+            team_id: teamId
+        });
+        
+    if (error) {
+        if (error.code === '23505') {
+            return { error: 'Ya tienes una solicitud pendiente en este u otro equipo. Solo puedes tener una activa.' };
+        }
+        return { error: error.message };
+    }
+    return { data };
+}
+
+/**
+ * Obtiene las solicitudes de fichaje para un equipo (Admin only).
+ */
+async function fetchTeamRequests(teamId) {
+    if (!supabase) return [];
+    const { data, error } = await supabase
+        .from('team_requests')
+        .select('id, created_at, user_id')
+        .eq('team_id', teamId);
+        
+    if (error) {
+        console.error(">>> [ERROR] fetchTeamRequests:", error.message);
+        return [];
+    }
+
+    // Cargar nombres de perfiles manualmente para evitar joins complejos si RLS es estricto
+    const augmentedData = await Promise.all((data || []).map(async (req) => {
+        const { data: prof } = await supabase.from('profiles').select('full_name').eq('id', req.user_id).single();
+        return { ...req, profiles: prof };
+    }));
+
+    return augmentedData;
+}
+
+/**
+ * Acepta una solicitud de fichaje.
+ */
+async function acceptTeamRequest(requestId, userId, teamId) {
+    if (!supabase) return;
+    try {
+        // 1. Crear la membresía
+        const { error: memErr } = await supabase.from('memberships').insert({
+            user_id: userId,
+            team_id: teamId,
+            role: 'jugador'
+        });
+        if (memErr) throw memErr;
+
+        // 2. Eliminar la solicitud
+        await supabase.from('team_requests').delete().eq('id', requestId);
+        
+        window.jbToast('Jugador aceptado en el club', 'success');
+    } catch (err) {
+        console.error(">>> [ERROR] acceptTeamRequest:", err.message);
+        window.jbToast('Error al aceptar solicitud: ' + err.message, 'error');
+    }
+}
+
+/**
+ * Rechaza una solicitud de fichaje.
+ */
+async function rejectTeamRequest(requestId) {
+    if (!supabase) return;
+    const { error } = await supabase.from('team_requests').delete().eq('id', requestId);
+    if (!error) {
+        window.jbToast('Solicitud rechazada', 'success');
+    } else {
+        window.jbToast('Error al rechazar solicitud', 'error');
+    }
+}

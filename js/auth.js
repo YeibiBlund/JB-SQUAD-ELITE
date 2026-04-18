@@ -154,18 +154,14 @@ function setupAuthHandlers() {
             }
 
             const targetTeam = teams[0];
-            if (await window.jbConfirm(`¿Quieres unirte a ${targetTeam.name.toUpperCase()}?`)) {
-                const { error: mErr } = await supabase.from('memberships').insert({
-                    user_id: state.user.auth.id,
-                    team_id: targetTeam.id,
-                    role: 'jugador'
-                });
+            if (await window.jbConfirm(`¿Quieres enviar una solicitud de fichaje a ${targetTeam.name.toUpperCase()}?`)) {
+                const { error } = await sendTeamRequest(targetTeam.id);
 
-                if (mErr) {
-                    window.jbToast('Error al unirte: ' + mErr.message, 'error');
+                if (error) {
+                    window.jbToast(error, 'error');
                 } else {
-                    window.jbToast(`¡Solicitud aceptada! Bienvenido.`, 'success');
-                    setTimeout(() => window.location.reload(), 1500);
+                    window.jbToast(`¡Solicitud enviada! Espera a que el Manager te acepte.`, 'success', 5000);
+                    // Opcional: podrías mostrar un estado de "Pendiente" aquí
                 }
             }
             
@@ -219,6 +215,7 @@ async function handleUserSession(authUser) {
             window.state.team = membership.teams;
             switchAuthView('main');
             await loadTeamData();
+            if (window.updateJoinRequestsBadge) window.updateJoinRequestsBadge();
             
             // Redirección Inteligente (v35.0.2)
             setTimeout(() => {
@@ -280,16 +277,11 @@ function renderClubBrowser(teams) {
         card.innerHTML = `<div><h4>${escapeHTML(team.name)}</h4></div><button class="join-btn btn-gold">UNIRSE</button>`;
 
         card.querySelector('.join-btn').onclick = async () => {
-            if (await window.jbConfirm(`¿Unirse a ${team.name}?`)) {
-                const { error: mErr } = await supabase.from('memberships').insert({ 
-                    user_id: state.user.auth.id, 
-                    team_id: team.id, 
-                    role: 'jugador' 
-                });
-                if (mErr) window.jbToast('Error: ' + mErr.message, 'error');
+            if (await window.jbConfirm(`¿Enviar solicitud a ${team.name}?`)) {
+                const { error } = await sendTeamRequest(team.id);
+                if (error) window.jbToast(error, 'error');
                 else {
-                    window.jbToast(`¡Bienvenido!`, 'success');
-                    setTimeout(() => window.location.reload(), 1500);
+                    window.jbToast(`¡Solicitud enviada con éxito!`, 'success');
                 }
             }
         };

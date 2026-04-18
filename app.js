@@ -288,8 +288,9 @@ document.addEventListener('DOMContentLoaded', () => {
         state.currentView = viewId;
         window.scrollTo(0, 0);
 
-        // Actualizar notificaciones de voto en el navbar en cada cambio de vista
+        // Actualizar notificaciones en el navbar en cada cambio de vista
         renderAvailabilityBanner();
+        if (window.updateJoinRequestsBadge) window.updateJoinRequestsBadge();
     }
 
     function handleTacticViewDisplay() {
@@ -2708,7 +2709,93 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // 4. Lista de Miembros y Roles
         await renderMembersList();
+
+        // 5. LISTA DE SOLICITUDES (v47.0)
+        await renderJoinRequests();
         
+        window.jbLoading.hide();
+    }
+
+    async function renderJoinRequests() {
+        const requestsContainer = document.getElementById('team-requests-list');
+        const countBadge = document.getElementById('requests-count-badge');
+        if (!requestsContainer) return;
+
+        const requests = await fetchTeamRequests();
+        
+        if (countBadge) {
+            countBadge.textContent = requests.length > 0 ? `${requests.length} PENDIENTES` : '0 PENDIENTES';
+            countBadge.style.display = requests.length > 0 ? 'inline-block' : 'none';
+        }
+
+        if (requests.length === 0) {
+            requestsContainer.innerHTML = `
+                <div style="text-align: center; opacity: 0.4; padding: 20px; font-size: 0.75rem;">
+                    NO HAY SOLICITUDES PENDIENTES
+                </div>
+            `;
+            return;
+        }
+
+        requestsContainer.innerHTML = '';
+        requests.forEach(req => {
+            const card = document.createElement('div');
+            card.className = 'request-card fade-in';
+            const name = req.profiles?.full_name || 'USUARIO DESCONOCIDO';
+            
+            card.innerHTML = `
+                <div class="request-info">
+                    <strong>${escapeHTML(name).toUpperCase()}</strong>
+                    <p>Enviada: ${new Date(req.created_at).toLocaleDateString()}</p>
+                </div>
+                <div class="request-actions">
+                    <button class="btn-reject" onclick="window.handleRequestAction('${req.id}', 'reject')">RECHAZAR</button>
+                    <button class="btn-approve" onclick="window.handleRequestAction('${req.id}', 'accept')">ACEPTAR</button>
+                </div>
+            `;
+            requestsContainer.appendChild(card);
+        });
+    }
+
+    window.updateJoinRequestsBadge = async function() {
+        if (!state.user || state.user.role !== 'manager' || !state.team) return;
+        
+        const requests = await fetchTeamRequests();
+        const badge = document.getElementById('requests-badge-profile');
+        
+        if (badge) {
+            if (requests.length > 0) {
+                badge.textContent = requests.length;
+                badge.style.display = 'flex';
+            } else {
+                badge.style.display = 'none';
+            }
+        }
+    }
+
+    window.handleRequestAction = async function(requestId, action) {
+        const msg = action === 'accept' ? '¿Quieres aceptar a este jugador en el club?' : '¿Rechazar esta solicitud?';
+        if (!await window.jbConfirm(msg)) return;
+
+        window.jbLoading.show(action === 'accept' ? 'Fichando jugador...' : 'Procesando...');
+        
+        try {
+            if (action === 'accept') {
+                await acceptTeamRequest(requestId);
+                window.jbToast('¡Jugador fichado con éxito!', 'success');
+            } else {
+                await rejectTeamRequest(requestId);
+                window.jbToast('Solicitud rechazada.', 'info');
+            }
+            
+            // Recargar datos
+            await loadTeamData();
+            await renderMiEquipoView();
+            window.updateJoinRequestsBadge();
+        } catch (err) {
+            console.error(">>> [ERROR] Acción de solicitud fallida:", err);
+            window.jbToast('Error al procesar la solicitud', 'error');
+        }
         window.jbLoading.hide();
     }
 

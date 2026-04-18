@@ -765,6 +765,17 @@
                     </div>
                 </div>
 
+                <!-- Solicitudes de Fichaje (v37.0) -->
+                <div id="team-requests-panel" class="card-elite fade-in" style="display: none; border: 1px solid var(--primary); background: rgba(240, 165, 0, 0.03); margin-bottom: 20px;">
+                    <div class="panel-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                        <h2 style="font-size: 1rem; color: var(--primary); letter-spacing: 1px;">SOLICITUDES PENDIENTES</h2>
+                        <span id="requests-count-badge" class="badge-elite" style="background: var(--primary); color: #000;">0 NUEVAS</span>
+                    </div>
+                    <div id="team-requests-list" style="display: flex; flex-direction: column; gap: 10px;">
+                        <!-- Inyección vía JS -->
+                    </div>
+                </div>
+
                 <!-- Member Management -->
                 <div class="member-management-panel card-elite fade-in">
                     <div class="panel-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
@@ -790,7 +801,10 @@
                     <span class="nav-label">INICIO</span>
                 </button>
                 <button class="nav-btn" data-view="my-profile">
-                    <span class="icon"><svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg></span>
+                    <span class="icon" style="position: relative;">
+                        <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                        <span id="nav-profile-badge" style="display: none; position: absolute; top: -5px; right: -5px; width: 10px; height: 10px; background: #ff4444; border-radius: 50%; border: 2px solid #000;"></span>
+                    </span>
                     <span class="nav-label">MI PERFIL</span>
                 </button>
                 <button class="nav-btn" data-view="plantilla">

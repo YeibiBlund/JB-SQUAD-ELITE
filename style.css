@@ -4319,4 +4319,72 @@ body.editing-tactic .tactical-slot {
     }
 }
 
+/* --- Sistema de Solicitudes de Fichaje v37.0 --- */
+.request-card {
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius-sm);
+    padding: 12px 15px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: var(--transition);
+}
 
+.request-card:hover {
+    background: rgba(255, 255, 255, 0.05);
+    border-color: var(--primary-glow);
+}
+
+.request-info {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.request-user-name {
+    font-weight: 800;
+    font-size: 0.9rem;
+    color: #fff;
+}
+
+.request-date {
+    font-size: 0.7rem;
+    color: var(--text-muted);
+}
+
+.request-actions {
+    display: flex;
+    gap: 10px;
+}
+
+.btn-approve {
+    background: var(--success);
+    color: #fff;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 6px;
+    font-size: 0.75rem;
+    font-weight: 800;
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.btn-reject {
+    background: rgba(244, 67, 54, 0.1);
+    color: var(--error);
+    border: 1px solid var(--error-glow);
+    padding: 8px 12px;
+    border-radius: 6px;
+    font-size: 0.75rem;
+    font-weight: 800;
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.btn-approve:hover { background: #45a049; transform: scale(1.05); }
+.btn-reject:hover { background: var(--error); color: #fff; transform: scale(1.05); }
+
+#nav-profile-badge {
+    animation: badgePulse 2s infinite;
+}
