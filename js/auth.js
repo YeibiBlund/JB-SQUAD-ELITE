@@ -212,11 +212,12 @@ async function handleUserSession(authUser) {
             role: membership ? membership.role : null 
         };
 
+        // Sincronizar datos y preparar UI (v47.4 - Siempre inicializar)
+        if (membership) window.state.team = membership.teams;
+        await loadTeamData();
+
         if (membership || playerCard) {
-            if (membership) window.state.team = membership.teams;
-            
             switchAuthView('main');
-            await loadTeamData();
             if (window.updateJoinRequestsBadge) window.updateJoinRequestsBadge();
             
             // Redirección Inteligente (v47.2 - Soporte Sin Club)

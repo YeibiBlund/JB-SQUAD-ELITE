@@ -470,6 +470,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- Lógica de Formularios ---
     window.populatePositionSelects = function() {
         const createOptions = (select) => {
+            select.innerHTML = ''; // Limpiar antes de poblar (v47.4)
             POSITIONS.forEach(pos => {
                 const opt = document.createElement('option');
                 opt.value = pos;
@@ -478,7 +479,7 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         };
         populatePositionSelects.done = true;
-        createOptions(primaryPosSelect);
+        if (primaryPosSelect) createOptions(primaryPosSelect);
         secondaryPosSelects.forEach(s => createOptions(s));
     }
 
