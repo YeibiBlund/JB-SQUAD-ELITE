@@ -2770,14 +2770,15 @@ document.addEventListener('DOMContentLoaded', () => {
                 useCORS: true,
                 allowTaint: true,
                 backgroundColor: '#050505',
-                scale: 2, // Alta calidad
+                scale: 1, // Calidad optimizada (evita archivos gigantes)
                 logging: false
             });
 
             // 3. Descargar
             const link = document.createElement('a');
-            link.download = `MATCHDAY_${teamNameText.replace(/\s+/g, '_')}_${matchTimeText.replace(':', 'h')}.png`;
-            link.href = canvas.toDataURL('image/png');
+            const safeTeamName = teamNameText.replace(/\s+/g, '_');
+            link.download = `MATCHDAY_${safeTeamName}_${matchTimeText.replace(':', 'h')}.jpg`;
+            link.href = canvas.toDataURL('image/jpeg', 0.85); // JPEG con calidad 85%
             link.click();
             
         } catch (err) {
