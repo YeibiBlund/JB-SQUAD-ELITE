@@ -131,6 +131,10 @@ document.addEventListener('DOMContentLoaded', () => {
     let selectedGoalScorerId = null;
     let selectedAssistantId = null;
 
+    // --- VARIABLES DE ESTADO PARA FOTOS (v47.4) ---
+    let currentPhotoBase64 = null; // Para previsualización rápida
+    let selectedPhotoFile = null;  // Para subida real a Storage
+
     // 3. Inicialización (Estado migrado a js/state.js)
     init();
 
@@ -509,16 +513,62 @@ document.addEventListener('DOMContentLoaded', () => {
                 .filter(v => v !== "" && v !== primaryPosSelect.value);
 
             const targetPlayer = state.editingPlayer || state.userPlayer;
+            const currentUserId = state.user.auth.id;
+            let finalPhotoUrl = targetPlayer ? targetPlayer.photo_url : null;
+
+            // --- LÓGICA DE SUBIDA A STORAGE (v47.4) ---
+            if (selectedPhotoFile) {
+                try {
+                    console.log(">>> [STORAGE] Iniciando subida para archivo:", selectedPhotoFile.name);
+                    submitBtn.textContent = 'Comprimiendo foto...';
+                    const compressedBlob = await compressImage(selectedPhotoFile);
+                    console.log(">>> [STORAGE] Foto comprimida. Tamaño:", (compressedBlob.size / 1024).toFixed(2), "KB");
+                    
+                    submitBtn.textContent = 'Subiendo foto...';
+                    // IMPORTANTE: El nombre del archivo debe ser el ID del jugador, no el de quien edita
+                    const playerFileName = targetPlayer ? targetPlayer.user_id : currentUserId;
+                    const filePath = `players/${playerFileName}.jpg`;
+                    
+                    console.log(">>> [STORAGE] Subiendo a path:", filePath);
+                    
+                    // Subir archivo (sobrescribir si existe)
+                    const { error: uploadErr } = await supabase.storage
+                        .from('player_photos')
+                        .upload(filePath, compressedBlob, {
+                            contentType: 'image/jpeg',
+                            upsert: true
+                        });
+
+                    if (uploadErr) {
+                        console.error(">>> [STORAGE UPLOAD ERROR]:", uploadErr);
+                        throw uploadErr;
+                    }
+
+                    // Obtener URL Pública
+                    const { data: { publicUrl } } = supabase.storage
+                        .from('player_photos')
+                        .getPublicUrl(filePath);
+                    
+                    finalPhotoUrl = `${publicUrl}?t=${Date.now()}`; // Cache bust
+                    console.log(">>> [STORAGE] Subida exitosa. URL:", finalPhotoUrl);
+                    
+                    // Resetear para evitar resubidas accidentales
+                    selectedPhotoFile = null;
+                } catch (err) {
+                    console.error(">>> [STORAGE CATCH ERROR]:", err);
+                    window.jbToast('Error al subir foto: ' + err.message, 'error');
+                }
+            }
 
             const newPlayer = {
-                user_id: targetPlayer ? (targetPlayer.user_id || targetPlayer.id) : state.user.auth.id,
+                user_id: targetPlayer ? (targetPlayer.user_id || targetPlayer.id) : currentUserId,
                 team_id: state.team ? state.team.id : null,
                 name: document.getElementById('playerName').value,
                 console_id: document.getElementById('consoleID').value,
                 dorsal: document.getElementById('dorsal').value,
                 primary_pos: primaryPosSelect.value,
                 secondary_pos: [...new Set(secondaryPositions)].slice(0, 3),
-                photo_url: currentPhotoBase64 || (targetPlayer ? targetPlayer.photo_url : null),
+                photo_url: finalPhotoUrl,
                 photo_scale: parseFloat(document.getElementById('photoScale')?.value || 1.0),
                 photo_x: parseInt(document.getElementById('photoX')?.value || 0),
                 photo_y: parseInt(document.getElementById('photoY')?.value || 0),
@@ -564,6 +614,7 @@ document.addEventListener('DOMContentLoaded', () => {
             photoInput.addEventListener('change', (e) => {
                 const file = e.target.files[0];
                 if (file) {
+                    selectedPhotoFile = file; // Guardar archivo real (v47.4)
                     const reader = new FileReader();
                     reader.onload = (event) => {
                         currentPhotoBase64 = event.target.result;
@@ -594,7 +645,38 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    let currentPhotoBase64 = null; // Variable temporal para la carga
+    /**
+     * Comprime una imagen usando Canvas para ahorrar ancho de banda.
+     */
+    async function compressImage(file, maxWidth = 800) {
+        return new Promise((resolve) => {
+            const reader = new FileReader();
+            reader.readAsDataURL(file);
+            reader.onload = (event) => {
+                const img = new Image();
+                img.src = event.target.result;
+                img.onload = () => {
+                    const canvas = document.createElement('canvas');
+                    let width = img.width;
+                    let height = img.height;
+
+                    if (width > maxWidth) {
+                        height = (maxWidth / width) * height;
+                        width = maxWidth;
+                    }
+
+                    canvas.width = width;
+                    canvas.height = height;
+                    const ctx = canvas.getContext('2d');
+                    ctx.drawImage(img, 0, 0, width, height);
+
+                    canvas.toBlob((blob) => {
+                        resolve(blob);
+                    }, 'image/jpeg', 0.7); // 70% calidad
+                };
+            };
+        });
+    }
 
     // --- Renderizado de Jugadores y Tabla ---
 
