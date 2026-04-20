@@ -3377,7 +3377,16 @@ document.addEventListener('DOMContentLoaded', () => {
             await initPollHistoryFilters();
         }
 
-        // 2. Determinar Rango de Fechas para la Consulta
+        const cacheKey = selectedMonth && selectedYear ? `${selectedMonth}-${selectedYear}` : 'all';
+
+        // 2. Comprobar Caché
+        if (state.historyCache && state.historyCache[cacheKey]) {
+            console.log(`>>> [HISTORIAL] Cargando desde caché: ${cacheKey}`);
+            renderHistoryRowsInternal(state.historyCache[cacheKey]);
+            return;
+        }
+
+        // 3. Determinar Rango de Fechas para la Consulta
         let query = supabase
             .from('availability_polls')
             .select('*')
@@ -3390,7 +3399,6 @@ document.addEventListener('DOMContentLoaded', () => {
             const endDate = new Date(selectedYear, selectedMonth, 0, 23, 59, 59).toISOString();
             query = query.gte('created_at', startDate).lte('created_at', endDate);
         } else {
-            // Por defecto, últimos 20 para no saturar si no hay filtro
             query = query.limit(20);
         }
 
@@ -3402,11 +3410,9 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        // 3. Renderizar Filas de Tabla
-        historyList.innerHTML = '';
-        
+        // 4. Obtener Conteos y Preparar Datos para Caché
+        const dataWithCounts = [];
         for (const p of data) {
-            // Obtener conteos de Squad (SÍ, TARDE, NO)
             const fetchCount = async (voteType) => {
                 const { count } = await supabase
                     .from('availability_votes')
@@ -3416,10 +3422,27 @@ document.addEventListener('DOMContentLoaded', () => {
                 return count || 0;
             };
 
-            const countYes = await fetchCount('yes');
-            const countLate = await fetchCount('late');
-            const countNo = await fetchCount('no');
+            const stats = {
+                yes: await fetchCount('yes'),
+                late: await fetchCount('late'),
+                no: await fetchCount('no')
+            };
+            dataWithCounts.push({ ...p, stats });
+        }
 
+        // Guardar en Caché
+        if (!state.historyCache) state.historyCache = {};
+        state.historyCache[cacheKey] = dataWithCounts;
+
+        renderHistoryRowsInternal(dataWithCounts);
+    }
+
+    function renderHistoryRowsInternal(data) {
+        const historyList = document.getElementById('polls-history-list');
+        if (!historyList) return;
+        
+        historyList.innerHTML = '';
+        data.forEach(p => {
             const dateObj = new Date(p.created_at);
             const day = dateObj.getDate().toString().padStart(2, '0');
             const month = (dateObj.getMonth() + 1).toString().padStart(2, '0');
@@ -3430,15 +3453,15 @@ document.addEventListener('DOMContentLoaded', () => {
             row.innerHTML = `
                 <div class="pht-col-date">${day}/${month}</div>
                 <div class="pht-col-title">${escapeHTML(p.title.toUpperCase())}</div>
-                <div class="pht-col-stat stat-yes">${countYes}</div>
-                <div class="pht-col-stat stat-late">${countLate}</div>
-                <div class="pht-col-stat stat-no">${countNo}</div>
+                <div class="pht-col-stat stat-yes">${p.stats.yes}</div>
+                <div class="pht-col-stat stat-late">${p.stats.late}</div>
+                <div class="pht-col-stat stat-no">${p.stats.no}</div>
                 <div class="pht-col-actions">
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
                 </div>
             `;
             historyList.appendChild(row);
-        }
+        });
     }
 
     async function initPollHistoryFilters() {
@@ -3637,9 +3660,11 @@ document.addEventListener('DOMContentLoaded', () => {
                             window.jbToast('Bloqueo de Seguridad RLS: Debes habilitar el DELETE en Supabase.', 'error');
                         } else {
                             window.jbToast('Historial eliminado con éxito', 'success');
+                            state.historyCache = {}; // Invalidar caché
                             overlay.style.display = 'none';
                             renderPollHistory();
                         }
+
                     }
                 };
             } else {
@@ -3742,7 +3767,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 window.jbToast('Error al cerrar: ' + error.message, 'error');
             } else {
                 window.jbToast('Convocatoria cerrada. Iniciando alineación...', 'success');
+                state.historyCache = {}; // Invalidar caché
                 await renderAvailabilityPanel();
+
                 
                 if (withAlignment) {
                     const tacticId = state.activeTacticId || (state.savedTactics.length > 0 ? state.savedTactics[0].id : null);

@@ -26,5 +26,7 @@ window.state = {
         active: false,
         voters: {}, // userId -> status ('yes', 'no', 'late')
         currentPollId: null 
-    }
+    },
+    historyCache: {}    // Caché para el historial de convocatorias { key: [data] }
 };
+

@@ -9,8 +9,10 @@ async function loadTeamData() {
     console.log(">>> [DATOS] Iniciando sincronización élite...");
     
     try {
-        // Inicializar array de jugadores (v47.3 - Fix Sin Club)
+        // Resetear cachés y datos locales
         window.state.players = [];
+        window.state.historyCache = {}; 
+
 
         // Cargar mi ficha (AUTOGESTIÓN) - SIEMPRE
         if (state.user && state.user.auth) {
