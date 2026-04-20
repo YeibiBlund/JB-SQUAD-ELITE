@@ -3981,18 +3981,11 @@ body.editing-tactic .tactical-slot {
 }
 
 /* Ajustes para el contenedor de historial en escritorio */
-@media (min-width: 1024px) {
     #polls-history-container {
         margin-top: 50px;
         padding: 0 40px;
     }
-    
-    #polls-history-list {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 20px;
-    }
-}
+
 
 .results-voters-list {
     display: flex;
@@ -4664,4 +4657,22 @@ body.editing-tactic .tactical-slot {
     border-color: var(--primary);
     box-shadow: 0 0 10px var(--primary-glow);
 }
+
+/* Ajuste Móvil: Solo Fecha y Squad */
+@media (max-width: 1023px) {
+    .poll-history-table-header, 
+    .poll-history-row {
+        grid-template-columns: 80px 1fr !important;
+        padding: 10px 15px;
+    }
+    .pht-col-title, 
+    .pht-col-actions {
+        display: none !important;
+    }
+    .pht-col-squad {
+        margin-right: 0;
+        margin-left: auto;
+    }
+}
+
 

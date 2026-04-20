@@ -3406,12 +3406,13 @@ document.addEventListener('DOMContentLoaded', () => {
         historyList.innerHTML = '';
         
         for (const p of data) {
-            // Obtener conteo de Squad (SÍ + TARDE)
+            // Obtener conteo de Squad (SOLO SÍ)
             const { count, error: countErr } = await supabase
                 .from('availability_votes')
                 .select('*', { count: 'exact', head: true })
                 .eq('poll_id', p.id)
-                .in('vote', ['yes', 'late']);
+                .eq('vote', 'yes');
+
             
             const squadCount = countErr ? '?' : (count || 0);
             const dateObj = new Date(p.created_at);
