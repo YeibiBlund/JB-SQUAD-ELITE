@@ -3811,7 +3811,13 @@ body.editing-tactic .tactical-slot {
 .btn-vote.vote-no:active { background: rgba(244,67,54,0.2); }
 .btn-vote.vote-no.active { background: #F44336; color: #fff; }
 
-.btn-vote.vote-late { border-color: var(--primary); color: var(--primary); }
+.btn-vote.vote-late { 
+    grid-column: span 2; 
+    border-color: var(--primary); 
+    color: var(--primary); 
+    flex-direction: row;
+    justify-content: center;
+}
 .btn-vote.vote-late:active { background: rgba(240,165,0,0.2); }
 .btn-vote.vote-late.active { background: var(--primary); color: #000; }
 
