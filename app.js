@@ -2917,6 +2917,18 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // 5. LISTA DE SOLICITUDES (v47.0)
         await renderJoinRequests();
+
+        // 6. Reset visual de pestañas (v49.1 fix)
+        const tabsContainer = document.getElementById('team-view-tabs');
+        if (state.user?.role === 'manager') {
+            if (tabsContainer) tabsContainer.style.display = 'flex';
+            // Forzar que el panel de plantilla sea el inicial
+            const firstTab = tabsContainer?.querySelector('[data-target="team-roster-panel"]');
+            if (firstTab) firstTab.click();
+        } else {
+            if (tabsContainer) tabsContainer.style.display = 'none';
+            document.getElementById('team-roster-panel').style.display = 'block';
+        }
         
         window.jbLoading.hide();
     }
