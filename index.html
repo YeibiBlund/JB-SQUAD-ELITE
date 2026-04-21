@@ -799,16 +799,55 @@
                     <button class="elite-tab-btn" data-target="team-requests-panel">
                         SOLICITUDES <span id="requests-tab-badge" style="display: none; background: var(--primary); color: #000; padding: 2px 6px; border-radius: 10px; font-size: 0.6rem; margin-left: 5px;">0</span>
                     </button>
+                    <button class="elite-tab-btn" data-target="team-settings-panel">AJUSTES</button>
                 </div>
 
-                <!-- Solicitudes de Fichaje (v37.0) -->
-                <div id="team-requests-panel" class="card-elite fade-in" style="display: none; border: 1px solid var(--primary); background: rgba(240, 165, 0, 0.03); margin-bottom: 20px;">
-                    <div class="panel-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
-                        <h2 style="font-size: 1rem; color: var(--primary); letter-spacing: 1px;">SOLICITUDES PENDIENTES</h2>
-                        <span id="requests-count-badge" class="badge-elite" style="background: var(--primary); color: #000;">0 NUEVAS</span>
+                </div>
+
+                <!-- Panel de Ajustes del Club (v49.0) -->
+                <div id="team-settings-panel" class="card-elite fade-in" style="display: none; border: 1px solid var(--glass-border); padding: 25px; margin-bottom: 20px; background: rgba(255,255,255,0.02);">
+                    <div class="panel-header" style="margin-bottom: 25px; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 12px; display: flex; justify-content: space-between; align-items: center;">
+                        <h2 style="font-size: 1.1rem; letter-spacing: 1px; color: var(--primary); font-weight: 800;">CONFIGURACIÓN DEL CLUB</h2>
+                        <span style="font-size: 0.6rem; color: var(--text-muted); text-transform: uppercase;">ADMINISTRACIÓN ÉLITE</span>
                     </div>
-                    <div id="team-requests-list" style="display: flex; flex-direction: column; gap: 10px;">
-                        <!-- Inyección vía JS -->
+                    
+                    <div class="settings-form" style="display: flex; flex-direction: column; gap: 20px;">
+                        <!-- Nombre e Identidad -->
+                        <div style="display: flex; gap: 20px; align-items: flex-start; background: rgba(0,0,0,0.2); padding: 15px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.05);">
+                            <div id="team-crest-trigger" style="width: 70px; height: 70px; background: rgba(0,0,0,0.4); border-radius: 12px; border: 2px dashed var(--primary); display: flex; align-items: center; justify-content: center; cursor: pointer; position: relative; overflow: hidden; transition: 0.3s;" onmouseover="this.style.borderColor='#fff'" onmouseout="this.style.borderColor='var(--primary)'">
+                                <div id="team-crest-display" style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center;"><span>🛡️</span></div>
+                                <div style="position: absolute; bottom: 0; left: 0; right: 0; background: rgba(0,0,0,0.6); font-size: 0.5rem; text-align: center; color: #fff; padding: 2px 0;">EDITAR</div>
+                                <input type="file" id="team-crest-input" accept="image/*" style="display: none;">
+                            </div>
+                            <div style="flex: 1;">
+                                <label style="display: block; font-size: 0.7rem; color: var(--primary); margin-bottom: 8px; font-weight: 800; letter-spacing: 0.5px;">NOMBRE OFICIAL DEL CLUB</label>
+                                <input type="text" id="input-team-name" style="width: 100%; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: #fff; padding: 12px; border-radius: 8px; font-weight: 600; outline: none; transition: 0.3s;" onfocus="this.style.borderColor='var(--primary)'" onblur="this.style.borderColor='rgba(255,255,255,0.1)'">
+                                <p style="font-size: 0.6rem; color: var(--text-muted); margin-top: 5px;">Este nombre aparecerá en todas las secciones y reportes.</p>
+                            </div>
+                        </div>
+
+                        <!-- Redes Sociales -->
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                            <div class="form-group-elite">
+                                <label style="display: block; font-size: 0.7rem; color: #1DA1F2; margin-bottom: 8px; font-weight: 800; display: flex; align-items: center; gap: 5px;">
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+                                    TWITTER (X)
+                                </label>
+                                <div style="position: relative;">
+                                    <span style="position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: rgba(255,255,255,0.3); font-size: 0.8rem;">@</span>
+                                    <input type="text" id="input-team-twitter" placeholder="Usuario" style="width: 100%; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: #fff; padding: 12px 12px 12px 30px; border-radius: 8px; outline: none; transition: 0.3s;" onfocus="this.style.borderColor='#1DA1F2'">
+                                </div>
+                            </div>
+                            <div class="form-group-elite">
+                                <label style="display: block; font-size: 0.7rem; color: #9146FF; margin-bottom: 8px; font-weight: 800; display: flex; align-items: center; gap: 5px;">
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M11.571 4.714h1.715v5.143H11.57zm4.715 0H18v5.143h-1.714zM6 0L1.714 4.286v15.428h5.143V24l4.286-4.286h3.428L22.286 12V0zm14.571 11.143l-3.428 3.428h-3.429l-3 3v-3H6.857V1.714h13.714Z"/></svg>
+                                    TWITCH
+                                </label>
+                                <input type="text" id="input-team-twitch" placeholder="Nombre del Canal" style="width: 100%; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: #fff; padding: 12px; border-radius: 8px; outline: none; transition: 0.3s;" onfocus="this.style.borderColor='#9146FF'">
+                            </div>
+                        </div>
+
+                        <button id="btn-save-team-settings" class="btn-gold" style="width: 100%; margin-top: 10px; padding: 15px; font-weight: 900; letter-spacing: 2px;">GUARDAR CONFIGURACIÓN</button>
                     </div>
                 </div>
 

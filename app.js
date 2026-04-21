@@ -132,14 +132,26 @@ document.addEventListener('DOMContentLoaded', () => {
     let selectedAssistantId = null;
 
     // Listeners for Elite Tabs (Mi Equipo)
+    // Listeners for Elite Tabs (Mi Equipo)
     const teamTabs = document.querySelectorAll('#team-view-tabs .elite-tab-btn');
+    const teamPanels = ['team-roster-panel', 'team-requests-panel', 'team-settings-panel'];
+    
     teamTabs.forEach(btn => {
         btn.addEventListener('click', () => {
             teamTabs.forEach(t => t.classList.remove('active'));
             btn.classList.add('active');
             const targetId = btn.getAttribute('data-target');
-            document.getElementById('team-roster-panel').style.display = targetId === 'team-roster-panel' ? 'block' : 'none';
-            document.getElementById('team-requests-panel').style.display = targetId === 'team-requests-panel' ? 'block' : 'none';
+            
+            // Ocultar todos los paneles y mostrar el seleccionado
+            teamPanels.forEach(pid => {
+                const panel = document.getElementById(pid);
+                if (panel) panel.style.display = pid === targetId ? 'block' : 'none';
+            });
+
+            // Si entramos en ajustes, cargar datos actuales en el formulario (v49.0)
+            if (targetId === 'team-settings-panel' && typeof window.loadTeamSettingsIntoForm === 'function') {
+                window.loadTeamSettingsIntoForm();
+            }
         });
     });
 
@@ -404,7 +416,39 @@ document.addEventListener('DOMContentLoaded', () => {
         const teamCrestHeader = document.getElementById('header-crest-container');
         
         if (state.team) {
-            if (teamNameLabel) teamNameLabel.textContent = state.team.name.toUpperCase();
+            if (teamNameLabel) {
+                 teamNameLabel.textContent = state.team.name.toUpperCase();
+                 
+                 // --- Inyección de Redes Sociales (v49.0) ---
+                 const socialContainerId = 'header-social-links';
+                 let socialContainer = document.getElementById(socialContainerId);
+                 if (!socialContainer) {
+                     socialContainer = document.createElement('div');
+                     socialContainer.id = socialContainerId;
+                     socialContainer.style.display = 'flex';
+                     socialContainer.style.gap = '8px';
+                     socialContainer.style.marginLeft = '12px';
+                     teamNameLabel.parentElement.appendChild(socialContainer);
+                 }
+                 
+                 socialContainer.innerHTML = '';
+                 const socials = state.team.socials || {};
+                 
+                 if (socials.twitter) {
+                     socialContainer.innerHTML += `
+                         <a href="https://x.com/${socials.twitter}" target="_blank" title="Twitter/X" style="color: #1DA1F2; transition: 0.3s; display: flex; align-items: center; opacity: 0.8;" onmouseover="this.style.opacity=1" onmouseout="this.style.opacity=0.8">
+                             <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+                         </a>
+                     `;
+                 }
+                 if (socials.twitch) {
+                     socialContainer.innerHTML += `
+                         <a href="https://twitch.tv/${socials.twitch}" target="_blank" title="Twitch" style="color: #9146FF; transition: 0.3s; display: flex; align-items: center; opacity: 0.8;" onmouseover="this.style.opacity=1" onmouseout="this.style.opacity=0.8">
+                             <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M11.571 4.714h1.715v5.143H11.57zm4.715 0H18v5.143h-1.714zM6 0L1.714 4.286v15.428h5.143V24l4.286-4.286h3.428L22.286 12V0zm14.571 11.143l-3.428 3.428h-3.429l-3 3v-3H6.857V1.714h13.714Z"/></svg>
+                         </a>
+                     `;
+                 }
+            }
             
             // Renderizar Escudo en Cabecera Global
             if (teamCrestHeader) {
@@ -3103,27 +3147,32 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
 
-    // Configurar Handler de Escudo
+    // --- LÓGICA DE CONFIGURACIÓN DEL CLUB (v49.0) ---
+    window.loadTeamSettingsIntoForm = function() {
+        if (!state.team) return;
+        const inputName = document.getElementById('input-team-name');
+        const inputTwitter = document.getElementById('input-team-twitter');
+        const inputTwitch = document.getElementById('input-team-twitch');
+        const crestDisplay = document.getElementById('team-crest-display');
+
+        if (inputName) inputName.value = state.team.name || '';
+        if (inputTwitter) inputTwitter.value = state.team.socials?.twitter || '';
+        if (inputTwitch) inputTwitch.value = state.team.socials?.twitch || '';
+        
+        if (crestDisplay) {
+            const crestSource = state.team.crest_url || localStorage.getItem(`jb_crest_${state.team.id}`);
+            if (crestSource) {
+                crestDisplay.innerHTML = `<img src="${crestSource}" style="width:100%; height:100%; object-fit:cover; border-radius:8px;">`;
+            } else {
+                crestDisplay.innerHTML = '🛡️';
+            }
+        }
+    };
+
+    // Configurar Handler de Escudo e inputs
     const crestTrigger = document.getElementById('team-crest-trigger');
     const crestInput = document.getElementById('team-crest-input');
-    
-    // Handler para Editar Nombre del Club
-    const btnEditTeamName = document.getElementById('btn-edit-team-name');
-    if (btnEditTeamName) {
-        btnEditTeamName.onclick = async () => {
-            if (state.user?.role !== 'manager') return;
-            const newName = await window.jbPrompt('Nuevo nombre para el club:', state.team.name);
-            if (newName && newName.trim() !== "" && newName !== state.team.name) {
-                window.jbLoading.show('Actualizando identidad...');
-                state.team.name = newName.trim();
-                await saveTeamCloud(); // js/data.js
-                updateTeamHeader();
-                document.getElementById('mgmt-team-name').textContent = state.team.name.toUpperCase();
-                window.jbLoading.hide();
-                window.jbToast('Nombre del club actualizado', 'success');
-            }
-        };
-    }
+    const btnSaveSettings = document.getElementById('btn-save-team-settings');
 
     if (crestTrigger && crestInput) {
         crestTrigger.onclick = () => {
@@ -3140,28 +3189,60 @@ document.addEventListener('DOMContentLoaded', () => {
                     window.jbLoading.show('Subiendo Escudo...');
                     await updateTeamCrest(base64);
                     window.jbLoading.hide();
+                    window.loadTeamSettingsIntoForm(); // Refrescar miniatura
                 };
                 reader.readAsDataURL(file);
             }
         };
     }
 
+    if (btnSaveSettings) {
+        btnSaveSettings.addEventListener('click', async () => {
+            if (state.user?.role !== 'manager') return;
+            
+            const newName = document.getElementById('input-team-name').value.trim();
+            const twitter = document.getElementById('input-team-twitter').value.trim().replace('@', '');
+            const twitch = document.getElementById('input-team-twitch').value.trim();
+
+            if (!newName) {
+                window.jbToast('El nombre del club no puede estar vacío.', 'error');
+                return;
+            }
+
+            window.jbLoading.show('Guardando ajustes del club...');
+            
+            state.team.name = newName;
+            state.team.socials = {
+                twitter: twitter,
+                twitch: twitch
+            };
+
+            await saveTeamCloud(); // js/data.js
+            updateTeamHeader();
+            
+            // Actualizar nombre en la UI de gestión
+            const mgmtName = document.getElementById('mgmt-team-name');
+            if (mgmtName) mgmtName.textContent = newName.toUpperCase();
+
+            window.jbLoading.hide();
+            window.jbToast('¡Ajustes del club actualizados!', 'success');
+        });
+    }
+
     async function updateTeamCrest(base64) {
+        if (!supabase || !state.team) return;
         const { error } = await supabase
             .from('teams')
             .update({ crest_url: base64 })
             .eq('id', state.team.id);
 
         if (error) {
-            console.warn(">>> [SQL ERROR] No se pudo guardar en Supabase (falta columna crest_url). Usando LocalStorage Fallback.");
+            console.warn(">>> Error al subir escudo:", error.message);
             localStorage.setItem(`jb_crest_${state.team.id}`, base64);
-            state.team.crest_url_local = base64;
-            document.getElementById('team-crest-display').innerHTML = `<img src="${base64}" alt="Escudo">`;
             window.jbToast('Escudo guardado localmente (Falta columna en DB)', 'info');
         } else {
             state.team.crest_url = base64;
-            document.getElementById('team-crest-display').innerHTML = `<img src="${base64}" alt="Escudo">`;
-            window.jbToast('¡Escudo actualizado con éxito!', 'success');
+            window.jbToast('¡Escudo actualizado!', 'success');
         }
         updateTeamHeader();
     }

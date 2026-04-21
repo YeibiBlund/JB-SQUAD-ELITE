@@ -280,11 +280,15 @@ async function setActiveTacticInDB(tacticId) {
  */
 async function saveTeamCloud() {
     if (!supabase || !state.team) return;
-    await supabase.from('teams').upsert({
-        id: state.team.id,
-        name: state.team.name,
-        manager_name: state.team.manager_name
-    });
+    const { error } = await supabase
+        .from('teams')
+        .update({ 
+            name: state.team.name,
+            socials: state.team.socials || {}
+        })
+        .eq('id', state.team.id);
+    
+    if (error) console.error(">>> [ERROR] saveTeamCloud:", error.message);
 }
 
 /**
