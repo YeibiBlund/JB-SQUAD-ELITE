@@ -156,6 +156,19 @@ function setupAuthHandlers() {
                 return;
             }
 
+            // Sincronizar ficha del creador (v48.0 fix)
+            const { data: existingPlayer } = await supabase.from('players').select('id').eq('user_id', state.user.auth.id).maybeSingle();
+            if (existingPlayer) {
+                await supabase.from('players').update({ team_id: team.id }).eq('user_id', state.user.auth.id);
+            } else {
+                const username = state.user.auth.user_metadata?.full_name || state.user.auth.email.split('@')[0];
+                await supabase.from('players').insert({
+                    user_id: state.user.auth.id,
+                    team_id: team.id,
+                    name: username
+                });
+            }
+
             window.jbToast(`¡Club ${teamName} fundado con éxito!`, 'success');
             await handleUserSession(state.user.auth);
         };

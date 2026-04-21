@@ -321,6 +321,10 @@ async function deleteMemberCloud(userId) {
             .eq('team_id', state.team.id);
 
         if (error) throw error;
+
+        // 2. Sincronizar ficha (v48.0 fix)
+        await supabase.from('players').update({ team_id: null }).eq('user_id', userId);
+
         window.jbToast('Miembro eliminado del club', 'success');
         if (typeof renderMembersList === 'function') await renderMembersList();
     } catch (err) {
@@ -404,6 +408,21 @@ async function acceptTeamRequest(requestId) {
 
         // 3. Eliminar la solicitud
         await supabase.from('team_requests').delete().eq('id', requestId);
+
+        // 4. Vincular ficha técnica al club (v48.0 fix)
+        // Buscamos si el jugador ya tiene ficha para no sobrescribir sus stats/dorsal
+        const { data: existingPlayer } = await supabase.from('players').select('id').eq('user_id', req.user_id).maybeSingle();
+        
+        if (existingPlayer) {
+            await supabase.from('players').update({ team_id: req.team_id }).eq('user_id', req.user_id);
+        } else {
+            const { data: profile } = await supabase.from('profiles').select('full_name').eq('id', req.user_id).single();
+            await supabase.from('players').insert({
+                user_id: req.user_id,
+                team_id: req.team_id,
+                name: profile?.full_name || 'Nuevo Jugador'
+            });
+        }
         
         window.jbToast('Jugador aceptado en el club', 'success');
     } catch (err) {
