@@ -2882,13 +2882,38 @@ document.addEventListener('DOMContentLoaded', () => {
         window.jbLoading.show('Generando imagen de plantilla...');
         
         const teamName = (state.team?.name || 'Mi Club').toUpperCase();
+        const crestUrl = state.team?.crest_url || localStorage.getItem(`jb_crest_${state.team?.id}`);
+        const twitter = state.team?.socials?.twitter;
+        const twitch = state.team?.socials?.twitch;
+
         const wrapper = document.createElement('div');
         wrapper.className = 'squad-export-wrapper';
         
         wrapper.innerHTML = `
             <div class="squad-export-header">
-                <h1>${teamName}</h1>
-                <div style="font-weight: 800; opacity: 0.5; font-size: 0.8rem;">PLANTILLA OFICIAL</div>
+                <div class="squad-export-logo-container">
+                    ${crestUrl ? `<img src="${crestUrl}" class="squad-export-crest">` : ''}
+                    <h1>${teamName}</h1>
+                </div>
+                <div class="squad-export-socials">
+                    ${twitter ? `
+                        <div class="squad-social-item">
+                            <span class="squad-social-icon" style="color: #1DA1F2;">
+                                <svg viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.045 4.126H5.078z"/></svg>
+                            </span>
+                            @${twitter.toUpperCase()}
+                        </div>
+                    ` : ''}
+                    ${twitch ? `
+                        <div class="squad-social-item">
+                            <span class="squad-social-icon" style="color: #9146FF;">
+                                <svg viewBox="0 0 24 24" fill="currentColor"><path d="M11.571 4.714h1.715v5.143H11.57zm4.715 0H18v5.143h-1.714zM6 0L1.714 4.286v15.428h5.143V24l4.286-4.286h3.428L22.286 12V0zm14.571 11.143l-3.428 3.428h-3.429l-3 3v-3H6.857V1.714h13.714Z"/></svg>
+                            </span>
+                            ${twitch.toUpperCase()}
+                        </div>
+                    ` : ''}
+                    <div style="font-weight: 800; opacity: 0.3; font-size: 0.7rem; margin-top: 5px;">PLANTILLA OFICIAL</div>
+                </div>
             </div>
             <div id="squad-export-content"></div>
         `;
