@@ -79,6 +79,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const mobileBtnSavePollAlignment = document.getElementById('mobile-btn-save-poll-alignment');
     const savedTacticsList = document.getElementById('saved-tactics-list');
     const newTacticNameInput = document.getElementById('newTacticName');
+    const btnExportSquad = document.getElementById('btn-export-squad');
 
     // Modal Exportación (v4.8.0)
     const exportTimeModal = document.getElementById('export-time-modal');
@@ -899,6 +900,13 @@ document.addEventListener('DOMContentLoaded', () => {
             exportTimeModal.style.display = 'none';
             exportTacticAsImage();
         });
+
+        // Exportar Plantilla (v49.4)
+        if (btnExportSquad) {
+            btnExportSquad.addEventListener('click', () => {
+                exportSquadAsImage();
+            });
+        }
 
         // Configurar Zona de Drop para volver al Banquillo Completo
         const rosterPanel = document.getElementById('tactic-roster-panel');
@@ -2714,9 +2722,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         <div class="scorebug-formation">LINEUP: ${escapeHTML(activeTactic.formation)}</div>
                     </div>
                 </div>
-                <div class="export-pitch-area">
-                    <!-- El campo se clonará aquí -->
-                </div>
+                <div class="export-pitch-area"></div>
             </div>
         `;
         
@@ -2724,88 +2730,12 @@ document.addEventListener('DOMContentLoaded', () => {
         document.body.appendChild(wrapper);
         const pitchAreaElement = wrapper.querySelector('.export-pitch-area');
         
-        // 2. Reconstrucción Manual del Campo (v23.1.0 - Bulletproof)
-        // En lugar de clonar el DOM (sucio), creamos un campo limpio desde los datos
         const pitchExport = document.createElement('div');
         pitchExport.className = 'pitch-container-export';
         
         const formationSlots = FORMATIONS[activeTactic.formation] || [];
         const assignments = activeTactic.assignments || {};
         const customPositions = activeTactic.customPositions || {};
-        
-        // 3. Función auxiliar para renderizar fotos nativamente en HTML5 Canvas (Bypass de bugs de html2canvas v28)
-        const renderPlayerPhotoToCanvas = async (player) => {
-            const canvas = document.createElement('canvas');
-            canvas.width = 150;
-            canvas.height = 205;
-            canvas.style.position = 'absolute';
-            canvas.style.top = '0';
-            canvas.style.left = '0';
-            canvas.style.width = '150px';
-            canvas.style.height = '205px';
-            const ctx = canvas.getContext('2d');
-            
-            return new Promise((resolve) => {
-                const img = new Image();
-                img.crossOrigin = "anonymous";
-
-                img.onload = () => {
-                    if (player.photo_url) {
-                        // Matemáticas para simular object-fit: cover en canvas
-                        const imgRatio = img.width / img.height;
-                        const canvasRatio = canvas.width / canvas.height;
-                        let drawWidth, drawHeight, offsetX, offsetY;
-
-                        if (imgRatio > canvasRatio) {
-                            drawHeight = canvas.height;
-                            drawWidth = img.width * (canvas.height / img.height);
-                            offsetX = (canvas.width - drawWidth) / 2;
-                            offsetY = 0;
-                        } else {
-                            drawWidth = canvas.width;
-                            drawHeight = img.height * (canvas.width / img.width);
-                            offsetX = 0;
-                            offsetY = 0;
-                        }
-
-                        const scale = player.photo_scale || 1.0;
-                        const posXVal = player.photo_x || 0;
-                        const posYVal = player.photo_y || 0;
-
-                        ctx.save();
-                        // Mover origen al centro exacto para escalar como en CSS
-                        ctx.translate(canvas.width / 2, canvas.height / 2);
-                        ctx.translate(posXVal, posYVal);
-                        ctx.scale(scale, scale);
-                        ctx.translate(-canvas.width / 2, -canvas.height / 2);
-
-                        ctx.drawImage(img, offsetX, offsetY, drawWidth, drawHeight);
-                        ctx.restore();
-                    } else {
-                        // Es un SVG, forzar cobertura total pura
-                        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-                    }
-                    resolve(canvas);
-                };
-
-                img.onerror = () => resolve(canvas); // Falla suave
-
-                if (player.photo_url) {
-                    img.src = player.photo_url;
-                } else {
-                    const avatar = player.avatar_id ? AVATARS.find(a => a.id === player.avatar_id) : AVATARS[0];
-                    let svgStr = avatar ? avatar.svg : AVATARS[0].svg;
-                    if (!svgStr.includes('xmlns=')) {
-                        svgStr = svgStr.replace('<svg ', '<svg xmlns="http://www.w3.org/2000/svg" ');
-                    }
-                    // Forzar medidas para el renderizado del SVG en Image
-                    if (!svgStr.includes('width=')) {
-                        svgStr = svgStr.replace('<svg ', '<svg width="150" height="205" ');
-                    }
-                    img.src = "data:image/svg+xml;charset=utf-8," + encodeURIComponent(svgStr);
-                }
-            });
-        };
 
         const slotPromises = formationSlots.map(async slotData => {
             const slotEl = document.createElement('div');
@@ -2873,6 +2803,155 @@ document.addEventListener('DOMContentLoaded', () => {
         } finally {
             // 4. Limpieza
             document.body.removeChild(wrapper);
+        }
+    }
+
+    // --- FUNCIÓN AUXILIAR DE RENDERIZADO DE FOTOS (v49.4) ---
+    // Usada por exportTacticAsImage y exportSquadAsImage
+    async function renderPlayerPhotoToCanvas(player, width = 150, height = 205) {
+        const canvas = document.createElement('canvas');
+        canvas.width = width;
+        canvas.height = height;
+        canvas.style.position = 'absolute';
+        canvas.style.top = '0';
+        canvas.style.left = '0';
+        canvas.style.width = `${width}px`;
+        canvas.style.height = `${height}px`;
+        const ctx = canvas.getContext('2d');
+        
+        return new Promise((resolve) => {
+            const img = new Image();
+            img.crossOrigin = "anonymous";
+
+            img.onload = () => {
+                if (player.photo_url) {
+                    const imgRatio = img.width / img.height;
+                    const canvasRatio = canvas.width / canvas.height;
+                    let drawWidth, drawHeight, offsetX, offsetY;
+
+                    if (imgRatio > canvasRatio) {
+                        drawHeight = canvas.height;
+                        drawWidth = img.width * (canvas.height / img.height);
+                        offsetX = (canvas.width - drawWidth) / 2;
+                        offsetY = 0;
+                    } else {
+                        drawWidth = canvas.width;
+                        drawHeight = img.height * (canvas.width / img.width);
+                        offsetX = 0;
+                        offsetY = 0;
+                    }
+
+                    const scale = player.photo_scale || 1.0;
+                    const posXVal = player.photo_x || 0;
+                    const posYVal = player.photo_y || 0;
+
+                    ctx.save();
+                    ctx.translate(canvas.width / 2, canvas.height / 2);
+                    ctx.translate(posXVal, posYVal);
+                    ctx.scale(scale, scale);
+                    ctx.translate(-canvas.width / 2, -canvas.height / 2);
+                    ctx.drawImage(img, offsetX, offsetY, drawWidth, drawHeight);
+                    ctx.restore();
+                } else {
+                    ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+                }
+                resolve(canvas);
+            };
+
+            img.onerror = () => resolve(canvas);
+
+            if (player.photo_url) {
+                img.src = player.photo_url;
+            } else {
+                const avatar = player.avatar_id ? AVATARS.find(a => a.id === player.avatar_id) : AVATARS[0];
+                let svgStr = avatar ? avatar.svg : AVATARS[0].svg;
+                if (!svgStr.includes('xmlns=')) svgStr = svgStr.replace('<svg ', '<svg xmlns="http://www.w3.org/2000/svg" ');
+                if (!svgStr.includes('width=')) svgStr = svgStr.replace('<svg ', `<svg width="${width}" height="${height}" `);
+                img.src = "data:image/svg+xml;charset=utf-8," + encodeURIComponent(svgStr);
+            }
+        });
+    }
+
+    async function exportSquadAsImage() {
+        const role = (state.user?.role || 'jugador').toLowerCase();
+        if (role !== 'manager' && role !== 'capitan') {
+            window.jbToast('Acceso denegado: Solo el Manager y los Capitanes pueden exportar la plantilla.', 'error');
+            return;
+        }
+
+        window.jbLoading.show('Generando imagen de plantilla...');
+        
+        const teamName = (state.team?.name || 'Mi Club').toUpperCase();
+        const wrapper = document.createElement('div');
+        wrapper.className = 'squad-export-wrapper';
+        
+        wrapper.innerHTML = `
+            <div class="squad-export-header">
+                <h1>${teamName}</h1>
+                <div style="font-weight: 800; opacity: 0.5; font-size: 0.8rem;">PLANTILLA OFICIAL</div>
+            </div>
+            <div id="squad-export-content"></div>
+        `;
+
+        document.body.appendChild(wrapper);
+        const content = wrapper.querySelector('#squad-export-content');
+
+        const categoryMap = {
+            'PORTERA': ['POR'],
+            'DEFENSA': ['DFC', 'LD', 'LI', 'CAD', 'CAI'],
+            'CENTROCAMPISTA': ['MCD', 'MC', 'MI', 'MD', 'MCO'],
+            'DELANTERA': ['ED', 'EI', 'SD', 'DC']
+        };
+
+        for (const [title, positions] of Object.entries(categoryMap)) {
+            const players = state.players.filter(p => positions.includes(p.primaryPos?.toUpperCase() || p.primary_pos?.toUpperCase()));
+            if (players.length === 0) continue;
+
+            const groupDiv = document.createElement('div');
+            groupDiv.className = 'squad-group';
+            groupDiv.innerHTML = `<h2 class="squad-group-title">${title}</h2><div class="squad-cards-grid"></div>`;
+            const grid = groupDiv.querySelector('.squad-cards-grid');
+
+            for (const player of players) {
+                const card = document.createElement('div');
+                card.className = 'squad-export-card';
+                card.innerHTML = `
+                    <div class="squad-card-photo"></div>
+                    <div class="squad-card-info">
+                        <div class="squad-card-name-row">
+                            <span class="squad-card-dorsal">${player.dorsal || ''}</span>
+                            <span class="squad-card-name">${escapeHTML(player.name)}</span>
+                        </div>
+                        <span class="squad-card-pos">${player.primaryPos || player.primary_pos}</span>
+                    </div>
+                `;
+                
+                const photoCanvas = await renderPlayerPhotoToCanvas(player, 180, 240); // Ligeramente más grande para squad
+                card.querySelector('.squad-card-photo').appendChild(photoCanvas);
+                grid.appendChild(card);
+            }
+            content.appendChild(groupDiv);
+        }
+
+        await new Promise(r => setTimeout(r, 1000));
+
+        try {
+            const canvas = await html2canvas(wrapper, {
+                useCORS: true,
+                scale: 1.5,
+                backgroundColor: '#ffffff'
+            });
+
+            const link = document.createElement('a');
+            link.download = `PLANTILLA_${teamName.replace(/\s+/g, '_')}.jpg`;
+            link.href = canvas.toDataURL('image/jpeg', 0.9);
+            link.click();
+        } catch (err) {
+            console.error("Error al exportar plantilla:", err);
+            window.jbToast("Error al generar la imagen.", "error");
+        } finally {
+            document.body.removeChild(wrapper);
+            window.jbLoading.hide();
         }
     }
 
