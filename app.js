@@ -959,6 +959,11 @@ document.addEventListener('DOMContentLoaded', () => {
         btnNewPoll?.addEventListener('click', () => {
             newPollContainer.style.display = 'block';
             btnNewPoll.style.display = 'none';
+            // Por defecto, fecha de hoy
+            const dateInput = document.getElementById('poll-date');
+            if (dateInput) {
+                dateInput.value = new Date().toISOString().split('T')[0];
+            }
         });
 
         btnCancelPoll?.addEventListener('click', () => {
@@ -975,10 +980,12 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
             const title = document.getElementById('poll-title').value.trim();
+            const date = document.getElementById('poll-date').value;
             const time = document.getElementById('poll-time').value;
             if (!title) return window.jbToast('Ponle un título al evento', 'warning');
+            if (!date) return window.jbToast('Selecciona una fecha', 'warning');
             
-            await createPoll(title, time);
+            await createPoll(title, date, time);
             
             // Limpiar y ocultar
             document.getElementById('poll-title').value = '';
@@ -3405,7 +3412,7 @@ document.addEventListener('DOMContentLoaded', () => {
         return data || [];
     }
 
-    async function createPoll(title, time) {
+    async function createPoll(title, date, time) {
         if (!state.team || !state.user) return;
         
         // --- SEGURIDAD: Solo Manager o Capitán (v49.3) ---
@@ -3415,9 +3422,8 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
         
-        // Fecha de hoy combinada con la hora elegida
-        const today = new Date().toISOString().split('T')[0];
-        const scheduledTime = `${today}T${time}:00Z`;
+        // Usar la fecha elegida combinada con la hora
+        const scheduledTime = `${date}T${time}:00Z`;
 
         const { data, error } = await supabase
             .from('availability_polls')
@@ -3511,7 +3517,11 @@ document.addEventListener('DOMContentLoaded', () => {
         const lateVotes = sortVotes(votes.filter(v => v.vote === 'late'));
         const noVotes = sortVotes(votes.filter(v => v.vote === 'no'));
 
-        const scheduledTime = new Date(poll.scheduled_time).toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' });
+        const pollDateObj = new Date(poll.scheduled_time);
+        const scheduledTime = pollDateObj.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' });
+        const scheduledDate = pollDateObj.toLocaleDateString('es-ES', { day: '2-digit', month: '2-digit' });
+        const isToday = pollDateObj.toDateString() === new Date().toDateString();
+        const dateLabel = isToday ? 'Hoy' : scheduledDate;
 
         activePollContainer.innerHTML = `
             <div class="poll-active-card fade-in">
@@ -3520,7 +3530,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         <div class="poll-header">
                             <div class="poll-info">
                                 <h2>${poll.title}</h2>
-                                <p>🕒 Hoy ${scheduledTime}</p>
+                                <p>🕒 ${dateLabel} ${scheduledTime}</p>
                             </div>
                             <div class="poll-header-actions">
                                 ${isManagerOrCapitan ? `
