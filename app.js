@@ -3496,36 +3496,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    async function renderAvailabilityBanner() {
-        const banner = document.getElementById('availability-banner');
-        const navDot = document.getElementById('nav-votar-dot');
-        if (!banner) return;
 
-        // Reset visual
-        banner.style.display = 'none';
-        if (navDot) navDot.style.display = 'none';
-
-        if (!state.team || !state.user) return;
-
-        // Caché de 60 segundos (v49.5)
-        const now = Date.now();
-        let poll;
-        if (state.bannerCache.timestamp && (now - state.bannerCache.timestamp < 60000)) {
-            poll = state.bannerCache.data;
-        } else {
-            poll = await fetchActivePoll();
-            state.bannerCache = { data: poll, timestamp: now };
-        }
-
-        if (!poll) return;
-      
-        // Mostrar/Ocultar botón de nueva según rango
-        const isManagerOrCapitan = state.user && (state.user.role === 'manager' || state.user.role === 'capitan');
-        if (btnNewPoll) btnNewPoll.style.display = isManagerOrCapitan ? 'flex' : 'none';
-
-        const poll = await fetchActivePoll();
-        // ... (resto del renderizado del banner)
-    }
 
     function sharePollWhatsApp(poll) {
         const url = `https://jb-squad.netlify.app/?poll=${poll.id}`;
