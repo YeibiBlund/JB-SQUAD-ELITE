@@ -3603,6 +3603,43 @@ body.editing-tactic .tactical-slot {
     margin-right: auto;
 }
 
+.results-group-title {
+    cursor: pointer;
+    padding: 5px 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+}
+
+/* Alinear contador a la derecha en cabecera */
+.results-group-title span:nth-child(2) {
+    margin-left: auto;
+    margin-right: 15px;
+}
+
+.results-group-title::after {
+    content: '▼';
+    font-size: 0.5rem;
+    opacity: 0.5;
+    transition: transform 0.3s ease;
+}
+
+.results-group.expanded .results-group-title::after {
+    transform: rotate(180deg);
+    opacity: 1;
+    color: var(--primary);
+}
+
+/* Colapso por defecto (Web y Mobile) */
+.results-group.collapsed-mobile .results-voters-list {
+    display: none;
+}
+
+.results-group.collapsed-mobile.expanded .results-voters-list {
+    display: block !important;
+}
+
 @media (max-width: 1023px) {
     .poll-active-card {
         padding: 15px;
@@ -3739,45 +3776,8 @@ body.editing-tactic .tactical-slot {
         font-size: 0.75rem !important;
     }
 
-    /* Secciones Colapsables */
-    .results-group.collapsed-mobile .results-voters-list {
-        display: none;
-    }
 
-    .results-group.collapsed-mobile.expanded .results-voters-list {
-        display: block !important;
-    }
-
-    .results-group-title {
-        cursor: pointer;
-        padding: 5px 0;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        width: 100%;
-    }
-
-    /* Alinear contador a la derecha en cabecera */
-    .results-group-title span:nth-child(2) {
-        margin-left: auto;
-        margin-right: 15px;
-    }
-
-    .results-group-title::after {
-        content: 'â–¼';
-        font-size: 0.5rem;
-        opacity: 0.5;
-        transition: transform 0.3s ease;
-    }
-
-    .results-group.expanded .results-group-title::after {
-        transform: rotate(180deg);
-        opacity: 1;
-        color: var(--primary);
-    }
-
-
-    /* Lista de votantes compacta en mÃ³vil (sin imagen) */
+    /* Lista de votantes compacta en móvil (sin imagen) */
     .voter-row {
         padding: 5px 10px !important;
         gap: 8px !important;

@@ -3488,9 +3488,25 @@ document.addEventListener('DOMContentLoaded', () => {
         state.activePoll.votes = votes; // Sincronizamos votos con el estado para el cierre
         const myVote = votes.find(v => v.user_id === state.user.auth.id);
         
-        const yesVotes = votes.filter(v => v.vote === 'yes');
-        const lateVotes = votes.filter(v => v.vote === 'late');
-        const noVotes = votes.filter(v => v.vote === 'no');
+        // --- Lógica de Ordenación por Posición (v49.5) ---
+        const positionOrder = ['POR', 'DFC', 'LD', 'CAD', 'LI', 'CAI', 'MCD', 'MC', 'MVI', 'MVD', 'MD', 'MI', 'MCO', 'EI', 'ED', 'DC'];
+        const sortVotes = (arr) => {
+            return arr.sort((a, b) => {
+                const playerA = state.players.find(p => p.user_id === a.user_id);
+                const playerB = state.players.find(p => p.user_id === b.user_id);
+                const posA = (playerA?.primaryPos || '??').toUpperCase();
+                const posB = (playerB?.primaryPos || '??').toUpperCase();
+                
+                const idxA = positionOrder.indexOf(posA);
+                const idxB = positionOrder.indexOf(posB);
+                
+                return (idxA === -1 ? 99 : idxA) - (idxB === -1 ? 99 : idxB);
+            });
+        };
+
+        const yesVotes = sortVotes(votes.filter(v => v.vote === 'yes'));
+        const lateVotes = sortVotes(votes.filter(v => v.vote === 'late'));
+        const noVotes = sortVotes(votes.filter(v => v.vote === 'no'));
 
         const scheduledTime = new Date(poll.scheduled_time).toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' });
 
