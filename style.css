@@ -5236,18 +5236,14 @@ body.editing-tactic .tactical-slot {
 /* --- SELECTOR DE FONDOS DE EXPORTACIÓN --- */
 .bg-selector-grid {
     display: flex;
-    gap: 10px;
+    gap: 8px;
     overflow-x: auto;
     padding: 10px 5px;
     margin-bottom: 20px;
-    scrollbar-width: none; /* Firefox */
-}
-.bg-selector-grid::-webkit-scrollbar {
-    display: none; /* Chrome/Safari */
 }
 .bg-option {
-    width: 80px;
-    height: 110px;
+    width: 65px;
+    height: 90px;
     flex-shrink: 0;
     border-radius: 8px;
     border: 2px solid rgba(255, 255, 255, 0.1);
