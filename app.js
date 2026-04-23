@@ -2616,7 +2616,12 @@ document.addEventListener('DOMContentLoaded', () => {
             items.forEach((s, i) => {
                 const row = document.createElement('div');
                 row.className = 'card-elite';
-                row.style.cssText = 'padding: 8px 12px; margin: 0; display: flex; align-items: center; gap: 12px; border-color: rgba(240,165,0,0.1); border-radius: 8px;';
+                row.style.cssText = 'padding: 8px 12px; margin: 0; display: flex; align-items: center; gap: 12px; border-color: rgba(240,165,0,0.1); border-radius: 8px; cursor: pointer; transition: transform 0.2s;';
+                row.onmouseover = () => row.style.transform = 'translateX(5px)';
+                row.onmouseout = () => row.style.transform = 'translateX(0)';
+                row.onclick = () => {
+                    if (window.viewPlayerProfileDetail) window.viewPlayerProfileDetail(s.id);
+                };
                 row.innerHTML = `
                     <span style="font-size: 0.8rem; font-weight: 900; color: var(--primary); width: 15px;">${i+1}</span>
                     <div style="width: 25px; height: 25px; background: rgba(0,0,0,0.2); border-radius: 4px; padding: 2px; overflow: hidden; display: flex; align-items: center; justify-content: center;">
@@ -2632,6 +2637,7 @@ document.addEventListener('DOMContentLoaded', () => {
         // --- Mapeador de jugador para rankings ---
         function mapPlayerForRanking(p) {
             return {
+                id: p.id,
                 name: p.name,
                 photo: p.photo_url,
                 transform: getPlayerTransform(p),
