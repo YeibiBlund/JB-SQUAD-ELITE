@@ -352,11 +352,13 @@ p { color: var(--text-muted); font-size: 0.95rem; line-height: 1.5; }
     }
     .home-stats-grid {
         display: grid !important;
+        grid-template-columns: 1fr 1fr;
+        gap: 15px;
     }
 }
 
 .home-stats-grid {
-    display: none;
+    display: none !important;
 }
 
 /* Onboarding */
