@@ -3943,11 +3943,28 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
 
-        // --- Configuración de Botón Reabrir (v34.1) ---
+        // --- Configuración de Botón Reabrir (v34.2) ---
         if (btnReopenReport) {
             const isAuthorized = state.user && (state.user.role === 'manager' || state.user.role === 'capitan');
+            
+            // Solo permitimos reabrir si es la jornada CERRADA más reciente
+            // Para saberlo, consultamos rápido la última cerrada de este equipo
+            const isLastClosed = async () => {
+                const { data } = await supabase
+                    .from('availability_polls')
+                    .select('id')
+                    .eq('team_id', state.team.id)
+                    .eq('status', 'closed')
+                    .order('created_at', { ascending: false })
+                    .limit(1)
+                    .maybeSingle();
+                return data && data.id === id;
+            };
+
             if (isAuthorized && poll.status === 'closed') {
-                btnReopenReport.style.display = 'block';
+                isLastClosed().then(last => {
+                    btnReopenReport.style.display = last ? 'block' : 'none';
+                });
                 btnReopenReport.onclick = () => window.jbReopenPoll(id);
             } else {
                 btnReopenReport.style.display = 'none';
@@ -4041,8 +4058,29 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     window.jbReopenPoll = async (id) => {
-        const confirmed = await window.jbConfirm('¿Quieres volver a activar esta convocatoria? Aparecerá de nuevo para que los jugadores puedan votar.');
-        if (!confirmed) return;
+        window.jbLoading.show('Comprobando estado...');
+        
+        // 1. Ver si hay alguna ya abierta
+        const activePoll = await fetchActivePoll();
+        
+        if (activePoll) {
+            const msg = `Ya existe una convocatoria activa ("${activePoll.title}").\n\n¿Quieres ELIMINAR la actual y reabrir la anterior? Esta acción no se puede deshacer.`;
+            const confirmReplace = await window.jbConfirm(msg);
+            if (!confirmReplace) {
+                window.jbLoading.hide();
+                return;
+            }
+
+            // Borrar la activa actual (la errónea)
+            await supabase.from('availability_votes').delete().eq('poll_id', activePoll.id);
+            await supabase.from('availability_polls').delete().eq('id', activePoll.id);
+        } else {
+            const confirmed = await window.jbConfirm('¿Quieres volver a activar esta convocatoria?');
+            if (!confirmed) {
+                window.jbLoading.hide();
+                return;
+            }
+        }
 
         window.jbLoading.show('Reabriendo convocatoria...');
         
@@ -4058,11 +4096,9 @@ document.addEventListener('DOMContentLoaded', () => {
         } else {
             window.jbToast('¡Convocatoria reabierta con éxito!', 'success');
             
-            // Cerrar el modal de detalle
             const overlay = document.getElementById('poll-detail-overlay');
             if (overlay) overlay.style.display = 'none';
             
-            // Limpiar caché e ir a la vista de convocatorias
             state.historyCache = {};
             renderAvailabilityPanel();
             renderPollHistory();
