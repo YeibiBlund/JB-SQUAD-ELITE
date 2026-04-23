@@ -3378,18 +3378,13 @@ document.addEventListener('DOMContentLoaded', () => {
     async function fetchActivePoll() {
         if (!state.team) return null;
         
-        // --- FILTRO DE SEGURIDAD (v49.6) ---
-        // Solo buscamos convocatorias creadas HOY para evitar bucles con basura antigua
-        const today = new Date();
-        today.setHours(0,0,0,0);
-        const todayISO = today.toISOString();
-
+        // --- Búsqueda de Convocatoria Activa ---
+        // Tomamos la más reciente que esté en estado 'open'
         const { data, error } = await supabase
             .from('availability_polls')
             .select('*')
             .eq('team_id', state.team.id)
             .eq('status', 'open')
-            .gte('created_at', todayISO) // Filtro de fecha
             .order('created_at', { ascending: false })
             .limit(1)
             .maybeSingle();
@@ -3784,6 +3779,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const noTactic = document.getElementById('report-no-tactic');
         const pitchContainer = document.getElementById('report-mini-pitch-container');
         const btnDeleteReport = document.getElementById('btn-delete-report');
+        const btnReopenReport = document.getElementById('btn-reopen-report');
 
         if (!overlay) return;
         window.jbLoading.show('Generando reporte...');
@@ -3935,6 +3931,17 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
 
+        // --- Configuración de Botón Reabrir (v34.1) ---
+        if (btnReopenReport) {
+            const isAuthorized = state.user && (state.user.role === 'manager' || state.user.role === 'capitan');
+            if (isAuthorized && poll.status === 'closed') {
+                btnReopenReport.style.display = 'block';
+                btnReopenReport.onclick = () => window.jbReopenPoll(id);
+            } else {
+                btnReopenReport.style.display = 'none';
+            }
+        }
+
         overlay.style.display = 'flex';
         window.jbLoading.hide();
     };
@@ -4057,6 +4064,36 @@ document.addEventListener('DOMContentLoaded', () => {
         btnAlign.onclick = () => withAlignmentData(true);
         btnOnlyClose.onclick = () => withAlignmentData(false);
         btnBack.onclick = () => dialog.style.display = 'none';
+    };
+
+    window.jbReopenPoll = async (id) => {
+        const confirmed = await window.jbConfirm('¿Quieres volver a activar esta convocatoria? Aparecerá de nuevo para que los jugadores puedan votar.');
+        if (!confirmed) return;
+
+        window.jbLoading.show('Reabriendo convocatoria...');
+        
+        const { error } = await supabase
+            .from('availability_polls')
+            .update({ status: 'open' })
+            .eq('id', id);
+
+        window.jbLoading.hide();
+
+        if (error) {
+            window.jbToast('Error al reabrir: ' + error.message, 'error');
+        } else {
+            window.jbToast('¡Convocatoria reabierta con éxito!', 'success');
+            
+            // Cerrar el modal de detalle
+            const overlay = document.getElementById('poll-detail-overlay');
+            if (overlay) overlay.style.display = 'none';
+            
+            // Limpiar caché e ir a la vista de convocatorias
+            state.historyCache = {};
+            renderAvailabilityPanel();
+            renderPollHistory();
+            window.switchView('view-convocatorias');
+        }
     };
     window.jbSharePoll = () => {
         const role = state.user?.role;
