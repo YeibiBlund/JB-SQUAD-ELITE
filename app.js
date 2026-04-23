@@ -3377,11 +3377,19 @@ document.addEventListener('DOMContentLoaded', () => {
 
     async function fetchActivePoll() {
         if (!state.team) return null;
+        
+        // --- FILTRO DE SEGURIDAD (v49.6) ---
+        // Solo buscamos convocatorias creadas HOY para evitar bucles con basura antigua
+        const today = new Date();
+        today.setHours(0,0,0,0);
+        const todayISO = today.toISOString();
+
         const { data, error } = await supabase
             .from('availability_polls')
             .select('*')
             .eq('team_id', state.team.id)
             .eq('status', 'open')
+            .gte('created_at', todayISO) // Filtro de fecha
             .order('created_at', { ascending: false })
             .limit(1)
             .maybeSingle();
