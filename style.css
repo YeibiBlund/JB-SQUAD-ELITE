@@ -4862,3 +4862,98 @@ body.editing-tactic .tactical-slot {
     color: #666;
     text-transform: uppercase;
 }
+
+/* --- Layout del Reporte en Mobile (v34.3) --- */
+@media (max-width: 768px) {
+    .report-header {
+        flex-direction: column !important;
+        align-items: flex-start !important;
+        gap: 15px !important;
+        padding: 15px !important;
+    }
+
+    #report-poll-title {
+        font-size: 1.1rem !important;
+        margin-bottom: 5px !important;
+        width: 100%;
+        display: block;
+    }
+
+    #report-poll-date {
+        font-size: 0.65rem !important;
+        margin-bottom: 10px !important;
+        width: 100%;
+        display: block;
+    }
+
+    /* Fila de botones en el header */
+    .report-header > div:last-child {
+        width: 100% !important;
+        display: flex !important;
+        justify-content: flex-start !important;
+        gap: 10px !important;
+        margin-top: 5px;
+    }
+
+    #btn-reopen-report, #btn-delete-report {
+        flex: 1;
+        text-align: center;
+        padding: 10px 5px !important;
+        font-size: 0.65rem !important;
+    }
+
+    #close-poll-detail {
+        position: absolute !important;
+        top: 15px;
+        right: 15px;
+    }
+}
+
+/* --- Estilos para Secciones Colapsables del Reporte --- */
+.report-collapsible-section {
+    border: 1px solid var(--glass-border);
+    border-radius: 12px;
+    margin-bottom: 15px;
+    background: rgba(255, 255, 255, 0.02);
+    overflow: hidden;
+}
+
+.report-section-header {
+    padding: 12px 15px;
+    background: rgba(255, 255, 255, 0.05);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+}
+
+.report-section-header h4 {
+    margin: 0 !important;
+    font-size: 0.7rem;
+    color: var(--primary);
+}
+
+.report-section-header .chevron {
+    font-size: 0.6rem;
+    transition: transform 0.3s;
+    opacity: 0.5;
+}
+
+.report-section-content {
+    padding: 15px;
+    display: block; /* Abierto por defecto en PC */
+}
+
+@media (max-width: 768px) {
+    .report-section-content {
+        display: none; /* Cerrado por defecto en Mobile */
+    }
+}
+
+.report-collapsible-section.expanded .report-section-content {
+    display: block !important;
+}
+
+.report-collapsible-section.expanded .chevron {
+    transform: rotate(180deg);
+}

@@ -4115,6 +4115,10 @@ document.addEventListener('DOMContentLoaded', () => {
         el.classList.toggle('expanded');
     };
 
+    window.jbToggleReportSection = (el) => {
+        el.parentElement.classList.toggle('expanded');
+    };
+
     // Deep Linking y Notificaciones
     async function checkPollFromURL() {
         const params = new URLSearchParams(window.location.search);
