@@ -263,7 +263,7 @@ async function recalculateAllStats() {
             p.mvp_count = 0; // Si usas esta variable fuera del objeto stats
         });
 
-        // 2. Cargar todas las sesiones del equipo (asegurarnos de tener las últimas)
+        // 2. Cargar todas las sesiones del equipo
         const { data: sessions, error: sessErr } = await supabase
             .from('sessions')
             .select('*')
@@ -272,26 +272,52 @@ async function recalculateAllStats() {
 
         if (sessErr) throw sessErr;
 
+        // 2.5 Cargar historial de convocatorias para rescatar alineaciones maestras (v50.1)
+        const { data: polls } = await supabase
+            .from('availability_polls')
+            .select('id, date, final_alignment')
+            .eq('team_id', state.team.id);
+
         // 3. Procesar cada sesión y partido
         sessions.forEach(session => {
             const matches = session.matches || [];
             
+            // Buscar si hay una alineación guardada en la convocatoria de este día
+            const sessionDate = session.date; // Formato YYYY-MM-DD
+            const matchingPoll = polls?.find(p => p.date === sessionDate);
+            const masterLineup = matchingPoll?.final_alignment?.assignments ? Object.values(matchingPoll.final_alignment.assignments).map(id => id.toString()) : null;
+
             matches.forEach(match => {
                 const mType = match.type || 'friendly';
                 const isWin = match.scoreHome > match.scoreAway;
 
-                // Sumar PJ y Victorias desde la alineación
-                if (match.lineup && Array.isArray(match.lineup)) {
-                    match.lineup.forEach(pId => {
-                        const player = state.players.find(p => p.id.toString() === pId.toString());
-                        if (player) {
-                            player.stats[mType].matches++;
-                            if (isWin) player.stats[mType].wins++;
-                        }
+                // 3.1. Determinar quién jugó este partido
+                let currentLineup = [];
+                if (match.lineup && Array.isArray(match.lineup) && match.lineup.length > 0) {
+                    currentLineup = match.lineup;
+                } else if (masterLineup) {
+                    currentLineup = masterLineup; // Usar la de la convocatoria si el partido no tiene
+                } else if (match.events) {
+                    // Último recurso: los que aparecen en eventos
+                    const involved = new Set();
+                    match.events.forEach(ev => {
+                        if (ev.scorerId) involved.add(ev.scorerId.toString());
+                        if (ev.assistantId) involved.add(ev.assistantId.toString());
                     });
+                    if (match.mvpId) involved.add(match.mvpId.toString());
+                    currentLineup = Array.from(involved);
                 }
 
-                // Sumar Goles y Asistencias desde eventos
+                // Sumar PJ y Victorias
+                currentLineup.forEach(pId => {
+                    const player = state.players.find(p => p.id.toString() === pId.toString());
+                    if (player) {
+                        player.stats[mType].matches++;
+                        if (isWin) player.stats[mType].wins++;
+                    }
+                });
+
+                // 3.2. Sumar Goles y Asistencias (Esto ya funcionaba bien)
                 if (match.events && Array.isArray(match.events)) {
                     match.events.forEach(ev => {
                         const scorer = state.players.find(p => p.id.toString() === ev.scorerId?.toString());
@@ -301,6 +327,7 @@ async function recalculateAllStats() {
                         if (assistant) assistant.stats[mType].assists++;
                     });
                 }
+            });
 
                 // MVP de partido (si existiera en el futuro)
                 if (match.mvpId) {

@@ -1,3 +1,10 @@
+## [v50.0.0] - 2026-04-24 | 22:35
+### Añadido (Sistema de Auto-curación y Mantenimiento)
+- **Recalculación Maestra de Estadísticas**: Implementación de un motor de sincronización que reconstruye los contadores de los jugadores (PJ, Goles, Asistencias, Victorias) basándose exclusivamente en las jornadas reales almacenadas en la base de datos.
+- **Botón de Reparación Élite**: Nueva sección de **Mantenimiento del Club** en el panel de Ajustes para permitir a los managers forzar una sincronización manual si detectan "datos fantasma".
+- **Borrado Sincronizado**: Refactorizada la función de eliminación de jornadas. Ahora, al borrar una sesión, el sistema realiza automáticamente una recalculación global para garantizar que los datos de los jugadores sean 100% precisos con el historial restante.
+- **Robustez de Datos**: Se ha mejorado la gestión de errores en las peticiones de borrado a Supabase y se ha añadido un delay de seguridad entre actualizaciones de jugadores para evitar bloqueos por concurrencia.
+
 ## [v36.1.1] - 2026-04-15 | 00:10
 ### Corregido (Estadísticas y Persistencia)
 - **Ruta de MVP**: Corregido el guardado de MVPs para que apunte a `stats.official.mvps` en lugar de una propiedad huérfana.
