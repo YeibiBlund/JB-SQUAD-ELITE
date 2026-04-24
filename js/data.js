@@ -282,9 +282,24 @@ async function recalculateAllStats() {
         sessions.forEach(session => {
             const matches = session.matches || [];
             
-            // Buscar si hay una alineación guardada en la convocatoria de este día
-            const sessionDate = session.date; // Formato YYYY-MM-DD
-            const matchingPoll = polls?.find(p => p.date === sessionDate);
+            // 3.0. Buscar la convocatoria más lógica para esta sesión (v50.2)
+            const sessionDate = session.date;
+            let matchingPoll = polls?.find(p => p.date === sessionDate);
+            
+            // Si no hay match exacto, buscar la convocatoria más cercana (margen de 2 días)
+            if (!matchingPoll && polls && polls.length > 0) {
+                const sDate = new Date(sessionDate);
+                polls.forEach(p => {
+                    const pDate = new Date(p.date);
+                    const diffDays = Math.abs(sDate - pDate) / (1000 * 60 * 60 * 24);
+                    if (diffDays <= 2) {
+                        if (!matchingPoll || diffDays < (Math.abs(sDate - new Date(matchingPoll.date)) / (1000 * 60 * 60 * 24))) {
+                            matchingPoll = p;
+                        }
+                    }
+                });
+            }
+
             const masterLineup = matchingPoll?.final_alignment?.assignments ? Object.values(matchingPoll.final_alignment.assignments).map(id => id.toString()) : null;
 
             matches.forEach(match => {
