@@ -230,9 +230,116 @@ async function saveSessionCloud(session) {
 /**
  * Elimina una sesión de juego en Supabase.
  */
+/**
+ * Elimina una sesión de juego en Supabase.
+ */
 async function deleteSessionCloud(sessionId) {
     if (!supabase) return;
-    await supabase.from('sessions').delete().eq('id', sessionId);
+    try {
+        const { error } = await supabase.from('sessions').delete().eq('id', sessionId);
+        if (error) throw error;
+        console.log(`>>> [DATOS] Sesión ${sessionId} eliminada de la nube.`);
+    } catch (err) {
+        console.error(">>> [ERROR] deleteSessionCloud:", err.message);
+    }
+}
+
+/**
+ * Recalcula todas las estadísticas de los jugadores basándose únicamente en las sesiones cerradas.
+ * (v50.0 - Sistema de Auto-curación)
+ */
+async function recalculateAllStats() {
+    if (!supabase || !state.team) return { error: 'No conectado' };
+
+    try {
+        window.jbLoading.show('Recalculando estadísticas...');
+        
+        // 1. Resetear estadísticas locales de todos los jugadores
+        state.players.forEach(p => {
+            p.stats = {
+                official: { goals: 0, assists: 0, matches: 0, wins: 0, mvps: 0 },
+                friendly: { goals: 0, assists: 0, matches: 0, wins: 0, mvps: 0 }
+            };
+            p.mvp_count = 0; // Si usas esta variable fuera del objeto stats
+        });
+
+        // 2. Cargar todas las sesiones del equipo (asegurarnos de tener las últimas)
+        const { data: sessions, error: sessErr } = await supabase
+            .from('sessions')
+            .select('*')
+            .eq('team_id', state.team.id)
+            .eq('status', 'closed');
+
+        if (sessErr) throw sessErr;
+
+        // 3. Procesar cada sesión y partido
+        sessions.forEach(session => {
+            const matches = session.matches || [];
+            
+            matches.forEach(match => {
+                const mType = match.type || 'friendly';
+                const isWin = match.scoreHome > match.scoreAway;
+
+                // Sumar PJ y Victorias desde la alineación
+                if (match.lineup && Array.isArray(match.lineup)) {
+                    match.lineup.forEach(pId => {
+                        const player = state.players.find(p => p.id.toString() === pId.toString());
+                        if (player) {
+                            player.stats[mType].matches++;
+                            if (isWin) player.stats[mType].wins++;
+                        }
+                    });
+                }
+
+                // Sumar Goles y Asistencias desde eventos
+                if (match.events && Array.isArray(match.events)) {
+                    match.events.forEach(ev => {
+                        const scorer = state.players.find(p => p.id.toString() === ev.scorerId?.toString());
+                        const assistant = state.players.find(p => p.id.toString() === ev.assistantId?.toString());
+                        
+                        if (scorer) scorer.stats[mType].goals++;
+                        if (assistant) assistant.stats[mType].assists++;
+                    });
+                }
+
+                // MVP de partido (si existiera en el futuro)
+                if (match.mvpId) {
+                    const mvpP = state.players.find(p => p.id.toString() === match.mvpId.toString());
+                    if (mvpP) {
+                        mvpP.stats[mType].mvps = (mvpP.stats[mType].mvps || 0) + 1;
+                    }
+                }
+            });
+
+            // MVP de la sesión
+            if (session.mvp_id) {
+                const mvpS = state.players.find(p => p.id.toString() === session.mvp_id.toString());
+                if (mvpS) {
+                    // Si no sabemos si la sesión fue oficial o amistosa, miramos los partidos
+                    const hasOfficial = matches.some(m => m.type === 'official');
+                    const type = hasOfficial ? 'official' : 'friendly';
+                    mvpS.stats[type].mvps = (mvpS.stats[type].mvps || 0) + 1;
+                    mvpS.mvp_count = (mvpS.mvp_count || 0) + 1;
+                }
+            }
+        });
+
+        // 4. Guardar todos los jugadores en la nube (Secuencial para evitar bloqueos)
+        for (let p of state.players) {
+            await savePlayerCloud(p);
+            await new Promise(r => setTimeout(r, 100)); // Delay de seguridad
+        }
+
+        window.jbLoading.hide();
+        window.jbToast('¡Estadísticas sincronizadas con éxito!', 'success');
+        return { success: true };
+
+    } catch (err) {
+        console.error(">>> [ERROR] recalculateAllStats:", err);
+        window.jbLoading.hide();
+        window.jbToast('Error al recalcular: ' + err.message, 'error');
+        return { error: err.message };
+    }
 }
 
 /**

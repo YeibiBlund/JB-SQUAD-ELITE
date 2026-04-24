@@ -1844,6 +1844,21 @@ document.addEventListener('DOMContentLoaded', () => {
         // Lógica de Registro de Gol
         closeGoalModal.onclick = () => goalModal.style.display = 'none';
         btnSaveGoal.addEventListener('click', () => saveGoalEvent());
+
+        // Botón de Recalculación (v50.0)
+        const btnRecalc = document.getElementById('btn-recalculate-stats');
+        if (btnRecalc) {
+            btnRecalc.addEventListener('click', async () => {
+                const ok = await window.jbConfirm('¿Quieres recalcular todas las estadísticas?\n\nEsto analizará tus jornadas guardadas y pondrá los contadores a cero para volver a sumarlos correctamente.');
+                if (ok) {
+                    const result = await recalculateAllStats();
+                    if (result.success) {
+                        await loadTeamData(); // Recargar todo para ver cambios
+                        switchView('home');
+                    }
+                }
+            });
+        }
     }
 
     window.renderSessions = function() {
@@ -1920,29 +1935,31 @@ document.addEventListener('DOMContentLoaded', () => {
     async function handleDeleteSession(session) {
         const confirmMsg = session.id === (state.activeSession ? state.activeSession.id : -1) 
             ? '¿Quieres eliminar la jornada actual en curso?'
-            : `¿Eliminar la jornada del ${session.date}? Esto revertirá TODAS las estadísticas asociadas.`;
+            : `¿Eliminar la jornada del ${session.date}? Esto recalculará todas las estadísticas del club para asegurar que los datos sean correctos.`;
             
         const ok = await window.jbConfirm(confirmMsg);
         if (ok) {
-            revertSessionStats(session);
+            window.jbLoading.show('Eliminando y sincronizando...');
             
+            // 1. Eliminar de la base de datos primero
+            await deleteSessionCloud(session.id);
+
+            // 2. Limpiar estado local
             if (state.activeSession && session.id === state.activeSession.id) {
                 state.activeSession = null;
                 localStorage.removeItem('jb_active_session');
-                // En Supabase borramos la sesión
-                deleteSessionCloud(session.id);
             } else {
                 state.sessions = state.sessions.filter(s => s.id !== session.id);
-                deleteSessionCloud(session.id);
             }
             
-            // Sincronizar todos los jugadores afectados por la reversión
-            for (let p of state.players) {
-                await savePlayerCloud(p);
-            }
+            // 3. RECALCULAR TODO (La Fuente de la Verdad son las sesiones que quedan)
+            await recalculateAllStats();
+            
+            await loadTeamData(); // Recargar todo para asegurar consistencia
             renderSessions();
             renderPlayers();
             switchView('jornadas');
+            window.jbLoading.hide();
         }
     }
 
