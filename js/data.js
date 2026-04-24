@@ -327,9 +327,7 @@ async function recalculateAllStats() {
                         if (assistant) assistant.stats[mType].assists++;
                     });
                 }
-            });
-
-                // MVP de partido (si existiera en el futuro)
+                // 3.3. MVP de partido (si existiera en el futuro)
                 if (match.mvpId) {
                     const mvpP = state.players.find(p => p.id.toString() === match.mvpId.toString());
                     if (mvpP) {
@@ -338,7 +336,7 @@ async function recalculateAllStats() {
                 }
             });
 
-            // MVP de la sesión
+            // 3.4. MVP de la sesión
             if (session.mvp_id) {
                 const mvpS = state.players.find(p => p.id.toString() === session.mvp_id.toString());
                 if (mvpS) {
