@@ -300,7 +300,19 @@ async function recalculateAllStats() {
                 });
             }
 
-            const masterLineup = matchingPoll?.final_alignment?.assignments ? Object.values(matchingPoll.final_alignment.assignments).map(id => id.toString()) : null;
+            // Extraer IDs de la alineación de forma ultra-flexible (v50.3)
+            let masterLineup = null;
+            if (matchingPoll && matchingPoll.final_alignment) {
+                const fa = matchingPoll.final_alignment;
+                if (fa.assignments) {
+                    masterLineup = Object.values(fa.assignments).map(id => id.toString());
+                } else if (Array.isArray(fa)) {
+                    masterLineup = fa.map(id => id.toString());
+                } else if (typeof fa === 'object') {
+                    // Si es un objeto de IDs directo
+                    masterLineup = Object.values(fa).filter(v => typeof v === 'string' || typeof v === 'number').map(id => id.toString());
+                }
+            }
 
             matches.forEach(match => {
                 const mType = match.type || 'friendly';
