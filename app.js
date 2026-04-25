@@ -998,7 +998,33 @@ document.addEventListener('DOMContentLoaded', () => {
             const time = document.getElementById('poll-time').value;
             if (!title) return window.jbToast('Ponle un título al evento', 'warning');
             if (!date) return window.jbToast('Selecciona una fecha', 'warning');
+
+            // --- COMPROBACIÓN DE DUPLICADOS EN LA MISMA FECHA ---
+            window.jbLoading.show('Verificando fecha...');
+            const startDate = `${date}T00:00:00Z`;
+            const endDate = `${date}T23:59:59Z`;
             
+            const { data: existingPolls, error: fetchErr } = await supabase
+                .from('availability_polls')
+                .select('id, title, status')
+                .eq('team_id', state.team.id)
+                .gte('scheduled_time', startDate)
+                .lte('scheduled_time', endDate);
+
+            window.jbLoading.hide();
+
+            if (!fetchErr && existingPolls && existingPolls.length > 0) {
+                const confirmed = await window.jbConfirm(`Ya existe una convocatoria para esta fecha (${existingPolls[0].title}).\n\n¿Quieres ELIMINARLA y crear esta nueva en su lugar?`);
+                if (!confirmed) return;
+
+                window.jbLoading.show('Eliminando anterior...');
+                for (const p of existingPolls) {
+                    await supabase.from('availability_votes').delete().eq('poll_id', p.id);
+                    await supabase.from('availability_polls').delete().eq('id', p.id);
+                }
+                window.jbLoading.hide();
+            }
+
             await createPoll(title, date, time);
             
             // Limpiar y ocultar
@@ -1755,11 +1781,34 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- LÓGICA DE JORNADAS Y PARTIDOS ---
     window.setupSessionHandlers = function() {
-        btnNewSession.addEventListener('click', () => {
+        btnNewSession.addEventListener('click', async () => {
             const activeTactic = state.savedTactics.find(t => t.id === state.activeTacticId);
             if (sessionTacticName) {
                 sessionTacticName.textContent = activeTactic ? activeTactic.name.toUpperCase() : 'SIN TÁCTICA ACTIVA';
             }
+            
+            // --- Cargar Convocatorias No Vinculadas ---
+            const selectEl = document.getElementById('session-poll-select');
+            if (selectEl) {
+                selectEl.innerHTML = '<option value="">Cargando...</option>';
+                selectEl.disabled = true;
+                
+                try {
+                    const unlinked = await fetchUnlinkedPolls();
+                    if (!unlinked || unlinked.length === 0) {
+                        selectEl.innerHTML = '<option value="">Sin convocatorias disponibles</option>';
+                    } else {
+                        selectEl.innerHTML = unlinked.map(p => {
+                            const dateStr = new Date(p.scheduled_time).toLocaleDateString('es-ES');
+                            return `<option value="${p.id}">${p.title} (${dateStr})</option>`;
+                        }).join('');
+                        selectEl.disabled = false;
+                    }
+                } catch (err) {
+                    selectEl.innerHTML = '<option value="">Error al cargar</option>';
+                }
+            }
+
             sessionStartModal.style.display = 'flex';
         });
 
@@ -1773,6 +1822,17 @@ document.addEventListener('DOMContentLoaded', () => {
         });
 
         btnConfirmSessionStart.addEventListener('click', () => {
+            const selectEl = document.getElementById('session-poll-select');
+            if (selectEl && (!selectEl.value || selectEl.disabled)) {
+                window.jbToast('Debes seleccionar una convocatoria para iniciar la jornada.', 'error');
+                return;
+            }
+            const selectedPollId = selectEl ? selectEl.value : null;
+
+            // --- CAPTURAR ALINEACIÓN INICIAL (v51.0) ---
+            const activeTactic = state.savedTactics.find(t => t.id === state.activeTacticId);
+            const currentLineup = activeTactic ? Object.values(activeTactic.assignments).filter(id => id) : [];
+
             sessionStartModal.style.display = 'none';
             const selectedType = document.querySelector('input[name="sessionType"]:checked')?.value || 'friendly';
             
@@ -1782,7 +1842,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 matches: [],
                 mvpId: null,
                 type: selectedType,
-                status: 'active'
+                status: 'active',
+                poll_id: selectedPollId,
+                lineup: currentLineup // Fotografía del 11 inicial
             };
             state.activeSession = newSession;
             saveSessionCloud(newSession);
@@ -1907,7 +1969,129 @@ document.addEventListener('DOMContentLoaded', () => {
                 window.jbLoading.hide();
             });
         }
+
+        // --- GESTIÓN DE CAMBIOS EN VIVO (v51.0) ---
+        const btnManageLineup = document.getElementById('btn-manage-lineup');
+        if (btnManageLineup) {
+            btnManageLineup.addEventListener('click', () => {
+                renderLineupChangesModal();
+            });
+        }
+
+        const closeLineupChanges = document.getElementById('close-lineup-changes');
+        if (closeLineupChanges) {
+            closeLineupChanges.addEventListener('click', () => {
+                document.getElementById('modal-lineup-changes').style.display = 'none';
+            });
+        }
+
+        const btnSaveLineupChanges = document.getElementById('btn-save-lineup-changes');
+        if (btnSaveLineupChanges) {
+            btnSaveLineupChanges.addEventListener('click', async () => {
+                if (state.activeSession) {
+                    window.jbLoading.show('Guardando cambios...');
+                    await saveSessionCloud(state.activeSession);
+                    window.jbLoading.hide();
+                    window.jbToast('Alineación actualizada para los próximos partidos.', 'success');
+                    document.getElementById('modal-lineup-changes').style.display = 'none';
+                }
+            });
+        }
     }
+
+    async function renderLineupChangesModal() {
+        const modal = document.getElementById('modal-lineup-changes');
+        const currentList = document.getElementById('current-lineup-list');
+        const availableList = document.getElementById('available-subs-list');
+        
+        if (!state.activeSession) return;
+        
+        modal.style.display = 'flex';
+        currentList.innerHTML = '<p style="font-size:0.7rem; opacity:0.5; padding: 15px; text-align:center;">Cargando...</p>';
+        availableList.innerHTML = '<p style="font-size:0.7rem; opacity:0.5; padding: 15px; text-align:center;">Cargando...</p>';
+
+        // 1. Obtener votos de la convocatoria vinculada
+        let availablePlayerIds = [];
+        if (state.activeSession.poll_id) {
+            const { data: votes } = await supabase
+                .from('availability_votes')
+                .select('user_id, vote')
+                .eq('poll_id', state.activeSession.poll_id)
+                .in('vote', ['yes', 'late']);
+            
+            if (votes) {
+                availablePlayerIds = votes.map(v => {
+                    const p = state.players.find(player => player.user_id === v.user_id);
+                    return p ? p.id : null;
+                }).filter(id => id);
+            }
+        }
+
+        const currentLineupIds = state.activeSession.lineup || [];
+        
+        // 2. Renderizar titulares
+        currentList.innerHTML = '';
+        currentLineupIds.forEach(id => {
+            const player = state.players.find(p => p.id == id);
+            if (!player) return;
+            
+            const item = document.createElement('div');
+            item.className = 'player-roster-card';
+            item.style.cssText = 'padding: 8px 12px; display: flex; align-items: center; gap: 10px; background: rgba(255,255,255,0.03); border-radius: 6px; margin-bottom: 5px;';
+            item.innerHTML = `
+                <span style="font-weight:900; color:var(--primary); width:20px;">${player.dorsal}</span>
+                <span style="flex:1; font-size:0.8rem; font-weight:700;">${player.name.toUpperCase()}</span>
+                <button class="btn-cancel" style="padding:4px 8px; font-size:0.6rem; border-radius:4px; width:auto; height:auto; margin:0;" onclick="window.removePlayerFromLineup('${player.id}')">QUITAR</button>
+            `;
+            currentList.appendChild(item);
+        });
+
+        if (currentLineupIds.length === 0) {
+            currentList.innerHTML = '<p style="font-size:0.7rem; opacity:0.4; text-align:center; padding:10px;">No hay jugadores en el 11 actual.</p>';
+        }
+
+        // 3. Renderizar suplentes
+        availableList.innerHTML = '';
+        const subs = availablePlayerIds.filter(id => !currentLineupIds.includes(id));
+        
+        if (subs.length === 0 && availablePlayerIds.length > 0) {
+            availableList.innerHTML = '<p style="font-size:0.7rem; opacity:0.5; text-align:center; padding:10px;">Todos los convocados están en el campo.</p>';
+        } else if (availablePlayerIds.length === 0) {
+            const allSubs = state.players.filter(p => !currentLineupIds.includes(p.id));
+            allSubs.forEach(p => renderSubItem(p, availableList));
+        } else {
+            subs.forEach(id => {
+                const player = state.players.find(p => p.id == id);
+                if (player) renderSubItem(player, availableList);
+            });
+        }
+    }
+
+    function renderSubItem(player, container) {
+        const item = document.createElement('div');
+        item.className = 'player-roster-card';
+        item.style.cssText = 'padding: 8px 12px; display: flex; align-items: center; gap: 10px; background: rgba(76, 175, 80, 0.05); border-radius: 6px; border: 1px solid rgba(76, 175, 80, 0.1); cursor: pointer; margin-bottom: 5px;';
+        item.innerHTML = `
+            <span style="font-weight:900; color:#4CAF50; width:20px;">${player.dorsal}</span>
+            <span style="flex:1; font-size:0.8rem; font-weight:700;">${player.name.toUpperCase()}</span>
+            <span style="font-size:0.6rem; color:#4CAF50; font-weight:900;">AÑADIR +</span>
+        `;
+        item.onclick = () => {
+            if (state.activeSession.lineup.length >= 11) {
+                window.jbToast('Ya hay 11 jugadores. Quita a uno primero.', 'warning');
+                return;
+            }
+            state.activeSession.lineup.push(player.id);
+            renderLineupChangesModal();
+        };
+        container.appendChild(item);
+    }
+
+    window.removePlayerFromLineup = (playerId) => {
+        if (!state.activeSession) return;
+        state.activeSession.lineup = state.activeSession.lineup.filter(id => id != playerId);
+        renderLineupChangesModal();
+    };
 
 
     window.renderSessions = function() {
@@ -2282,12 +2466,11 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
 
-        // 2. Procesar PJ (Partidos Jugados)
-        const lastTactic = state.savedTactics.find(t => t.id === state.activeTacticId);
-        if (lastTactic) {
-            const assignedIds = Object.values(lastTactic.assignments).map(id => id.toString());
+        // 2. Procesar PJ (Partidos Jugados) - Priorizar alineación de sesión (Flujo Túnel v51.0)
+        if (state.activeSession && state.activeSession.lineup && state.activeSession.lineup.length > 0) {
+            const assignedIds = state.activeSession.lineup.map(id => id.toString());
             
-            // Guardar la alineación dentro del partido para poder revertir stats al borrar
+            // Guardar la alineación dentro del partido para trazabilidad absoluta
             currentMatch.lineup = assignedIds;
             
             for (let p of state.players) {
@@ -2299,8 +2482,24 @@ document.addEventListener('DOMContentLoaded', () => {
                     if (currentMatch.scoreHome > currentMatch.scoreAway) {
                         p.stats[mType].wins = (p.stats[mType].wins || 0) + 1;
                     }
-
                     playersToSave.add(p);
+                }
+            }
+        } else {
+            // Fallback: Usar táctica actual si no hay alineación de sesión (compatibilidad)
+            const lastTactic = state.savedTactics.find(t => t.id === state.activeTacticId);
+            if (lastTactic) {
+                const assignedIds = Object.values(lastTactic.assignments).map(id => id.toString());
+                currentMatch.lineup = assignedIds;
+                for (let p of state.players) {
+                    if (assignedIds.includes(p.id.toString())) {
+                        initStats(p);
+                        p.stats[mType].matches++;
+                        if (currentMatch.scoreHome > currentMatch.scoreAway) {
+                            p.stats[mType].wins = (p.stats[mType].wins || 0) + 1;
+                        }
+                        playersToSave.add(p);
+                    }
                 }
             }
         }

@@ -147,6 +147,37 @@ async function loadTeamData() {
 }
 
 /**
+ * Recupera convocatorias cerradas que aún no han sido vinculadas a una jornada.
+ */
+async function fetchUnlinkedPolls() {
+    if (!supabase || !state.team) return [];
+    
+    // Obtenemos todas las convocatorias cerradas
+    const { data: polls, error: pollErr } = await supabase
+        .from('availability_polls')
+        .select('id, title, scheduled_time')
+        .eq('team_id', state.team.id)
+        .eq('status', 'closed')
+        .order('scheduled_time', { ascending: false });
+
+    if (pollErr || !polls) return [];
+
+    // Obtenemos todos los poll_ids usados en sessions
+    const { data: sessions, error: sessErr } = await supabase
+        .from('sessions')
+        .select('poll_id')
+        .eq('team_id', state.team.id)
+        .not('poll_id', 'is', null);
+
+    if (sessErr) return [];
+
+    const usedPollIds = sessions.map(s => s.poll_id);
+    
+    // Filtramos las convocatorias que no están en usedPollIds
+    return polls.filter(p => !usedPollIds.includes(p.id));
+}
+
+/**
  * Guarda todas las tácticas en Supabase.
  */
 async function saveTacticsCloud() {
@@ -272,60 +303,58 @@ async function recalculateAllStats() {
 
         if (sessErr) throw sessErr;
 
-        // 2.5 Cargar historial de convocatorias para rescatar alineaciones maestras (v50.1)
+        // 2.5 Cargar historial de convocatorias (v50.1)
         const { data: polls } = await supabase
             .from('availability_polls')
-            .select('id, date, final_alignment')
+            .select('id, scheduled_time, final_alignment')
             .eq('team_id', state.team.id);
 
         // 3. Procesar cada sesión y partido
         sessions.forEach(session => {
             const matches = session.matches || [];
             
-            // 3.0. Buscar la convocatoria más lógica para esta sesión (v50.2)
-            const sessionDate = session.date;
-            let matchingPoll = polls?.find(p => p.date === sessionDate);
+            // 3.0. Buscar la convocatoria (v51.0: Priorizar vinculación explícita poll_id)
+            let matchingPoll = null;
+            if (session.poll_id) {
+                matchingPoll = polls?.find(p => p.id === session.poll_id);
+            }
             
-            // Si no hay match exacto, buscar la convocatoria más cercana (margen de 2 días)
+            // Fallback a fechas para sesiones legacy (v50.2)
             if (!matchingPoll && polls && polls.length > 0) {
-                const sDate = new Date(sessionDate);
+                const sDate = new Date(session.date);
                 polls.forEach(p => {
-                    const pDate = new Date(p.date);
+                    const pDate = new Date(p.scheduled_time);
                     const diffDays = Math.abs(sDate - pDate) / (1000 * 60 * 60 * 24);
                     if (diffDays <= 2) {
-                        if (!matchingPoll || diffDays < (Math.abs(sDate - new Date(matchingPoll.date)) / (1000 * 60 * 60 * 24))) {
+                        if (!matchingPoll || diffDays < (Math.abs(sDate - new Date(matchingPoll.scheduled_time)) / (1000 * 60 * 60 * 24))) {
                             matchingPoll = p;
                         }
                     }
                 });
             }
 
-            // Extraer IDs de la alineación de forma ultra-flexible (v50.3)
+            // Determinar alineación maestra de la sesión (v51.0)
             let masterLineup = null;
-            if (matchingPoll && matchingPoll.final_alignment) {
+            if (session.lineup && Array.isArray(session.lineup) && session.lineup.length > 0) {
+                masterLineup = session.lineup.map(id => id.toString());
+            } else if (matchingPoll && matchingPoll.final_alignment) {
                 const fa = matchingPoll.final_alignment;
-                if (fa.assignments) {
-                    masterLineup = Object.values(fa.assignments).map(id => id.toString());
-                } else if (Array.isArray(fa)) {
-                    masterLineup = fa.map(id => id.toString());
-                } else if (typeof fa === 'object') {
-                    // Si es un objeto de IDs directo
-                    masterLineup = Object.values(fa).filter(v => typeof v === 'string' || typeof v === 'number').map(id => id.toString());
-                }
+                if (fa.assignments) masterLineup = Object.values(fa.assignments).map(id => id.toString());
+                else if (Array.isArray(fa)) masterLineup = fa.map(id => id.toString());
+                else if (typeof fa === 'object') masterLineup = Object.values(fa).filter(v => v).map(id => id.toString());
             }
 
             matches.forEach(match => {
                 const mType = match.type || 'friendly';
                 const isWin = match.scoreHome > match.scoreAway;
 
-                // 3.1. Determinar quién jugó este partido
+                // 3.1. Determinar quién jugó este partido (Prioridad: match.lineup > masterLineup)
                 let currentLineup = [];
                 if (match.lineup && Array.isArray(match.lineup) && match.lineup.length > 0) {
                     currentLineup = match.lineup;
                 } else if (masterLineup) {
-                    currentLineup = masterLineup; // Usar la de la convocatoria si el partido no tiene
+                    currentLineup = masterLineup; 
                 } else if (match.events) {
-                    // Último recurso: los que aparecen en eventos
                     const involved = new Set();
                     match.events.forEach(ev => {
                         if (ev.scorerId) involved.add(ev.scorerId.toString());

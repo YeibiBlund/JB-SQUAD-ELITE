@@ -630,7 +630,10 @@
                         <p style="font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase;">Resumen en Vivo</p>
                         <h3 id="session-stats-summary" style="font-size: 1.1rem; margin-top: 5px;">0G - 0E - 0P</h3>
                     </div>
-                    <button class="btn-gold" id="btn-add-match" style="width: auto; padding: 8px 15px; font-size: 0.8rem;">Nuevo Partido</button>
+                    <div style="display: flex; flex-direction: column; gap: 8px; align-items: flex-end;">
+                        <button class="btn-gold" id="btn-add-match" style="width: auto; padding: 8px 15px; font-size: 0.8rem;">Nuevo Partido</button>
+                        <button class="btn-detail" id="btn-manage-lineup" style="width: auto; padding: 6px 12px; font-size: 0.65rem; border-radius: 6px; background: rgba(255,255,255,0.05); color: #fff; border-color: rgba(255,255,255,0.2); font-weight: 800;">🔄 HACER CAMBIOS</button>
+                    </div>
                 </div>
 
                 <div id="session-history-summary" class="card-elite" style="display: none; margin-bottom: 20px;">
@@ -972,6 +975,12 @@
                 <button id="close-session-start" class="btn-close">✕</button>
             </div>
             <div style="text-align: center; margin-top: 20px;">
+                <div class="form-group" style="text-align: left; margin-bottom: 20px;">
+                    <label style="font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase;">Convocatoria de la Jornada (Check-in)</label>
+                    <select id="session-poll-select" style="width: 100%; padding: 10px; background: rgba(0,0,0,0.5); border: 1px solid var(--primary); color: #fff; border-radius: 6px; margin-top: 5px; outline: none;">
+                        <option value="">Cargando convocatorias...</option>
+                    </select>
+                </div>
                 <p style="font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase;">Alineación Actual</p>
                 <h3 id="session-tactic-name" style="margin: 10px 0; color: var(--primary);">OFENSIVA TOTAL</h3>
                 <div style="display: flex; justify-content: center; gap: 10px; margin-bottom: 25px;">
@@ -1114,6 +1123,38 @@
                     </div>
 
                 </div>
+            </div>
+        </div>
+    </div>
+    <!-- Modal de Cambios en Vivo (v51.0) -->
+    <div id="modal-lineup-changes" class="modal-overlay" style="display: none; z-index: 9998;">
+        <div class="modal-content" style="max-width: 500px; width: 95%;">
+            <div class="modal-header">
+                <h2>GESTIÓN DE <span class="gradient-text">CAMBIOS</span></h2>
+                <button id="close-lineup-changes" class="btn-close">✕</button>
+            </div>
+            <p style="font-size: 0.7rem; color: var(--text-muted); margin-bottom: 20px; text-transform: uppercase; letter-spacing: 1px;">Sustituye jugadores para los próximos partidos</p>
+            
+            <div style="display: flex; flex-direction: column; gap: 20px;">
+                <!-- Titulares Actuales -->
+                <div>
+                    <h4 style="font-size: 0.7rem; color: var(--primary); margin-bottom: 10px;">ONCE INICIAL / ACTUAL</h4>
+                    <div id="current-lineup-list" style="display: flex; flex-direction: column; gap: 8px; max-height: 250px; overflow-y: auto; padding-right: 5px;">
+                        <!-- Inyectado por JS -->
+                    </div>
+                </div>
+
+                <!-- Suplentes Disponibles (Votaron Sí/Tarde) -->
+                <div>
+                    <h4 style="font-size: 0.7rem; color: #4CAF50; margin-bottom: 10px;">DISPONIBLES (SUPLENTES)</h4>
+                    <div id="available-subs-list" style="display: flex; flex-direction: column; gap: 8px; max-height: 200px; overflow-y: auto; padding-right: 5px;">
+                        <!-- Inyectado por JS -->
+                    </div>
+                </div>
+            </div>
+
+            <div style="margin-top: 25px; padding-top: 15px; border-top: 1px solid rgba(255,255,255,0.05);">
+                <button id="btn-save-lineup-changes" class="btn-gold" style="width: 100%;">GUARDAR CAMBIOS</button>
             </div>
         </div>
     </div>
