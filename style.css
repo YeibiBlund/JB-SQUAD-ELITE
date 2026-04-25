@@ -4446,13 +4446,41 @@ body.editing-tactic .tactical-slot {
 
 /* Ajuste PC Calendario (v52.2) */
 @media (min-width: 1024px) {
-    #sessions-month-summary {
+    #sessions-month-summary, 
+    #polls-month-summary {
         display: block !important;
     }
-    #sessions-calendar-container {
+    #sessions-calendar-container,
+    #polls-calendar-container {
         /* Permitir crecimiento flexible */
         max-width: none !important;
     }
+}
+
+/* Clases Semánticas para Convocatorias (v53.0) */
+.calendar-day.poll-day-success {
+    background: linear-gradient(135deg, rgba(76, 175, 80, 0.2), rgba(76, 175, 80, 0.05)) !important;
+    border-color: var(--success) !important;
+    color: #fff !important;
+    cursor: pointer;
+}
+
+.calendar-day.poll-day-cancel {
+    background: linear-gradient(135deg, rgba(244, 67, 54, 0.2), rgba(244, 67, 54, 0.05)) !important;
+    border-color: var(--error) !important;
+    color: #fff !important;
+    cursor: pointer;
+}
+
+.calendar-day.poll-day-active {
+    border: 2px dashed var(--primary) !important;
+    animation: pulse-border 2s infinite;
+}
+
+@keyframes pulse-border {
+    0% { border-color: rgba(240, 165, 0, 0.3); }
+    50% { border-color: rgba(240, 165, 0, 1); }
+    100% { border-color: rgba(240, 165, 0, 0.3); }
 }
 
 .month-stat-card {

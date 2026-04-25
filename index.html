@@ -784,34 +784,42 @@
                     <p style="text-align: center; opacity: 0.5; padding: 40px;">No hay ninguna convocatoria activa.</p>
                 </div>
 
-                <!-- Historial -->
+                <!-- Historial de Convocatorias (v53.0) -->
                 <div id="polls-history-container" style="margin-top: 30px; opacity: 0.9;">
-                    <div class="polls-history-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-                        <h4 style="font-size: 0.75rem; color: var(--text-muted); letter-spacing: 2px; margin: 0;">HISTORIAL DE JORNADAS</h4>
-                        
-                        <!-- Selector de Mes (Elite Style) -->
-                        <div id="poll-history-filter" class="month-filter-elite">
-                            <select id="select-history-month" class="premium-select-mini">
-                                <!-- Opciones inyectadas por JS -->
-                                <option value="current">Este Mes</option>
-                            </select>
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                        <h4 style="font-size: 0.75rem; color: var(--text-muted); letter-spacing: 2px; margin: 0;">HISTORIAL DE CONVOCATORIAS</h4>
+                    </div>
+
+                    <div id="polls-calendar-layout" style="display: flex; gap: 20px; flex-wrap: wrap; align-items: flex-start;">
+                        <!-- Calendario de Convocatorias -->
+                        <div id="polls-calendar-container" class="card-elite" style="flex: 2; min-width: 350px; padding: 25px;">
+                            <div class="calendar-header">
+                                <h2 class="calendar-title">ARCHIVO <span class="gradient-text">MENSUAL</span></h2>
+                                <div class="calendar-nav">
+                                    <button id="polls-calendar-prev" class="btn-cal-nav">←</button>
+                                    <span id="polls-calendar-month-label">MES AÑO</span>
+                                    <button id="polls-calendar-next" class="btn-cal-nav">→</button>
+                                </div>
+                            </div>
+                            <div class="calendar-grid-header">
+                                <span>L</span><span>M</span><span>X</span><span>J</span><span>V</span><span>S</span><span>D</span>
+                            </div>
+                            <div id="polls-calendar-grid" class="calendar-days-grid">
+                                <!-- Inyectado por JS -->
+                            </div>
+                        </div>
+
+                        <!-- Resumen del Mes (PC Only) (v53.0) -->
+                        <div id="polls-month-summary" class="card-elite" style="flex: 1; min-width: 280px; padding: 25px; display: none;">
+                            <h3 id="polls-summary-month-name" style="font-size: 0.7rem; color: var(--primary); letter-spacing: 2px; margin-bottom: 25px; text-transform: uppercase; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 10px;">RESUMEN MES</h3>
+                            <div id="polls-summary-stats" style="display: flex; flex-direction: column; gap: 12px;">
+                                <!-- Inyectado por JS -->
+                            </div>
                         </div>
                     </div>
 
-                    <div class="poll-history-table-container">
-                        <div class="poll-history-table-header">
-                            <div class="pht-col-date">FECHA</div>
-                            <div class="pht-col-title">EVENTO</div>
-                            <div class="pht-col-stat stat-yes">✅</div>
-                            <div class="pht-col-stat stat-late">🕒</div>
-                            <div class="pht-col-stat stat-no">❌</div>
-                            <div class="pht-col-actions"></div>
-                        </div>
-                        <div id="polls-history-list" class="poll-history-table-body">
-                            <!-- Inyectado por JS -->
-                        </div>
-                    </div>
-
+                    <!-- Listado oculto para compatibilidad legacy si fuera necesario -->
+                    <div id="polls-history-list" style="display: none;"></div>
                 </div>
 
             </section>

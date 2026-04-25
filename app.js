@@ -103,6 +103,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // 2.1 Estado del Calendario (v36.3)
     let currentCalendarDate = new Date();
     let currentSessionsCalendarDate = new Date(); // v52.0
+    let currentPollsCalendarDate = new Date();    // v53.0
     
     // Listeners para Navegación del Calendario
     const btnCalPrev = document.getElementById('calendar-prev');
@@ -138,6 +139,22 @@ document.addEventListener('DOMContentLoaded', () => {
         btnSessionsCalNext.onclick = () => {
             currentSessionsCalendarDate.setMonth(currentSessionsCalendarDate.getMonth() + 1);
             window.renderSessionsCalendar();
+        };
+    }
+
+    // Listeners para Navegación del Calendario de Convocatorias (v53.0)
+    const btnPollsCalPrev = document.getElementById('polls-calendar-prev');
+    const btnPollsCalNext = document.getElementById('polls-calendar-next');
+    if (btnPollsCalPrev) {
+        btnPollsCalPrev.onclick = () => {
+            currentPollsCalendarDate.setMonth(currentPollsCalendarDate.getMonth() - 1);
+            renderPollsCalendar();
+        };
+    }
+    if (btnPollsCalNext) {
+        btnPollsCalNext.onclick = () => {
+            currentPollsCalendarDate.setMonth(currentPollsCalendarDate.getMonth() + 1);
+            renderPollsCalendar();
         };
     }
 
@@ -4204,148 +4221,130 @@ document.addEventListener('DOMContentLoaded', () => {
         `;
     }
 
-    async function renderPollHistory(selectedMonth = null, selectedYear = null) {
-        if (!state.team) return;
-        
-        const historyList = document.getElementById('polls-history-list');
-        const monthSelect = document.getElementById('select-history-month');
-        if (!historyList) return;
-
-        // 1. Generar Selector de Meses si no está inicializado
-        if (monthSelect && monthSelect.options.length <= 1) {
-            await initPollHistoryFilters();
-        }
-
-        const cacheKey = selectedMonth && selectedYear ? `${selectedMonth}-${selectedYear}` : 'all';
-
-        // 2. Comprobar Caché
-        if (state.historyCache && state.historyCache[cacheKey]) {
-            console.log(`>>> [HISTORIAL] Cargando desde caché: ${cacheKey}`);
-            renderHistoryRowsInternal(state.historyCache[cacheKey]);
-            return;
-        }
-
-        // 3. Determinar Rango de Fechas para la Consulta
-        let query = supabase
-            .from('availability_polls')
-            .select('*')
-            .eq('team_id', state.team.id)
-            .eq('status', 'closed')
-            .order('created_at', { ascending: false });
-
-        if (selectedMonth && selectedYear) {
-            const startDate = new Date(selectedYear, selectedMonth - 1, 1).toISOString();
-            const endDate = new Date(selectedYear, selectedMonth, 0, 23, 59, 59).toISOString();
-            query = query.gte('created_at', startDate).lte('created_at', endDate);
-        } else {
-            query = query.limit(20);
-        }
-
-        const { data, error } = await query;
-        if (error) return;
-        
-        if (!data || data.length === 0) {
-            historyList.innerHTML = `<p style="grid-column: 1/-1; font-size:0.75rem; opacity:0.4; text-align:center; padding:40px;">No hay convocatorias para este periodo.</p>`;
-            return;
-        }
-
-        // 4. Obtener Conteos y Preparar Datos para Caché
-        const dataWithCounts = [];
-        for (const p of data) {
-            const fetchCount = async (voteType) => {
-                const { count } = await supabase
-                    .from('availability_votes')
-                    .select('*', { count: 'exact', head: true })
-                    .eq('poll_id', p.id)
-                    .eq('vote', voteType);
-                return count || 0;
-            };
-
-            const stats = {
-                yes: await fetchCount('yes'),
-                late: await fetchCount('late'),
-                no: await fetchCount('no')
-            };
-            dataWithCounts.push({ ...p, stats });
-        }
-
-        // Guardar en Caché
-        if (!state.historyCache) state.historyCache = {};
-        state.historyCache[cacheKey] = dataWithCounts;
-
-        renderHistoryRowsInternal(dataWithCounts);
+    async function renderPollHistory() {
+        // Redirigir a la nueva lógica de calendario (v53.0)
+        renderPollsCalendar();
     }
 
-    function renderHistoryRowsInternal(data) {
-        const historyList = document.getElementById('polls-history-list');
-        if (!historyList) return;
-        
-        historyList.innerHTML = '';
-        data.forEach(p => {
-            const dateObj = new Date(p.created_at);
-            const day = dateObj.getDate().toString().padStart(2, '0');
-            const month = (dateObj.getMonth() + 1).toString().padStart(2, '0');
+    /**
+     * RENDERIZA EL CALENDARIO DE CONVOCATORIAS (v53.0)
+     */
+    async function renderPollsCalendar() {
+        const grid = document.getElementById('polls-calendar-grid');
+        const label = document.getElementById('polls-calendar-month-label');
+        if (!grid || !label || !state.team) return;
+
+        const year = currentPollsCalendarDate.getFullYear();
+        const month = currentPollsCalendarDate.getMonth();
+        const monthNames = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"];
+        const today = new Date();
+        const todayStr = today.toDateString();
+
+        label.textContent = `${monthNames[month].toUpperCase()} ${year}`;
+        grid.innerHTML = '';
+
+        // 1. Obtener todas las convocatorias del equipo
+        const { data: allPolls, error } = await supabase
+            .from('availability_polls')
+            .select('id, title, scheduled_time, status, final_alignment')
+            .eq('team_id', state.team.id);
+
+        if (error) return;
+
+        // Mapear por fecha para acceso rápido
+        const pollsByDate = new Map();
+        allPolls.forEach(p => {
+            const d = new Date(p.scheduled_time);
+            const dateStr = d.toDateString();
+            if (!pollsByDate.has(dateStr)) pollsByDate.set(dateStr, []);
+            pollsByDate.get(dateStr).push(p);
+        });
+
+        // 2. Grid Logic
+        const firstDay = new Date(year, month, 1).getDay();
+        const daysInMonth = new Date(year, month + 1, 0).getDate();
+        const offset = (firstDay === 0) ? 6 : firstDay - 1;
+
+        // Celdas vacías
+        for (let i = 0; i < offset; i++) {
+            const cell = document.createElement('div');
+            cell.className = 'calendar-day';
+            grid.appendChild(cell);
+        }
+
+        // Generar días
+        for (let d = 1; d <= daysInMonth; d++) {
+            const dateObj = new Date(year, month, d);
+            const dateStr = dateObj.toDateString();
+            const dayPolls = pollsByDate.get(dateStr);
             
-            const row = document.createElement('div');
-            row.className = 'poll-history-row fade-in';
-            row.onclick = () => window.jbViewPollDetail(p.id);
-            row.innerHTML = `
-                <div class="pht-col-date">${day}/${month}</div>
-                <div class="pht-col-title">${escapeHTML(p.title.toUpperCase())}</div>
-                <div class="pht-col-stat stat-yes">${p.stats.yes}</div>
-                <div class="pht-col-stat stat-late">${p.stats.late}</div>
-                <div class="pht-col-stat stat-no">${p.stats.no}</div>
-                <div class="pht-col-actions">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+            const cell = document.createElement('div');
+            cell.className = 'calendar-day has-date';
+            
+            // Destaque hoy
+            if (dateStr === todayStr) cell.classList.add('today-highlight');
+
+            if (dayPolls && dayPolls.length > 0) {
+                // Si hay una abierta, marcamos como activa (pueden haber varias, buscamos 'open')
+                const active = dayPolls.find(p => p.status === 'open');
+                if (active) cell.classList.add('poll-day-active');
+
+                // Mostrar la cerrada más reciente en el calendario si existen
+                const closedPolls = dayPolls.filter(p => p.status === 'closed');
+                if (closedPolls.length > 0) {
+                    const latestClosed = closedPolls[0];
+                    // Verde si tiene alineación, Rojo si no
+                    if (latestClosed.final_alignment) cell.classList.add('poll-day-success');
+                    else cell.classList.add('poll-day-cancel');
+
+                    cell.onclick = () => window.jbViewPollDetail(latestClosed.id);
+                } else if (active) {
+                    cell.onclick = () => window.jbToast(`Convocatoria Activa: ${active.title}`, 'info');
+                }
+            }
+
+            cell.innerHTML = `<span class="calendar-day-number">${d}</span>`;
+            grid.appendChild(cell);
+        }
+
+        // 3. Resumen Mensual (v53.0)
+        let totalPolls = 0;
+        let successPolls = 0;
+        let cancelledPolls = 0;
+
+        allPolls.forEach(p => {
+            const d = new Date(p.scheduled_time);
+            if (d.getMonth() === month && d.getFullYear() === year && p.status === 'closed') {
+                totalPolls++;
+                if (p.final_alignment) successPolls++;
+                else cancelledPolls++;
+            }
+        });
+
+        const summaryName = document.getElementById('polls-summary-month-name');
+        const summaryStats = document.getElementById('polls-summary-stats');
+        if (summaryName && summaryStats) {
+            summaryName.textContent = `RESUMEN ${monthNames[month].toUpperCase()}`;
+            summaryStats.innerHTML = `
+                <div class="month-stat-card">
+                    <span class="label">Convocatorias</span>
+                    <span class="value">${totalPolls}</span>
+                </div>
+                <div class="month-stat-card" style="border-left: 3px solid var(--success);">
+                    <span class="label">Con Alineación</span>
+                    <span class="value" style="color: var(--success);">${successPolls}</span>
+                </div>
+                <div class="month-stat-card" style="border-left: 3px solid var(--error);">
+                    <span class="label">Archivadas</span>
+                    <span class="value" style="color: var(--error);">${cancelledPolls}</span>
                 </div>
             `;
-            historyList.appendChild(row);
-        });
+        }
     }
 
-    async function initPollHistoryFilters() {
-        const monthSelect = document.getElementById('select-history-month');
-        if (!monthSelect || !state.team) return;
+    // initPollHistoryFilters obsoleta en v53.0 (calendario reemplaza el select)
+    async function initPollHistoryFilters() { /* NOOP - Calendar replaces this */ }
 
-        // Obtener todas las fechas únicas de convocatorias cerradas para llenar el select
-        const { data, error } = await supabase
-            .from('availability_polls')
-            .select('created_at')
-            .eq('team_id', state.team.id)
-            .eq('status', 'closed')
-            .order('created_at', { ascending: false });
-
-        if (error || !data) return;
-
-        const months = [];
-        data.forEach(p => {
-            const d = new Date(p.created_at);
-            const m = d.getMonth() + 1;
-            const y = d.getFullYear();
-            const val = `${m}-${y}`;
-            if (!months.find(x => x.val === val)) {
-                const label = d.toLocaleDateString('es-ES', { month: 'long', year: 'numeric' }).toUpperCase();
-                months.push({ val, label, m, y });
-            }
-        });
-
-        monthSelect.innerHTML = '<option value="all">ÚLTIMAS 20</option>';
-        months.forEach(item => {
-            const opt = document.createElement('option');
-            opt.value = item.val;
-            opt.textContent = item.label;
-            monthSelect.appendChild(opt);
-        });
-
-        monthSelect.onchange = (e) => {
-            if (e.target.value === 'all') {
-                renderPollHistory();
-            } else {
-                const [m, y] = e.target.value.split('-');
-                renderPollHistory(parseInt(m), parseInt(y));
-            }
-        };
-    }
 
 
     window.jbViewPollDetail = async (id) => {
@@ -4362,9 +4361,9 @@ document.addEventListener('DOMContentLoaded', () => {
         const btnDeleteReport = document.getElementById('btn-delete-report');
         const btnReopenReport = document.getElementById('btn-reopen-report');
         
-        // Filtros de calendario para el reporte
-        const monthStart = new Date(currentCalendarDate.getFullYear(), currentCalendarDate.getMonth(), 1).toISOString();
-        const monthEnd = new Date(currentCalendarDate.getFullYear(), currentCalendarDate.getMonth() + 1, 0, 23, 59, 59).toISOString();
+        // Filtros de calendario para el reporte (v53.0)
+        const monthStart = new Date(currentPollsCalendarDate.getFullYear(), currentPollsCalendarDate.getMonth(), 1).toISOString();
+        const monthEnd = new Date(currentPollsCalendarDate.getFullYear(), currentPollsCalendarDate.getMonth() + 1, 0, 23, 59, 59).toISOString();
 
         if (!overlay) return;
         window.jbLoading.show('Generando reporte...');
