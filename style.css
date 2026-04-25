@@ -3664,6 +3664,17 @@ body.editing-tactic .tactical-slot {
     margin-bottom: 20px;
 }
 
+@media (max-width: 768px) {
+    .poll-header {
+        flex-direction: column !important;
+        gap: 15px;
+    }
+    .poll-header-actions {
+        width: 100%;
+        justify-content: flex-start;
+    }
+}
+
 .poll-info h2 {
     font-size: 1.4rem;
     margin-bottom: 5px;
