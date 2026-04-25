@@ -3659,20 +3659,17 @@ body.editing-tactic .tactical-slot {
 
 .poll-header {
     display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
+    flex-direction: column !important;
+    align-items: flex-start !important;
     margin-bottom: 20px;
+    gap: 15px;
 }
 
-@media (max-width: 768px) {
-    .poll-header {
-        flex-direction: column !important;
-        gap: 15px;
-    }
-    .poll-header-actions {
-        width: 100%;
-        justify-content: flex-start;
-    }
+.poll-header-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    width: 100%;
 }
 
 .poll-info h2 {
@@ -3935,6 +3932,11 @@ body.editing-tactic .tactical-slot {
     text-transform: uppercase;
     cursor: pointer;
     transition: all 0.3s ease;
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 32px;
 }
 
 .btn-poll-cancel:hover {
@@ -3956,6 +3958,11 @@ body.editing-tactic .tactical-slot {
     cursor: pointer;
     box-shadow: 0 4px 10px rgba(240, 165, 0, 0.2);
     transition: all 0.3s ease;
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 32px;
 }
 
 .btn-poll-align:hover {
