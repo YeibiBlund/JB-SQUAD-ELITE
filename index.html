@@ -1176,44 +1176,44 @@
         </div>
     </div>
 
-    <!-- MODAL: EDITAR ESTADÍSTICAS (Solo Managers) -->
-    <div id="modal-edit-stats" class="jb-modal">
-        <div class="jb-modal-content">
+    <!-- MODAL: EDITAR ESTADÍSTICAS (Solo Managers) (v50.5) -->
+    <div id="modal-edit-stats" class="jb-modal" style="display: none;">
+        <div class="jb-modal-content" style="max-width: 450px;">
             <div class="jb-modal-header">
-                <h2 id="edit-stats-name">Editar Estadísticas</h2>
+                <h2 id="edit-stats-name" class="gradient-text">Editar Estadísticas</h2>
                 <span class="jb-modal-close" onclick="closeEditStatsModal()">&times;</span>
             </div>
             <div class="jb-modal-body">
                 <form id="form-edit-stats">
                     <input type="hidden" id="edit-stats-id">
                     
-                    <div class="stats-edit-section" style="background: rgba(255,255,255,0.03); padding: 15px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.1);">
-                        <h3 style="color: var(--primary); font-size: 0.8rem; margin-bottom: 15px; letter-spacing: 1px;">ESTADÍSTICAS OFICIALES</h3>
-                        <div class="jb-form-group-row" style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                    <div class="stats-edit-section" style="background: rgba(255,255,255,0.03); padding: 20px; border-radius: 15px; border: 1px solid rgba(255,255,255,0.1); margin-bottom: 20px;">
+                        <h3 style="color: var(--primary); font-size: 0.75rem; margin-bottom: 20px; letter-spacing: 1.5px; text-transform: uppercase; font-weight: 800;">Estadísticas Oficiales</h3>
+                        
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
                             <div class="jb-form-group">
-                                <label style="display: block; font-size: 0.7rem; margin-bottom: 5px; color: var(--text-muted);">Partidos (PJ)</label>
-                                <input type="number" id="edit-pj-off" class="jb-input" min="0" style="width: 100%; text-align: center; font-size: 1.2rem; font-weight: 800;">
+                                <label style="display: block; font-size: 0.65rem; color: var(--text-muted); margin-bottom: 8px; text-transform: uppercase; font-weight: 700;">Partidos (PJ)</label>
+                                <input type="number" id="edit-pj-off" class="jb-input" min="0" style="width: 100%; text-align: center; font-size: 1.3rem; font-weight: 900; background: rgba(0,0,0,0.2); border: 1px solid rgba(255,255,255,0.1); color: #fff; padding: 10px; border-radius: 8px;">
                             </div>
                             <div class="jb-form-group">
-                                <label style="display: block; font-size: 0.7rem; margin-bottom: 5px; color: var(--text-muted);">Goles</label>
-                                <input type="number" id="edit-g-off" class="jb-input" min="0" style="width: 100%; text-align: center; font-size: 1.2rem; font-weight: 800;">
+                                <label style="display: block; font-size: 0.65rem; color: var(--text-muted); margin-bottom: 8px; text-transform: uppercase; font-weight: 700;">Goles</label>
+                                <input type="number" id="edit-g-off" class="jb-input" min="0" style="width: 100%; text-align: center; font-size: 1.3rem; font-weight: 900; background: rgba(0,0,0,0.2); border: 1px solid rgba(255,255,255,0.1); color: #fff; padding: 10px; border-radius: 8px;">
                             </div>
                         </div>
-                        <div class="jb-form-group-row" style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 15px;">
+
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 20px;">
                             <div class="jb-form-group">
-                                <label style="display: block; font-size: 0.7rem; margin-bottom: 5px; color: var(--text-muted);">Asistencias</label>
-                                <input type="number" id="edit-a-off" class="jb-input" min="0" style="width: 100%; text-align: center; font-size: 1.2rem; font-weight: 800;">
+                                <label style="display: block; font-size: 0.65rem; color: var(--text-muted); margin-bottom: 8px; text-transform: uppercase; font-weight: 700;">Asistencias</label>
+                                <input type="number" id="edit-a-off" class="jb-input" min="0" style="width: 100%; text-align: center; font-size: 1.3rem; font-weight: 900; background: rgba(0,0,0,0.2); border: 1px solid rgba(255,255,255,0.1); color: #fff; padding: 10px; border-radius: 8px;">
                             </div>
                             <div class="jb-form-group">
-                                <label style="display: block; font-size: 0.7rem; margin-bottom: 5px; color: var(--text-muted);">Victorias</label>
-                                <input type="number" id="edit-w-off" class="jb-input" min="0" style="width: 100%; text-align: center; font-size: 1.2rem; font-weight: 800;">
+                                <label style="display: block; font-size: 0.65rem; color: var(--text-muted); margin-bottom: 8px; text-transform: uppercase; font-weight: 700;">Victorias</label>
+                                <input type="number" id="edit-w-off" class="jb-input" min="0" style="width: 100%; text-align: center; font-size: 1.3rem; font-weight: 900; background: rgba(0,0,0,0.2); border: 1px solid rgba(255,255,255,0.1); color: #fff; padding: 10px; border-radius: 8px;">
                             </div>
                         </div>
                     </div>
 
-                    <div style="margin-top: 25px;">
-                        <button type="submit" class="jb-btn jb-btn-primary full-width" style="padding: 15px; font-weight: 900; letter-spacing: 1px;">GUARDAR CAMBIOS</button>
-                    </div>
+                    <button type="submit" class="jb-btn jb-btn-primary full-width" style="padding: 18px; font-weight: 900; letter-spacing: 1px; box-shadow: 0 5px 15px rgba(240, 165, 0, 0.2);">GUARDAR CAMBIOS</button>
                 </form>
             </div>
         </div>
