@@ -2187,14 +2187,32 @@ document.addEventListener('DOMContentLoaded', () => {
             
             const cell = document.createElement('div');
             cell.className = 'calendar-day has-date';
-            if (dateString === todayStr) cell.classList.add('today');
+            
+            // Destacar día actual con borde azul (v52.1)
+            if (dateString === todayStr) cell.classList.add('today-highlight');
             
             if (daySessions && daySessions.length > 0) {
+                // Calcular tendencia del día (v52.1)
+                let totalWins = 0;
+                let totalLosses = 0;
+                
+                daySessions.forEach(s => {
+                    const wins = s.matches.filter(m => m.scoreHome > m.scoreAway).length;
+                    const losses = s.matches.filter(m => m.scoreHome < m.scoreAway).length;
+                    totalWins += wins;
+                    totalLosses += losses;
+                });
+                
                 cell.classList.add('day-played');
+                if (totalWins > totalLosses) cell.classList.add('day-win');
+                else if (totalLosses > totalWins) cell.classList.add('day-loss');
+                else cell.classList.add('day-draw');
+                
                 cell.onclick = () => window.renderSessionDayDetails(dateString, daySessions);
             }
             
-            cell.textContent = d;
+            // Inyectar número en la esquina (v52.1)
+            cell.innerHTML = `<span class="calendar-day-number">${d}</span>`;
             grid.appendChild(cell);
         }
     }
