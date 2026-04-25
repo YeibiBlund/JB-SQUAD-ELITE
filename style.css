@@ -4483,6 +4483,22 @@ body.editing-tactic .tactical-slot {
     100% { border-color: rgba(240, 165, 0, 0.3); }
 }
 
+/* Mobile fix para calendario de convocatorias (v53.1) */
+@media (max-width: 768px) {
+    #polls-calendar-layout {
+        flex-direction: column !important;
+    }
+    #polls-calendar-container {
+        min-width: 0 !important;
+        width: 100% !important;
+        padding: 15px !important;
+        box-sizing: border-box !important;
+    }
+    #polls-month-summary {
+        display: none !important;
+    }
+}
+
 .month-stat-card {
     background: rgba(255,255,255,0.02);
     border: 1px solid rgba(255,255,255,0.05);
