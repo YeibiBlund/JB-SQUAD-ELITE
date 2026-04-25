@@ -605,7 +605,34 @@
                     <h1>Mis <span class="gradient-text">Jornadas</span></h1>
                     <button class="btn-gold" id="btn-new-session" data-role-required="manager" style="width: auto; padding: 10px 20px;">Nueva Jornada</button>
                 </div>
-                <div id="sessions-list">
+                
+                <!-- Calendario de Jornadas (v52.0) -->
+                <div id="sessions-calendar-container" class="card-elite" style="padding: 25px; margin-bottom: 2rem;">
+                    <div class="calendar-header">
+                        <h2 class="calendar-title">HISTORIAL <span class="gradient-text">CALENDARIO</span></h2>
+                        <div class="calendar-nav">
+                            <button id="sessions-calendar-prev" class="btn-cal-nav">←</button>
+                            <span id="sessions-calendar-month-label">MES AÑO</span>
+                            <button id="sessions-calendar-next" class="btn-cal-nav">→</button>
+                        </div>
+                    </div>
+                    <div class="calendar-grid-header">
+                        <span>L</span><span>M</span><span>X</span><span>J</span><span>V</span><span>S</span><span>D</span>
+                    </div>
+                    <div id="sessions-calendar-grid" class="calendar-days-grid">
+                        <!-- Inyectado por JS -->
+                    </div>
+                </div>
+
+                <!-- Detalles de la Jornada Seleccionada -->
+                <div id="sessions-day-details" style="display: none; padding-bottom: 40px;">
+                    <h3 id="selected-day-label" style="font-size: 0.8rem; margin-bottom: 1.5rem; color: var(--primary); letter-spacing: 2px; text-transform: uppercase; border-left: 3px solid var(--primary); padding-left: 15px;">PARTIDOS DEL --/--/----</h3>
+                    <div id="sessions-day-matches-list" style="display: flex; flex-direction: column; gap: 15px;">
+                        <!-- Inyectado por JS -->
+                    </div>
+                </div>
+
+                <div id="sessions-list" style="display: none;">
                     <!-- Inyectado por JS -->
                 </div>
             </section>

@@ -102,6 +102,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // 2.1 Estado del Calendario (v36.3)
     let currentCalendarDate = new Date();
+    let currentSessionsCalendarDate = new Date(); // v52.0
     
     // Listeners para Navegación del Calendario
     const btnCalPrev = document.getElementById('calendar-prev');
@@ -121,6 +122,22 @@ document.addEventListener('DOMContentLoaded', () => {
             if (state.viewingPlayerForCalendar) {
                 window.renderPlayerCalendar(state.viewingPlayerForCalendar);
             }
+        };
+    }
+
+    // Listeners para Navegación del Calendario de Jornadas (v52.0)
+    const btnSessionsCalPrev = document.getElementById('sessions-calendar-prev');
+    const btnSessionsCalNext = document.getElementById('sessions-calendar-next');
+    if (btnSessionsCalPrev) {
+        btnSessionsCalPrev.onclick = () => {
+            currentSessionsCalendarDate.setMonth(currentSessionsCalendarDate.getMonth() - 1);
+            window.renderSessionsCalendar();
+        };
+    }
+    if (btnSessionsCalNext) {
+        btnSessionsCalNext.onclick = () => {
+            currentSessionsCalendarDate.setMonth(currentSessionsCalendarDate.getMonth() + 1);
+            window.renderSessionsCalendar();
         };
     }
 
@@ -2110,74 +2127,188 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
     window.renderSessions = function() {
-        sessionsList.innerHTML = '';
-        if (state.sessions.length === 0 && !state.activeSession) {
-            sessionsList.innerHTML = `
-                <div class="card-elite" style="text-align:center; opacity:0.5; padding: 40px; background: transparent; border: 2px dashed rgba(255,255,255,0.05);">
-                    <p style="font-size: 2.5rem; margin-bottom: 10px;">🛡️</p>
-                    <p style="font-weight: 800; letter-spacing: 2px;">ARCHIVO VACÍO</p>
-                    <p style="font-size: 0.7rem; color: var(--text-muted);">AÚN NO HAS COMPLETADO NINGUNA JORNADA</p>
-                </div>`;
-            return;
+        window.renderSessionsCalendar();
+    }
+
+    window.renderSessionsCalendar = function() {
+        const grid = document.getElementById('sessions-calendar-grid');
+        const label = document.getElementById('sessions-calendar-month-label');
+        const details = document.getElementById('sessions-day-details');
+        if (!grid || !label) return;
+
+        if (details) details.style.display = 'none'; // Ocultar detalles al cambiar de mes
+        
+        const year = currentSessionsCalendarDate.getFullYear();
+        const month = currentSessionsCalendarDate.getMonth();
+        const monthNames = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"];
+        label.textContent = `${monthNames[month].toUpperCase()} ${year}`;
+
+        grid.innerHTML = '';
+        
+        // 1. Calcular offset para que el lunes sea el primer día
+        const firstDay = new Date(year, month, 1).getDay();
+        const daysInMonth = new Date(year, month + 1, 0).getDate();
+        const offset = (firstDay === 0) ? 6 : firstDay - 1;
+
+        for (let i = 0; i < offset; i++) {
+            const empty = document.createElement('div');
+            empty.className = 'calendar-day';
+            grid.appendChild(empty);
         }
 
+        // 2. Mapear sesiones por fecha
+        const sessionsByDate = new Map();
         const allSessions = [...state.sessions];
         if (state.activeSession) {
             if (!allSessions.find(s => s.id === state.activeSession.id)) {
                 allSessions.push(state.activeSession);
             }
         }
+        
+        allSessions.forEach(s => {
+            if (!s.date) return;
+            // Normalizar fecha (Asumimos DD/MM/YYYY)
+            const parts = s.date.split('/');
+            if (parts.length === 3) {
+                const dateObj = new Date(parts[2], parts[1] - 1, parts[0]);
+                const key = dateObj.toDateString();
+                if (!sessionsByDate.has(key)) sessionsByDate.set(key, []);
+                sessionsByDate.get(key).push(s);
+            }
+        });
 
-        allSessions.sort((a, b) => b.id - a.id).forEach(session => {
-            const card = document.createElement('div');
+        const todayStr = new Date().toDateString();
+
+        // 3. Generar días
+        for (let d = 1; d <= daysInMonth; d++) {
+            const dateObj = new Date(year, month, d);
+            const dateString = dateObj.toDateString();
+            const daySessions = sessionsByDate.get(dateString);
+            
+            const cell = document.createElement('div');
+            cell.className = 'calendar-day has-date';
+            if (dateString === todayStr) cell.classList.add('today');
+            
+            if (daySessions && daySessions.length > 0) {
+                cell.classList.add('day-played');
+                cell.onclick = () => window.renderSessionDayDetails(dateString, daySessions);
+            }
+            
+            cell.textContent = d;
+            grid.appendChild(cell);
+        }
+    }
+
+    window.renderSessionDayDetails = function(dateString, sessions) {
+        const details = document.getElementById('sessions-day-details');
+        const label = document.getElementById('selected-day-label');
+        const container = document.getElementById('sessions-day-matches-list');
+        if (!details || !label || !container) return;
+
+        details.style.display = 'block';
+        
+        // Formatear fecha para el label
+        const dateObj = new Date(dateString);
+        const day = dateObj.getDate();
+        const month = dateObj.getMonth() + 1;
+        const year = dateObj.getFullYear();
+        const formattedDate = `${day < 10 ? '0' + day : day}/${month < 10 ? '0' + month : month}/${year}`;
+        
+        label.textContent = `PARTIDOS DEL ${formattedDate}`;
+        container.innerHTML = '';
+
+        sessions.forEach(session => {
+            const sessionCard = document.createElement('div');
+            sessionCard.className = 'card-elite';
+            sessionCard.style.padding = '20px';
+            sessionCard.style.background = 'rgba(255,255,255,0.02)';
+            sessionCard.style.border = '1px solid rgba(255,255,255,0.05)';
+            
             const isActive = state.activeSession && session.id === state.activeSession.id;
             
-            const wins = session.matches.filter(m => m.scoreHome > m.scoreAway).length;
-            const draws = session.matches.filter(m => m.scoreHome === m.scoreAway).length;
-            const losses = session.matches.filter(m => m.scoreHome < m.scoreAway).length;
-            
-            // Determinar tendencia para el color lateral
-            let trendClass = 'draw-trend';
-            if (wins > losses) trendClass = 'win-trend';
-            else if (losses > wins) trendClass = 'loss-trend';
+            let matchesHtml = session.matches.map(m => {
+                const homeGoals = m.events ? m.events.filter(e => e.side === 'home') : [];
+                const awayGoals = m.events ? m.events.filter(e => e.side === 'away') : [];
 
-            card.className = `session-card fade-in ${trendClass} ${isActive ? 'active' : ''}`;
-            
-            const isAdmin = state.user.role === 'manager' || state.user.role === 'capitan';
-            
-            card.innerHTML = `
-                <div style="flex: 1;">
-                    <p style="font-size: 0.65rem; color: var(--text-muted); text-transform: uppercase; font-weight: 800; letter-spacing: 1px;">
-                        ${session.date} ${isActive ? '<span class="badge-live">LIVE</span>' : ''}
-                    </p>
-                    <div style="display: flex; align-items: baseline; gap: 10px; margin-top: 8px;">
-                        <span class="session-stat-value stat-v">${wins}V</span>
-                        <span style="color: rgba(255,255,255,0.1); font-weight: 900;">|</span>
-                        <span class="session-stat-value stat-e">${draws}E</span>
-                        <span style="color: rgba(255,255,255,0.1); font-weight: 900;">|</span>
-                        <span class="session-stat-value stat-d">${losses}D</span>
+                return `
+                    <div class="match-detail-item" style="border-bottom: 1px solid rgba(255,255,255,0.05); padding: 15px 0;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                            <span style="font-weight: 800; color: var(--primary); font-size: 0.7rem; width: 35%;">${state.team.name.toUpperCase()}</span>
+                            <div style="font-size: 1.1rem; font-weight: 900; letter-spacing: 3px; width: 30%; text-align: center;">
+                                ${m.scoreHome} - ${m.scoreAway}
+                            </div>
+                            <span style="font-weight: 800; color: var(--error); font-size: 0.7rem; width: 35%; text-align: right;">${m.rival.toUpperCase()}</span>
+                        </div>
+                        
+                        <div style="display: flex; flex-direction: column; gap: 6px; margin-top: 10px;">
+                            ${homeGoals.length > 0 ? homeGoals.map(g => `
+                                <div style="font-size: 0.65rem; display: flex; align-items: center; gap: 8px;">
+                                    <span style="color: var(--primary); font-size: 0.8rem;">⚽</span>
+                                    <span style="font-weight: 700;">${window.getPlayerNameById(g.scorerId)}</span>
+                                    ${g.assistantId ? `<span style="opacity: 0.5;">(Asist: ${window.getPlayerNameById(g.assistantId)})</span>` : ''}
+                                </div>
+                            `).join('') : ''}
+                        </div>
                     </div>
-                    <p style="font-size: 0.65rem; color: var(--primary); margin-top: 5px; font-weight: 700; opacity: 0.8;">
-                        ${session.matches.length} PARTIDOS REGISTRADOS
-                    </p>
+                `;
+            }).join('');
+
+            if (session.matches.length === 0) {
+                matchesHtml = '<p style="text-align: center; opacity: 0.4; font-size: 0.7rem; padding: 20px;">No hay partidos registrados.</p>';
+            }
+
+            const isAdmin = state.user.role === 'manager' || state.user.role === 'capitan';
+
+            sessionCard.innerHTML = `
+                <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 15px;">
+                    <div>
+                        <span class="badge" style="background: ${session.type === 'official' ? 'var(--primary)' : 'rgba(255,255,255,0.1)'}; color: ${session.type === 'official' ? '#000' : '#fff'}; font-size: 0.55rem; padding: 2px 8px; border-radius: 4px; font-weight: 900;">
+                            ${session.type === 'official' ? 'OFICIAL' : 'AMISTOSO'}
+                        </span>
+                        ${isActive ? '<span class="badge-live" style="margin-left: 5px;">LIVE</span>' : ''}
+                    </div>
+                    ${isAdmin ? `<button class="btn-delete-session-icon" style="background: transparent; border: none; cursor: pointer; opacity: 0.5; transition: 0.3s;" title="Eliminar Jornada">🗑️</button>` : ''}
                 </div>
-                <div style="display: flex; align-items: center; gap: 15px;">
-                    ${session.mvpId ? `<div style="text-align: right;"><p style="font-size: 0.55rem; color: var(--text-muted); text-transform: uppercase;">MVP</p><p style="color: var(--primary); font-weight: 900; font-size: 0.75rem;">${getPlayerNameById(session.mvpId)}</p></div>` : ''}
-                    ${isAdmin ? `<button class="btn-delete-session" title="Eliminar Jornada">🗑️</button>` : ''}
+                <div class="matches-container">
+                    ${matchesHtml}
                 </div>
+                ${session.mvpId ? `
+                    <div style="margin-top: 15px; padding-top: 15px; border-top: 1px dashed rgba(255,255,255,0.1); display: flex; justify-content: space-between; align-items: center;">
+                        <span style="font-size: 0.55rem; color: var(--text-muted); letter-spacing: 1px; font-weight: 800;">MVP</span>
+                        <span style="color: var(--primary); font-weight: 900; font-size: 0.75rem;">${window.getPlayerNameById(session.mvpId)}</span>
+                    </div>
+                ` : ''}
+                <button class="btn-view-details" style="width: 100%; margin-top: 20px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: #fff; padding: 10px; border-radius: 6px; font-size: 0.65rem; font-weight: 800; cursor: pointer; transition: 0.3s;">
+                    ${isActive ? 'CONTINUAR JORNADA' : 'VER RESUMEN COMPLETO'}
+                </button>
             `;
-            
-            // Evitar que el clic en borrar abra el detalle
+
             if (isAdmin) {
-                card.querySelector('.btn-delete-session').onclick = (e) => {
+                const btnDel = sessionCard.querySelector('.btn-delete-session-icon');
+                btnDel.onmouseover = () => btnDel.style.opacity = '1';
+                btnDel.onmouseout = () => btnDel.style.opacity = '0.5';
+                btnDel.onclick = (e) => {
                     e.stopPropagation();
-                    handleDeleteSession(session);
+                    window.handleDeleteSession(session);
                 };
             }
 
-            card.onclick = () => renderActiveSession(session);
-            sessionsList.appendChild(card);
+            const btnView = sessionCard.querySelector('.btn-view-details');
+            btnView.onmouseover = () => {
+                btnView.style.background = 'var(--primary)';
+                btnView.style.color = '#000';
+            };
+            btnView.onmouseout = () => {
+                btnView.style.background = 'rgba(255,255,255,0.05)';
+                btnView.style.color = '#fff';
+            };
+            btnView.onclick = () => window.renderActiveSession(session);
+
+            container.appendChild(sessionCard);
         });
+
+        // Scroll suave hasta los detalles
+        details.scrollIntoView({ behavior: 'smooth' });
     }
 
     async function handleDeleteSession(session) {

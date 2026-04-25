@@ -4391,6 +4391,25 @@ body.editing-tactic .tactical-slot {
     font-weight: 900;
 }
 
+.calendar-day.day-played {
+    background: linear-gradient(135deg, rgba(240, 165, 0, 0.3), rgba(240, 165, 0, 0.1));
+    border-color: var(--primary);
+    color: var(--primary);
+    font-weight: 900;
+    box-shadow: 0 0 15px rgba(240, 165, 0, 0.2);
+    cursor: pointer;
+}
+
+.calendar-day.day-played:hover {
+    transform: scale(1.1);
+    background: rgba(240, 165, 0, 0.4);
+    z-index: 5;
+}
+
+.calendar-day.clickable {
+    cursor: pointer;
+}
+
 .btn-cal-nav {
     background: rgba(255,255,255,0.05);
     border: 1px solid rgba(255,255,255,0.1);
