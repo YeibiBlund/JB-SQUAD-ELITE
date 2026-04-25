@@ -4692,37 +4692,55 @@ document.addEventListener('DOMContentLoaded', () => {
         if (state.activePoll) sharePollWhatsApp(state.activePoll);
     };
 
-    window.jbShareReminder = () => {
+    window.jbShareReminder = async () => {
         const modal = document.getElementById('modal-share-wa');
         if (modal) modal.style.display = 'none';
-        if (!state.activePoll || !state.players) return;
+        if (!state.activePoll || !state.team) return;
 
-        // 1. Identificar quién falta por votar
-        // Obtenemos IDs de los que YA votaron
-        const votedUserIds = state.activePoll.votes.map(v => v.user_id);
-        
-        // Filtramos jugadores del equipo que tienen cuenta (user_id) y NO están en la lista de votos
-        const missingVoters = state.players.filter(p => 
-            p.user_id && 
-            p.user_id !== 'invited' && // Ignorar slots de invitados si los hay
-            !votedUserIds.includes(p.user_id)
-        );
+        window.jbLoading.show('Buscando pendientes...');
 
-        if (missingVoters.length === 0) {
-            window.jbToast('¡Todos han votado!', 'success');
-            return;
+        try {
+            // 1. Obtener miembros actuales con sus perfiles para tener los nombres reales (full_name)
+            const { data: members, error: memErr } = await supabase
+                .from('memberships')
+                .select('user_id, profiles(full_name)')
+                .eq('team_id', state.team.id);
+
+            if (memErr || !members) throw memErr || new Error("No se encontraron miembros");
+
+            // 2. Identificar quién falta por votar
+            // Obtenemos IDs de los que YA votaron
+            const votedUserIds = state.activePoll.votes.map(v => v.user_id);
+            
+            // Filtramos miembros del equipo que NO están en la lista de votos
+            const missingVoters = members.filter(m => 
+                m.user_id && 
+                !votedUserIds.includes(m.user_id)
+            );
+
+            if (missingVoters.length === 0) {
+                window.jbToast('¡Todos han votado!', 'success');
+                window.jbLoading.hide();
+                return;
+            }
+
+            // 3. Construir mensaje
+            const teamName = state.team?.name?.toUpperCase() || 'EQUIPO';
+            const url = `https://jb-squad.netlify.app/?poll=${state.activePoll.id}`;
+            
+            // Mapeamos los nombres desde profiles.full_name
+            let voterList = missingVoters.map(m => `• ${m.profiles?.full_name || 'Jugador Anónimo'}`).join('\n');
+            
+            const text = `⚠️ *RECORDATORIO DE VOTO - ${teamName}* ⚠️\n\nTodavía faltan por confirmar para la convocatoria de *${state.activePoll.title}*:\n\n${voterList}\n\nPor favor, confirmad vuestra asistencia aquí 👇\n🔗 ${url}`;
+            
+            const waUrl = `https://api.whatsapp.com/send?text=${encodeURIComponent(text)}`;
+            window.open(waUrl, '_blank');
+        } catch (err) {
+            console.error(">>> [ERROR] Share Reminder:", err);
+            window.jbToast('Error al obtener lista de pendientes', 'error');
         }
 
-        // 2. Construir mensaje
-        const teamName = state.team?.name?.toUpperCase() || 'EQUIPO';
-        const url = `https://jb-squad.netlify.app/?poll=${state.activePoll.id}`;
-        
-        let voterList = missingVoters.map(p => `• ${p.full_name}`).join('\n');
-        
-        const text = `⚠️ *RECORDATORIO DE VOTO - ${teamName}* ⚠️\n\nTodavía faltan por confirmar para la convocatoria de *${state.activePoll.title}*:\n\n${voterList}\n\nPor favor, confirmad vuestra asistencia aquí 👇\n🔗 ${url}`;
-        
-        const waUrl = `https://api.whatsapp.com/send?text=${encodeURIComponent(text)}`;
-        window.open(waUrl, '_blank');
+        window.jbLoading.hide();
     };
 
     window.jbToggleGroup = (el) => {
