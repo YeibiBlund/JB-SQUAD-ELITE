@@ -2211,9 +2211,53 @@ document.addEventListener('DOMContentLoaded', () => {
                 cell.onclick = () => window.renderSessionDayDetails(dateString, daySessions);
             }
             
-            // Inyectar número en la esquina (v52.1)
             cell.innerHTML = `<span class="calendar-day-number">${d}</span>`;
             grid.appendChild(cell);
+        }
+
+        // 4. Calcular estadísticas del mes visible (v52.2)
+        let monthTotalMatches = 0;
+        let monthWins = 0;
+        let monthLosses = 0;
+        let monthDraws = 0;
+        
+        allSessions.forEach(s => {
+            const parts = s.date.split('/');
+            const sMonth = parseInt(parts[1]) - 1;
+            const sYear = parseInt(parts[2]);
+            
+            if (sMonth === month && sYear === year) {
+                monthTotalMatches += s.matches.length;
+                s.matches.forEach(m => {
+                    if (m.scoreHome > m.scoreAway) monthWins++;
+                    else if (m.scoreHome < m.scoreAway) monthLosses++;
+                    else monthDraws++;
+                });
+            }
+        });
+        
+        const summaryName = document.getElementById('summary-month-name');
+        const summaryStats = document.getElementById('sessions-summary-stats');
+        if (summaryName && summaryStats) {
+            summaryName.textContent = `ESTADÍSTICAS ${monthNames[month].toUpperCase()}`;
+            summaryStats.innerHTML = `
+                <div class="month-stat-card">
+                    <span class="label">Partidos Jugados</span>
+                    <span class="value">${monthTotalMatches}</span>
+                </div>
+                <div class="month-stat-card" style="border-left: 3px solid var(--success);">
+                    <span class="label">Victorias</span>
+                    <span class="value" style="color: var(--success);">${monthWins}</span>
+                </div>
+                <div class="month-stat-card" style="border-left: 3px solid #FFC107;">
+                    <span class="label">Empates</span>
+                    <span class="value" style="color: #FFC107;">${monthDraws}</span>
+                </div>
+                <div class="month-stat-card" style="border-left: 3px solid var(--error);">
+                    <span class="label">Derrotas</span>
+                    <span class="value" style="color: var(--error);">${monthLosses}</span>
+                </div>
+            `;
         }
     }
 

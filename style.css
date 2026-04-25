@@ -4444,12 +4444,45 @@ body.editing-tactic .tactical-slot {
     cursor: pointer;
 }
 
-/* Ajuste PC Calendario */
+/* Ajuste PC Calendario (v52.2) */
 @media (min-width: 1024px) {
-    #sessions-calendar-container {
-        max-width: 500px;
-        margin-left: 0;
+    #sessions-month-summary {
+        display: block !important;
     }
+    #sessions-calendar-container {
+        /* Permitir crecimiento flexible */
+        max-width: none !important;
+    }
+}
+
+.month-stat-card {
+    background: rgba(255,255,255,0.02);
+    border: 1px solid rgba(255,255,255,0.05);
+    padding: 15px;
+    border-radius: 8px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: var(--transition);
+}
+
+.month-stat-card:hover {
+    background: rgba(255,255,255,0.04);
+    transform: translateX(5px);
+}
+
+.month-stat-card .label {
+    font-size: 0.6rem;
+    font-weight: 700;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.month-stat-card .value {
+    font-size: 1.2rem;
+    font-weight: 900;
+    color: #fff;
 }
 
 .btn-cal-nav {

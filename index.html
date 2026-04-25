@@ -606,21 +606,32 @@
                     <button class="btn-gold" id="btn-new-session" data-role-required="manager" style="width: auto; padding: 10px 20px;">Nueva Jornada</button>
                 </div>
                 
-                <!-- Calendario de Jornadas (v52.0) -->
-                <div id="sessions-calendar-container" class="card-elite" style="padding: 25px; margin-bottom: 2rem;">
-                    <div class="calendar-header">
-                        <h2 class="calendar-title">HISTORIAL <span class="gradient-text">CALENDARIO</span></h2>
-                        <div class="calendar-nav">
-                            <button id="sessions-calendar-prev" class="btn-cal-nav">←</button>
-                            <span id="sessions-calendar-month-label">MES AÑO</span>
-                            <button id="sessions-calendar-next" class="btn-cal-nav">→</button>
+                <!-- Layout Dual: Calendario + Resumen (v52.2) -->
+                <div id="sessions-main-layout" style="display: flex; gap: 20px; flex-wrap: wrap; align-items: flex-start; margin-bottom: 2rem;">
+                    <!-- Calendario de Jornadas (v52.0) -->
+                    <div id="sessions-calendar-container" class="card-elite" style="flex: 2; min-width: 350px; padding: 25px;">
+                        <div class="calendar-header">
+                            <h2 class="calendar-title">HISTORIAL <span class="gradient-text">CALENDARIO</span></h2>
+                            <div class="calendar-nav">
+                                <button id="sessions-calendar-prev" class="btn-cal-nav">←</button>
+                                <span id="sessions-calendar-month-label">MES AÑO</span>
+                                <button id="sessions-calendar-next" class="btn-cal-nav">→</button>
+                            </div>
+                        </div>
+                        <div class="calendar-grid-header">
+                            <span>L</span><span>M</span><span>X</span><span>J</span><span>V</span><span>S</span><span>D</span>
+                        </div>
+                        <div id="sessions-calendar-grid" class="calendar-days-grid">
+                            <!-- Inyectado por JS -->
                         </div>
                     </div>
-                    <div class="calendar-grid-header">
-                        <span>L</span><span>M</span><span>X</span><span>J</span><span>V</span><span>S</span><span>D</span>
-                    </div>
-                    <div id="sessions-calendar-grid" class="calendar-days-grid">
-                        <!-- Inyectado por JS -->
+
+                    <!-- Resumen del Mes (v52.2) -->
+                    <div id="sessions-month-summary" class="card-elite" style="flex: 1; min-width: 280px; padding: 25px; display: none;">
+                        <h3 id="summary-month-name" style="font-size: 0.7rem; letter-spacing: 2px; margin-bottom: 25px; color: var(--primary); text-transform: uppercase; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 10px;">RESUMEN MES</h3>
+                        <div id="sessions-summary-stats" style="display: flex; flex-direction: column; gap: 12px;">
+                            <!-- Inyectado por JS -->
+                        </div>
                     </div>
                 </div>
 
