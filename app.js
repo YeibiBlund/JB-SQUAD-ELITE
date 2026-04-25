@@ -1047,8 +1047,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
             // --- COMPROBACIÓN DE DUPLICADOS EN LA MISMA FECHA ---
             window.jbLoading.show('Verificando fecha...');
-            const startDate = `${date}T00:00:00Z`;
-            const endDate = `${date}T23:59:59Z`;
+            const startDate = new Date(`${date}T00:00:00`).toISOString();
+            const endDate = new Date(`${date}T23:59:59`).toISOString();
             
             const { data: existingPolls, error: fetchErr } = await supabase
                 .from('availability_polls')
@@ -4007,7 +4007,8 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         
         // Usar la fecha elegida combinada con la hora
-        const scheduledTime = `${date}T${time}:00Z`;
+        // Usar la fecha elegida combinada con la hora, tratándola como hora local (v53.7)
+        const scheduledTime = new Date(`${date}T${time}`).toISOString();
 
         const { data, error } = await supabase
             .from('availability_polls')
@@ -4056,7 +4057,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function sharePollWhatsApp(poll) {
         const url = `https://jb-squad.netlify.app/?poll=${poll.id}`;
-        const timeStr = poll.scheduled_time.split('T')[1].substring(0, 5);
+        const d = new Date(poll.scheduled_time);
+        const timeStr = d.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' });
         const teamName = state.team?.name?.toUpperCase() || 'EQUIPO';
         const text = `⚽ *CONVOCATORIA ${teamName}* ⚽\n\n📅 ${poll.title} — Hoy ${timeStr}\n\n¿Estás disponible? Vota aquí 👇\n🔗 ${url}`;
         const waUrl = `https://api.whatsapp.com/send?text=${encodeURIComponent(text)}`;
@@ -4808,7 +4810,7 @@ document.addEventListener('DOMContentLoaded', () => {
                             <span style="font-size:1.2rem;">📋</span>
                             <div>
                                 <p style="font-size:0.8rem; font-weight:800; margin:0;">CONVOCATORIA ABIERTA</p>
-                                <p style="font-size:0.6rem; opacity:0.8; margin:0;">${poll.title} - ${poll.scheduled_time.split('T')[1].substring(0,5)}</p>
+                                <p style="font-size:0.6rem; opacity:0.8; margin:0;">${poll.title} - ${new Date(poll.scheduled_time).toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' })}</p>
                             </div>
                         </div>
                         <button class="btn-gold" style="width:auto; padding:5px 15px; font-size:0.7rem;" onclick="this.parentElement.remove(); window.jbSwitchToPoll()">VOTAR NOW</button>
