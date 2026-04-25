@@ -1,82 +1,127 @@
-# JB-SQUAD ELITE: Manual de Arquitectura Técnica
+# JB-SQUAD ELITE: Manual de Arquitectura Técnica Exhaustiva
 
-Este documento describe la estructura, flujos y reglas técnicas del proyecto JB-SQUAD ELITE. Debe ser consultado y actualizado por el agente tras cada cambio significativo.
-
----
-
-## 1. Visión General
-**JB-SQUAD ELITE** es una plataforma táctica y de gestión para clubes de E-sports (FIFA/FC), diseñada bajo una estética premium, oscura y moderna. Su objetivo es centralizar la gestión de la plantilla, las tácticas de juego y el seguimiento de jornadas competitivas.
+Este documento describe a fondo la estructura, flujos de datos, reglas de negocio y dependencias del proyecto JB-SQUAD ELITE. Es la fuente de verdad arquitectónica del sistema y debe ser consultado antes de realizar reestructuraciones profundas.
 
 ---
 
-## 2. Stack Tecnológico
-- **Frontend**: HTML5, Vanilla CSS3 (Custom Properties), Vanilla JavaScript (ES6+).
-- **Backend**: Supabase (PostgreSQL, Auth, Storage).
-- **Despliegue**: Netlify (CI/CD vía GitHub).
-- **Gráficos**: HTML5 Canvas (para exportación de alineaciones).
+## 1. Visión General del Sistema
+**JB-SQUAD ELITE** es una Single Page Application (SPA) orientada a la gestión integral de un club de E-sports (FIFA/FC). Combina herramientas de **Recursos Humanos** (plantillas, altas/bajas, roles), **Logística** (convocatorias y asistencia) y **Análisis Deportivo** (tácticas interactivas, registro de partidos en vivo y estadísticas matemáticas).
+
+### Stack Tecnológico Principal
+- **Frontend**: HTML5 Semántico, CSS3 Vanilla (con un riguroso sistema de variables CSS), JavaScript ES6+ Vanilla (Sin frameworks).
+- **Backend / BaaS**: Supabase (PostgreSQL para datos relacionales, Auth para identidades, Storage para media).
+- **Despliegue**: CI/CD (GitHub -> Netlify).
 
 ---
 
-## 3. Estructura de Archivos (Mapa de Módulos)
+## 2. Mapa de Módulos (Directorio de Archivos)
 
-### 3.1. Núcleo (Directorio Raíz)
-- **`index.html`**: Punto de entrada único (SPA). Contiene la estructura de todas las "vistas" (`#view-dashboard`, `#view-tacticas`, etc.).
-- **`style.css`**: Sistema de diseño centralizado. Define la paleta "Elite Obsidian & Electric Amber" y media queries (Mobile-First Elite).
-- **`app.js`**: Controlador principal de la interfaz y lógica de negocio. Actualmente en proceso de modularización.
+El proyecto sigue una arquitectura modular en JavaScript, aunque fuertemente ligada al DOM global en `app.js`.
 
-### 3.2. Módulos de Soporte (`/js`)
-- **`js/state.js`**: Definición del objeto `window.state`. Es la única fuente de verdad para los datos en tiempo de ejecución.
-- **`js/config.js`**: Constantes estáticas (Formaciones, Avatares, Posiciones, Paleta de colores).
-- **`js/data.js`**: Orquestador de sincronización. Contiene todas las llamadas a Supabase (`loadTeamData`, `savePlayerCloud`, etc.).
-- **`js/auth.js`**: Gestor de sesiones. Controla el login, registro y la redirección inicial post-autenticación.
-- **`js/utils.js`**: Funciones auxiliares reutilizables (escapeHTML, helpers de UI, etc.).
+### 2.1. Núcleo UI y Estilos
+- **`index.html`**: SPA Root. Contiene todos los "paneles" ocultos/visibles mediante CSS (`display: none` / `block`). Implementa la barra de navegación inferior (`bottom-nav`).
+- **`style.css`**: Design System. Define tokens globales (colores, fuentes, espaciados). Contiene utilidades clave (`.card-elite`, `.btn-gold`, `.gradient-text`) y media queries orientadas a **Mobile-First**.
 
-### 3.3. Recursos Gráficos (`/img`)
-- **`img/emerald_pitch.png`**: Textura de césped profesional con líneas de cal. Utilizada como fondo del campo táctico y en la exportación de alineaciones.
+### 2.2. Lógica de Negocio (`/js/`)
+- **`state.js`**: Define `window.state`. El "store" global en memoria.
+- **`config.js`**: Diccionarios estáticos. Coordina formaciones (4-3-3, 4-2-3-1), cordenadas X/Y del campo virtual, avatares SVG predefinidos y posiciones de juego.
+- **`auth.js`**: Capa de seguridad. Gestiona tokens JWT de Supabase, login, registro y redirecciones.
+- **`data.js`**: **Capa DAO (Data Access Object).** Actúa como middleware entre la App y Supabase. Toda operación CRUD pasa por aquí. Contiene lógica pesada como `recalculateAllStats()`.
+- **`utils.js`**: Helpers puros (`escapeHTML`, `generateId`) y UI Globals (`window.jbToast`, `window.jbConfirm`, `window.jbLoading`).
+- **`app.js`**: **El Orquestador (Controller).** Archivo masivo (~4500 líneas) que maneja:
+  - Inicialización (`init()`, `setupEventListeners()`).
+  - Navegación (`switchView()`).
+  - Renderizadores (`renderHomeDashboard`, `renderPitch`, `renderMembersList`).
+  - Lógica de Match en Vivo (`startLiveMatch`, `finalizeMatch`).
 
-### 3.4. Documentación (`/docs`)
-- **`docs/architecture.md`**: Este documento. Manual de arquitectura técnica.
-- **`docs/changelog.md`**: Registro histórico de cambios por versión (con trazabilidad horaria).
-- **`docs/agents.md`**: Manual del agente IA con las reglas de oro del proyecto.
+---
+
+## 3. Modelo de Datos Exhaustivo (Supabase Schema)
+
+La base de datos PostgreSQL en Supabase está estructurada para permitir multi-tenancy (múltiples equipos), aunque el flujo actual asume un equipo primario por sesión.
+
+### Tablas Core
+1. **`teams`**
+   - **Propósito**: Entidad principal del club.
+   - **Campos Clave**: `id` (UUID), `name`, `manager_name`, `crest_url`, `socials` (JSONB con twitter/twitch).
+2. **`profiles`**
+   - **Propósito**: Extensión de `auth.users` de Supabase. Datos personales.
+   - **Campos Clave**: `id` (FK a auth), `full_name`, `username`, `phone`.
+3. **`memberships`**
+   - **Propósito**: Tabla pivote que une Usuarios (Profiles) con Equipos. Define Autorización (RBAC).
+   - **Campos Clave**: `team_id`, `user_id`, `role` (enum: `manager`, `capitan`, `jugador`).
+
+### Tablas Operativas
+4. **`players`**
+   - **Propósito**: La "Ficha Deportiva". Representa a un jugador en el campo.
+   - **Campos Clave**: `id`, `team_id`, `user_id` (Opcional, null si es IA/Bot), `name`, `position`, `stats` (JSONB complejo).
+   - **Estructura Stats**: `{"official": {"matches": 0, "goals": 0, "assists": 0, "wins": 0}, "friendly": {...}}`.
+5. **`tactics`**
+   - **Propósito**: Configuraciones de pizarra.
+   - **Campos Clave**: `id`, `team_id`, `name`, `formation` (ej. "4-3-3"), `assignments` (JSONB: mapea `slotId` -> `playerId`), `custom_positions` (JSONB: offsets X/Y editados).
+6. **`sessions`**
+   - **Propósito**: Jornadas de juego.
+   - **Campos Clave**: `id`, `team_id`, `date` (YYYY-MM-DD), `status` (`open`, `closed`), `matches` (Array de JSONB con los partidos de la noche), `mvp_id`.
+7. **`availability_polls` & `availability_votes`**
+   - **Propósito**: Sistema de Convocatorias.
+   - **Campos**: `polls` tiene fecha y `final_alignment` (JSONB). `votes` almacena `player_id` y `vote` (yes/no/late).
 
 ---
 
 ## 4. Estado Global (`window.state`)
-El objeto `state` es el cerebro de la aplicación. Estructura principal:
-- `user`: Datos del usuario autenticado y su rol (`manager`, `capitan`, `jugador`).
-- `team`: Información del club actual.
-- `players`: Array de objetos jugador vinculados al equipo.
-- `savedTactics`: Lista de tácticas guardadas.
-- `activeTacticId`: ID de la táctica seleccionada actualmente.
-- `sessions`: Historial de jornadas/partidos cerrados.
-- `activeSession`: Datos de la jornada que se está jugando actualmente.
+
+El motor reactivo (manual) de la app. Si mutas `state`, debes llamar explícitamente a un renderizador.
+
+- **`state.user`**: Contiene `auth` (datos token) y `role` (extraído de memberships).
+- **`state.team`**: Fila del club actual.
+- **`state.players`**: Array vital. Todas las tablas y selects buscan el jugador aquí.
+- **`state.savedTactics`**: Array de tácticas cacheadas.
+- **`state.activeTacticId`**: Puntero a la táctica mostrada en el Canvas (`renderPitch`).
+- **`state.sessions`**: Historial completo.
+- **`state.activeSession`**: Objeto de la jornada que está `status: 'open'`.
+- **`currentMatch`** (Variable local en `app.js`): Controla el partido en vivo antes de ser pusheado a `state.activeSession.matches`.
 
 ---
 
-## 5. Ciclo de Vida y Sincronización
-1. **Arranque**: `auth.js` verifica la sesión -> `loadTeamData()` en `data.js`.
-2. **Carga**: Se descargan jugadores, tácticas y sesiones de Supabase.
-3. **Setup UI**: Tras la carga, `loadTeamData` invoca las funciones de "Setup" en `app.js` (`setupEventListeners`, `setupNavigation`, etc.).
-4. **Persistencia**: Cualquier cambio en la UI que requiera guardado invoca una función `Cloud` en `data.js`, la cual actualiza Supabase y, opcionalmente, refresca la UI.
+## 5. Flujos Lógicos Críticos
+
+### 5.1. Sistema de Control de Acceso (RBAC)
+Manejado principalmente por la función `window.applyRolePermissions()` en `app.js`.
+- **Managers**: Acceso total. Pueden expulsar, cambiar roles, borrar sesiones, editar stats manuales y modificar la configuración del club.
+- **Capitanes**: Rango intermedio. Pueden abrir/cerrar convocatorias, iniciar/cerrar jornadas y modificar tácticas. No pueden expulsar usuarios ni borrar historiales completos.
+- **Jugadores**: Solo lectura. Pueden votar en convocatorias, ver stats y editar su propio perfil físico.
+
+### 5.2. Flujo Estadístico (El Motor de Datos)
+El flujo que transforma acciones en el campo en números en el Dashboard:
+1. **Live Match**: Se anotan Goles (`btnAddGoalHome`) asignando un `scorerId` y `assistantId`.
+2. **Finalize Match**: 
+   - Se lee `currentMatch.events` para sumar G y A al JSON de `player.stats`.
+   - **Punto Crítico**: Se lee `state.savedTactics.find(t => t.id === state.activeTacticId)`. Los jugadores asignados a esta táctica en ese instante reciben `+1 PJ` y (si el equipo local gana) `+1 Win`.
+3. **Persistencia**: Se hace un bucle `savePlayerCloud()` a los modificados y se actualiza la `session` en Supabase.
+4. **Dashboard (`renderHomeDashboard`)**: Lee el array `state.players`, itera sobre sus `stats` y ordena los arrays para pintar los Rankings (Top Goleadores, Top Asistentes, Win Rate).
+
+### 5.3. Generación de Gráficos (Canvas)
+Para exportar alineaciones o fichas, la app no usa librerías externas pesadas.
+- Crea un `<canvas>` dinámico.
+- Dibuja el fondo (`emerald_pitch.png`).
+- Itera sobre `tactic.assignments`, dibuja las coordenadas `X/Y` (re-escaladas desde porcentajes), inyecta los avatares/fotos mediante promesas de carga de imagen (`Image.onload`), y usa `canvas.toDataURL()` para generar un JPG descargable.
 
 ---
 
-## 6. Reglas de Diseño (UX/UI)
-- **Aesthetics**: Oscuro, contrastes con Oro (`#f0a500`), cristales (glassmorphism).
-- **Mobile-First Elite**: Prioridad absoluta a la experiencia móvil, pero con un layout "Ultra-Wide" para escritorio (sin límites de 1200px).
-- **Cero Scroll Horizontal**: El contenido fluye verticalmente; las tácticas ocupan el 100% del viewport disponible.
-- **Sin Modales Nativos**: Uso exclusivo de la UI propia (`jbToast`, `jbConfirm`, `jbLoading`).
+## 6. Convenciones de UI/UX y Sistema de Diseño
+
+- **Fondo General**: `#0f0f11` a `#1a1a1a` (Negros puros y grises muy oscuros).
+- **Acento (Primary)**: `#f0a500` (Dorado Élite / Ámbar).
+- **Tarjetas (`.card-elite`)**: Fondos translúcidos (`rgba(255,255,255,0.02)`), bordes sutiles (`rgba(240, 165, 0, 0.1)`) y desenfoque (`backdrop-filter: blur(10px)`).
+- **Interacciones**: Botones redondeados, sombras dinámicas al hacer hover, y transformaciones (`scale(1.02)`) para dar sensación de "App Nativa".
+- **Responsive**: `index.html` es fluido. En PC, los contenedores (`.container`) tienen `max-width: 1400px` o `800px` dependiendo de la densidad de datos.
 
 ---
 
-## 7. Esquema de Base de Datos (Supabase)
-- **`teams`**: `id, name, manager_name, crest_url`.
-- **`memberships`**: Vincula usuarios con equipos y roles (`team_id, user_id, role`).
-- **`players`**: Fichas de jugadores (`team_id, name, position, photo_url, stats`).
-- **`tactics`**: Configuraciones de campo (`team_id, name, formation, assignments, custom_positions`).
-- **`sessions`**: Registro de jornadas (`team_id, date, status, matches, mvp_id`).
+## 7. Áreas Identificadas de Mejora / Deuda Técnica (Refactoring)
+1. **Acoplamiento en `app.js`**: El archivo concentra UI, lógica de negocio y listeners. Debería dividirse en controladores (ej. `MatchController.js`, `RosterController.js`).
+2. **Flujo de Jornadas Desconectado**: La dependencia de `activeTacticId` en el momento de pitar el final de un partido causa pérdida de datos si la táctica no fue confirmada. (Ver `futureplans.md` para la propuesta de flujo "Túnel").
+3. **Consumo de API / N+1**: Múltiples secciones iteran arrays haciendo peticiones asíncronas a Supabase dentro de bucles, en lugar de usar `JOINs` relacionales en la carga inicial.
 
 ---
-
-*Última actualización: v36.1.0 - 2026-04-13 | 23:54*
-
+*Última actualización: v50.8 - 25 Abril 2026*
