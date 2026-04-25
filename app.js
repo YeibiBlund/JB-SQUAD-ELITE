@@ -4241,7 +4241,6 @@ document.addEventListener('DOMContentLoaded', () => {
         const todayStr = today.toDateString();
 
         label.textContent = `${monthNames[month].toUpperCase()} ${year}`;
-        grid.innerHTML = '';
 
         // 1. Obtener todas las convocatorias del equipo
         const { data: allPolls, error } = await supabase
@@ -4250,6 +4249,9 @@ document.addEventListener('DOMContentLoaded', () => {
             .eq('team_id', state.team.id);
 
         if (error) return;
+
+        // Limpiar grid DESPUÉS del await para evitar race condition (v53.1)
+        grid.innerHTML = '';
 
         // Mapear por fecha para acceso rápido
         const pollsByDate = new Map();
