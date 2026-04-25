@@ -8,6 +8,9 @@ let isHandlingSession = false;
  * Inicializa los manejadores de eventos para el login y registro.
  */
 function setupAuthHandlers() {
+    if (window._hasSetupAuth) return;
+    window._hasSetupAuth = true;
+
     const loginForm = document.getElementById('login-form');
     const regForm = document.getElementById('register-form');
     const tabs = document.querySelectorAll('.auth-tab');

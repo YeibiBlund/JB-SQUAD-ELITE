@@ -444,6 +444,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- Configuración de Navegación ---
     window.setupNavigation = function() {
+        if (window._hasSetupNavigation) return;
+        window._hasSetupNavigation = true;
+
         navButtons.forEach(btn => {
             btn.addEventListener('click', () => {
                 const view = btn.getAttribute('data-view');
@@ -515,6 +518,9 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     window.setupFormHandlers = function() {
+        if (window._hasSetupForms) return;
+        window._hasSetupForms = true;
+
         // Registro del Club
         // Fichaje de Jugador (Autogestión)
         playerForm.addEventListener('submit', async (e) => {
@@ -746,6 +752,9 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     window.setupTableSorting = function() {
+        if (window._hasSetupSorting) return;
+        window._hasSetupSorting = true;
+
         document.querySelectorAll('.th-sortable').forEach(th => {
             th.addEventListener('click', () => {
                 const key = th.getAttribute('data-sort');
@@ -835,6 +844,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- Lógica de Tácticas Múltiples ---
     window.setupTacticHandlers = function() {
+        if (window._hasSetupTactics) return;
+        window._hasSetupTactics = true;
+
         // Ir a Crear Táctica
         btnCreateTactic.addEventListener('click', () => {
             tacticasList.style.display = 'none';
@@ -1781,6 +1793,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- LÓGICA DE JORNADAS Y PARTIDOS ---
     window.setupSessionHandlers = function() {
+        if (window._hasSetupSession) return;
+        window._hasSetupSession = true;
+
         btnNewSession.addEventListener('click', async () => {
             const activeTactic = state.savedTactics.find(t => t.id === state.activeTacticId);
             if (sessionTacticName) {
