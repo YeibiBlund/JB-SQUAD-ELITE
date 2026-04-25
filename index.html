@@ -130,7 +130,6 @@
                 
                 <!-- Lista de clubes disponibles -->
                 <div id="available-clubs-list" style="display: flex; flex-direction: column; gap: 12px; overflow-y: auto; max-height: 400px; padding-right: 5px;">
-                    <!-- Se llena dinámicamente -->
                     <p style="color: var(--text-muted); font-size: 0.8rem; text-align: center; padding: 20px;">Cargando clubes...</p>
                 </div>
             </div>
@@ -1174,6 +1173,49 @@
 
             <button id="btn-confirm-export" class="btn-gold" style="margin-top: 25px;">GENERAR IMAGEN</button>
 
+        </div>
+    </div>
+
+    <!-- MODAL: EDITAR ESTADÍSTICAS (Solo Managers) -->
+    <div id="modal-edit-stats" class="jb-modal">
+        <div class="jb-modal-content">
+            <div class="jb-modal-header">
+                <h2 id="edit-stats-name">Editar Estadísticas</h2>
+                <span class="jb-modal-close" onclick="closeEditStatsModal()">&times;</span>
+            </div>
+            <div class="jb-modal-body">
+                <form id="form-edit-stats">
+                    <input type="hidden" id="edit-stats-id">
+                    
+                    <div class="stats-edit-section" style="background: rgba(255,255,255,0.03); padding: 15px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.1);">
+                        <h3 style="color: var(--primary); font-size: 0.8rem; margin-bottom: 15px; letter-spacing: 1px;">ESTADÍSTICAS OFICIALES</h3>
+                        <div class="jb-form-group-row" style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                            <div class="jb-form-group">
+                                <label style="display: block; font-size: 0.7rem; margin-bottom: 5px; color: var(--text-muted);">Partidos (PJ)</label>
+                                <input type="number" id="edit-pj-off" class="jb-input" min="0" style="width: 100%; text-align: center; font-size: 1.2rem; font-weight: 800;">
+                            </div>
+                            <div class="jb-form-group">
+                                <label style="display: block; font-size: 0.7rem; margin-bottom: 5px; color: var(--text-muted);">Goles</label>
+                                <input type="number" id="edit-g-off" class="jb-input" min="0" style="width: 100%; text-align: center; font-size: 1.2rem; font-weight: 800;">
+                            </div>
+                        </div>
+                        <div class="jb-form-group-row" style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 15px;">
+                            <div class="jb-form-group">
+                                <label style="display: block; font-size: 0.7rem; margin-bottom: 5px; color: var(--text-muted);">Asistencias</label>
+                                <input type="number" id="edit-a-off" class="jb-input" min="0" style="width: 100%; text-align: center; font-size: 1.2rem; font-weight: 800;">
+                            </div>
+                            <div class="jb-form-group">
+                                <label style="display: block; font-size: 0.7rem; margin-bottom: 5px; color: var(--text-muted);">Victorias</label>
+                                <input type="number" id="edit-w-off" class="jb-input" min="0" style="width: 100%; text-align: center; font-size: 1.2rem; font-weight: 800;">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div style="margin-top: 25px;">
+                        <button type="submit" class="jb-btn jb-btn-primary full-width" style="padding: 15px; font-weight: 900; letter-spacing: 1px;">GUARDAR CAMBIOS</button>
+                    </div>
+                </form>
+            </div>
         </div>
     </div>
 

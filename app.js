@@ -3225,6 +3225,61 @@ document.addEventListener('DOMContentLoaded', () => {
         window.jbLoading.hide();
     }
 
+    // --- EDICIÓN MANUAL DE ESTADÍSTICAS (v50.4) ---
+    window.openEditStatsModal = function(playerId) {
+        const player = state.players.find(p => p.id == playerId);
+        if (!player) return;
+
+        document.getElementById('edit-stats-id').value = playerId;
+        document.getElementById('edit-stats-name').textContent = `EDITAR: ${player.name.toUpperCase()}`;
+        
+        const off = player.stats?.official || { matches: 0, goals: 0, assists: 0, wins: 0 };
+        document.getElementById('edit-pj-off').value = off.matches || 0;
+        document.getElementById('edit-g-off').value = off.goals || 0;
+        document.getElementById('edit-a-off').value = off.assists || 0;
+        document.getElementById('edit-w-off').value = off.wins || 0;
+
+        document.getElementById('modal-edit-stats').style.display = 'flex';
+    };
+
+    window.closeEditStatsModal = function() {
+        document.getElementById('modal-edit-stats').style.display = 'none';
+    };
+
+    const formEditStats = document.getElementById('form-edit-stats');
+    if (formEditStats) {
+        formEditStats.onsubmit = async (e) => {
+            e.preventDefault();
+            const playerId = document.getElementById('edit-stats-id').value;
+            const player = state.players.find(p => p.id == playerId);
+            if (!player) return;
+
+            window.jbLoading.show('Guardando cambios...');
+            
+            // Actualizar objeto local
+            if (!player.stats) player.stats = { official: {}, friendly: {} };
+            if (!player.stats.official) player.stats.official = {};
+
+            player.stats.official.matches = parseInt(document.getElementById('edit-pj-off').value) || 0;
+            player.stats.official.goals = parseInt(document.getElementById('edit-g-off').value) || 0;
+            player.stats.official.assists = parseInt(document.getElementById('edit-a-off').value) || 0;
+            player.stats.official.wins = parseInt(document.getElementById('edit-w-off').value) || 0;
+
+            try {
+                // Guardar en Supabase (savePlayerCloud está en data.js)
+                await savePlayerCloud(player);
+                window.jbToast('Estadísticas actualizadas.', 'success');
+                window.closeEditStatsModal();
+                await loadTeamData();
+                await renderMembersList();
+            } catch (err) {
+                console.error(">>> [ERROR] Error al editar stats manual:", err);
+                window.jbToast('Error al guardar.', 'error');
+            }
+            window.jbLoading.hide();
+        };
+    }
+
     window.renderMembersList = async function() {
         const membersListContainer = document.getElementById('team-members-list');
         const { data: members, error } = await supabase
@@ -3320,11 +3375,14 @@ document.addEventListener('DOMContentLoaded', () => {
                 <div class="member-stat-cell g">${totalG}</div>
                 <div class="member-stat-cell a">${totalA}</div>
                 <div class="member-admin-actions" style="text-align:right;">
-                    ${isManager && m.user_id !== state.user.auth.id ? `
-                        <div style="display:flex; justify-content:flex-end; align-items:center;">
-                            <button class="btn-delete-row" style="width:28px; height:28px; font-size:0.7rem;" onclick="window.kickMemberFromAdmin('${m.user_id}', '${escapeHTML(m.profiles?.full_name || 'ANÓNIMO')}')" title="Expulsar del Club">🗑️</button>
-                        </div>
-                    ` : ''}
+                    <div style="display:flex; justify-content:flex-end; align-items:center; gap: 8px;">
+                        ${isManager && playerCard ? `
+                            <button class="btn-detail" style="width:28px; height:28px; font-size:0.7rem; background:rgba(240,165,0,0.15); border-color:var(--primary); color:var(--primary); padding:0; display:flex; align-items:center; justify-content:center;" onclick="window.openEditStatsModal('${playerCard.id}')" title="Editar Estadísticas">📊</button>
+                        ` : ''}
+                        ${isManager && m.user_id !== state.user.auth.id ? `
+                            <button class="btn-delete-row" style="width:28px; height:28px; font-size:0.7rem; padding:0; display:flex; align-items:center; justify-content:center;" onclick="window.kickMemberFromAdmin('${m.user_id}', '${escapeHTML(m.profiles?.full_name || 'ANÓNIMO')}')" title="Expulsar del Club">🗑️</button>
+                        ` : ''}
+                    </div>
                 </div>
             `;
 
