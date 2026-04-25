@@ -1859,7 +1859,56 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             });
         }
+
+        // Botón Resetear Temporada (v50.7)
+        const btnResetSeason = document.getElementById('btn-reset-season');
+        if (btnResetSeason) {
+            btnResetSeason.addEventListener('click', async () => {
+                if (state.user?.role !== 'manager') return;
+                
+                const ok1 = await window.jbConfirm('⚠️ ADVERTENCIA CRÍTICA ⚠️\n\nEstás a punto de ELIMINAR TODO EL HISTORIAL de jornadas y poner TODAS LAS ESTADÍSTICAS A 0 para todos los jugadores.\n\n¿Quieres continuar?');
+                if (!ok1) return;
+
+                const ok2 = await window.jbConfirm('¿ESTÁS ABSOLUTAMENTE SEGURO?\n\nEsta acción NO SE PUEDE DESHACER. Se borrarán todos los partidos y goles actuales para empezar una nueva temporada.');
+                if (!ok2) return;
+
+                window.jbLoading.show('Borrando historial e iniciando nueva temporada...');
+                try {
+                    // 1. Borrar todas las sesiones del equipo
+                    const { error: errSessions } = await supabase
+                        .from('sessions')
+                        .delete()
+                        .eq('team_id', state.team.id);
+                        
+                    if (errSessions) throw errSessions;
+
+                    // 2. Resetear stats de jugadores a 0
+                    for (let p of state.players) {
+                        p.stats = {
+                            official: { goals: 0, assists: 0, matches: 0, wins: 0, mvps: 0 },
+                            friendly: { goals: 0, assists: 0, matches: 0, wins: 0, mvps: 0 }
+                        };
+                        p.mvp_count = 0;
+                        await savePlayerCloud(p); // Importado de data.js
+                    }
+
+                    // 3. Resetear datos locales
+                    state.sessions = [];
+                    state.activeSession = null;
+                    localStorage.removeItem('jb_active_session');
+
+                    await loadTeamData(); // Recarga integral
+                    window.jbToast('¡NUEVA TEMPORADA INICIADA! Historial reseteado a 0.', 'success');
+                    switchView('home');
+                } catch (err) {
+                    console.error(">>> [ERROR] Fallo al resetear la temporada:", err);
+                    window.jbToast('Hubo un error al intentar resetear la temporada.', 'error');
+                }
+                window.jbLoading.hide();
+            });
+        }
     }
+
 
     window.renderSessions = function() {
         sessionsList.innerHTML = '';
@@ -3147,12 +3196,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (requests.length === 0) {
             requestsContainer.innerHTML = `
-                <div style="text-align: center; opacity: 0.4; padding: 20px; font-size: 0.75rem;">
-                    NO HAY SOLICITUDES PENDIENTES
+                <div class="card-elite" style="text-align: center; opacity: 0.6; padding: 40px 20px; background: transparent; border: 1px dashed rgba(255,255,255,0.1); display: flex; flex-direction: column; align-items: center; gap: 10px;">
+                    <span style="font-size: 2rem;">📭</span>
+                    <h3 style="font-size: 0.9rem; color: #fff; font-weight: 800; letter-spacing: 1px;">BANDEJA VACÍA</h3>
+                    <p style="font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase;">Actualmente no tienes ninguna solicitud pendiente para unirse a tu club.</p>
                 </div>
             `;
             return;
         }
+
 
         requestsContainer.innerHTML = '';
         requests.forEach(req => {
@@ -3298,32 +3350,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
         document.getElementById('member-count-badge').textContent = `${members.length} MIEMBROS`;
 
-        // --- Sincronización Retroactiva (v48.1 fix) ---
-        const btnSync = document.getElementById('btn-sync-squad');
-        if (btnSync) {
-            const isManager = state.user?.role === 'manager';
-            btnSync.style.display = isManager ? 'flex' : 'none';
-            if (isManager && !btnSync.dataset.listenerSet) {
-                btnSync.addEventListener('click', async () => {
-                    const agreed = await window.jbConfirm('¿Quieres reparar la vinculación de todos los miembros con la plantilla? Esto arreglará a los jugadores que no aparecen actualmente.');
-                    if (!agreed) return;
-                    
-                    window.jbLoading.show('Sincronizando plantilla...');
-                    const res = await syncTeamMembers();
-                    window.jbLoading.hide();
-                    
-                    if (res.success) {
-                        window.jbToast('Plantilla sincronizada con éxito', 'success');
-                        await loadTeamData();
-                        await renderMembersList();
-                    } else {
-                        window.jbToast('Error: ' + res.error, 'error');
-                    }
-                });
-                btnSync.dataset.listenerSet = "true";
-            }
-        }
-        
         // Limpiar e Inyectar Encabezado
         membersListContainer.innerHTML = `
             <div class="member-table-header">

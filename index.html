@@ -869,12 +869,22 @@
 
                         <button id="btn-save-team-settings" class="btn-gold" style="width: 100%; margin-top: 10px; padding: 15px; font-weight: 900; letter-spacing: 2px;">GUARDAR CONFIGURACIÓN</button>
 
-                        <!-- Sección de Mantenimiento (v50.0) -->
+                        <!-- Sección de Mantenimiento (v50.7) -->
                         <div style="margin-top: 30px; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 20px;">
                             <label style="display: block; font-size: 0.7rem; color: #F44336; margin-bottom: 12px; font-weight: 800; letter-spacing: 1px;">MANTENIMIENTO DEL CLUB</label>
-                            <div class="card-elite" style="background: rgba(244, 67, 54, 0.05); border: 1px solid rgba(244, 67, 54, 0.2); padding: 15px;">
-                                <p style="font-size: 0.65rem; color: var(--text-muted); margin-bottom: 15px; line-height: 1.4;">Si notas que los partidos jugados o goles no coinciden con tus jornadas guardadas, usa este botón para recalcular todo desde cero.</p>
-                                <button id="btn-recalculate-stats" class="btn-cancel" style="width: 100%; background: rgba(244, 67, 54, 0.1); border-color: #F44336; color: #F44336; padding: 10px; font-size: 0.7rem; font-weight: 800;">🔄 RECALCULAR TODO EL HISTORIAL</button>
+                            
+                            <div style="display: flex; flex-direction: column; gap: 15px;">
+                                <div class="card-elite" style="background: rgba(255, 255, 255, 0.02); border: 1px solid rgba(255, 255, 255, 0.05); padding: 15px; display: flex; flex-direction: column; gap: 10px;">
+                                    <h4 style="font-size: 0.75rem; color: #fff;">Sincronizar Datos</h4>
+                                    <p style="font-size: 0.65rem; color: var(--text-muted); line-height: 1.4;">Si notas que los partidos jugados o goles no coinciden con tus jornadas guardadas, usa este botón para recalcular el historial actual.</p>
+                                    <button id="btn-recalculate-stats" class="btn-detail" style="width: 100%; background: rgba(255, 255, 255, 0.05); border-color: rgba(255,255,255,0.2); color: #fff; padding: 10px; font-size: 0.7rem; font-weight: 800;">🔄 RECALCULAR HISTORIAL</button>
+                                </div>
+
+                                <div class="card-elite" style="background: rgba(244, 67, 54, 0.05); border: 1px solid rgba(244, 67, 54, 0.2); padding: 15px; display: flex; flex-direction: column; gap: 10px;">
+                                    <h4 style="font-size: 0.75rem; color: #F44336;">Nueva Temporada</h4>
+                                    <p style="font-size: 0.65rem; color: var(--text-muted); line-height: 1.4;">Atención: Esto borrará TODAS las jornadas y reseteará a 0 las estadísticas de todos los jugadores. Úsalo solo para empezar una nueva temporada.</p>
+                                    <button id="btn-reset-season" class="btn-cancel" style="width: 100%; background: rgba(244, 67, 54, 0.1); border-color: #F44336; color: #F44336; padding: 10px; font-size: 0.7rem; font-weight: 800;">⚠️ RESETEAR TEMPORADA</button>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -882,14 +892,12 @@
 
                 <!-- Member Management -->
                 <div id="team-roster-panel" class="member-management-panel card-elite fade-in">
-                    <!-- Cabecera de Gestión (v34.4 Optimizada) -->
-                    <div class="team-management-header-flex">
-                        <h2 class="team-management-title">GESTIÓN DE PLANTILLA</h2>
-                        <span id="member-count-badge" class="badge-elite">0 MIEMBROS</span>
-                        <div class="team-management-actions">
-                            <button id="btn-export-squad" class="btn-detail" title="Exportar imagen de la plantilla" style="padding: 4px 12px; font-size: 0.6rem; border-radius: 4px; background: rgba(255, 255, 255, 0.05); border-color: rgba(255,255,255,0.2); color: #fff; font-weight: 800; cursor: pointer;">📤 EXPORTAR</button>
-                            <button id="btn-sync-squad" class="btn-detail" title="Sincronizar fichas de todos los miembros" style="padding: 4px 8px; font-size: 0.6rem; border-radius: 4px; background: rgba(240, 165, 0, 0.1); border-color: var(--primary); color: var(--primary); font-weight: 800; cursor: pointer; display: none;">🔄 REPARAR</button>
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding-bottom: 15px; border-bottom: 1px solid rgba(255,255,255,0.05);">
+                        <div>
+                            <h2 style="font-size: 1.1rem; letter-spacing: 1px; color: var(--primary); font-weight: 800; margin-bottom: 5px;">GESTIÓN DE PLANTILLA</h2>
+                            <span id="member-count-badge" class="badge-elite" style="font-size: 0.6rem;">0 MIEMBROS</span>
                         </div>
+                        <button id="btn-export-squad" class="btn-gold" title="Exportar imagen de la plantilla" style="padding: 8px 15px; font-size: 0.7rem; font-weight: 800; box-shadow: 0 4px 15px rgba(240, 165, 0, 0.2);">📤 EXPORTAR</button>
                     </div>
                     
                     <div id="team-members-list" class="members-dynamic-list">
