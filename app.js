@@ -4680,7 +4680,49 @@ document.addEventListener('DOMContentLoaded', () => {
     window.jbSharePoll = () => {
         const role = state.user?.role;
         if (role !== 'manager' && role !== 'capitan') return;
+        if (!state.activePoll) return;
+        
+        const modal = document.getElementById('modal-share-wa');
+        if (modal) modal.style.display = 'flex';
+    };
+
+    window.jbShareStandard = () => {
+        const modal = document.getElementById('modal-share-wa');
+        if (modal) modal.style.display = 'none';
         if (state.activePoll) sharePollWhatsApp(state.activePoll);
+    };
+
+    window.jbShareReminder = () => {
+        const modal = document.getElementById('modal-share-wa');
+        if (modal) modal.style.display = 'none';
+        if (!state.activePoll || !state.players) return;
+
+        // 1. Identificar quién falta por votar
+        // Obtenemos IDs de los que YA votaron
+        const votedUserIds = state.activePoll.votes.map(v => v.user_id);
+        
+        // Filtramos jugadores del equipo que tienen cuenta (user_id) y NO están en la lista de votos
+        const missingVoters = state.players.filter(p => 
+            p.user_id && 
+            p.user_id !== 'invited' && // Ignorar slots de invitados si los hay
+            !votedUserIds.includes(p.user_id)
+        );
+
+        if (missingVoters.length === 0) {
+            window.jbToast('¡Todos han votado!', 'success');
+            return;
+        }
+
+        // 2. Construir mensaje
+        const teamName = state.team?.name?.toUpperCase() || 'EQUIPO';
+        const url = `https://jb-squad.netlify.app/?poll=${state.activePoll.id}`;
+        
+        let voterList = missingVoters.map(p => `• ${p.full_name}`).join('\n');
+        
+        const text = `⚠️ *RECORDATORIO DE VOTO - ${teamName}* ⚠️\n\nTodavía faltan por confirmar para la convocatoria de *${state.activePoll.title}*:\n\n${voterList}\n\nPor favor, confirmad vuestra asistencia aquí 👇\n🔗 ${url}`;
+        
+        const waUrl = `https://api.whatsapp.com/send?text=${encodeURIComponent(text)}`;
+        window.open(waUrl, '_blank');
     };
 
     window.jbToggleGroup = (el) => {
