@@ -1176,8 +1176,38 @@
         </div>
     </div>
 
-    <!-- MODAL: EDITAR ESTADÍSTICAS (Solo Managers) (v50.5) -->
-    <div id="modal-edit-stats" class="jb-modal" style="display: none;">
+    <!-- MODAL: EDITAR ESTADÍSTICAS (Solo Managers) (v50.6) -->
+    <style>
+        .jb-modal {
+            display: none;
+            position: fixed;
+            z-index: 10001;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.85);
+            backdrop-filter: blur(5px);
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .jb-modal-content {
+            background: linear-gradient(145deg, #1a1a1a 0%, #0a0a0a 100%);
+            border: 1px solid rgba(240, 165, 0, 0.3);
+            border-radius: 20px;
+            width: 100%;
+            max-width: 450px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            animation: modalSlideUp 0.3s ease-out;
+        }
+        @keyframes modalSlideUp {
+            from { transform: translateY(30px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+    </style>
+
+    <div id="modal-edit-stats" class="jb-modal">
         <div class="jb-modal-content" style="max-width: 450px;">
             <div class="jb-modal-header">
                 <h2 id="edit-stats-name" class="gradient-text">Editar Estadísticas</h2>

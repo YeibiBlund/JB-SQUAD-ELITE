@@ -3357,8 +3357,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 <div class="member-admin-avatar">
                     ${photo ? `<img src="${photo}" style="width:100%; height:100%; object-fit:cover;">` : (avatar ? avatar.svg : '')}
                 </div>
-                <div class="member-admin-info">
-                    <h4>${escapeHTML(m.profiles?.full_name?.toUpperCase() || 'ANÓNIMO')}</h4>
+                <div class="member-admin-info" ${isManager && playerCard ? `onclick="window.openEditStatsModal('${playerCard.id}')" style="cursor:pointer;" title="Editar Estadísticas"` : ''}>
+                    <h4 style="${isManager && playerCard ? 'color: var(--primary); text-decoration: underline dotted rgba(240,165,0,0.4);' : ''}">${escapeHTML(m.profiles?.full_name?.toUpperCase() || 'ANÓNIMO')}</h4>
                 </div>
                 <div>
                     ${isManager && m.user_id !== state.user.auth.id ? `
@@ -3376,9 +3376,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 <div class="member-stat-cell a">${totalA}</div>
                 <div class="member-admin-actions" style="text-align:right;">
                     <div style="display:flex; justify-content:flex-end; align-items:center; gap: 8px;">
-                        ${isManager && playerCard ? `
-                            <button class="btn-detail" style="width:28px; height:28px; font-size:0.7rem; background:rgba(240,165,0,0.15); border-color:var(--primary); color:var(--primary); padding:0; display:flex; align-items:center; justify-content:center;" onclick="window.openEditStatsModal('${playerCard.id}')" title="Editar Estadísticas">📊</button>
-                        ` : ''}
                         ${isManager && m.user_id !== state.user.auth.id ? `
                             <button class="btn-delete-row" style="width:28px; height:28px; font-size:0.7rem; padding:0; display:flex; align-items:center; justify-content:center;" onclick="window.kickMemberFromAdmin('${m.user_id}', '${escapeHTML(m.profiles?.full_name || 'ANÓNIMO')}')" title="Expulsar del Club">🗑️</button>
                         ` : ''}
