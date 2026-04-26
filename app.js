@@ -7,8 +7,8 @@ document.addEventListener('DOMContentLoaded', () => {
     // El objeto 'state' y 'supabase' ya están disponibles globalmente.
 
 
-    // 1. Constantes Globales (v55.6)
-    const neutralCrest = `data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%23f0a500"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm0 10.99h7c-.53 4.12-3.28 7.79-7 8.94V12H5V6.3l7-3.11v8.8z"/></svg>`;
+    // 1. Constantes Globales (v56.0 - Base64 para evitar roturas de HTML)
+    const neutralCrest = `data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0iI2YwYTUwMCI+PHBhdGggZD0iTTEyIDlMMyA1djZjMCA1LjU1IDMuODQgMTAuNzQgOSAxMiA1LjE2LTEuMjYgOS02LjQ1IDktMTJWNWwtOS00em0wIDEwLjk5aDdjLS41MyA0LjEyLTMuMjggNy43OS03IDguOTRWMTJINVY2LjNsNy0zLjExdjguOHoiLz48L3N2Zz4=`;
 
     // 2. Elementos del DOM
     const views = document.querySelectorAll('.view');
