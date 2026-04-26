@@ -402,38 +402,54 @@ document.addEventListener('DOMContentLoaded', () => {
         
         const typeLabel = document.getElementById('match-type-label');
         const rivalLabel = document.getElementById('rival-name-display');
+        const rivalLabel = document.getElementById('rival-name-display');
         if (typeLabel) typeLabel.textContent = currentMatch.type === 'official' ? 'PARTIDO OFICIAL' : 'PARTIDO AMISTOSO';
         if (rivalLabel) rivalLabel.textContent = currentMatch.rival.toUpperCase();
 
-        // Nombres y Escudos (v55.0)
+        // Fallback SVG (v55.6) - Ahora definido en el scope superior de setupSessionHandlers
+
         const myTeamName = (state.team && state.team.name) ? state.team.name : 'MI CLUB';
-        const myTeamCrest = (state.team && state.team.crest_url) ? state.team.crest_url : 'img/crest_placeholder.png';
+        const myTeamCrest = (state.team && state.team.crest_url) ? state.team.crest_url : neutralCrest;
         const rivalName = currentMatch.rival || 'RIVAL';
-        const rivalCrest = currentMatch.rivalCrest || 'img/crest_placeholder.png';
+        const rivalCrest = currentMatch.rivalCrest || neutralCrest;
 
         const nameA = document.getElementById('score-team-name-a');
         const nameB = document.getElementById('score-team-name-b');
         const crestA = document.getElementById('score-team-crest-a');
         const crestB = document.getElementById('score-team-crest-b');
 
-        // Botones de GOL (v55.0)
-        const btnGoalHomeLabel = document.querySelector('#btn-add-goal-home span:last-child');
-        const btnGoalAwayLabel = document.querySelector('#btn-add-goal-away span');
+        // Función para manejar error de carga de imagen
+        const handleImageError = (img) => {
+            img.onerror = null;
+            img.src = neutralCrest;
+        };
 
         if (currentMatch.matchCondition === 'visitor') {
             // Somos Visitantes -> Rival (A) vs Nosotros (B)
             if (nameA) nameA.textContent = rivalName.toUpperCase();
-            if (crestA) crestA.src = rivalCrest;
+            if (crestA) {
+                crestA.src = rivalCrest;
+                crestA.onerror = () => handleImageError(crestA);
+            }
             if (nameB) nameB.textContent = myTeamName.toUpperCase();
-            if (crestB) crestB.src = myTeamCrest;
+            if (crestB) {
+                crestB.src = myTeamCrest;
+                crestB.onerror = () => handleImageError(crestB);
+            }
             if (btnGoalHomeLabel) btnGoalHomeLabel.textContent = 'GOL ' + rivalName.substring(0,6).toUpperCase();
             if (btnGoalAwayLabel) btnGoalAwayLabel.textContent = '+ GOL ' + myTeamName.substring(0,6).toUpperCase();
         } else {
             // Somos Locales -> Nosotros (A) vs Rival (B)
             if (nameA) nameA.textContent = myTeamName.toUpperCase();
-            if (crestA) crestA.src = myTeamCrest;
+            if (crestA) {
+                crestA.src = myTeamCrest;
+                crestA.onerror = () => handleImageError(crestA);
+            }
             if (nameB) nameB.textContent = rivalName.toUpperCase();
-            if (crestB) crestB.src = rivalCrest;
+            if (crestB) {
+                crestB.src = rivalCrest;
+                crestB.onerror = () => handleImageError(crestB);
+            }
             if (btnGoalHomeLabel) btnGoalHomeLabel.textContent = 'GOL ' + myTeamName.substring(0,6).toUpperCase();
             if (btnGoalAwayLabel) btnGoalAwayLabel.textContent = '+ GOL ' + rivalName.substring(0,6).toUpperCase();
         }
@@ -1871,6 +1887,7 @@ document.addEventListener('DOMContentLoaded', () => {
         let globalLeagues = [];
         let globalTeams = [];
         let currentMatchCondition = 'local'; // local o visitor
+        const neutralCrest = `data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%23f0a500"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm0 10.99h7c-.53 4.12-3.28 7.79-7 8.94V12H5V6.3l7-3.11v8.8z"/></svg>`;
 
         // --- Selectores Globales (v55.0) ---
         const leagueSelect = document.getElementById('match-league-select');
@@ -2803,7 +2820,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 <div class="match-card-main" style="display: flex; align-items: center; justify-content: space-between; gap: 10px;">
                     <div style="display: flex; align-items: center; gap: 15px;">
                         <div style="width: 40px; height: 40px; background: rgba(255,255,255,0.03); border-radius: 50%; padding: 5px; display: flex; align-items: center; justify-content: center;">
-                            <img src="${match.rivalCrest || 'img/crest_placeholder.png'}" style="width: 100%; height: 100%; object-fit: contain;">
+                            <img src="${match.rivalCrest || neutralCrest}" referrerpolicy="no-referrer" onerror="this.onerror=null;this.src='${neutralCrest}'" style="width: 100%; height: 100%; object-fit: contain;">
                         </div>
                         <div>
                             <div style="display: flex; align-items: center; gap: 6px;">
