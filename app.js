@@ -2101,6 +2101,13 @@ document.addEventListener('DOMContentLoaded', () => {
         btnAddMatch.addEventListener('click', async () => {
             cancelQuickGoal(); // Limpiar por si acaso
             await loadGlobalData();
+
+            // Sincronizar tipo de partido con el tipo de la jornada activa (v56.8)
+            const mTypeSelect = document.getElementById('matchType');
+            if (mTypeSelect && state.activeSession) {
+                mTypeSelect.value = state.activeSession.type || 'friendly';
+            }
+
             matchModal.style.display = 'flex';
             if (manualRivalContainer) manualRivalContainer.style.display = 'block';
             currentMatchCondition = 'local';

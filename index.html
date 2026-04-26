@@ -1062,11 +1062,11 @@
                     <p style="font-size: 0.8rem; color: #fff; margin-bottom: 15px;">¿Todo listo para empezar la sesión de hoy?</p>
                     <div style="display: flex; justify-content: center; gap: 20px;">
                         <label style="cursor: pointer; display: flex; align-items: center; gap: 5px;">
-                            <input type="radio" name="sessionType" value="official" checked>
+                            <input type="radio" name="sessionType" value="friendly" checked>
                             <span style="font-size: 0.8rem; color: var(--text-main); font-weight: 700;">🤝 AMISTOSO</span>
                         </label>
                         <label style="cursor: pointer; display: flex; align-items: center; gap: 5px;">
-                            <input type="radio" name="sessionType" value="friendly">
+                            <input type="radio" name="sessionType" value="official">
                             <span style="font-size: 0.8rem; color: var(--primary); font-weight: 700;">🏆 OFICIAL</span>
                         </label>
                     </div>
@@ -1117,9 +1117,9 @@
                     </div>
                 </div>
 
-                <div class="form-group" style="display: none;">
-                    <label>Tipo de Partido</label>
-                    <select id="matchType">
+                <div class="form-group">
+                    <label style="font-size: 0.65rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px;">Tipo de Partido</label>
+                    <select id="matchType" style="width: 100%; padding: 12px; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); color: #fff; border-radius: 8px; outline: none;">
                         <option value="official" selected>Oficial</option>
                         <option value="friendly">Amistoso</option>
                     </select>
