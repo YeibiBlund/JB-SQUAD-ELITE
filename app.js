@@ -2016,7 +2016,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
             // --- CAPTURAR ALINEACIÓN (Priorizar Histórica de la Convocatoria) (v56.2) ---
             let currentLineup = [];
-            const linkedPoll = lastFetchedPolls.find(p => p.id === selectedPollId);
             
             if (linkedPoll && linkedPoll.final_alignment) {
                 const fa = linkedPoll.final_alignment;
