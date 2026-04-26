@@ -89,6 +89,9 @@ window.jbConfirm = (message) => {
 
         if (!dialog) return resolve(confirm(message)); // Fallback
 
+        // Auto-ocultar loading si estuviera activo para evitar bloqueos de z-index (v56.9)
+        if (window.jbLoading) window.jbLoading.hide();
+
         msgEl.innerText = message;
         dialog.style.display = 'flex';
 
