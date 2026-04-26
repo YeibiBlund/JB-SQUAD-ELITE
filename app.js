@@ -5325,12 +5325,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 .select(`
                     vote,
                     availability_polls (
-                        created_at
+                        scheduled_time
                     )
                 `)
                 .eq('user_id', player.user_id)
-                .gte('availability_polls.created_at', monthStart)
-                .lte('availability_polls.created_at', monthEnd);
+                .gte('availability_polls.scheduled_time', monthStart)
+                .lte('availability_polls.scheduled_time', monthEnd);
 
 
             if (error) throw error;
@@ -5341,11 +5341,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 const sortedVotes = votes
                     .filter(v => v.availability_polls) 
                     .sort((a, b) => 
-                        new Date(a.availability_polls.created_at) - new Date(b.availability_polls.created_at)
+                        new Date(a.availability_polls.scheduled_time) - new Date(b.availability_polls.scheduled_time)
                     );
                 
                 sortedVotes.forEach(v => {
-                    const dateStr = new Date(v.availability_polls.created_at).toDateString();
+                    const dateStr = new Date(v.availability_polls.scheduled_time).toDateString();
                     if (!attendanceMap.has(dateStr)) {
                         attendanceMap.set(dateStr, v.vote);
                     }
