@@ -3160,8 +3160,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
     async function finalizeMatch() {
         if (!state.activeSession) return;
-        const mType = state.activeSession.type === 'official' ? 'official' : 'friendly';
-        currentMatch.type = mType; // Asegurar consistencia
+        
+        // Priorizar el tipo del partido actual, sino el de la sesión (v56.9)
+        const mType = currentMatch.type || state.activeSession.type || 'friendly';
+        currentMatch.type = mType; 
+        
+        console.log(`>>> [STATS] Finalizando partido tipo: ${mType.toUpperCase()}`);
 
         const initStats = (p) => {
             if (!p.stats) p.stats = { official: { goals: 0, assists: 0, matches: 0, wins: 0 }, friendly: { goals: 0, assists: 0, matches: 0, wins: 0 } };

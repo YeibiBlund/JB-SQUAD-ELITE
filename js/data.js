@@ -82,7 +82,7 @@ async function loadTeamData() {
             }
 
             // 2. Cargar Sesiones
-            const { data: dbSessions } = await supabase.from('sessions').select('id, date, status, mvp_id, matches, poll_id, lineup').eq('team_id', state.team.id);
+            const { data: dbSessions } = await supabase.from('sessions').select('id, date, status, mvp_id, matches, poll_id, lineup, type').eq('team_id', state.team.id);
 
             if (dbSessions) {
                 window.state.sessions = dbSessions.filter(s => s.status === 'closed').map(s => ({
@@ -92,7 +92,8 @@ async function loadTeamData() {
                     mvpId: s.mvp_id,
                     matches: s.matches,
                     poll_id: s.poll_id,
-                    lineup: s.lineup
+                    lineup: s.lineup,
+                    type: s.type || 'friendly'
                 }));
                 const active = dbSessions.find(s => s.status === 'active');
                 window.state.activeSession = active ? {
@@ -102,7 +103,8 @@ async function loadTeamData() {
                     mvpId: active.mvp_id,
                     matches: active.matches,
                     poll_id: active.poll_id,
-                    lineup: active.lineup
+                    lineup: active.lineup,
+                    type: active.type || 'friendly'
                 } : null;
             }
 
@@ -246,7 +248,8 @@ async function saveSessionCloud(session) {
             matches: session.matches,
             mvp_id: session.mvpId,
             poll_id: session.poll_id,
-            lineup: session.lineup
+            lineup: session.lineup,
+            type: session.type || 'friendly'
         };
 
         if (session.id && session.id.toString().includes('-')) {
