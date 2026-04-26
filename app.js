@@ -4610,10 +4610,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
         window.jbLoading.show('Borrando definitivamente...');
         try {
-            // 1. Borrar votos asociados
+            // 1. Desvincular jornadas que apunten a esta convocatoria (v54.2)
+            await supabase.from('sessions').update({ poll_id: null }).eq('poll_id', id);
+
+            // 2. Borrar votos asociados
             await supabase.from('availability_votes').delete().eq('poll_id', id);
             
-            // 2. Borrar la encuesta
+            // 3. Borrar la encuesta
             const { error } = await supabase.from('availability_polls').delete().eq('id', id);
             
             if (error) throw error;
@@ -4624,7 +4627,7 @@ document.addEventListener('DOMContentLoaded', () => {
             await renderPollHistory();
         } catch (err) {
             console.error(">>> [ERROR] Delete Poll:", err);
-            window.jbToast('Error al borrar convocatoria', 'error');
+            window.jbToast('Error al borrar convocatoria: ' + err.message, 'error');
         }
         window.jbLoading.hide();
     };
