@@ -21,6 +21,7 @@ window.state = {
     currentView: 'auth',
     isEditingPositions: false, 
     editingPlayer: null,
+    editingPollId: null,
     // Contexto de alineación inteligente
     alignmentMode: {
         active: false,

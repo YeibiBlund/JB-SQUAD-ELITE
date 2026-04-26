@@ -1071,6 +1071,13 @@ document.addEventListener('DOMContentLoaded', () => {
         btnCancelPoll?.addEventListener('click', () => {
             newPollContainer.style.display = 'none';
             btnNewPoll.style.display = 'flex';
+            
+            // Resetear estado de edición por si acaso
+            state.editingPollId = null;
+            const formTitle = newPollContainer.querySelector('h3');
+            if (formTitle) formTitle.textContent = "NUEVA CONVOCATORIA";
+            if (btnSavePoll) btnSavePoll.textContent = "CREAR Y COMPARTIR";
+            document.getElementById('poll-title').value = '';
         });
 
         btnSavePoll?.addEventListener('click', async () => {
@@ -1086,6 +1093,22 @@ document.addEventListener('DOMContentLoaded', () => {
             const time = document.getElementById('poll-time').value;
             if (!title) return window.jbToast('Ponle un título al evento', 'warning');
             if (!date) return window.jbToast('Selecciona una fecha', 'warning');
+
+            // --- MODO EDICIÓN (v56.0) ---
+            if (state.editingPollId) {
+                await updatePoll(state.editingPollId, title, date, time);
+                
+                // Resetear estado de edición
+                state.editingPollId = null;
+                const formTitle = newPollContainer.querySelector('h3');
+                if (formTitle) formTitle.textContent = "NUEVA CONVOCATORIA";
+                btnSavePoll.textContent = "CREAR Y COMPARTIR";
+                
+                document.getElementById('poll-title').value = '';
+                newPollContainer.style.display = 'none';
+                btnNewPoll.style.display = 'flex';
+                return;
+            }
 
             // --- CONTROL DE CONVOCATORIA ACTIVA (v54.3) ---
             window.jbLoading.show('Comprobando estado...');
@@ -4440,6 +4463,7 @@ document.addEventListener('DOMContentLoaded', () => {
                                             <path d="M380.9 97.1C339 55.1 283.2 32 223.9 32c-122.4 0-222 99.6-222 222 0 39.1 10.2 77.3 29.6 111L0 480l117.7-30.9c32.7 17.8 69.4 27.2 106.2 27.2h.1c122.3 0 222-99.6 222-222 0-59.3-23-115.1-65.1-157.1zM223.9 446.6c-33.2 0-65.7-8.9-94-25.7l-6.7-4-69.8 18.3L72 367.3l-4.4-7c-18.5-29.4-28.2-63.3-28.2-98.2 0-101.7 82.8-184.5 184.6-184.5 49.3 0 95.6 19.2 130.4 54.1 34.8 34.9 56.2 81.2 56.1 130.5 0 101.8-82.7 184.6-184.5 184.6zm101.2-138.2c-5.5-2.8-32.8-16.2-37.9-18-5.1-1.9-8.8-2.8-12.5 2.8-3.7 5.6-14.3 18-17.6 21.8-3.2 3.7-6.5 4.2-12 1.4-5.5-2.8-23.2-8.5-44.2-27.1-16.4-14.6-27.4-32.7-30.6-38.1-3.2-5.5-.3-8.4 2.4-11.2 2.5-2.5 5.5-6.5 8.3-9.7 2.8-3.3 3.7-5.6 5.6-9.3 1.9-3.7 .9-7-1.3-9.5-2.4-2.5-12.5-30.1-17.1-41.2-4.5-10.8-9.1-9.3-12.5-9.5-3.2-.2-6.9-.2-10.6-.2-3.7 0-9.7 1.4-14.8 6.9-5.1 5.6-19.4 19-19.4 46.3 0 27.3 19.9 53.7 22.6 57.4 2.8 3.7 39.1 59.7 94.8 83.8 13.2 5.8 23.5 9.2 31.5 11.8 13.3 4.2 25.4 3.6 35 2.2 10.7-1.5 32.8-13.4 37.4-26.4 4.6-13 4.6-24.1 3.2-26.4-1.3-2.5-5-3.9-10.5-6.6z"/>
                                             </svg>
                                         </button>
+                                        <button onclick="window.jbEditPoll('${poll.id}')" class="btn-share-wa-circle" title="Editar Convocatoria" style="background: rgba(255,255,255,0.05); border-color: rgba(255,255,255,0.1); margin-left: 5px;">✍️</button>
                                         <button onclick="window.jbOpenCancelPollModal('${poll.id}')" class="btn-poll-cancel">CANCELAR</button>
                                         <button onclick="window.jbClosePoll('${poll.id}', true)" class="btn-poll-align">CREAR ALINEACIÓN</button>
                                 ` : `<span class="poll-status-tag open">ABIERTA</span>`}
@@ -4536,6 +4560,61 @@ document.addEventListener('DOMContentLoaded', () => {
                 ${lateInfo}
             </div>
         `;
+    }
+    
+    // --- EDICIÓN DE CONVOCATORIA (v56.0) ---
+    window.jbEditPoll = function(pollId) {
+        if (!state.activePoll || state.activePoll.id !== pollId) return;
+        
+        const poll = state.activePoll;
+        const formContainer = document.getElementById('new-poll-form-container');
+        const btnNew = document.getElementById('btn-new-poll');
+        const formTitle = formContainer.querySelector('h3');
+        const btnSave = document.getElementById('btn-save-poll');
+        
+        // Rellenar campos
+        document.getElementById('poll-title').value = poll.title;
+        const d = new Date(poll.scheduled_time);
+        document.getElementById('poll-date').value = d.toISOString().split('T')[0];
+        
+        // Formatear hora local HH:mm para el input type="time"
+        const hours = d.getHours().toString().padStart(2, '0');
+        const minutes = d.getMinutes().toString().padStart(2, '0');
+        document.getElementById('poll-time').value = `${hours}:${minutes}`;
+        
+        // Ajustar UI del formulario para modo edición
+        formTitle.textContent = "EDITAR CONVOCATORIA";
+        btnSave.textContent = "ACTUALIZAR CONVOCATORIA";
+        state.editingPollId = pollId;
+        
+        formContainer.style.display = 'block';
+        if (btnNew) btnNew.style.display = 'none';
+        
+        // Scroll al formulario
+        formContainer.scrollIntoView({ behavior: 'smooth' });
+    };
+
+    async function updatePoll(pollId, title, date, time) {
+        window.jbLoading.show('Actualizando convocatoria...');
+        try {
+            const scheduledTime = new Date(`${date}T${time}`).toISOString();
+            const { error } = await supabase
+                .from('availability_polls')
+                .update({
+                    title: title,
+                    scheduled_time: scheduledTime
+                })
+                .eq('id', pollId);
+
+            if (error) throw error;
+
+            window.jbToast('Convocatoria actualizada con éxito', 'success');
+            await renderAvailabilityPanel(); // Refrescar UI
+        } catch (err) {
+            console.error(">>> [ERROR] updatePoll:", err);
+            window.jbToast('Error al actualizar: ' + err.message, 'error');
+        }
+        window.jbLoading.hide();
     }
 
     async function renderPollHistory() {
