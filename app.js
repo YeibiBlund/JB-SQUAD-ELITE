@@ -402,7 +402,6 @@ document.addEventListener('DOMContentLoaded', () => {
         
         const typeLabel = document.getElementById('match-type-label');
         const rivalLabel = document.getElementById('rival-name-display');
-        const rivalLabel = document.getElementById('rival-name-display');
         if (typeLabel) typeLabel.textContent = currentMatch.type === 'official' ? 'PARTIDO OFICIAL' : 'PARTIDO AMISTOSO';
         if (rivalLabel) rivalLabel.textContent = currentMatch.rival.toUpperCase();
 
