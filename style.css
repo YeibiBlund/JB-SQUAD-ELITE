@@ -4448,6 +4448,7 @@ body.editing-tactic .tactical-slot {
 
 .calendar-day.today-highlight {
     border: 2px solid #2196F3 !important;
+    background: rgba(33, 150, 243, 0.15) !important; /* Fondo azul sutil por defecto */
     box-shadow: 0 0 15px rgba(33, 150, 243, 0.3);
     z-index: 2;
 }
@@ -4495,11 +4496,11 @@ body.editing-tactic .tactical-slot {
     animation: pulse-border 2s infinite;
 }
 
-/* Optimización Hoy con Convocatoria (v53.8) */
-.calendar-day.today.poll-day-active {
-    background: rgba(30, 136, 229, 0.4) !important; /* Azul más intenso */
-    box-shadow: inset 0 0 10px rgba(30, 136, 229, 0.5), 0 0 15px rgba(240, 165, 0, 0.3);
-    border-style: dashed !important;
+/* Optimización Hoy con Convocatoria (v53.9) */
+.calendar-day.today-highlight.poll-day-active {
+    background: rgba(30, 136, 229, 0.5) !important; /* Azul más intenso */
+    box-shadow: inset 0 0 15px rgba(30, 136, 229, 0.6), 0 0 20px rgba(240, 165, 0, 0.4);
+    border: 2px dashed var(--primary) !important;
 }
 
 @keyframes pulse-border {
