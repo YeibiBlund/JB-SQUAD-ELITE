@@ -2705,6 +2705,29 @@ body.editing-tactic .tactical-slot {
         padding-left: 130px; /* Ajuste para el nuevo ancho del sidebar */
     }
 
+    /* --- SELECTORES GLOBALES DE PARTIDO (v55.0) --- */
+    .btn-toggle-match {
+        background: transparent;
+        color: var(--text-muted);
+    }
+
+    .btn-toggle-match.active {
+        background: var(--primary);
+        color: #000;
+        box-shadow: 0 4px 15px rgba(240, 165, 0, 0.3);
+    }
+
+    #match-modal-overlay select option {
+        background: #1a1a1a;
+        color: #fff;
+        padding: 10px;
+    }
+
+    #match-modal-overlay select:focus {
+        border-color: var(--primary);
+        background: rgba(0,0,0,0.6);
+    }
+
     #btn-global-logout {
         display: flex !important;
     }
@@ -5484,4 +5507,33 @@ body.editing-tactic .tactical-slot {
     justify-content: center;
     font-size: 0.6rem;
     font-weight: 900;
+}
+/* --- SISTEMA DE RIVALES Y LIGAS GLOBAL (v55.0) --- */
+.btn-toggle-match {
+    background: rgba(255, 255, 255, 0.05);
+    color: var(--text-muted);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.btn-toggle-match.active {
+    background: var(--primary);
+    color: #000;
+    box-shadow: 0 4px 15px rgba(240, 165, 0, 0.3);
+    border-color: var(--primary);
+}
+
+#match-modal-overlay select {
+    cursor: pointer;
+}
+
+#match-modal-overlay select option {
+    background: #111;
+    color: #fff;
+    padding: 15px;
+}
+
+#manual-rival-container {
+    transition: all 0.3s ease;
 }

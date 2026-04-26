@@ -404,22 +404,41 @@ document.addEventListener('DOMContentLoaded', () => {
         if (typeLabel) typeLabel.textContent = currentMatch.type === 'official' ? 'PARTIDO OFICIAL' : 'PARTIDO AMISTOSO';
         if (rivalLabel) rivalLabel.textContent = currentMatch.rival.toUpperCase();
 
+        // Nombres y Escudos (v55.0)
+        const myTeamName = (state.team && state.team.name) ? state.team.name : 'MI CLUB';
+        const myTeamCrest = (state.team && state.team.crest_url) ? state.team.crest_url : 'img/crest_placeholder.png';
+        const rivalName = currentMatch.rival || 'RIVAL';
+        const rivalCrest = currentMatch.rivalCrest || 'img/crest_placeholder.png';
+
+        const nameA = document.getElementById('score-team-name-a');
+        const nameB = document.getElementById('score-team-name-b');
+        const crestA = document.getElementById('score-team-crest-a');
+        const crestB = document.getElementById('score-team-crest-b');
+
+        // Botones de GOL (v55.0)
+        const btnGoalHomeLabel = document.querySelector('#btn-add-goal-home span:last-child');
+        const btnGoalAwayLabel = document.querySelector('#btn-add-goal-away span');
+
+        if (currentMatch.matchCondition === 'visitor') {
+            // Somos Visitantes -> Rival (A) vs Nosotros (B)
+            if (nameA) nameA.textContent = rivalName.toUpperCase();
+            if (crestA) crestA.src = rivalCrest;
+            if (nameB) nameB.textContent = myTeamName.toUpperCase();
+            if (crestB) crestB.src = myTeamCrest;
+            if (btnGoalHomeLabel) btnGoalHomeLabel.textContent = 'GOL ' + rivalName.substring(0,6).toUpperCase();
+            if (btnGoalAwayLabel) btnGoalAwayLabel.textContent = '+ GOL ' + myTeamName.substring(0,6).toUpperCase();
+        } else {
+            // Somos Locales -> Nosotros (A) vs Rival (B)
+            if (nameA) nameA.textContent = myTeamName.toUpperCase();
+            if (crestA) crestA.src = myTeamCrest;
+            if (nameB) nameB.textContent = rivalName.toUpperCase();
+            if (crestB) crestB.src = rivalCrest;
+            if (btnGoalHomeLabel) btnGoalHomeLabel.textContent = 'GOL ' + myTeamName.substring(0,6).toUpperCase();
+            if (btnGoalAwayLabel) btnGoalAwayLabel.textContent = '+ GOL ' + rivalName.substring(0,6).toUpperCase();
+        }
+
         scoreHomeDisplay.textContent = currentMatch.scoreHome;
         scoreAwayDisplay.textContent = currentMatch.scoreAway;
-        
-        // Actualizar nombres completos en el marcador
-        const teamNameText = (state.team && state.team.name) ? state.team.name : 'MI CLUB';
-        const rivalNameText = currentMatch.rival || 'RIVAL';
-        
-        if (scoreTeamName) scoreTeamName.textContent = teamNameText.toUpperCase();
-        if (scoreRivalName) scoreRivalName.textContent = rivalNameText.toUpperCase();
-
-        // Label del botón de gol dinámico (usamos iniciales aquí para que quepa bien en el botón)
-        const initials = teamNameText.length > 3 ? teamNameText.substring(0, 3).toUpperCase() : teamNameText.toUpperCase();
-        const goalBtnLabel = document.getElementById('goal-btn-team-name');
-        if (goalBtnLabel) {
-            goalBtnLabel.textContent = 'GOL ' + initials;
-        }
 
         const eventsContainer = document.getElementById('events-container');
         if (eventsContainer) {
@@ -1847,7 +1866,28 @@ document.addEventListener('DOMContentLoaded', () => {
         if (window._hasSetupSession) return;
         window._hasSetupSession = true;
         
-        let lastFetchedPolls = []; // v54.1: Almacén temporal para capturar la fecha
+        let lastFetchedPolls = []; 
+        let globalLeagues = [];
+        let globalTeams = [];
+        let currentMatchCondition = 'local'; // local o visitor
+
+        // --- Selectores Globales (v55.0) ---
+        const leagueSelect = document.getElementById('match-league-select');
+        const rivalSelect = document.getElementById('match-rival-select');
+        const manualRivalContainer = document.getElementById('manual-rival-container');
+        const btnSetLocal = document.getElementById('btn-set-local');
+        const btnSetVisitor = document.getElementById('btn-set-visitor');
+
+        const loadGlobalData = async () => {
+            try {
+                const { data: leagues } = await supabase.from('global_leagues').select('*').order('name');
+                globalLeagues = leagues || [];
+                if (leagueSelect) {
+                    leagueSelect.innerHTML = '<option value="none">Amistoso / Sin Liga</option>' + 
+                        globalLeagues.map(l => `<option value="${l.id}">${l.name}</option>`).join('');
+                }
+            } catch (err) { console.error("Error cargando ligas:", err); }
+        };
 
         btnNewSession.addEventListener('click', async () => {
             const activeTactic = state.savedTactics.find(t => t.id === state.activeTacticId);
@@ -1943,39 +1983,122 @@ document.addEventListener('DOMContentLoaded', () => {
         });
 
         btnAddMatch.addEventListener('click', () => {
+            loadGlobalData();
             matchModal.style.display = 'flex';
+            if (manualRivalContainer) manualRivalContainer.style.display = 'block';
+            currentMatchCondition = 'local';
+            if (btnSetLocal) btnSetLocal.classList.add('active');
+            if (btnSetVisitor) btnSetVisitor.classList.remove('active');
         });
+
+        if (leagueSelect) {
+            leagueSelect.onchange = async () => {
+                const leagueId = leagueSelect.value;
+                if (leagueId === 'none') {
+                    rivalSelect.innerHTML = '<option value="manual">-- ESCRIBIR NOMBRE MANUAL --</option>';
+                    manualRivalContainer.style.display = 'block';
+                    return;
+                }
+                
+                rivalSelect.innerHTML = '<option value="">Cargando equipos...</option>';
+                const { data: teams } = await supabase
+                    .from('league_teams')
+                    .select('global_teams(*)')
+                    .eq('league_id', leagueId);
+                
+                globalTeams = teams ? teams.map(t => t.global_teams) : [];
+                rivalSelect.innerHTML = '<option value="manual">-- ESCRIBIR NOMBRE MANUAL --</option>' + 
+                    globalTeams.map(t => `<option value="${t.id}">${t.name}</option>`).join('');
+            };
+        }
+
+        if (rivalSelect) {
+            rivalSelect.onchange = () => {
+                manualRivalContainer.style.display = rivalSelect.value === 'manual' ? 'block' : 'none';
+            };
+        }
+
+        if (btnSetLocal) {
+            btnSetLocal.onclick = () => {
+                currentMatchCondition = 'local';
+                btnSetLocal.classList.add('active');
+                btnSetVisitor.classList.remove('active');
+            };
+        }
+        if (btnSetVisitor) {
+            btnSetVisitor.onclick = () => {
+                currentMatchCondition = 'visitor';
+                btnSetVisitor.classList.add('active');
+                btnSetLocal.classList.remove('active');
+            };
+        }
 
         closeMatchModal.onclick = () => matchModal.style.display = 'none';
 
         matchForm.addEventListener('submit', (e) => {
             e.preventDefault();
-            const rival = document.getElementById('rivalName').value;
+            
+            let rivalName = '';
+            let rivalCrest = null;
+            const isManual = rivalSelect.value === 'manual';
+
+            if (isManual) {
+                rivalName = document.getElementById('rivalName').value.trim();
+            } else {
+                const selectedTeam = globalTeams.find(t => t.id === rivalSelect.value);
+                rivalName = selectedTeam ? selectedTeam.name : 'Rival';
+                rivalCrest = selectedTeam ? selectedTeam.crest_url : null;
+            }
+
+            if (!rivalName) return window.jbToast('Introduce el nombre del rival', 'warning');
+
             const type = document.getElementById('matchType').value;
             
-            startLiveMatch(rival, type);
+            // Iniciar partido con datos extendidos (v55.0)
+            window.startLiveMatch(rivalName, type, rivalCrest, currentMatchCondition);
+            
             matchModal.style.display = 'none';
             matchForm.reset();
         });
 
-        // Controles de partido en vivo
-        btnAddGoalHome.addEventListener('click', () => openGoalModal());
+        // Controles de partido en vivo (v55.0 - Dinámicos)
+        btnAddGoalHome.addEventListener('click', () => {
+            const isClub = currentMatch.matchCondition === 'local';
+            if (isClub) openGoalModal('home');
+            else {
+                currentMatch.scoreHome++;
+                updateLiveMatchUI();
+            }
+        });
+
         btnSubGoalHome.addEventListener('click', () => {
-            const lastHomeGoalIndex = [...currentMatch.events].reverse().findIndex(e => e.side === 'home');
-            if (lastHomeGoalIndex !== -1) {
-                const actualIndex = currentMatch.events.length - 1 - lastHomeGoalIndex;
-                currentMatch.events.splice(actualIndex, 1);
+            if (currentMatch.scoreHome > 0) {
+                const lastHomeGoalIndex = [...currentMatch.events].reverse().findIndex(e => e.side === 'home');
+                if (lastHomeGoalIndex !== -1) {
+                    const actualIndex = currentMatch.events.length - 1 - lastHomeGoalIndex;
+                    currentMatch.events.splice(actualIndex, 1);
+                }
                 currentMatch.scoreHome--;
                 updateLiveMatchUI();
             }
         });
 
         btnAddGoalAway.addEventListener('click', () => {
-            currentMatch.scoreAway++;
-            updateLiveMatchUI();
+            const isClub = currentMatch.matchCondition === 'visitor';
+            if (isClub) openGoalModal('away');
+            else {
+                currentMatch.scoreAway++;
+                updateLiveMatchUI();
+            }
         });
+
         btnSubGoalAway.addEventListener('click', () => {
             if (currentMatch.scoreAway > 0) {
+                const lastAwayGoalIndex = [...currentMatch.events].reverse().findIndex(e => e.side === 'away');
+                if (lastAwayGoalIndex !== -1) {
+                    const actualIndex = currentMatch.events.length - 1 - lastAwayGoalIndex;
+                    currentMatch.events.splice(actualIndex, 1);
+                }
                 currentMatch.scoreAway--;
                 updateLiveMatchUI();
             }
@@ -2581,12 +2704,20 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
             card.innerHTML = `
-                <div class="match-card-main">
-                    <div>
-                        <span class="${typeClass}">${match.type.toUpperCase()}</span>
-                        <h4 style="margin-top:5px;">vs ${match.rival.toUpperCase()}</h4>
+                <div class="match-card-main" style="display: flex; align-items: center; justify-content: space-between; gap: 10px;">
+                    <div style="display: flex; align-items: center; gap: 15px;">
+                        <div style="width: 40px; height: 40px; background: rgba(255,255,255,0.03); border-radius: 50%; padding: 5px; display: flex; align-items: center; justify-content: center;">
+                            <img src="${match.rivalCrest || 'img/crest_placeholder.png'}" style="width: 100%; height: 100%; object-fit: contain;">
+                        </div>
+                        <div>
+                            <div style="display: flex; align-items: center; gap: 6px;">
+                                <span class="${typeClass}">${match.type.toUpperCase()}</span>
+                                ${match.matchCondition === 'visitor' ? '<span style="font-size: 0.5rem; background: rgba(255,255,255,0.1); padding: 2px 5px; border-radius: 4px; color: var(--text-muted);">FUERA</span>' : ''}
+                            </div>
+                            <h4 style="margin: 4px 0 0 0; font-size: 0.9rem;">vs ${match.rival.toUpperCase()}</h4>
+                        </div>
                     </div>
-                    <div class="result">${match.scoreHome} - ${match.scoreAway}</div>
+                    <div class="result" style="font-size: 1.3rem; font-weight: 900; color: #fff;">${match.scoreHome} - ${match.scoreAway}</div>
                 </div>
                 ${eventsHTML}
             `;
@@ -2594,10 +2725,12 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    function startLiveMatch(rival, type) {
+    function startLiveMatch(rival, type, rivalCrest = null, matchCondition = 'local') {
         currentMatch = {
             id: Date.now(),
             rival: rival,
+            rivalCrest: rivalCrest, // v55.0
+            matchCondition: matchCondition, // local o visitor
             type: type,
             scoreHome: 0,
             scoreAway: 0,
@@ -2624,7 +2757,10 @@ document.addEventListener('DOMContentLoaded', () => {
         updateLiveMatchUI();
     };
 
-    function openGoalModal() {
+    let selectedGoalSide = 'home'; // v55.0
+
+    function openGoalModal(side = 'home') {
+        selectedGoalSide = side;
         goalModal.style.display = 'flex';
         selectedGoalScorerId = null;
         selectedAssistantId = null;
@@ -2687,9 +2823,12 @@ document.addEventListener('DOMContentLoaded', () => {
         currentMatch.events.push({
             scorerId: selectedGoalScorerId,
             assistantId: selectedAssistantId,
-            side: 'home' // Por simplicidad, el modal es para goles propios
+            side: selectedGoalSide // v55.0 dinámico
         });
-        currentMatch.scoreHome++;
+
+        if (selectedGoalSide === 'home') currentMatch.scoreHome++;
+        else currentMatch.scoreAway++;
+
         goalModal.style.display = 'none';
         updateLiveMatchUI();
     }
