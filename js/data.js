@@ -574,9 +574,9 @@ async function fetchTeamRequests(teamId) {
     const tId = teamId || (window.state && window.state.team ? window.state.team.id : null);
     if (!tId) return [];
 
-    const { data, error } = await supabase
+    const { data: requests, error } = await supabase
         .from('team_requests')
-        .select('id, created_at, user_id, profiles(full_name)')
+        .select('id, created_at, user_id')
         .eq('team_id', tId);
         
     if (error) {
@@ -584,7 +584,27 @@ async function fetchTeamRequests(teamId) {
         return [];
     }
 
-    return data || [];
+    if (!requests || requests.length === 0) return [];
+
+    // Obtener nombres de los perfiles en una sola query (evita error de JOIN de PostgREST)
+    const userIds = requests.map(r => r.user_id);
+    const { data: profiles, error: profError } = await supabase
+        .from('profiles')
+        .select('id, full_name')
+        .in('id', userIds);
+
+    if (profError) {
+        console.error(">>> [ERROR] fetchTeamRequests (profiles):", profError.message);
+        return requests; // Devolver sin nombre si falla
+    }
+
+    const profileMap = {};
+    profiles.forEach(p => profileMap[p.id] = p.full_name);
+
+    return requests.map(r => ({
+        ...r,
+        profiles: { full_name: profileMap[r.user_id] || 'USUARIO DESCONOCIDO' }
+    }));
 }
 
 
