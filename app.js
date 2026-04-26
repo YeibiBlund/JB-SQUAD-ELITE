@@ -1045,6 +1045,22 @@ document.addEventListener('DOMContentLoaded', () => {
             if (!title) return window.jbToast('Ponle un título al evento', 'warning');
             if (!date) return window.jbToast('Selecciona una fecha', 'warning');
 
+            // --- CONTROL DE CONVOCATORIA ACTIVA (v54.3) ---
+            window.jbLoading.show('Comprobando estado...');
+            const currentActive = await fetchActivePoll();
+            if (currentActive) {
+                const msg = `⚠️ Ya hay una convocatoria abierta: "${currentActive.title}".\n\n¿Quieres BORRAR la actual y publicar la nueva? (Se perderán los votos actuales).`;
+                const confirmReplace = await window.jbConfirm(msg);
+                if (!confirmReplace) {
+                    window.jbLoading.hide();
+                    return;
+                }
+                // Borrado rápido sin confirmación extra (ya la hemos pedido)
+                await supabase.from('sessions').update({ poll_id: null }).eq('poll_id', currentActive.id);
+                await supabase.from('availability_votes').delete().eq('poll_id', currentActive.id);
+                await supabase.from('availability_polls').delete().eq('id', currentActive.id);
+            }
+
             // --- COMPROBACIÓN DE DUPLICADOS EN LA MISMA FECHA ---
             window.jbLoading.show('Verificando fecha...');
             const startDate = new Date(`${date}T00:00:00`).toISOString();
