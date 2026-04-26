@@ -3055,7 +3055,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
 
-        // 2. Procesar PJ (Partidos Jugados) - Priorizar alineación de sesión (v56.4)
+        // 2. Procesar PJ (Partidos Jugados) - Priorizar alineación de sesión (v56.5)
         let assignedIds = [];
         if (state.activeSession && state.activeSession.lineup) {
             const sl = state.activeSession.lineup;
@@ -3063,23 +3063,30 @@ document.addEventListener('DOMContentLoaded', () => {
                 assignedIds = sl.map(id => id.toString());
             } else if (sl.assignments) {
                 assignedIds = Object.values(sl.assignments).filter(id => id).map(id => id.toString());
+            } else if (typeof sl === 'object') {
+                // Fallback para objetos planos de asignaciones (formato legacy)
+                assignedIds = Object.values(sl).filter(id => id && typeof id !== 'object').map(id => id.toString());
             }
         }
+
+        console.log(">>> [STATS] IDs Detectados para PJ:", assignedIds);
 
         if (assignedIds.length > 0) {
             // Guardar la alineación dentro del partido para trazabilidad absoluta
             currentMatch.lineup = assignedIds;
             
             for (let p of state.players) {
-                if (assignedIds.includes(p.id.toString())) {
+                const pIdStr = p.id.toString();
+                if (assignedIds.includes(pIdStr)) {
                     initStats(p);
                     p.stats[mType].matches++;
                     
-                    // Sumar victoria individual si el club ganó el partido (scoreHome > scoreAway)
+                    // Sumar victoria individual si el club ganó el partido
                     if (currentMatch.scoreHome > currentMatch.scoreAway) {
                         p.stats[mType].wins = (p.stats[mType].wins || 0) + 1;
                     }
                     playersToSave.add(p);
+                    console.log(`>>> [STATS] PJ sumado a: ${p.name}`);
                 }
             }
         } else {
