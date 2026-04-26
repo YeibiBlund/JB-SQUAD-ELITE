@@ -4495,6 +4495,13 @@ body.editing-tactic .tactical-slot {
     animation: pulse-border 2s infinite;
 }
 
+/* Optimización Hoy con Convocatoria (v53.8) */
+.calendar-day.today.poll-day-active {
+    background: rgba(30, 136, 229, 0.4) !important; /* Azul más intenso */
+    box-shadow: inset 0 0 10px rgba(30, 136, 229, 0.5), 0 0 15px rgba(240, 165, 0, 0.3);
+    border-style: dashed !important;
+}
+
 @keyframes pulse-border {
     0% { border-color: rgba(240, 165, 0, 0.3); }
     50% { border-color: rgba(240, 165, 0, 1); }

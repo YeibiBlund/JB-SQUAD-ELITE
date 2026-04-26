@@ -1363,6 +1363,36 @@
                 <button onclick="document.getElementById('modal-share-wa').style.display='none'" style="background: transparent; border: none; color: var(--text-muted); font-size: 0.7rem; margin-top: 10px; cursor: pointer; text-transform: uppercase; font-weight: 800; letter-spacing: 1px;">CANCELAR</button>
             </div>
         </div>
+    <!-- MODAL: OPCIONES CANCELAR CONVOCATORIA (v53.8) -->
+    <div id="modal-cancel-poll" class="jb-modal">
+        <div class="jb-modal-content" style="max-width: 400px; padding: 30px;">
+            <div class="jb-modal-header" style="justify-content: center; margin-bottom: 25px; position: relative;">
+                <h2 class="gradient-text" style="font-size: 1rem; letter-spacing: 2px;">CANCELAR CONVOCATORIA</h2>
+                <span class="jb-modal-close" style="position: absolute; right: 0; top: -5px;" onclick="document.getElementById('modal-cancel-poll').style.display='none'">&times;</span>
+            </div>
+            <p style="font-size: 0.8rem; text-align: center; opacity: 0.7; margin-bottom: 25px; line-height: 1.5;">
+                Selecciona cómo quieres proceder con la cancelación de este evento.
+            </p>
+            <div style="display: flex; flex-direction: column; gap: 15px;">
+                <button id="btn-modal-archive-poll" class="jb-btn jb-btn-primary" style="padding: 18px; font-weight: 800; border: 1px solid rgba(240,165,0,0.3);">
+                    <div style="display:flex; flex-direction:column; align-items:center; gap:4px;">
+                        <span>CONFIRMAR Y ARCHIVAR</span>
+                        <small style="font-size:0.6rem; opacity:0.6; font-weight:400;">Se guarda en el historial como 'Cerrada'</small>
+                    </div>
+                </button>
+
+                <button id="btn-modal-delete-poll" class="jb-btn" style="background: rgba(244, 67, 54, 0.1); border: 1px solid var(--error); color: var(--error); padding: 18px; font-weight: 800;">
+                    <div style="display:flex; flex-direction:column; align-items:center; gap:4px;">
+                        <span>BORRAR DEFINITIVAMENTE</span>
+                        <small style="font-size:0.6rem; opacity:0.8; font-weight:400;">Se elimina por completo de la base de datos</small>
+                    </div>
+                </button>
+
+                <button onclick="document.getElementById('modal-cancel-poll').style.display='none'" class="jb-btn" style="margin-top: 10px; background: transparent; border: 1px solid rgba(255,255,255,0.1); font-size: 0.7rem; letter-spacing: 1px;">
+                    VOLVER ATRÁS
+                </button>
+            </div>
+        </div>
     </div>
 
     <!-- Scripts Modulares -->
