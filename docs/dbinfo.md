@@ -1,6 +1,6 @@
 # 🗄️ JB-SQUAD ELITE — Database Schema (Supabase)
 
-> **Última actualización:** 19/04/2026  
+> **Última actualización:** 26/04/2026 (v55.0)  
 > **Proveedor:** Supabase (PostgreSQL)  
 > **Nota:** Este esquema es solo de referencia. No ejecutar directamente.
 
@@ -24,6 +24,8 @@ erDiagram
     teams ||--o{ team_requests : "team_id"
     players ||--o{ sessions : "mvp_id"
     availability_polls ||--o{ availability_votes : "poll_id"
+    global_leagues ||--o{ league_teams : "league_id"
+    global_teams ||--o{ league_teams : "team_id"
 ```
 
 ---
@@ -222,14 +224,50 @@ CREATE TABLE public.team_requests (
 
 ---
 
-### `team_config` *(Legacy — en desuso)*
-Configuración básica del equipo original. Reemplazada por la tabla `teams`.
+
+---
+
+## 🌎 Tablas Globales (Librería de Rivales)
+
+### `global_leagues`
+Catálogo de competiciones (VPG, VPN, etc.) compartido por todos los clubes.
 
 ```sql
-CREATE TABLE public.team_config (
-  id integer NOT NULL DEFAULT 1,
-  name text DEFAULT 'HERCULES'::text,
-  manager_name text DEFAULT 'YEIBI'::text,
-  CONSTRAINT team_config_pkey PRIMARY KEY (id)
+CREATE TABLE public.global_leagues (
+  id uuid NOT NULL DEFAULT gen_random_uuid(),
+  name text NOT NULL UNIQUE,
+  logo_url text,
+  created_at timestamp with time zone DEFAULT now(),
+  CONSTRAINT global_leagues_pkey PRIMARY KEY (id)
+);
+```
+
+---
+
+### `global_teams`
+Catálogo maestro de equipos rivales con sus nombres y escudos oficiales.
+
+```sql
+CREATE TABLE public.global_teams (
+  id uuid NOT NULL DEFAULT gen_random_uuid(),
+  name text NOT NULL UNIQUE,
+  crest_url text,
+  created_at timestamp with time zone DEFAULT now(),
+  CONSTRAINT global_teams_pkey PRIMARY KEY (id)
+);
+```
+
+---
+
+### `league_teams`
+Relación muchos-a-muchos que vincula equipos a sus respectivas ligas.
+
+```sql
+CREATE TABLE public.league_teams (
+  league_id uuid NOT NULL,
+  team_id uuid NOT NULL,
+  CONSTRAINT league_teams_pkey PRIMARY KEY (league_id, team_id),
+  CONSTRAINT league_teams_league_id_fkey FOREIGN KEY (league_id) REFERENCES public.global_leagues(id) ON DELETE CASCADE,
+  CONSTRAINT league_teams_team_id_fkey FOREIGN KEY (team_id) REFERENCES public.global_teams(id) ON DELETE CASCADE
 );
 ```

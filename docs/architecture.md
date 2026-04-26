@@ -61,10 +61,17 @@ La base de datos PostgreSQL en Supabase está estructurada para permitir multi-t
    - **Campos Clave**: `id`, `team_id`, `name`, `formation` (ej. "4-3-3"), `assignments` (JSONB: mapea `slotId` -> `playerId`), `custom_positions` (JSONB: offsets X/Y editados).
 6. **`sessions`**
    - **Propósito**: Jornadas de juego.
-   - **Campos Clave**: `id`, `team_id`, `date` (YYYY-MM-DD), `status` (`open`, `closed`), `matches` (Array de JSONB con los partidos de la noche), `mvp_id`.
+   - **Campos Clave**: `id`, `team_id`, `date` (YYYY-MM-DD), `status` (`open`, `closed`), `matches` (Array de JSONB complejo), `mvp_id`.
+   - **Estructura Match**: `{rival, type, scoreHome, scoreAway, events, rivalCrest, matchCondition}` (v55.0).
 7. **`availability_polls` & `availability_votes`**
    - **Propósito**: Sistema de Convocatorias.
    - **Campos**: `polls` tiene fecha y `final_alignment` (JSONB). `votes` almacena `player_id` y `vote` (yes/no/late).
+
+### Tablas de Datos Globales (v55.0)
+8. **`global_leagues` / `global_teams`**
+   - **Propósito**: Hub centralizado de información para Pro Clubs.
+   - **Concepto**: Base de datos curada de ligas (VPN, VPG) y equipos con escudos verificados.
+   - **Acceso**: Lectura pública para todos los managers; escritura centralizada mediante scripts SQL controlados para mantener la estética premium.
 
 ---
 
@@ -93,12 +100,15 @@ Manejado principalmente por la función `window.applyRolePermissions()` en `app.
 
 ### 5.2. Flujo Estadístico (El Motor de Datos)
 El flujo que transforma acciones en el campo en números en el Dashboard:
-1. **Live Match**: Se anotan Goles (`btnAddGoalHome`) asignando un `scorerId` y `assistantId`.
+1. **Live Match (v55.0)**: 
+   - Se selecciona Liga y Rival desde el **Hub Global**.
+   - Se define la **Localía** (`matchCondition`), lo que ajusta visualmente el marcador e invierte los roles de Home/Away en el registro si el club es visitante.
+   - Se anotan Goles asignando un `scorerId` y `assistantId`.
 2. **Finalize Match**: 
    - Se lee `currentMatch.events` para sumar G y A al JSON de `player.stats`.
-   - **Punto Crítico**: Se lee `state.savedTactics.find(t => t.id === state.activeTacticId)`. Los jugadores asignados a esta táctica en ese instante reciben `+1 PJ` y (si el equipo local gana) `+1 Win`.
-3. **Persistencia**: Se hace un bucle `savePlayerCloud()` a los modificados y se actualiza la `session` en Supabase.
-4. **Dashboard (`renderHomeDashboard`)**: Lee el array `state.players`, itera sobre sus `stats` y ordena los arrays para pintar los Rankings (Top Goleadores, Top Asistentes, Win Rate).
+   - **Punto Crítico**: Se lee `state.savedTactics.find(t => t.id === state.activeTacticId)`. Los jugadores asignados a esta táctica en ese instante reciben `+1 PJ` y (si el club gana el partido) `+1 Win`.
+3. **Persistencia**: Se hace un bucle `savePlayerCloud()` a los modificados y se actualiza la `session` en Supabase con los metadatos extendidos del partido (incluyendo el escudo del rival).
+4. **Dashboard (`renderHomeDashboard`)**: Lee el array `state.players`, itera sobre sus `stats` y ordena los arrays para pintar los Rankings.
 
 ### 5.3. Generación de Gráficos (Canvas)
 Para exportar alineaciones o fichas, la app no usa librerías externas pesadas.
@@ -124,4 +134,4 @@ Para exportar alineaciones o fichas, la app no usa librerías externas pesadas.
 3. **Consumo de API / N+1**: Múltiples secciones iteran arrays haciendo peticiones asíncronas a Supabase dentro de bucles, en lugar de usar `JOINs` relacionales en la carga inicial.
 
 ---
-*Última actualización: v50.8 - 25 Abril 2026*
+*Última actualización: v55.0 - 26 Abril 2026*
