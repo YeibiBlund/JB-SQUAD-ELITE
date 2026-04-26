@@ -1829,6 +1829,8 @@ document.addEventListener('DOMContentLoaded', () => {
     window.setupSessionHandlers = function() {
         if (window._hasSetupSession) return;
         window._hasSetupSession = true;
+        
+        let lastFetchedPolls = []; // v54.1: Almacén temporal para capturar la fecha
 
         btnNewSession.addEventListener('click', async () => {
             const activeTactic = state.savedTactics.find(t => t.id === state.activeTacticId);
@@ -1844,6 +1846,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 
                 try {
                     const unlinked = await fetchUnlinkedPolls();
+                    lastFetchedPolls = unlinked || []; // Guardamos para usar la fecha después
+                    
                     if (!unlinked || unlinked.length === 0) {
                         selectEl.innerHTML = '<option value="">Sin convocatorias disponibles</option>';
                     } else {
@@ -1870,7 +1874,7 @@ document.addEventListener('DOMContentLoaded', () => {
             switchView('tacticas');
         });
 
-        btnConfirmSessionStart.addEventListener('click', () => {
+        btnConfirmSessionStart.addEventListener('click', async () => {
             const selectEl = document.getElementById('session-poll-select');
             if (selectEl && (!selectEl.value || selectEl.disabled)) {
                 window.jbToast('Debes seleccionar una convocatoria para iniciar la jornada.', 'error');
@@ -1878,7 +1882,18 @@ document.addEventListener('DOMContentLoaded', () => {
             }
             const selectedPollId = selectEl ? selectEl.value : null;
 
-            // --- CAPTURAR ALINEACIÓN INICIAL (v51.0) ---
+            // --- DETERMINAR FECHA DE LA CONVOCATORIA (v54.1) ---
+            let sessionDate = new Date().toLocaleDateString('es-ES'); // Por defecto hoy
+            const linkedPoll = lastFetchedPolls.find(p => p.id === selectedPollId);
+            if (linkedPoll) {
+                const d = new Date(linkedPoll.scheduled_time);
+                const dd = String(d.getDate()).padStart(2, '0');
+                const mm = String(d.getMonth() + 1).padStart(2, '0');
+                const yyyy = d.getFullYear();
+                sessionDate = `${dd}/${mm}/${yyyy}`;
+            }
+
+            // --- CAPTURAR ALINEACIÓN INICIAL ---
             const activeTactic = state.savedTactics.find(t => t.id === state.activeTacticId);
             const currentLineup = activeTactic ? Object.values(activeTactic.assignments).filter(id => id) : [];
 
@@ -1887,16 +1902,20 @@ document.addEventListener('DOMContentLoaded', () => {
             
             const newSession = {
                 id: Date.now(),
-                date: new Date().toLocaleDateString(),
+                date: sessionDate,
                 matches: [],
                 mvpId: null,
                 type: selectedType,
                 status: 'active',
                 poll_id: selectedPollId,
-                lineup: currentLineup // Fotografía del 11 inicial
+                lineup: currentLineup
             };
+            
             state.activeSession = newSession;
-            saveSessionCloud(newSession);
+            window.jbLoading.show('Iniciando jornada...');
+            await saveSessionCloud(newSession); // Esperamos a que se guarde
+            window.jbLoading.hide();
+            
             renderActiveSession();
             switchView('active-session');
         });
@@ -2390,7 +2409,7 @@ document.addEventListener('DOMContentLoaded', () => {
         details.scrollIntoView({ behavior: 'smooth' });
     }
 
-    async function handleDeleteSession(session) {
+    window.handleDeleteSession = async function(session) {
         const confirmMsg = session.id === (state.activeSession ? state.activeSession.id : -1) 
             ? '¿Quieres eliminar la jornada actual en curso?'
             : `¿Eliminar la jornada del ${session.date}? Esto recalculará todas las estadísticas del club para asegurar que los datos sean correctos.`;
