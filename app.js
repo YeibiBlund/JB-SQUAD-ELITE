@@ -355,7 +355,8 @@ document.addEventListener('DOMContentLoaded', () => {
         if (viewId === 'tacticas') {
             handleTacticViewDisplay();
         } else if (viewId === 'jornadas') {
-            renderSessions();
+            if (typeof window.renderSessions === 'function') window.renderSessions();
+            else if (typeof renderSessions === 'function') renderSessions();
         } else if (viewId === 'mi-equipo') {
             renderMiEquipoView();
         } else if (viewId === 'convocatorias') {
@@ -2321,6 +2322,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
     window.renderSessions = function() {
+        console.log(">>> [UI] Renderizando vista de Jornadas...");
         window.renderSessionsCalendar();
         window.renderActiveSessionBanner(); // v55.2
     }
@@ -2338,25 +2340,31 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         const session = state.activeSession;
-        const wins = session.matches.filter(m => m.scoreHome > m.scoreAway).length;
-        const draws = session.matches.filter(m => m.scoreHome === m.scoreAway).length;
-        const losses = session.matches.filter(m => m.scoreHome < m.scoreAway).length;
+        if (!session) {
+            bannerContainer.style.display = 'none';
+            return;
+        }
+
+        const matches = session.matches || [];
+        const wins = matches.filter(m => m.scoreHome > m.scoreAway).length;
+        const draws = matches.filter(m => m.scoreHome === m.scoreAway).length;
+        const losses = matches.filter(m => m.scoreHome < m.scoreAway).length;
 
         bannerContainer.style.display = 'block';
         bannerContainer.innerHTML = `
-            <div class="card-elite" style="border: 1px solid var(--primary); background: linear-gradient(135deg, rgba(240, 165, 0, 0.1), rgba(240, 165, 0, 0.02)); padding: 25px; display: flex; justify-content: space-between; align-items: center; gap: 20px; flex-wrap: wrap; border-radius: 12px;">
+            <div class="card-elite" style="border: 1px solid var(--primary); background: linear-gradient(135deg, rgba(240, 165, 0, 0.1), rgba(240, 165, 0, 0.02)); padding: 25px; display: flex; justify-content: space-between; align-items: center; gap: 20px; flex-wrap: wrap; border-radius: 12px; box-shadow: 0 0 30px rgba(0,0,0,0.5);">
                 <div style="display: flex; align-items: center; gap: 20px;">
-                    <div style="font-size: 2.5rem; animation: pulse 2s infinite;">⏱️</div>
+                    <div class="badge-live" style="font-size: 1.5rem; padding: 10px; width: 50px; height: 50px; display: flex; align-items: center; justify-content: center; border-radius: 50%;">⏱️</div>
                     <div>
                         <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 5px;">
-                            <span class="badge-live">EN CURSO</span>
+                            <span class="badge-live" style="animation: pulse 1.5s infinite;">EN CURSO</span>
                             <span style="font-size: 0.7rem; color: var(--text-muted); font-weight: 800; letter-spacing: 1px;">JORNADA DEL ${session.date}</span>
                         </div>
-                        <h3 style="margin: 0; font-size: 1.2rem; color: #fff;">Tienes una sesión activa sin finalizar</h3>
-                        <p style="margin: 5px 0 0 0; font-size: 0.8rem; color: var(--text-muted);">Balance actual: <b>${wins}V - ${draws}E - ${losses}D</b> en ${session.matches.length} partidos.</p>
+                        <h3 style="margin: 0; font-size: 1.2rem; color: #fff; font-weight: 900;">Sesión activa detectada</h3>
+                        <p style="margin: 5px 0 0 0; font-size: 0.8rem; color: var(--text-muted);">Balance: <b style="color:var(--primary)">${wins}V - ${draws}E - ${losses}D</b> en ${matches.length} partidos.</p>
                     </div>
                 </div>
-                <button onclick="window.resumeActiveSession()" class="btn-gold" style="width: auto; padding: 15px 30px; font-weight: 900; box-shadow: 0 0 20px rgba(240, 165, 0, 0.3);">RETOMAR JORNADA</button>
+                <button onclick="window.resumeActiveSession()" class="btn-gold" style="width: auto; padding: 15px 35px; font-weight: 900; box-shadow: 0 0 30px rgba(240, 165, 0, 0.2); transform: scale(1.05);">RETOMAR AHORA</button>
             </div>
         `;
     };
@@ -2365,9 +2373,11 @@ document.addEventListener('DOMContentLoaded', () => {
      * Navega directamente a la gestión de la jornada activa (v55.2)
      */
     window.resumeActiveSession = function() {
-        if (!state.activeSession) return;
-        renderActiveSession();
-        switchView('active-session');
+        if (!state.activeSession) {
+            console.warn("No active session found to resume.");
+            return;
+        }
+        window.renderActiveSession(state.activeSession);
     };
 
     window.renderSessionsCalendar = function() {
@@ -2604,7 +2614,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 btnView.style.background = 'rgba(255,255,255,0.05)';
                 btnView.style.color = '#fff';
             };
-            btnView.onclick = () => window.renderActiveSession(session);
+            btnView.onclick = () => {
+                if (isActive) window.resumeActiveSession();
+                else window.renderActiveSession(session);
+            };
 
             container.appendChild(sessionCard);
         });
@@ -2697,7 +2710,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    function renderActiveSession(sessionToView = null) {
+    window.renderActiveSession = function(sessionToView = null) {
         // Si no se pasa sesión, intentamos usar la activa
         const session = sessionToView || state.activeSession;
         if (!session) return switchView('jornadas');
