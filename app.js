@@ -1048,13 +1048,14 @@ document.addEventListener('DOMContentLoaded', () => {
             // --- CONTROL DE CONVOCATORIA ACTIVA (v54.3) ---
             window.jbLoading.show('Comprobando estado...');
             const currentActive = await fetchActivePoll();
+            window.jbLoading.hide(); // Ocultamos para que no tape el mensaje de confirmación (v54.4)
+            
             if (currentActive) {
                 const msg = `⚠️ Ya hay una convocatoria abierta: "${currentActive.title}".\n\n¿Quieres BORRAR la actual y publicar la nueva? (Se perderán los votos actuales).`;
                 const confirmReplace = await window.jbConfirm(msg);
-                if (!confirmReplace) {
-                    window.jbLoading.hide();
-                    return;
-                }
+                if (!confirmReplace) return;
+
+                window.jbLoading.show('Borrando anterior...');
                 // Borrado rápido sin confirmación extra (ya la hemos pedido)
                 await supabase.from('sessions').update({ poll_id: null }).eq('poll_id', currentActive.id);
                 await supabase.from('availability_votes').delete().eq('poll_id', currentActive.id);
