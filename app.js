@@ -2821,7 +2821,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    function startLiveMatch(rival, type, rivalCrest = null, matchCondition = 'local') {
+    window.startLiveMatch = function(rival, type, rivalCrest = null, matchCondition = 'local') {
         currentMatch = {
             id: Date.now(),
             rival: rival,
