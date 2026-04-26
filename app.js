@@ -2016,7 +2016,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
             // --- CAPTURAR ALINEACIÓN (Preservar Estructura para Renderizado) (v56.3) ---
             let currentLineup = null; 
-            const linkedPoll = lastFetchedPolls.find(p => p.id === selectedPollId);
             
             if (linkedPoll && linkedPoll.final_alignment) {
                 currentLineup = linkedPoll.final_alignment;
