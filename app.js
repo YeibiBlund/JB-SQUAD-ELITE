@@ -420,6 +420,10 @@ document.addEventListener('DOMContentLoaded', () => {
         const crestA = document.getElementById('score-team-crest-a');
         const crestB = document.getElementById('score-team-crest-b');
 
+        // Botones de GOL (v55.0)
+        const btnGoalHomeLabel = document.querySelector('#btn-add-goal-home span:last-child');
+        const btnGoalAwayLabel = document.querySelector('#btn-add-goal-away span');
+
         // Función para manejar error de carga de imagen
         const handleImageError = (img) => {
             img.onerror = null;
