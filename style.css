@@ -4419,6 +4419,13 @@ body.editing-tactic .tactical-slot {
     font-weight: 900;
 }
 
+.calendar-day.today-highlight {
+    border: 2px solid #2196F3 !important;
+    background: rgba(33, 150, 243, 0.15); /* Sin !important para que ganen los estados */
+    box-shadow: 0 0 15px rgba(33, 150, 243, 0.3);
+    z-index: 2;
+}
+
 .calendar-day.day-played {
     background: linear-gradient(135deg, rgba(240, 165, 0, 0.3), rgba(240, 165, 0, 0.1));
     border-color: var(--primary);
@@ -4429,13 +4436,13 @@ body.editing-tactic .tactical-slot {
 }
 
 .calendar-day.day-win {
-    background: linear-gradient(135deg, rgba(76, 175, 80, 0.3), rgba(76, 175, 80, 0.1)) !important;
+    background: linear-gradient(135deg, rgba(76, 175, 80, 0.4), rgba(76, 175, 80, 0.15)) !important;
     border-color: var(--success) !important;
     box-shadow: 0 0 15px rgba(76, 175, 80, 0.15) !important;
 }
 
 .calendar-day.day-loss {
-    background: linear-gradient(135deg, rgba(244, 67, 54, 0.3), rgba(244, 67, 54, 0.1)) !important;
+    background: linear-gradient(135deg, rgba(244, 67, 54, 0.4), rgba(244, 67, 54, 0.15)) !important;
     border-color: var(--error) !important;
     box-shadow: 0 0 15px rgba(244, 67, 54, 0.15) !important;
 }
@@ -4446,13 +4453,7 @@ body.editing-tactic .tactical-slot {
     box-shadow: 0 0 15px rgba(255, 193, 7, 0.15) !important;
 }
 
-.calendar-day.today-highlight {
-    border: 2px solid #2196F3 !important;
-    background: rgba(33, 150, 243, 0.15) !important; /* Fondo azul sutil por defecto */
-    box-shadow: 0 0 15px rgba(33, 150, 243, 0.3);
-    z-index: 2;
-}
-
+/* Hover effect */
 .calendar-day.day-played:hover {
     transform: scale(1.05);
     filter: brightness(1.2);
