@@ -159,7 +159,7 @@ async function fetchUnlinkedPolls() {
     // Obtenemos todas las convocatorias cerradas
     const { data: polls, error: pollErr } = await supabase
         .from('availability_polls')
-        .select('id, title, scheduled_time')
+        .select('id, title, scheduled_time, final_alignment')
         .eq('team_id', state.team.id)
         .eq('status', 'closed')
         .order('scheduled_time', { ascending: false });

@@ -2014,9 +2014,23 @@ document.addEventListener('DOMContentLoaded', () => {
                 sessionDate = `${dd}/${mm}/${yyyy}`;
             }
 
-            // --- CAPTURAR ALINEACIÓN INICIAL ---
-            const activeTactic = state.savedTactics.find(t => t.id === state.activeTacticId);
-            const currentLineup = activeTactic ? Object.values(activeTactic.assignments).filter(id => id) : [];
+            // --- CAPTURAR ALINEACIÓN (Priorizar Histórica de la Convocatoria) (v56.2) ---
+            let currentLineup = [];
+            const linkedPoll = lastFetchedPolls.find(p => p.id === selectedPollId);
+            
+            if (linkedPoll && linkedPoll.final_alignment) {
+                const fa = linkedPoll.final_alignment;
+                // Manejar diferentes formatos de snapshot (Objeto con slots o Array simple)
+                if (fa.assignments) currentLineup = Object.values(fa.assignments).filter(id => id).map(id => id.toString());
+                else if (Array.isArray(fa)) currentLineup = fa.filter(id => id).map(id => id.toString());
+                else if (typeof fa === 'object') currentLineup = Object.values(fa).filter(id => id).map(id => id.toString());
+            }
+
+            // Fallback a táctica actual si no hay alineación en la convocatoria
+            if (currentLineup.length === 0) {
+                const activeTactic = state.savedTactics.find(t => t.id === state.activeTacticId);
+                currentLineup = activeTactic ? Object.values(activeTactic.assignments).filter(id => id).map(id => id.toString()) : [];
+            }
 
             sessionStartModal.style.display = 'none';
             const selectedType = document.querySelector('input[name="sessionType"]:checked')?.value || 'friendly';
@@ -2936,15 +2950,18 @@ document.addEventListener('DOMContentLoaded', () => {
         scorerSelection.innerHTML = '';
         assistantSelection.innerHTML = '';
 
-        // Filtro Sugerido: Solo jugadores asignados en la táctica activa
-        // Si no hay táctica activa o slots, mostrar todos los jugadores como fallback
+        // Filtro Sugerido: Priorizar alineación guardada en la sesión (v56.2)
         let relevantPlayers = state.players;
         
-        // Intentar buscar táctica "útil" (la última guardada o similar si no hay activa)
-        const lastTactic = state.savedTactics[0]; 
-        if (lastTactic) {
-            const assignedIds = Object.values(lastTactic.assignments);
-            if (assignedIds.length > 0) {
+        if (state.activeSession && state.activeSession.lineup && state.activeSession.lineup.length > 0) {
+            // Usar jugadores registrados en esta sesión
+            const assignedIds = state.activeSession.lineup.map(id => id.toString());
+            relevantPlayers = state.players.filter(p => assignedIds.includes(p.id.toString()) || assignedIds.includes(p.id));
+        } else {
+            // Fallback: Usar táctica más reciente guardada
+            const lastTactic = state.savedTactics[0]; 
+            if (lastTactic) {
+                const assignedIds = Object.values(lastTactic.assignments).map(id => id.toString());
                 relevantPlayers = state.players.filter(p => assignedIds.includes(p.id.toString()) || assignedIds.includes(p.id));
             }
         }
