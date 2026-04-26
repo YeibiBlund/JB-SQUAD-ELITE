@@ -2821,21 +2821,45 @@ document.addEventListener('DOMContentLoaded', () => {
                 eventsHTML += `</div>`;
             }
 
+            const isVisitor = match.matchCondition === 'visitor';
+            const myTeamName = (state.team && state.team.name) ? state.team.name : 'MI CLUB';
+            const myTeamCrest = (state.team && state.team.crest_url) ? state.team.crest_url : neutralCrest;
+            const rivalName = match.rival || 'RIVAL';
+            const rivalCrest = match.rivalCrest || neutralCrest;
+
+            const nameLocal = isVisitor ? rivalName : myTeamName;
+            const crestLocal = isVisitor ? rivalCrest : myTeamCrest;
+            const nameVisitor = isVisitor ? myTeamName : rivalName;
+            const crestVisitor = isVisitor ? myTeamCrest : rivalCrest;
+
             card.innerHTML = `
-                <div class="match-card-main" style="display: flex; align-items: center; justify-content: space-between; gap: 10px;">
-                    <div style="display: flex; align-items: center; gap: 15px;">
-                        <div style="width: 40px; height: 40px; background: rgba(255,255,255,0.03); border-radius: 50%; padding: 5px; display: flex; align-items: center; justify-content: center;">
-                            <img src="${match.rivalCrest || neutralCrest}" referrerpolicy="no-referrer" onerror="this.onerror=null;this.src='${neutralCrest}'" style="width: 100%; height: 100%; object-fit: contain;">
-                        </div>
-                        <div>
-                            <div style="display: flex; align-items: center; gap: 6px;">
-                                <span class="${typeClass}">${match.type.toUpperCase()}</span>
-                                ${match.matchCondition === 'visitor' ? '<span style="font-size: 0.5rem; background: rgba(255,255,255,0.1); padding: 2px 5px; border-radius: 4px; color: var(--text-muted);">FUERA</span>' : ''}
+                <div class="match-card-main" style="display: flex; flex-direction: column; gap: 12px; padding: 10px 0;">
+                    <div style="display: flex; align-items: center; justify-content: center; gap: 8px; margin-bottom: 5px;">
+                        <span class="${typeClass}" style="font-size: 0.5rem; letter-spacing: 1px;">${match.type.toUpperCase()}</span>
+                    </div>
+                    
+                    <div style="display: flex; align-items: center; justify-content: space-between; gap: 10px;">
+                        <!-- LOCAL -->
+                        <div style="flex: 1; display: flex; align-items: center; justify-content: flex-end; gap: 10px; text-align: right;">
+                            <span style="font-size: 0.75rem; font-weight: 800; color: ${isVisitor ? 'var(--primary)' : '#fff'};">${nameLocal.toUpperCase()}</span>
+                            <div style="width: 32px; height: 32px; background: rgba(255,255,255,0.03); border-radius: 50%; padding: 4px; flex-shrink: 0;">
+                                <img src="${crestLocal}" referrerpolicy="no-referrer" onerror="this.onerror=null;this.src='${neutralCrest}'" style="width: 100%; height: 100%; object-fit: contain;">
                             </div>
-                            <h4 style="margin: 4px 0 0 0; font-size: 0.9rem;">vs ${match.rival.toUpperCase()}</h4>
+                        </div>
+
+                        <!-- MARCADOR -->
+                        <div style="background: rgba(255,255,255,0.05); padding: 5px 12px; border-radius: 6px; font-weight: 900; font-size: 1.1rem; min-width: 60px; text-align: center; border: 1px solid rgba(255,255,255,0.1);">
+                            ${match.scoreHome} - ${match.scoreAway}
+                        </div>
+
+                        <!-- VISITANTE -->
+                        <div style="flex: 1; display: flex; align-items: center; justify-content: flex-start; gap: 10px;">
+                            <div style="width: 32px; height: 32px; background: rgba(255,255,255,0.03); border-radius: 50%; padding: 4px; flex-shrink: 0;">
+                                <img src="${crestVisitor}" referrerpolicy="no-referrer" onerror="this.onerror=null;this.src='${neutralCrest}'" style="width: 100%; height: 100%; object-fit: contain;">
+                            </div>
+                            <span style="font-size: 0.75rem; font-weight: 800; color: ${!isVisitor ? 'var(--primary)' : '#fff'};">${nameVisitor.toUpperCase()}</span>
                         </div>
                     </div>
-                    <div class="result" style="font-size: 1.3rem; font-weight: 900; color: #fff;">${match.scoreHome} - ${match.scoreAway}</div>
                 </div>
                 ${eventsHTML}
             `;
