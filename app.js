@@ -1590,6 +1590,14 @@ document.addEventListener('DOMContentLoaded', () => {
                     <div class="slot-pos">${slot.pos}</div>
                 `;
 
+                // --- Interacción rápida en Partido en Vivo (v56.6) ---
+                const livePitch = document.getElementById('live-football-pitch');
+                if (targetPitch === livePitch) {
+                    slotEl.style.cursor = 'pointer';
+                    slotEl.title = `Registrar gol de ${displayName}`;
+                    slotEl.onclick = () => openQuickGoalModal(player.id);
+                }
+
             } else {
                 slotEl.innerHTML = `
                     <span class="plus-icon">+</span>
@@ -2945,6 +2953,21 @@ document.addEventListener('DOMContentLoaded', () => {
         renderGoalSelection();
     }
 
+    function openQuickGoalModal(scorerId) {
+        selectedGoalSide = 'home'; 
+        goalModal.style.display = 'flex';
+        selectedGoalScorerId = scorerId;
+        selectedAssistantId = null;
+        renderGoalSelection();
+        
+        // Scroll suave hacia los asistentes para agilizar la selección
+        setTimeout(() => {
+            if (assistantSelection) {
+                assistantSelection.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+        }, 150);
+    }
+
     function renderGoalSelection() {
         scorerSelection.innerHTML = '';
         assistantSelection.innerHTML = '';
@@ -2966,12 +2989,22 @@ document.addEventListener('DOMContentLoaded', () => {
             relevantPlayers = state.players.filter(p => assignedIds.includes(p.id.toString()) || assignedIds.includes(p.id));
         } else {
             // Fallback: Usar táctica más reciente guardada
-            const lastTactic = state.savedTactics[0]; 
-            if (lastTactic) {
-                const assignedIds = Object.values(lastTactic.assignments).map(id => id.toString());
+            const lastTactic = state.savedTactics.find(t => t.id === state.activeTacticId);
+            if (lastTactic && lastTactic.assignments) {
+                const assignedIds = Object.values(lastTactic.assignments).filter(id => id).map(id => id.toString());
                 relevantPlayers = state.players.filter(p => assignedIds.includes(p.id.toString()) || assignedIds.includes(p.id));
             }
         }
+
+        // Ordenar por prioridad de posición (Ataque -> Portero) (v56.6)
+        relevantPlayers.sort((a, b) => {
+            const prioA = POSITION_PRIORITY[a.primaryPos] || 99;
+            const prioB = POSITION_PRIORITY[b.primaryPos] || 99;
+            return prioA - prioB;
+        });
+
+        scorerSelection.innerHTML = '';
+        assistantSelection.innerHTML = '';
 
         relevantPlayers.forEach(player => {
             // Scorer
@@ -2981,8 +3014,24 @@ document.addEventListener('DOMContentLoaded', () => {
                 sItem.classList.add('selected');
                 selectedGoalScorerId = player.id;
             };
+            if (selectedGoalScorerId == player.id) sItem.classList.add('selected');
             scorerSelection.appendChild(sItem);
+        });
 
+        // Opción Sin Asistente (v56.6)
+        const noAssistant = document.createElement('div');
+        noAssistant.className = 'player-select-item';
+        noAssistant.style.justifyContent = 'center';
+        noAssistant.innerHTML = `<span style="font-size:0.7rem; font-weight:800; opacity:0.6;">SIN ASISTENTE</span>`;
+        noAssistant.onclick = () => {
+            document.querySelectorAll('#assistant-selection .player-select-item').forEach(el => el.classList.remove('selected'));
+            noAssistant.classList.add('selected');
+            selectedAssistantId = null;
+        };
+        if (!selectedAssistantId) noAssistant.classList.add('selected');
+        assistantSelection.appendChild(noAssistant);
+
+        relevantPlayers.forEach(player => {
             // Assistant
             const aItem = createPlayerSelectItem(player);
             aItem.onclick = () => {
@@ -2990,6 +3039,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 aItem.classList.add('selected');
                 selectedAssistantId = player.id;
             };
+            if (selectedAssistantId == player.id) aItem.classList.add('selected');
             assistantSelection.appendChild(aItem);
         });
     }

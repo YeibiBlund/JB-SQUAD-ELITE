@@ -3,6 +3,12 @@
 
 const POSITIONS = ['POR', 'DFC', 'CAD', 'CAI', 'LI', 'LD', 'MCD', 'MC', 'MVI', 'MVD', 'MD', 'MI', 'MCO', 'ED', 'EI', 'DC'];
 
+const POSITION_PRIORITY = {
+    'DC': 1, 'SD': 2, 'ED': 3, 'EI': 4, 'ATA': 5,
+    'MCO': 6, 'MI': 7, 'MD': 8, 'MC': 9, 'MCD': 10,
+    'LI': 11, 'LD': 12, 'DFC': 13, 'POR': 14
+};
+
 const FORMATIONS = {
     '4-4-2': [
         { id: 'GK', pos: 'POR', x: 50, y: 92 },

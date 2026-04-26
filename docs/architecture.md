@@ -83,6 +83,12 @@ Un punto crítico de la arquitectura es cómo maneja los partidos de "Visitante"
 ### 4.2. Registro de Sucesos
 Cada gol se registra como un evento: `{ type: 'goal', scorerId: UUID, assistantId: UUID }`. Al finalizar el partido, la función `finalizeMatch` recorre estos eventos y actualiza proactivamente la tabla `players`.
 
+### 4.3. Túnel de Datos Históricos (v56.5)
+Para garantizar la integridad de los datos en jornadas reportadas a posteriori:
+- **Snapshot de Alineación**: Cada sesión almacena un objeto `lineup` que contiene la formación exacta y las coordenadas de los jugadores en el momento del juego.
+- **Renderizado Forzado**: El motor `renderPitch` permite inyectar una táctica histórica, ignorando la configuración actual del club para visualización y validación de sucesos.
+- **Normalización de IDs**: El sistema de estadísticas (`recalculateAllStats` y `finalizeMatch`) implementa un extractor flexible que soporta múltiples formatos de alineación (legacy, flat arrays y structured snapshots).
+
 ---
 
 ## 5. Comunicación entre Componentes
@@ -123,4 +129,4 @@ Al cerrar la jornada:
 *   **Optimización de Imágenes**: Uso de `object-fit: contain` y contenedores circulares con `backdrop-filter` para un aspecto de "App de Apple".
 
 ---
-*Última actualización técnica: v56.1 - 26 de Abril de 2026*
+*Última actualización técnica: v56.5 - 26 de Abril de 2026*
