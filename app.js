@@ -1880,14 +1880,22 @@ document.addEventListener('DOMContentLoaded', () => {
         const btnSetVisitor = document.getElementById('btn-set-visitor');
 
         const loadGlobalData = async () => {
+            console.log(">>> [DB] Cargando datos globales (Ligas)...");
             try {
-                const { data: leagues } = await supabase.from('global_leagues').select('*').order('name');
+                const { data: leagues, error } = await supabase.from('global_leagues').select('*').order('name');
+                if (error) throw error;
+                
                 globalLeagues = leagues || [];
+                console.log(`>>> [DB] Ligas cargadas: ${globalLeagues.length}`);
+                
                 if (leagueSelect) {
                     leagueSelect.innerHTML = '<option value="none">Amistoso / Sin Liga</option>' + 
                         globalLeagues.map(l => `<option value="${l.id}">${l.name}</option>`).join('');
                 }
-            } catch (err) { console.error("Error cargando ligas:", err); }
+            } catch (err) { 
+                console.error(">>> [ERROR] Error cargando ligas:", err); 
+                window.jbToast("Error al cargar competiciones", "error");
+            }
         };
 
         btnNewSession.addEventListener('click', async () => {
@@ -1999,8 +2007,8 @@ document.addEventListener('DOMContentLoaded', () => {
             switchView('jornadas');
         });
 
-        btnAddMatch.addEventListener('click', () => {
-            loadGlobalData();
+        btnAddMatch.addEventListener('click', async () => {
+            await loadGlobalData();
             matchModal.style.display = 'flex';
             if (manualRivalContainer) manualRivalContainer.style.display = 'block';
             currentMatchCondition = 'local';
@@ -2011,6 +2019,8 @@ document.addEventListener('DOMContentLoaded', () => {
         if (leagueSelect) {
             leagueSelect.onchange = async () => {
                 const leagueId = leagueSelect.value;
+                console.log(`>>> [DB] Liga seleccionada: ${leagueId}`);
+                
                 if (leagueId === 'none') {
                     rivalSelect.innerHTML = '<option value="manual">-- ESCRIBIR NOMBRE MANUAL --</option>';
                     manualRivalContainer.style.display = 'block';
@@ -2018,14 +2028,23 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
                 
                 rivalSelect.innerHTML = '<option value="">Cargando equipos...</option>';
-                const { data: teams } = await supabase
-                    .from('league_teams')
-                    .select('global_teams(*)')
-                    .eq('league_id', leagueId);
-                
-                globalTeams = teams ? teams.map(t => t.global_teams) : [];
-                rivalSelect.innerHTML = '<option value="manual">-- ESCRIBIR NOMBRE MANUAL --</option>' + 
-                    globalTeams.map(t => `<option value="${t.id}">${t.name}</option>`).join('');
+                try {
+                    const { data: teams, error } = await supabase
+                        .from('league_teams')
+                        .select('global_teams(*)')
+                        .eq('league_id', leagueId);
+                    
+                    if (error) throw error;
+
+                    globalTeams = teams ? teams.map(t => t.global_teams) : [];
+                    console.log(`>>> [DB] Equipos cargados para liga ${leagueId}: ${globalTeams.length}`);
+                    
+                    rivalSelect.innerHTML = '<option value="manual">-- ESCRIBIR NOMBRE MANUAL --</option>' + 
+                        globalTeams.map(t => `<option value="${t.id}">${t.name}</option>`).join('');
+                } catch (err) {
+                    console.error(">>> [ERROR] Error cargando equipos:", err);
+                    window.jbToast("Error al cargar equipos de la liga", "error");
+                }
             };
         }
 
