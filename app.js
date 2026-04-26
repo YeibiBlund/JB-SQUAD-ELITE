@@ -3055,10 +3055,18 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
 
-        // 2. Procesar PJ (Partidos Jugados) - Priorizar alineación de sesión (Flujo Túnel v51.0)
-        if (state.activeSession && state.activeSession.lineup && state.activeSession.lineup.length > 0) {
-            const assignedIds = state.activeSession.lineup.map(id => id.toString());
-            
+        // 2. Procesar PJ (Partidos Jugados) - Priorizar alineación de sesión (v56.4)
+        let assignedIds = [];
+        if (state.activeSession && state.activeSession.lineup) {
+            const sl = state.activeSession.lineup;
+            if (Array.isArray(sl)) {
+                assignedIds = sl.map(id => id.toString());
+            } else if (sl.assignments) {
+                assignedIds = Object.values(sl.assignments).filter(id => id).map(id => id.toString());
+            }
+        }
+
+        if (assignedIds.length > 0) {
             // Guardar la alineación dentro del partido para trazabilidad absoluta
             currentMatch.lineup = assignedIds;
             
