@@ -340,13 +340,19 @@ async function recalculateAllStats() {
             }
 
             // Determinar alineación maestra de la sesión (v51.0)
-            let masterLineup = null;
-            if (session.lineup && Array.isArray(session.lineup) && session.lineup.length > 0) {
-                masterLineup = session.lineup.map(id => id.toString());
-            } else if (matchingPoll && matchingPoll.final_alignment) {
+            if (session.lineup) {
+                const sl = session.lineup;
+                if (Array.isArray(sl) && sl.length > 0) {
+                    masterLineup = sl.map(id => id.toString());
+                } else if (sl.assignments) {
+                    masterLineup = Object.values(sl.assignments).filter(id => id).map(id => id.toString());
+                }
+            } 
+            
+            if (!masterLineup && matchingPoll && matchingPoll.final_alignment) {
                 const fa = matchingPoll.final_alignment;
-                if (fa.assignments) masterLineup = Object.values(fa.assignments).map(id => id.toString());
-                else if (Array.isArray(fa)) masterLineup = fa.map(id => id.toString());
+                if (fa.assignments) masterLineup = Object.values(fa.assignments).filter(id => id).map(id => id.toString());
+                else if (Array.isArray(fa)) masterLineup = fa.filter(id => id).map(id => id.toString());
                 else if (typeof fa === 'object') masterLineup = Object.values(fa).filter(v => v).map(id => id.toString());
             }
 

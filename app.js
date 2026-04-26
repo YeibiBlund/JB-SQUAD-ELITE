@@ -1414,8 +1414,8 @@ document.addEventListener('DOMContentLoaded', () => {
         renderPitch();
     }
 
-    function renderPitch(targetPitch = pitch) {
-        const activeTactic = state.savedTactics.find(t => t.id === state.activeTacticId);
+    function renderPitch(targetPitch = pitch, forcedTactic = null) {
+        const activeTactic = forcedTactic || state.savedTactics.find(t => t.id === state.activeTacticId);
         if (!activeTactic) return handleTacticViewDisplay();
 
         if (targetPitch === pitch) {
@@ -2014,21 +2014,22 @@ document.addEventListener('DOMContentLoaded', () => {
                 sessionDate = `${dd}/${mm}/${yyyy}`;
             }
 
-            // --- CAPTURAR ALINEACIÓN (Priorizar Histórica de la Convocatoria) (v56.2) ---
-            let currentLineup = [];
+            // --- CAPTURAR ALINEACIÓN (Preservar Estructura para Renderizado) (v56.3) ---
+            let currentLineup = null; 
+            const linkedPoll = lastFetchedPolls.find(p => p.id === selectedPollId);
             
             if (linkedPoll && linkedPoll.final_alignment) {
-                const fa = linkedPoll.final_alignment;
-                // Manejar diferentes formatos de snapshot (Objeto con slots o Array simple)
-                if (fa.assignments) currentLineup = Object.values(fa.assignments).filter(id => id).map(id => id.toString());
-                else if (Array.isArray(fa)) currentLineup = fa.filter(id => id).map(id => id.toString());
-                else if (typeof fa === 'object') currentLineup = Object.values(fa).filter(id => id).map(id => id.toString());
+                currentLineup = linkedPoll.final_alignment;
             }
 
             // Fallback a táctica actual si no hay alineación en la convocatoria
-            if (currentLineup.length === 0) {
+            if (!currentLineup) {
                 const activeTactic = state.savedTactics.find(t => t.id === state.activeTacticId);
-                currentLineup = activeTactic ? Object.values(activeTactic.assignments).filter(id => id).map(id => id.toString()) : [];
+                currentLineup = activeTactic ? {
+                    formation: activeTactic.formation,
+                    assignments: activeTactic.assignments,
+                    customPositions: activeTactic.customPositions || {}
+                } : [];
             }
 
             sessionStartModal.style.display = 'none';
@@ -2917,14 +2918,14 @@ document.addEventListener('DOMContentLoaded', () => {
         updateLiveMatchUI();
         switchView('match-live');
         
-        // Renderizar la táctica en el mini-pitch del partido
+        // Renderizar la táctica en el mini-pitch del partido (v56.3)
         const livePitch = document.getElementById('live-football-pitch');
         if (livePitch) {
-            // Usar la primera táctica guardada si no hay una activa
-            if (!state.activeTacticId && state.savedTactics.length > 0) {
-                state.activeTacticId = state.savedTactics[0].id;
+            let forcedTactic = null;
+            if (state.activeSession && state.activeSession.lineup && !Array.isArray(state.activeSession.lineup)) {
+                forcedTactic = state.activeSession.lineup;
             }
-            renderPitch(livePitch);
+            renderPitch(livePitch, forcedTactic);
         }
     }
 
@@ -2952,9 +2953,17 @@ document.addEventListener('DOMContentLoaded', () => {
         // Filtro Sugerido: Priorizar alineación guardada en la sesión (v56.2)
         let relevantPlayers = state.players;
         
-        if (state.activeSession && state.activeSession.lineup && state.activeSession.lineup.length > 0) {
-            // Usar jugadores registrados en esta sesión
-            const assignedIds = state.activeSession.lineup.map(id => id.toString());
+        if (state.activeSession && state.activeSession.lineup && state.activeSession.lineup.length !== 0) {
+            // Usar jugadores registrados en esta sesión (v56.3)
+            const lineup = state.activeSession.lineup;
+            let assignedIds = [];
+            
+            if (Array.isArray(lineup)) {
+                assignedIds = lineup.map(id => id.toString());
+            } else if (lineup.assignments) {
+                assignedIds = Object.values(lineup.assignments).filter(id => id).map(id => id.toString());
+            }
+            
             relevantPlayers = state.players.filter(p => assignedIds.includes(p.id.toString()) || assignedIds.includes(p.id));
         } else {
             // Fallback: Usar táctica más reciente guardada
