@@ -1890,6 +1890,16 @@ document.addEventListener('DOMContentLoaded', () => {
         };
 
         btnNewSession.addEventListener('click', async () => {
+            // --- BLOQUEO JORNADA ACTIVA (v55.2) ---
+            if (state.activeSession) {
+                const confirmed = await window.jbConfirm(`⚠️ Ya tienes una jornada activa del ${state.activeSession.date}.\n\nPara empezar una nueva debes FINALIZAR la actual.\n\n¿Quieres ir a la jornada activa ahora?`);
+                if (confirmed) {
+                    renderActiveSession();
+                    switchView('active-session');
+                }
+                return;
+            }
+
             const activeTactic = state.savedTactics.find(t => t.id === state.activeTacticId);
             if (sessionTacticName) {
                 sessionTacticName.textContent = activeTactic ? activeTactic.name.toUpperCase() : 'SIN TÁCTICA ACTIVA';
@@ -1970,8 +1980,14 @@ document.addEventListener('DOMContentLoaded', () => {
             
             state.activeSession = newSession;
             window.jbLoading.show('Iniciando jornada...');
-            await saveSessionCloud(newSession); // Esperamos a que se guarde
-            window.jbLoading.hide();
+            try {
+                await saveSessionCloud(newSession); 
+            } catch (err) {
+                console.error("Error al iniciar jornada:", err);
+                window.jbToast("Error de conexión al iniciar jornada.", "error");
+            } finally {
+                window.jbLoading.hide();
+            }
             
             renderActiveSession();
             switchView('active-session');
@@ -2044,10 +2060,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
             if (isManual) {
                 rivalName = document.getElementById('rivalName').value.trim();
+                // v55.2: Escudo neutral para rivales manuales
+                rivalCrest = "https://www.virtualpronetwork.com/api/media/images/teamlogos/default.png";
             } else {
                 const selectedTeam = globalTeams.find(t => t.id === rivalSelect.value);
                 rivalName = selectedTeam ? selectedTeam.name : 'Rival';
-                rivalCrest = selectedTeam ? selectedTeam.crest_url : null;
+                rivalCrest = selectedTeam ? selectedTeam.crest_url : "https://www.virtualpronetwork.com/api/media/images/teamlogos/default.png";
             }
 
             if (!rivalName) return window.jbToast('Introduce el nombre del rival', 'warning');
@@ -2304,7 +2322,53 @@ document.addEventListener('DOMContentLoaded', () => {
 
     window.renderSessions = function() {
         window.renderSessionsCalendar();
+        window.renderActiveSessionBanner(); // v55.2
     }
+
+    /**
+     * Renderiza un banner informativo si hay una jornada en curso (v55.2)
+     */
+    window.renderActiveSessionBanner = function() {
+        const bannerContainer = document.getElementById('active-session-resume-banner');
+        if (!bannerContainer) return;
+
+        if (!state.activeSession) {
+            bannerContainer.style.display = 'none';
+            return;
+        }
+
+        const session = state.activeSession;
+        const wins = session.matches.filter(m => m.scoreHome > m.scoreAway).length;
+        const draws = session.matches.filter(m => m.scoreHome === m.scoreAway).length;
+        const losses = session.matches.filter(m => m.scoreHome < m.scoreAway).length;
+
+        bannerContainer.style.display = 'block';
+        bannerContainer.innerHTML = `
+            <div class="card-elite" style="border: 1px solid var(--primary); background: linear-gradient(135deg, rgba(240, 165, 0, 0.1), rgba(240, 165, 0, 0.02)); padding: 25px; display: flex; justify-content: space-between; align-items: center; gap: 20px; flex-wrap: wrap; border-radius: 12px;">
+                <div style="display: flex; align-items: center; gap: 20px;">
+                    <div style="font-size: 2.5rem; animation: pulse 2s infinite;">⏱️</div>
+                    <div>
+                        <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 5px;">
+                            <span class="badge-live">EN CURSO</span>
+                            <span style="font-size: 0.7rem; color: var(--text-muted); font-weight: 800; letter-spacing: 1px;">JORNADA DEL ${session.date}</span>
+                        </div>
+                        <h3 style="margin: 0; font-size: 1.2rem; color: #fff;">Tienes una sesión activa sin finalizar</h3>
+                        <p style="margin: 5px 0 0 0; font-size: 0.8rem; color: var(--text-muted);">Balance actual: <b>${wins}V - ${draws}E - ${losses}D</b> en ${session.matches.length} partidos.</p>
+                    </div>
+                </div>
+                <button onclick="window.resumeActiveSession()" class="btn-gold" style="width: auto; padding: 15px 30px; font-weight: 900; box-shadow: 0 0 20px rgba(240, 165, 0, 0.3);">RETOMAR JORNADA</button>
+            </div>
+        `;
+    };
+
+    /**
+     * Navega directamente a la gestión de la jornada activa (v55.2)
+     */
+    window.resumeActiveSession = function() {
+        if (!state.activeSession) return;
+        renderActiveSession();
+        switchView('active-session');
+    };
 
     window.renderSessionsCalendar = function() {
         const grid = document.getElementById('sessions-calendar-grid');

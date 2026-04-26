@@ -112,6 +112,7 @@ CREATE TABLE public.players (
 
 ### `sessions`
 Jornadas de juego (activas o cerradas). El campo `matches` almacena un JSON con todos los partidos.
+*v55.2: Las sesiones con `status = 'active'` se visualizan en un banner de reanudación prioritario.*
 
 ```sql
 CREATE TABLE public.sessions (
@@ -246,6 +247,7 @@ CREATE TABLE public.global_leagues (
 
 ### `global_teams`
 Catálogo maestro de equipos rivales con sus nombres y escudos oficiales.
+*v55.2: Si `crest_url` es NULL, la App usa automáticamente el escudo neutral genérico.*
 
 ```sql
 CREATE TABLE public.global_teams (

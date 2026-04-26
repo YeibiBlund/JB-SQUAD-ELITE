@@ -128,10 +128,20 @@ Para exportar alineaciones o fichas, la app no usa librerías externas pesadas.
 
 ---
 
-## 7. Áreas Identificadas de Mejora / Deuda Técnica (Refactoring)
-1. **Acoplamiento en `app.js`**: El archivo concentra UI, lógica de negocio y listeners. Debería dividirse en controladores (ej. `MatchController.js`, `RosterController.js`).
-2. **Flujo de Jornadas Desconectado**: La dependencia de `activeTacticId` en el momento de pitar el final de un partido causa pérdida de datos si la táctica no fue confirmada. (Ver `futureplans.md` para la propuesta de flujo "Túnel").
-3. **Consumo de API / N+1**: Múltiples secciones iteran arrays haciendo peticiones asíncronas a Supabase dentro de bucles, en lugar de usar `JOINs` relacionales en la carga inicial.
+## 7. Flujos de Trabajo Críticos (v55.2)
+
+- **Sistema de Jornadas:**
+  - `activeSession`: Variable global persistente que permite reanudar el registro de partidos tras recargas.
+  - **Banner de Reanudación:** UI proactiva en la vista de jornadas que detecta sesiones abiertas.
+  - **Seguridad:** Bloqueo de creación de jornadas paralelas para evitar corrupción de datos.
+- **Rivales Manuales:**
+  - Los rivales sin logo oficial en la BD global ahora usan un escudo neutral SVG por defecto.
 
 ---
-*Última actualización: v55.0 - 26 Abril 2026*
+
+## 8. Áreas Identificadas de Mejora / Deuda Técnica (Refactoring)
+1. **Acoplamiento en `app.js`**: El archivo concentra UI, lógica de negocio y listeners. Debería dividirse en controladores (ej. `MatchController.js`, `RosterController.js`).
+2. **Consumo de API / N+1**: Múltiples secciones iteran arrays haciendo peticiones asíncronas a Supabase dentro de bucles, en lugar de usar `JOINs` relacionales en la carga inicial.
+
+---
+*Última actualización: v55.2 - 26 Abril 2026*
