@@ -5267,21 +5267,18 @@ document.addEventListener('DOMContentLoaded', () => {
         
         if (activePoll) {
             const msg = `Ya existe una convocatoria activa ("${activePoll.title}").\n\n¿Quieres ELIMINAR la actual y reabrir la anterior? Esta acción no se puede deshacer.`;
+            window.jbLoading.hide(); 
             const confirmReplace = await window.jbConfirm(msg);
-            if (!confirmReplace) {
-                window.jbLoading.hide();
-                return;
-            }
+            if (!confirmReplace) return;
 
+            window.jbLoading.show('Eliminando anterior...');
             // Borrar la activa actual (la errónea)
             await supabase.from('availability_votes').delete().eq('poll_id', activePoll.id);
             await supabase.from('availability_polls').delete().eq('id', activePoll.id);
         } else {
+            window.jbLoading.hide();
             const confirmed = await window.jbConfirm('¿Quieres volver a activar esta convocatoria?');
-            if (!confirmed) {
-                window.jbLoading.hide();
-                return;
-            }
+            if (!confirmed) return;
         }
 
         window.jbLoading.show('Reabriendo convocatoria...');
