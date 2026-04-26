@@ -5537,3 +5537,88 @@ body.editing-tactic .tactical-slot {
 #manual-rival-container {
     transition: all 0.3s ease;
 }
+/* --- Registro Interactivo de Goles (v56.7) --- */
+.tactical-slot.pending-scorer {
+    border-color: var(--primary) !important;
+    background: rgba(240, 165, 0, 0.2) !important;
+    box-shadow: 0 0 30px var(--primary-glow), 0 0 0 2px var(--primary) !important;
+    animation: slotPulse 1.5s infinite ease-in-out;
+    z-index: 100;
+}
+
+@keyframes slotPulse {
+    0% { transform: translate(-50%, -50%) scale(1); }
+    50% { transform: translate(-50%, -50%) scale(1.08); }
+    100% { transform: translate(-50%, -50%) scale(1); }
+}
+
+.tactical-slot.pending-assistant {
+    border-color: var(--success) !important;
+    background: rgba(76, 175, 80, 0.1) !important;
+    box-shadow: 0 0 20px var(--success-glow) !important;
+}
+
+.floating-action-bar {
+    position: fixed;
+    bottom: 110px;
+    left: 50%;
+    transform: translateX(-50%) translateY(30px);
+    background: linear-gradient(145deg, #1a1a1a 0%, #050505 100%);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255,255,255,0.1);
+    padding: 10px 20px;
+    border-radius: 50px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    z-index: 2000;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.6), 0 0 20px rgba(240, 165, 0, 0.1);
+    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    opacity: 0;
+    pointer-events: none;
+}
+
+.floating-action-bar.active {
+    transform: translateX(-50%) translateY(0);
+    opacity: 1;
+    pointer-events: all;
+}
+
+.floating-action-bar .btn-quick {
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.1);
+    color: #fff;
+    padding: 8px 16px;
+    border-radius: 30px;
+    font-size: 0.7rem;
+    font-weight: 800;
+    cursor: pointer;
+    text-transform: uppercase;
+    transition: all 0.2s;
+    white-space: nowrap;
+}
+
+.floating-action-bar .btn-quick:hover {
+    background: rgba(255,255,255,0.1);
+    border-color: rgba(255,255,255,0.2);
+}
+
+.floating-action-bar .btn-quick.primary {
+    background: rgba(240, 165, 0, 0.15);
+    border-color: var(--primary);
+    color: var(--primary);
+}
+
+.floating-action-bar .btn-quick.danger {
+    color: var(--error);
+    border-color: rgba(244, 67, 54, 0.3);
+}
+
+@media (max-width: 1023px) {
+    .floating-action-bar {
+        bottom: 80px;
+        width: 90%;
+        justify-content: space-between;
+    }
+}

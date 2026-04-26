@@ -99,6 +99,13 @@ document.addEventListener('DOMContentLoaded', () => {
     const scoreTeamName = document.getElementById('score-team-name');
     const scoreRivalName = document.getElementById('score-rival-name');
 
+    // 2.3 Registro Interactivo (v56.7)
+    let pendingScorerId = null;
+    const quickGoalFab = document.getElementById('quick-goal-fab');
+    const btnQuickNoAssistant = document.getElementById('btn-quick-no-assistant');
+    const btnQuickCancel = document.getElementById('btn-quick-cancel');
+    const quickGoalStatus = document.getElementById('quick-goal-status');
+
     const pitch = document.getElementById('football-pitch');
     const playerSelector = document.getElementById('player-selector-overlay');
     const selectorList = document.getElementById('selector-player-list');
@@ -314,6 +321,9 @@ document.addEventListener('DOMContentLoaded', () => {
     // Lógica de Vistas (checkLoginState removido)
 
     window.switchView = function(viewId) {
+        // Cancelar interactividad de goles si cambiamos de vista (v56.7)
+        if (typeof cancelQuickGoal === 'function') cancelQuickGoal();
+
         // Bloqueo de seguridad: Solo el Manager accede a gestión de equipo
         if (viewId === 'mi-equipo' && state.user?.role !== 'manager') {
             window.jbToast('Acceso denegado: Solo el Manager puede gestionar el club.', 'error');
@@ -1590,12 +1600,27 @@ document.addEventListener('DOMContentLoaded', () => {
                     <div class="slot-pos">${slot.pos}</div>
                 `;
 
-                // --- Interacción rápida en Partido en Vivo (v56.6) ---
+                // --- Interacción rápida en Partido en Vivo (v56.7 - Two Tap Flow) ---
                 const livePitch = document.getElementById('live-football-pitch');
                 if (targetPitch === livePitch) {
                     slotEl.style.cursor = 'pointer';
-                    slotEl.title = `Registrar gol de ${displayName}`;
-                    slotEl.onclick = () => openQuickGoalModal(player.id);
+                    
+                    // Clases dinámicas para el flujo interactivo
+                    slotEl.classList.remove('pending-scorer', 'pending-assistant');
+                    if (pendingScorerId === player.id) {
+                        slotEl.classList.add('pending-scorer');
+                        slotEl.title = "Cancelar selección de goleador";
+                    } else if (pendingScorerId) {
+                        slotEl.classList.add('pending-assistant');
+                        slotEl.title = `Seleccionar a ${displayName} como asistente`;
+                    } else {
+                        slotEl.title = `Registrar gol de ${displayName}`;
+                    }
+
+                    slotEl.onclick = (e) => {
+                        e.stopPropagation();
+                        handlePitchClick(player.id, displayName);
+                    };
                 }
 
             } else {
@@ -2074,6 +2099,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
 
         btnAddMatch.addEventListener('click', async () => {
+            cancelQuickGoal(); // Limpiar por si acaso
             await loadGlobalData();
             matchModal.style.display = 'flex';
             if (manualRivalContainer) manualRivalContainer.style.display = 'block';
@@ -2953,19 +2979,72 @@ document.addEventListener('DOMContentLoaded', () => {
         renderGoalSelection();
     }
 
-    function openQuickGoalModal(scorerId) {
-        selectedGoalSide = 'home'; 
-        goalModal.style.display = 'flex';
-        selectedGoalScorerId = scorerId;
-        selectedAssistantId = null;
-        renderGoalSelection();
+    function handlePitchClick(playerId, playerName) {
+        const livePitch = document.getElementById('live-football-pitch');
+        const forcedTactic = state.activeSession?.lineup || null;
         
-        // Scroll suave hacia los asistentes para agilizar la selección
-        setTimeout(() => {
-            if (assistantSelection) {
-                assistantSelection.scrollIntoView({ behavior: 'smooth', block: 'center' });
-            }
-        }, 150);
+        // Caso 1: No hay goleador seleccionado -> Seleccionamos Goleador
+        if (!pendingScorerId) {
+            pendingScorerId = playerId;
+            renderPitch(livePitch, forcedTactic);
+            showQuickGoalFab(playerName);
+            return;
+        }
+
+        // Caso 2: Click en el mismo jugador -> Cancelamos
+        if (pendingScorerId === playerId) {
+            cancelQuickGoal();
+            return;
+        }
+
+        // Caso 3: Click en otro jugador -> Es el asistente
+        confirmQuickGoal(pendingScorerId, playerId);
+    }
+
+    function showQuickGoalFab(scorerName) {
+        if (!quickGoalStatus) return;
+        quickGoalStatus.textContent = `GOL DE ${scorerName.toUpperCase()}... ¿ASISTENTE?`;
+        quickGoalFab.classList.add('active');
+        
+        btnQuickNoAssistant.onclick = () => confirmQuickGoal(pendingScorerId, null);
+        btnQuickCancel.onclick = () => cancelQuickGoal();
+    }
+
+    function cancelQuickGoal() {
+        pendingScorerId = null;
+        if (quickGoalFab) quickGoalFab.classList.remove('active');
+        const livePitch = document.getElementById('live-football-pitch');
+        if (livePitch) {
+            const forcedTactic = state.activeSession?.lineup || null;
+            renderPitch(livePitch, forcedTactic);
+        }
+    }
+
+    async function confirmQuickGoal(scorerId, assistantId) {
+        if (!currentMatch) return cancelQuickGoal();
+        
+        const scorerName = getPlayerNameById(scorerId);
+        const assistantName = assistantId ? getPlayerNameById(assistantId) : 'SIN ASISTENCIA';
+        
+        const msg = assistantId 
+            ? `¿Confirmar GOL de ${scorerName} con asistencia de ${assistantName}?`
+            : `¿Confirmar GOL de ${scorerName} SIN ASISTENCIA?`;
+
+        const ok = await window.jbConfirm(msg);
+        if (ok) {
+            // Registrar el evento (v56.7)
+            currentMatch.events.push({
+                type: 'goal',
+                side: 'home',
+                scorerId: scorerId,
+                assistantId: assistantId,
+                minute: 'Direct'
+            });
+            currentMatch.scoreHome++;
+            updateLiveMatchUI();
+            window.jbToast("Gol registrado con éxito", "success");
+        }
+        cancelQuickGoal();
     }
 
     function renderGoalSelection() {
