@@ -3784,22 +3784,67 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // Función auxiliar: Convierte una URL de imagen a Base64 (v57.2)
+    // Intenta múltiples proxies CORS como fallback
     async function imageUrlToBase64(url) {
-        try {
-            // Usar un proxy CORS para descargar la imagen como blob
-            const proxyUrl = `https://corsproxy.io/?${encodeURIComponent(url)}`;
-            const response = await fetch(proxyUrl);
-            const blob = await response.blob();
-            return new Promise((resolve) => {
-                const reader = new FileReader();
-                reader.onloadend = () => resolve(reader.result);
-                reader.onerror = () => resolve(null);
-                reader.readAsDataURL(blob);
-            });
-        } catch (err) {
-            console.warn('>>> [WARN] No se pudo convertir imagen a Base64:', url, err.message);
-            return null;
+        const proxies = [
+            (u) => `https://corsproxy.io/?${encodeURIComponent(u)}`,
+            (u) => `https://api.allorigins.win/raw?url=${encodeURIComponent(u)}`,
+            (u) => `https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(u)}`,
+        ];
+
+        for (let i = 0; i < proxies.length; i++) {
+            const proxyUrl = proxies[i](url);
+            try {
+                console.log(`>>> [B64] Intento ${i + 1}/${proxies.length} para: ${url.substring(0, 60)}...`);
+                const response = await fetch(proxyUrl);
+                if (!response.ok) {
+                    console.warn(`>>> [B64] Proxy ${i + 1} devolvió status ${response.status}`);
+                    continue;
+                }
+                const blob = await response.blob();
+                if (blob.size < 100) {
+                    console.warn(`>>> [B64] Proxy ${i + 1} devolvió blob muy pequeño (${blob.size} bytes)`);
+                    continue;
+                }
+                const b64 = await new Promise((resolve) => {
+                    const reader = new FileReader();
+                    reader.onloadend = () => resolve(reader.result);
+                    reader.onerror = () => resolve(null);
+                    reader.readAsDataURL(blob);
+                });
+                if (b64) {
+                    console.log(`>>> [B64] ✅ Éxito con proxy ${i + 1} (${blob.size} bytes)`);
+                    return b64;
+                }
+            } catch (err) {
+                console.warn(`>>> [B64] Proxy ${i + 1} falló:`, err.message);
+                continue;
+            }
         }
+
+        // Último recurso: intentar fetch directo (por si el servidor ya soporta CORS)
+        try {
+            console.log(`>>> [B64] Último recurso: fetch directo para ${url.substring(0, 60)}...`);
+            const response = await fetch(url);
+            if (response.ok) {
+                const blob = await response.blob();
+                const b64 = await new Promise((resolve) => {
+                    const reader = new FileReader();
+                    reader.onloadend = () => resolve(reader.result);
+                    reader.onerror = () => resolve(null);
+                    reader.readAsDataURL(blob);
+                });
+                if (b64) {
+                    console.log(`>>> [B64] ✅ Éxito con fetch directo (${blob.size} bytes)`);
+                    return b64;
+                }
+            }
+        } catch (err) {
+            console.warn(`>>> [B64] Fetch directo también falló:`, err.message);
+        }
+
+        console.error(`>>> [B64] ❌ FALLO TOTAL para: ${url}`);
+        return null;
     }
 
     async function exportMatchdayImage() {
