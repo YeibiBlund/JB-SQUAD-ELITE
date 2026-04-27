@@ -125,7 +125,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const miniPosterPreview = document.getElementById('mini-poster-preview');
 
     let matchdayPosterData = {
-        matches: [{ id: Date.now(), rivalId: 'manual', rivalName: '', time: '23:00' }]
+        matches: [{ id: Date.now(), rivalId: 'manual', rivalName: '', rivalCrest: null, time: '23:00' }]
     };
     let globalTeamsList = [];
 
@@ -3649,11 +3649,20 @@ document.addEventListener('DOMContentLoaded', () => {
             // Events
             const select = row.querySelector('.match-rival-select');
             select.onchange = (e) => {
-                matchdayPosterData.matches[idx].rivalId = e.target.value;
-                if (e.target.value !== 'manual') {
-                    const team = globalTeamsList.find(t => t.id === e.target.value);
-                    matchdayPosterData.matches[idx].rivalName = team ? team.name : '';
+                const val = e.target.value;
+                matchdayPosterData.matches[idx].rivalId = val;
+                
+                if (val !== 'manual') {
+                    // Buscar el equipo en la lista global (v57.1)
+                    const team = globalTeamsList.find(t => String(t.id) === String(val));
+                    if (team) {
+                        matchdayPosterData.matches[idx].rivalName = team.name;
+                        matchdayPosterData.matches[idx].rivalCrest = team.crest_url || null;
+                    }
+                } else {
+                    matchdayPosterData.matches[idx].rivalCrest = null;
                 }
+                
                 renderMatchdayConfig();
                 updatePosterPreview();
             };
@@ -3681,7 +3690,7 @@ document.addEventListener('DOMContentLoaded', () => {
             window.jbToast('Máximo 3 partidos por cartel.', 'warning');
             return;
         }
-        matchdayPosterData.matches.push({ id: Date.now(), rivalId: 'manual', rivalName: '', time: '23:00' });
+        matchdayPosterData.matches.push({ id: Date.now(), rivalId: 'manual', rivalName: '', rivalCrest: null, time: '23:00' });
         renderMatchdayConfig();
         updatePosterPreview();
     }
@@ -3716,16 +3725,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
         let matchesHtml = '';
         matchdayPosterData.matches.forEach(m => {
-            const team = m.rivalId !== 'manual' ? globalTeamsList.find(t => t.id === m.rivalId) : null;
-            const crestUrl = (team?.crest_url && team.crest_url.trim() !== '') ? team.crest_url : null;
+            const crestUrl = m.rivalCrest || null;
             const initials = (m.rivalName || 'R').substring(0, 2).toUpperCase();
 
             let rivalCrestHtml = '';
-            if (crestUrl) {
-                // Si hay URL, intentamos cargar la imagen con fallback a iniciales si falla (onerror)
-                rivalCrestHtml = `<img src="${crestUrl}" class="poster-crest-img" referrerpolicy="no-referrer" onerror="this.onerror=null; this.outerHTML='<div class=\\'poster-generic-crest-elite\\'>${initials}</div>'">`;
+            if (crestUrl && crestUrl.trim() !== '') {
+                // Usamos la misma lógica que en el marcador de partidos (v57.1)
+                rivalCrestHtml = `<img src="${crestUrl}" class="poster-crest-img" referrerpolicy="no-referrer" onerror="this.onerror=null; this.src='${neutralCrest}';">`;
             } else {
-                // Si no hay URL (o es manual), usamos el escudo de iniciales directamente
+                // Fallback a iniciales solo si no hay URL en absoluto
                 rivalCrestHtml = `<div class="poster-generic-crest-elite">${initials}</div>`;
             }
 
