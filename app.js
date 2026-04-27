@@ -129,8 +129,6 @@ document.addEventListener('DOMContentLoaded', () => {
     };
     let globalTeamsList = [];
 
-    let activeSlotId = null;
-
     // Listeners para Navegación del Calendario
     const btnCalPrev = document.getElementById('calendar-prev');
     const btnCalNext = document.getElementById('calendar-next');
