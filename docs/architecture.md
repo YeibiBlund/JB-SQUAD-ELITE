@@ -42,7 +42,9 @@ El flujo diario que transforma una intención de juego en estadísticas permanen
 ```mermaid
 graph LR
     A[Convocatoria] --> B[Votos de Asistencia]
-    B --> C[Cierre de Poll]
+    B --> B2{¿Auto-Voto?}
+    B2 --> C[Cierre de Poll]
+    B2 -.->|Always Available| B
     C --> D[Pizarra Táctica: Alineación]
     D --> E[Inicio de Jornada]
     E --> F[Partido en Vivo]
@@ -64,6 +66,7 @@ La base de datos PostgreSQL está optimizada para la integridad referencial y el
 
 ### 3.2. Núcleo Deportivo
 *   **`players`**: Almacena el perfil físico (posición, dorsal) y el objeto JSONB `stats`. 
+    *   *Always Available*: Campo booleano para el sistema de auto-asistencia (v58.0).
     *   *Nota Técnica*: El campo `stats` separa `official` de `friendly` para no contaminar el ranking competitivo.
 *   **`sessions`**: Almacena el array `matches`. Cada match es un objeto complejo que incluye:
     *   `rival`, `rivalCrest`, `scoreHome`, `scoreAway`, `events` (G/A), y `matchCondition` (Local/Visitante).
@@ -139,4 +142,5 @@ El sistema incluye un motor de diseño dinámico que transforma los datos de la 
 - **Resolución de Exportación**: Forzada a `1080x1350px` mediante contenedores con tamaños en píxeles duros para garantizar la consistencia en el recorte de las redes sociales.
 
 ---
-*Última actualización técnica: v57.0.0 - 27 de Abril de 2026*
+---
+*Última actualización técnica: v58.0.0 - 28 de Abril de 2026*

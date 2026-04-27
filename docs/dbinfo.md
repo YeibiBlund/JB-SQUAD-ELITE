@@ -1,6 +1,6 @@
 # 🗄️ JB-SQUAD ELITE — Database Schema (Supabase)
 
-> **Última actualización:** 26/04/2026 (v55.0)  
+> **Última actualización:** 28/04/2026 (v58.0)  
 > **Proveedor:** Supabase (PostgreSQL)  
 > **Nota:** Este esquema es solo de referencia. No ejecutar directamente.
 
@@ -102,6 +102,7 @@ CREATE TABLE public.players (
   mvp_count integer DEFAULT 0,
   photo_x integer DEFAULT 0,
   photo_y integer DEFAULT 0,
+  always_available boolean DEFAULT false,
   CONSTRAINT players_pkey PRIMARY KEY (id),
   CONSTRAINT players_team_id_fkey FOREIGN KEY (team_id) REFERENCES public.teams(id),
   CONSTRAINT players_user_id_fkey FOREIGN KEY (user_id) REFERENCES auth.users(id)

@@ -18,7 +18,7 @@ async function loadTeamData() {
         if (state.user && state.user.auth) {
             const { data: myPlayer } = await supabase
                 .from('players')
-                .select('id, user_id, team_id, name, console_id, avatar_id, primary_pos, secondary_pos, dorsal, photo_url, photo_scale, photo_x, photo_y, stats')
+                .select('id, user_id, team_id, name, console_id, avatar_id, primary_pos, secondary_pos, dorsal, photo_url, photo_scale, photo_x, photo_y, stats, always_available')
                 .eq('user_id', state.user.auth.id)
                 .maybeSingle();
 
@@ -45,7 +45,8 @@ async function loadTeamData() {
                     photo_scale: myPlayer.photo_scale,
                     photo_x: myPlayer.photo_x,
                     photo_y: myPlayer.photo_y,
-                    stats: myPlayer.stats
+                    stats: myPlayer.stats,
+                    alwaysAvailable: myPlayer.always_available
                 };
                 // Añadir a la lista general para que las vistas funcionen
                 window.state.players = [window.state.userPlayer];
@@ -57,7 +58,7 @@ async function loadTeamData() {
             // 1. Cargar Jugadores (Excluyendo al usuario si ya se cargó para evitar duplicados)
             const { data: dbPlayers } = await supabase
                 .from('players')
-                .select('id, user_id, name, console_id, avatar_id, primary_pos, secondary_pos, dorsal, photo_url, photo_scale, photo_x, photo_y, stats')
+                .select('id, user_id, name, console_id, avatar_id, primary_pos, secondary_pos, dorsal, photo_url, photo_scale, photo_x, photo_y, stats, always_available')
                 .eq('team_id', state.team.id)
                 .neq('user_id', state.user.auth.id);
 
@@ -76,7 +77,8 @@ async function loadTeamData() {
                     photo_scale: p.photo_scale,
                     photo_x: p.photo_x,
                     photo_y: p.photo_y,
-                    stats: p.stats
+                    stats: p.stats,
+                    alwaysAvailable: p.always_available
                 }));
                 window.state.players = [...window.state.players, ...otherPlayers];
             }
@@ -348,7 +350,8 @@ async function savePlayerCloud(player) {
             photo_scale: player.photo_scale,
             photo_x: player.photo_x,
             photo_y: player.photo_y,
-            stats: player.stats || { official: { goals: 0, assists: 0, matches: 0, wins: 0 }, friendly: { goals: 0, assists: 0, matches: 0, wins: 0 } }
+            stats: player.stats || { official: { goals: 0, assists: 0, matches: 0, wins: 0 }, friendly: { goals: 0, assists: 0, matches: 0, wins: 0 } },
+            always_available: player.alwaysAvailable || false
         };
 
         if (player.id && player.id.toString().includes('-')) {

@@ -3515,6 +3515,62 @@ document.addEventListener('DOMContentLoaded', () => {
                 attendanceContainer.style.display = 'block';
                 state.viewingPlayerForCalendar = player;
                 currentCalendarDate = new Date(); // Resetear al mes actual al abrir nuevo perfil
+
+                // --- SECCIÓN SIEMPRE DISPONIBLE (v58.0) ---
+                let alwaysAvailableHTML = '';
+                if (isSelf) {
+                    alwaysAvailableHTML = `
+                        <div class="always-available-wrapper fade-in">
+                            <div class="always-available-info">
+                                <span class="always-available-label">SIEMPRE DISPONIBLE</span>
+                                <span class="always-available-desc">Votarás "SÍ" automáticamente en cada convocatoria.</span>
+                            </div>
+                            <label class="jb-switch">
+                                <input type="checkbox" ${player.alwaysAvailable ? 'checked' : ''} onchange="window.toggleAlwaysAvailable(this.checked)">
+                                <span class="jb-slider"></span>
+                            </label>
+                        </div>
+                    `;
+                } else if (isAdmin && player.alwaysAvailable) {
+                    alwaysAvailableHTML = `
+                        <div class="always-available-wrapper fade-in" style="background: rgba(76, 175, 80, 0.05); border-color: rgba(76, 175, 80, 0.1);">
+                            <div class="always-available-info">
+                                <span class="always-available-label" style="color: var(--success);">AUTO-ASISTENCIA ACTIVA</span>
+                                <span class="always-available-desc">Este jugador tiene activado el voto automático.</span>
+                            </div>
+                            <div class="always-available-status-badge">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                                <span>ACTIVO</span>
+                            </div>
+                        </div>
+                    `;
+                }
+
+                attendanceContainer.innerHTML = `
+                    ${alwaysAvailableHTML}
+                    <div id="calendar-header" class="calendar-header">
+                        <button class="calendar-nav" id="prev-month">&lt;</button>
+                        <h2 id="calendar-month-label" class="calendar-month-label">MES AÑO</h2>
+                        <button class="calendar-nav" id="next-month">&gt;</button>
+                    </div>
+                    <div class="calendar-weekdays">
+                        <div>LU</div><div>MA</div><div>MI</div><div>JU</div><div>VI</div><div>SÁ</div><div>DO</div>
+                    </div>
+                    <div id="calendar-days-grid" class="calendar-days-grid">
+                        <!-- Días inyectados por JS -->
+                    </div>
+                `;
+
+                // Re-vincular botones del calendario (v58.0)
+                document.getElementById('prev-month').onclick = () => {
+                    currentCalendarDate.setMonth(currentCalendarDate.getMonth() - 1);
+                    window.renderPlayerCalendar(player);
+                };
+                document.getElementById('next-month').onclick = () => {
+                    currentCalendarDate.setMonth(currentCalendarDate.getMonth() + 1);
+                    window.renderPlayerCalendar(player);
+                };
+
                 window.renderPlayerCalendar(player);
             } else {
                 attendanceContainer.style.display = 'none';
@@ -4937,14 +4993,13 @@ document.addEventListener('DOMContentLoaded', () => {
                      onclick="window.handleEditGlobalTeam('${t.id}', '${t.name}')"
                      style="padding: 15px 20px; display: flex; align-items: center; gap: 18px; border: 1px solid rgba(255,255,255,0.03); cursor: pointer; transition: 0.3s; background: rgba(255,255,255,0.02); border-radius: 12px; min-height: 90px;">
                     
-                    <!-- Escudo Premium: Círculo Blanco con Sombra (Tamaño XL) -->
-                    <div style="width: 60px; height: 60px; display: flex; align-items: center; justify-content: center; background: #fff; border-radius: 50%; padding: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.5); flex-shrink: 0; border: 2px solid rgba(255,255,255,0.15);">
-                        <img src="${t.crest_url || neutralCrest}" style="width: 100%; height: 100%; object-fit: contain; filter: drop-shadow(0 1px 2px rgba(0,0,0,0.1));">
+                    <!-- Escudo Premium: Imagen maximizada dentro del círculo -->
+                    <div style="width: 60px; height: 60px; display: flex; align-items: center; justify-content: center; background: #fff; border-radius: 50%; padding: 3px; box-shadow: 0 4px 12px rgba(0,0,0,0.5); flex-shrink: 0; border: 2px solid rgba(255,255,255,0.15); overflow: hidden;">
+                        <img src="${t.crest_url || neutralCrest}" style="width: 100%; height: 100%; object-fit: contain; filter: drop-shadow(0 1px 1px rgba(0,0,0,0.1));">
                     </div>
 
-                    <div style="flex: 1;">
-                        <div style="font-size: 0.85rem; font-weight: 900; color: #fff; letter-spacing: 0.5px; text-shadow: 0 1px 2px rgba(0,0,0,0.5);">${t.name.toUpperCase()}</div>
-                        <div style="font-size: 0.6rem; color: var(--primary); text-transform: uppercase; letter-spacing: 2px; font-weight: 700; opacity: 0.9;">RIVAL ÉLITE</div>
+                    <div style="flex: 1; display: flex; align-items: center;">
+                        <div style="font-size: 0.9rem; font-weight: 900; color: #fff; letter-spacing: 0.5px; text-shadow: 0 1px 2px rgba(0,0,0,0.5);">${t.name.toUpperCase()}</div>
                     </div>
 
                     <div class="edit-icon" style="opacity: 0; transition: 0.3s; color: var(--primary);">
@@ -5152,6 +5207,24 @@ document.addEventListener('DOMContentLoaded', () => {
         } else {
             state.activePoll = data;
             window.jbToast('¡Convocatoria creada!', 'success');
+            
+            // --- AUTO-VOTO PARA JUGADORES "SIEMPRE DISPONIBLES" (v58.0) ---
+            try {
+                const availablePlayers = state.players.filter(p => p.alwaysAvailable && p.user_id);
+                if (availablePlayers.length > 0) {
+                    const autoVotes = availablePlayers.map(p => ({
+                        poll_id: data.id,
+                        user_id: p.user_id,
+                        vote: 'yes',
+                        voted_at: new Date().toISOString()
+                    }));
+                    await supabase.from('availability_votes').upsert(autoVotes, { onConflict: 'poll_id,user_id' });
+                    console.log(`>>> [CONVOCATORIAS] Auto-votos procesados: ${availablePlayers.length}`);
+                }
+            } catch (vErr) {
+                console.error(">>> [ERROR] Auto-voto falló:", vErr);
+            }
+
             sharePollWhatsApp(data);
             renderAvailabilityPanel();
         }
@@ -6287,6 +6360,38 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
         console.log("\n🎉 Backfill completado. Recarga la página para ver los porcentajes actualizados.");
+    };
+
+    // --- LÓGICA SIEMPRE DISPONIBLE (v58.0) ---
+    window.toggleAlwaysAvailable = async (status) => {
+        if (!state.userPlayer) return;
+        
+        window.jbLoading.show(status ? 'Activando auto-asistencia...' : 'Desactivando auto-asistencia...');
+        try {
+            const { error } = await supabase
+                .from('players')
+                .update({ always_available: status })
+                .eq('id', state.userPlayer.id);
+
+            if (error) throw error;
+
+            // Actualizar estado local
+            state.userPlayer.alwaysAvailable = status;
+            const pIndex = state.players.findIndex(p => p.id === state.userPlayer.id);
+            if (pIndex !== -1) state.players[pIndex].alwaysAvailable = status;
+
+            window.jbToast(status ? 'Auto-asistencia ACTIVADA' : 'Auto-asistencia DESACTIVADA', 'success');
+            
+            // Re-renderizar perfil para ver el cambio
+            renderPlayerProfileDetail(state.userPlayer);
+            
+        } catch (err) {
+            console.error(">>> [ERROR] toggleAlwaysAvailable:", err);
+            window.jbToast('Error al actualizar preferencia', 'error');
+            // Revertir el checkbox visualmente si falla (esto se hace re-renderizando)
+            renderPlayerProfileDetail(state.userPlayer);
+        }
+        window.jbLoading.hide();
     };
 
 });

@@ -1,3 +1,15 @@
+## [v58.0] - 2026-04-28 | 00:05
+### Añadido (Auto-Asistencia "Siempre Disponible")
+- **Switch Premium de Auto-Voto**: Implementado un control elegante en "Mi Perfil" que permite a los jugadores automatizar su asistencia.
+- **Lógica de Inyección Automática**: Al crear una nueva convocatoria, el sistema detecta a los jugadores con auto-asistencia activa e inserta su voto "SÍ" automáticamente en la base de datos.
+- **Privacidad y Visibilidad**: El estado de auto-asistencia es privado para cada jugador, pero visible para los managers en la ficha técnica para facilitar la planificación nocturna.
+- **Sincronización Cloud**: Integrado el nuevo campo `always_available` en el motor de persistencia de Supabase.
+
+### Mejorado (Interfaz de Rivales y Escudos)
+- **Escudos Elite**: Se ha maximizado el tamaño de los escudos de los equipos rivales reduciendo el padding a 3px y manteniéndolos sobre un fondo blanco circular premium.
+- **Limpieza de Tarjetas**: Eliminado el texto "RIVAL ÉLITE" de las tarjetas de equipos para priorizar la identidad visual del escudo y el nombre.
+- **Tipografía**: Ajustado el tamaño del nombre del equipo rival a `0.9rem` con alineación vertical perfecta.
+
 ## [v57.2] - 2026-04-27 | 20:00
 ### Añadido
 - **Gestión Global de Ligas**: Nueva pestaña "LIGAS" en Mi Equipo protegida por código secreto.
