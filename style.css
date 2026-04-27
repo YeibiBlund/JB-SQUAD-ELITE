@@ -3644,16 +3644,15 @@ body.editing-tactic .tactical-slot {
     background: rgba(220, 38, 38, 0.1);
     color: #dc2626;
     border: 1px solid rgba(220, 38, 38, 0.3);
-    padding: 4px 10px;
-    border-radius: 15px;
-    font-size: 0.6rem;
-    font-weight: 900;
-    text-transform: uppercase;
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
     cursor: pointer;
     transition: all 0.3s ease;
     display: flex;
     align-items: center;
-    gap: 4px;
+    justify-content: center;
+    z-index: 10;
 }
 
 .poll-cancel-absolute:hover {
