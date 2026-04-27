@@ -1,0 +1,2 @@
+# Proxy para escudos de VPN (evita CORS) - v57.2
+/vpn-proxy/*  https://www.virtualpronetwork.com/:splat  200

@@ -3784,10 +3784,19 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // Función auxiliar: Convierte una URL de imagen a Base64 (v57.2)
+    // Usa el proxy de Netlify para evitar CORS con virtualpronetwork.com
     async function imageUrlToBase64(url) {
         try {
-            console.log(`>>> [B64] Descargando: ${url.substring(0, 80)}...`);
-            const response = await fetch(url);
+            // Reescribir URLs de VPN a través del proxy de Netlify (mismo dominio = sin CORS)
+            let fetchUrl = url;
+            if (url.includes('virtualpronetwork.com')) {
+                fetchUrl = url.replace('https://www.virtualpronetwork.com', '/vpn-proxy');
+                console.log(`>>> [B64] Proxy Netlify: ${fetchUrl.substring(0, 80)}...`);
+            } else {
+                console.log(`>>> [B64] Descarga directa: ${url.substring(0, 80)}...`);
+            }
+
+            const response = await fetch(fetchUrl);
             if (!response.ok) {
                 console.warn(`>>> [B64] Error HTTP ${response.status} para: ${url}`);
                 return null;
