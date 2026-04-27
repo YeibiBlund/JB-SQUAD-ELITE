@@ -5807,3 +5807,16 @@ body.editing-tactic .tactical-slot {
     color: var(--primary);
     box-shadow: 0 0 30px var(--primary-glow);
 }
+
+/* Layout del Creador de Matchday (v57.0) */
+#view-matchday-creator.active-view {
+    display: flex !important;
+    flex-direction: column;
+    height: 100%;
+    overflow-y: auto;
+    padding: 0 15px 100px 15px;
+}
+
+#view-matchday-creator h1 {
+    margin-bottom: 0;
+}

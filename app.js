@@ -351,10 +351,16 @@ document.addEventListener('DOMContentLoaded', () => {
             viewId = 'home';
         }
 
-        views.forEach(v => v.classList.remove('active-view'));
+        views.forEach(v => {
+            v.classList.remove('active-view');
+            v.style.display = 'none'; // Asegurar ocultación total (v57.0)
+        });
+
         const targetView = document.getElementById(`view-${viewId}`);
         if (targetView) {
             targetView.classList.add('active-view');
+            targetView.style.display = (viewId === 'tacticas' || viewId === 'matchday-creator') ? 'flex' : 'block';
+            
             // Asegurar que si es el contenedor principal, se muestre sobre el !important del CSS inicial
             const mainApp = document.getElementById('main-app');
             if (mainApp) mainApp.style.setProperty('display', 'flex', 'important');
