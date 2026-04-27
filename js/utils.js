@@ -108,6 +108,48 @@ window.jbConfirm = (message) => {
 };
 
 /**
+ * Sistema de Entrada de Texto (v57.2).
+ */
+window.jbInput = (title, message, type = 'text') => {
+    return new Promise((resolve) => {
+        const dialog = document.getElementById('jb-global-dialog');
+        const titleEl = document.getElementById('jb-dialog-title');
+        const msgEl = document.getElementById('jb-dialog-message');
+        const inputEl = document.getElementById('jb-dialog-input');
+        const btnConfirm = document.getElementById('jb-dialog-btn-confirm');
+        const btnCancel = document.getElementById('jb-dialog-btn-cancel');
+
+        if (!dialog) return resolve(prompt(message)); // Fallback
+
+        titleEl.textContent = title;
+        msgEl.innerText = message;
+        inputEl.style.display = 'block';
+        inputEl.type = type;
+        inputEl.value = '';
+        dialog.style.display = 'flex';
+        inputEl.focus();
+
+        const closeDialog = (result) => {
+            const val = inputEl.value;
+            dialog.style.display = 'none';
+            inputEl.style.display = 'none';
+            titleEl.textContent = 'ATENCIÓN'; // Reset title
+            btnConfirm.onclick = null;
+            btnCancel.onclick = null;
+            resolve(result ? val : null);
+        };
+
+        btnConfirm.onclick = () => closeDialog(true);
+        btnCancel.onclick = () => closeDialog(false);
+        
+        inputEl.onkeyup = (e) => {
+            if (e.key === 'Enter') closeDialog(true);
+            if (e.key === 'Escape') closeDialog(false);
+        };
+    });
+};
+
+/**
  * Reemplazo de window.alert nativo.
  */
 window.jbAlert = (message) => {

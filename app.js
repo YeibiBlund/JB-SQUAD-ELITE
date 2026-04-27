@@ -193,7 +193,8 @@ document.addEventListener('DOMContentLoaded', () => {
     // Listeners for Elite Tabs (Mi Equipo)
     // Listeners for Elite Tabs (Mi Equipo)
     const teamTabs = document.querySelectorAll('#team-view-tabs .elite-tab-btn');
-    const teamPanels = ['team-roster-panel', 'team-requests-panel', 'team-settings-panel'];
+    const teamPanels = ['team-roster-panel', 'team-requests-panel', 'team-settings-panel', 'team-global-panel'];
+    let isGlobalUnlocked = false; // Estado de desbloqueo de la sección Ligas (v57.2)
     
     teamTabs.forEach(btn => {
         btn.addEventListener('click', () => {
@@ -201,6 +202,17 @@ document.addEventListener('DOMContentLoaded', () => {
             btn.classList.add('active');
             const targetId = btn.getAttribute('data-target');
             
+            // --- PROTECCIÓN SECCIÓN LIGAS (v57.2) ---
+            if (targetId === 'team-global-panel' && !isGlobalUnlocked) {
+                // Volvemos a la pestaña anterior visualmente hasta que se desbloquee
+                btn.classList.remove('active');
+                const prevBtn = Array.from(teamTabs).find(t => t.getAttribute('data-target') === 'team-roster-panel');
+                if (prevBtn) prevBtn.classList.add('active');
+                
+                unlockGlobalMgmt();
+                return;
+            }
+
             // Ocultar todos los paneles y mostrar el seleccionado
             teamPanels.forEach(pid => {
                 const panel = document.getElementById(pid);
@@ -210,6 +222,11 @@ document.addEventListener('DOMContentLoaded', () => {
             // Si entramos en ajustes, cargar datos actuales en el formulario (v49.0)
             if (targetId === 'team-settings-panel' && typeof window.loadTeamSettingsIntoForm === 'function') {
                 window.loadTeamSettingsIntoForm();
+            }
+            
+            // Si entramos en Ligas y está desbloqueado, cargar datos (v57.2)
+            if (targetId === 'team-global-panel' && isGlobalUnlocked) {
+                renderGlobalMgmt();
             }
         });
     });
@@ -4813,6 +4830,175 @@ document.addEventListener('DOMContentLoaded', () => {
             window.jbToast('¡Escudo actualizado!', 'success');
         }
         updateTeamHeader();
+    }
+
+    /* ==========================================================================
+       GESTIÓN GLOBAL DE LIGAS Y EQUIPOS (v57.2)
+       ========================================================================== */
+
+    async function unlockGlobalMgmt() {
+        const input = await window.jbInput("🔐 ACCESO ADMINISTRADOR", "Introduzca el código de gestión global:", "password");
+        if (!input) return;
+
+        window.jbLoading.show('Verificando código...');
+        const realCode = await fetchGlobalConfig('global_mgmt_code');
+        window.jbLoading.hide();
+
+        if (realCode && input === realCode) {
+            isGlobalUnlocked = true;
+            document.getElementById('global-locked-state').style.display = 'none';
+            document.getElementById('global-unlocked-state').style.display = 'block';
+            
+            // Simular clic en la pestaña para que se active visualmente
+            const tab = Array.from(teamTabs).find(t => t.getAttribute('data-target') === 'team-global-panel');
+            if (tab) tab.click();
+            
+            window.jbToast('✅ Acceso concedido.', 'success');
+            renderGlobalMgmt();
+        } else {
+            window.jbToast('❌ Código incorrecto.', 'error');
+        }
+    }
+
+    async function renderGlobalMgmt() {
+        if (!isGlobalUnlocked) return;
+        await renderGlobalLeagues();
+        await renderGlobalTeams();
+
+        // Setup Listeners de los botones si no existen
+        document.getElementById('btn-unlock-global').onclick = unlockGlobalMgmt;
+        document.getElementById('btn-add-global-league').onclick = handleAddGlobalLeague;
+        document.getElementById('btn-add-global-team').onclick = handleAddGlobalTeam;
+        document.getElementById('mgmt-league-filter').onchange = renderGlobalTeams;
+    }
+
+    async function renderGlobalLeagues() {
+        const list = document.getElementById('global-leagues-list');
+        const selectFilter = document.getElementById('mgmt-league-filter');
+        if (!list) return;
+
+        const { data: leagues } = await supabase.from('global_leagues').select('*').order('name');
+        
+        if (leagues) {
+            list.innerHTML = leagues.map(l => `
+                <div class="card-elite" style="padding: 10px; text-align: center; border: 1px solid rgba(255,255,255,0.05);">
+                    <img src="${l.logo_url || neutralCrest}" style="width: 40px; height: 40px; object-fit: contain; margin-bottom: 5px;">
+                    <div style="font-size: 0.65rem; font-weight: 800; color: #fff;">${l.name.toUpperCase()}</div>
+                </div>
+            `).join('');
+
+            // Actualizar el filtro de equipos
+            const currentFilter = selectFilter.value;
+            selectFilter.innerHTML = '<option value="">TODAS LAS LIGAS</option>' + 
+                leagues.map(l => `<option value="${l.id}">${l.name.toUpperCase()}</option>`).join('');
+            selectFilter.value = currentFilter;
+        }
+    }
+
+    async function renderGlobalTeams() {
+        const list = document.getElementById('global-teams-list');
+        const leagueId = document.getElementById('mgmt-league-filter').value;
+        if (!list) return;
+
+        list.innerHTML = '<div style="grid-column: 1/-1; text-align: center; padding: 20px;">Cargando equipos...</div>';
+
+        let query = supabase.from('global_teams').select('*').order('name');
+        
+        if (leagueId) {
+            // Si hay filtro, usamos la tabla intermedia
+            const { data: linkData } = await supabase.from('league_teams').select('team_id').eq('league_id', leagueId);
+            const teamIds = linkData ? linkData.map(d => d.team_id) : [];
+            query = query.in('id', teamIds);
+        }
+
+        const { data: teams } = await query;
+        
+        if (teams && teams.length > 0) {
+            list.innerHTML = teams.map(t => `
+                <div class="card-elite" style="padding: 12px; display: flex; align-items: center; gap: 15px; border: 1px solid rgba(255,255,255,0.05);">
+                    <img src="${t.crest_url || neutralCrest}" style="width: 35px; height: 35px; object-fit: contain;">
+                    <div style="font-size: 0.75rem; font-weight: 700; color: #fff;">${t.name.toUpperCase()}</div>
+                </div>
+            `).join('');
+        } else {
+            list.innerHTML = '<div style="grid-column: 1/-1; text-align: center; padding: 20px; color: var(--text-muted); font-size: 0.7rem;">No hay equipos en esta liga.</div>';
+        }
+    }
+
+    async function handleAddGlobalLeague() {
+        const name = await window.jbInput("🏆 NUEVA LIGA", "Nombre de la competición:");
+        if (!name) return;
+
+        // Crear input de archivo temporal para el logo
+        const fileInput = document.createElement('input');
+        fileInput.type = 'file';
+        fileInput.accept = 'image/*';
+        fileInput.onchange = async (e) => {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            window.jbLoading.show('Procesando logo...');
+            const compressedBlob = await compressImage(file, 200); // Logo pequeño
+            const reader = new FileReader();
+            reader.onload = async (event) => {
+                const base64 = event.target.result;
+                const { error } = await addGlobalLeague(name, base64);
+                window.jbLoading.hide();
+
+                if (error) window.jbToast(error, 'error');
+                else {
+                    window.jbToast('¡Liga añadida!', 'success');
+                    renderGlobalMgmt();
+                }
+            };
+            reader.readAsDataURL(compressedBlob);
+        };
+        fileInput.click();
+    }
+
+    async function handleAddGlobalTeam() {
+        const name = await window.jbInput("🛡️ NUEVO EQUIPO", "Nombre del equipo:");
+        if (!name) return;
+
+        // Pedir liga (v57.2)
+        const { data: leagues } = await supabase.from('global_leagues').select('*').order('name');
+        if (!leagues || leagues.length === 0) {
+            window.jbToast('Crea primero una liga para asociar el equipo.', 'error');
+            return;
+        }
+
+        // Simular un selector de liga simple con jbInput (usando prompt para simplicidad o un modal pequeño si fuera necesario)
+        // Pero vamos a hacerlo con el filtro actual si hay uno seleccionado, o pedir ID
+        const leagueId = document.getElementById('mgmt-league-filter').value;
+        if (!leagueId) {
+            window.jbToast('Selecciona primero una liga en el filtro para añadir el equipo en ella.', 'info');
+            return;
+        }
+
+        const fileInput = document.createElement('input');
+        fileInput.type = 'file';
+        fileInput.accept = 'image/*';
+        fileInput.onchange = async (e) => {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            window.jbLoading.show('Optimizando escudo...');
+            const compressedBlob = await compressImage(file, 250); // Escudo ligero
+            const reader = new FileReader();
+            reader.onload = async (event) => {
+                const base64 = event.target.result;
+                const { error } = await addGlobalTeam(name, base64, leagueId);
+                window.jbLoading.hide();
+
+                if (error) window.jbToast(error, 'error');
+                else {
+                    window.jbToast('¡Equipo añadido con éxito!', 'success');
+                    renderGlobalMgmt();
+                }
+            };
+            reader.readAsDataURL(compressedBlob);
+        };
+        fileInput.click();
     }
 
     /* ==========================================================================

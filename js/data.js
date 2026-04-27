@@ -184,6 +184,72 @@ async function fetchUnlinkedPolls() {
 }
 
 /**
+ * Obtiene un valor de configuración del sistema (v57.2).
+ */
+async function fetchGlobalConfig(key) {
+    if (!supabase) return null;
+    try {
+        const { data, error } = await supabase
+            .from('system_config')
+            .select('value')
+            .eq('key', key)
+            .single();
+        if (error) throw error;
+        return data ? data.value : null;
+    } catch (err) {
+        console.error(`>>> [ERROR] fetchGlobalConfig(${key}):`, err.message);
+        return null;
+    }
+}
+
+/**
+ * Añade una nueva liga a la base de datos global (v57.2).
+ */
+async function addGlobalLeague(name, logoBase64) {
+    if (!supabase) return { error: 'No hay conexión a DB' };
+    try {
+        const { data, error } = await supabase
+            .from('global_leagues')
+            .insert({ name, logo_url: logoBase64 })
+            .select()
+            .single();
+        if (error) throw error;
+        return { data };
+    } catch (err) {
+        return { error: err.message };
+    }
+}
+
+/**
+ * Añade un nuevo equipo y lo vincula a una liga (v57.2).
+ */
+async function addGlobalTeam(name, crestBase64, leagueId) {
+    if (!supabase) return { error: 'No hay conexión a DB' };
+    try {
+        // 1. Crear el equipo global
+        const { data: team, error: tErr } = await supabase
+            .from('global_teams')
+            .insert({ name, crest_url: crestBase64 })
+            .select()
+            .single();
+        
+        if (tErr) throw tErr;
+
+        // 2. Vincularlo a la liga si se proporcionó una
+        if (leagueId) {
+            const { error: lErr } = await supabase
+                .from('league_teams')
+                .insert({ league_id: leagueId, team_id: team.id });
+            if (lErr) throw lErr;
+        }
+
+        return { data: team };
+    } catch (err) {
+        return { error: err.message };
+    }
+}
+
+/**
  * Obtiene la lista de equipos globales (rivales) para el generador de carteles.
  */
 async function fetchGlobalTeams() {

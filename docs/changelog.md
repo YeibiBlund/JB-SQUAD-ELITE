@@ -1,3 +1,10 @@
+## [v57.2] - 2026-04-27 | 20:00
+### Añadido
+- **Gestión Global de Ligas**: Nueva pestaña "LIGAS" en Mi Equipo protegida por código secreto.
+- **Sistema jbInput**: Nuevo modal interactivo para capturar texto con diseño Élite.
+- **Optimización de Imágenes**: Motor de compresión integrado para escudos de equipos rivales (máx 250px).
+- **Tablas de Configuración**: Soporte para códigos de administración variables en la DB.
+
 ## [v57.0.0] - 2026-04-27 | 16:56
 ### Añadido (Generador de Carteles Matchday)
 - **Nuevo Creador de Matchday**: Herramienta premium para generar carteles de partidos en formato 1080x1350 (4:5) optimizados para redes sociales.

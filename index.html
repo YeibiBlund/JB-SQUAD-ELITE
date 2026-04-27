@@ -915,7 +915,54 @@
                     <button class="elite-tab-btn" data-target="team-requests-panel">
                         SOLICITUDES <span id="requests-tab-badge" style="display: none; background: var(--primary); color: #000; padding: 2px 6px; border-radius: 10px; font-size: 0.6rem; margin-left: 5px;">0</span>
                     </button>
+                    <button class="elite-tab-btn" data-target="team-global-panel">LIGAS</button>
                     <button class="elite-tab-btn" data-target="team-settings-panel">AJUSTES</button>
+                </div>
+
+                <!-- Panel de Gestión de Ligas y Rivales (v57.2) -->
+                <div id="team-global-panel" class="card-elite fade-in" style="display: none; border: 1px solid var(--glass-border); padding: 25px; margin-bottom: 20px; background: rgba(255,255,255,0.02);">
+                    <div class="panel-header" style="margin-bottom: 25px; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 12px; display: flex; justify-content: space-between; align-items: center;">
+                        <h2 style="font-size: 1.1rem; letter-spacing: 1px; color: var(--primary); font-weight: 800;">GESTIÓN DE LIGAS Y RIVALES</h2>
+                        <span style="font-size: 0.6rem; color: var(--text-muted); text-transform: uppercase;">MODO ADMINISTRADOR</span>
+                    </div>
+
+                    <div id="global-locked-state" style="text-align: center; padding: 40px 20px;">
+                        <div style="font-size: 3rem; margin-bottom: 20px;">🔐</div>
+                        <h3 style="color: #fff; margin-bottom: 10px;">Acceso Protegido</h3>
+                        <p style="color: var(--text-muted); font-size: 0.8rem; margin-bottom: 25px;">Esta sección es solo para la administración global de la plataforma.</p>
+                        <button id="btn-unlock-global" class="btn-gold" style="padding: 12px 30px;">INTRODUCIR CÓDIGO</button>
+                    </div>
+
+                    <div id="global-unlocked-state" style="display: none;">
+                        <!-- Gestión de Ligas -->
+                        <div class="mgmt-section" style="margin-bottom: 30px;">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                                <h3 style="font-size: 0.9rem; color: var(--primary);">🏆 COMPETICIONES</h3>
+                                <button id="btn-add-global-league" class="btn-gold" style="padding: 5px 15px; font-size: 0.7rem;">+ AÑADIR LIGA</button>
+                            </div>
+                            <div id="global-leagues-list" class="grid-list" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 10px;">
+                                <!-- Cargado dinámicamente -->
+                            </div>
+                        </div>
+
+                        <hr style="border: 0; border-top: 1px solid rgba(255,255,255,0.05); margin: 30px 0;">
+
+                        <!-- Gestión de Equipos -->
+                        <div class="mgmt-section">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                                <h3 style="font-size: 0.9rem; color: var(--primary);">🛡️ EQUIPOS RIVALES</h3>
+                                <div style="display: flex; gap: 10px;">
+                                    <select id="mgmt-league-filter" style="padding: 5px 10px; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); color: #fff; border-radius: 4px; font-size: 0.7rem;">
+                                        <option value="">TODAS LAS LIGAS</option>
+                                    </select>
+                                    <button id="btn-add-global-team" class="btn-gold" style="padding: 5px 15px; font-size: 0.7rem;">+ AÑADIR EQUIPO</button>
+                                </div>
+                            </div>
+                            <div id="global-teams-list" class="grid-list" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 12px;">
+                                <!-- Cargado dinámicamente -->
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
                 <!-- Panel de Ajustes del Club (v49.0) -->
@@ -1299,6 +1346,7 @@
             <div style="margin-bottom: 20px;">
                 <h2 id="jb-dialog-title" style="color: var(--primary); margin-bottom: 10px; font-size: 1.3rem; text-shadow: 0 0 10px var(--primary-glow);">ATENCIÓN</h2>
                 <p id="jb-dialog-message" style="color: #fff; font-size: 0.95rem; line-height: 1.4;"></p>
+                <input id="jb-dialog-input" type="text" style="display: none; width: 100%; margin-top: 20px; padding: 12px; background: rgba(0,0,0,0.3); border: 1px solid var(--primary); color: #fff; border-radius: 8px; outline: none; text-align: center;">
             </div>
             <div style="display: flex; justify-content: center; gap: 15px;">
                 <button id="jb-dialog-btn-cancel" class="btn-cancel" style="padding: 10px 20px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.2); background: rgba(255,255,255,0.05); color: #fff; cursor: pointer; font-weight: 800; transition: all 0.2s;">CANCELAR</button>
