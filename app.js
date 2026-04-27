@@ -4836,7 +4836,7 @@ document.addEventListener('DOMContentLoaded', () => {
        GESTIÓN GLOBAL DE LIGAS Y EQUIPOS (v57.2)
        ========================================================================== */
 
-    async function unlockGlobalMgmt() {
+    window.unlockGlobalMgmt = async function() {
         const input = await window.jbInput("🔐 ACCESO ADMINISTRADOR", "Introduzca el código de gestión global:", "password");
         if (!input) return;
 
@@ -4854,25 +4854,25 @@ document.addEventListener('DOMContentLoaded', () => {
             if (tab) tab.click();
             
             window.jbToast('✅ Acceso concedido.', 'success');
-            renderGlobalMgmt();
+            window.renderGlobalMgmt();
         } else {
             window.jbToast('❌ Código incorrecto.', 'error');
         }
     }
 
-    async function renderGlobalMgmt() {
+    window.renderGlobalMgmt = async function() {
         if (!isGlobalUnlocked) return;
-        await renderGlobalLeagues();
-        await renderGlobalTeams();
+        await window.renderGlobalLeagues();
+        await window.renderGlobalTeams();
 
         // Setup Listeners de los botones si no existen
-        document.getElementById('btn-unlock-global').onclick = unlockGlobalMgmt;
-        document.getElementById('btn-add-global-league').onclick = handleAddGlobalLeague;
-        document.getElementById('btn-add-global-team').onclick = handleAddGlobalTeam;
-        document.getElementById('mgmt-league-filter').onchange = renderGlobalTeams;
+        document.getElementById('btn-unlock-global').onclick = window.unlockGlobalMgmt;
+        document.getElementById('btn-add-global-league').onclick = window.handleAddGlobalLeague;
+        document.getElementById('btn-add-global-team').onclick = window.handleAddGlobalTeam;
+        document.getElementById('mgmt-league-filter').onchange = window.renderGlobalTeams;
     }
 
-    async function renderGlobalLeagues() {
+    window.renderGlobalLeagues = async function() {
         const list = document.getElementById('global-leagues-list');
         const selectFilter = document.getElementById('mgmt-league-filter');
         if (!list) return;
@@ -4882,7 +4882,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (leagues) {
             list.innerHTML = leagues.map(l => `
                 <div class="card-elite league-card-edit" 
-                     onclick="handleEditGlobalLeague('${l.id}', '${l.name}')"
+                     onclick="window.handleEditGlobalLeague('${l.id}', '${l.name}')"
                      style="padding: 15px; text-align: center; border: 1px solid rgba(255,255,255,0.05); cursor: pointer; transition: 0.3s; position: relative; overflow: hidden; background: rgba(255,255,255,0.03);">
                     <div class="edit-overlay" style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: rgba(var(--primary-rgb), 0.1); opacity: 0; display: flex; align-items: center; justify-content: center; transition: 0.3s;">
                         <span style="font-size: 0.5rem; color: var(--primary); font-weight: 800; background: rgba(0,0,0,0.8); padding: 4px 8px; border-radius: 4px;">EDITAR</span>
@@ -4900,7 +4900,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    async function renderGlobalTeams() {
+    window.renderGlobalTeams = async function() {
         const list = document.getElementById('global-teams-list');
         const leagueId = document.getElementById('mgmt-league-filter').value;
         if (!list) return;
@@ -4920,7 +4920,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (teams && teams.length > 0) {
             list.innerHTML = teams.map(t => `
                 <div class="card-elite team-card-edit" 
-                     onclick="handleEditGlobalTeam('${t.id}', '${t.name}')"
+                     onclick="window.handleEditGlobalTeam('${t.id}', '${t.name}')"
                      style="padding: 12px 15px; display: flex; align-items: center; gap: 15px; border: 1px solid rgba(255,255,255,0.05); cursor: pointer; transition: 0.3s; background: rgba(0,0,0,0.2);">
                     <div style="width: 35px; height: 35px; display: flex; align-items: center; justify-content: center; background: rgba(255,255,255,0.02); border-radius: 6px; padding: 4px;">
                         <img src="${t.crest_url || neutralCrest}" style="width: 100%; height: 100%; object-fit: contain;">
@@ -4937,7 +4937,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    async function handleAddGlobalLeague() {
+    window.handleAddGlobalLeague = async function() {
         const name = await window.jbInput("🏆 NUEVA LIGA", "Nombre de la competición:");
         if (!name) return;
 
@@ -4959,7 +4959,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (error) window.jbToast(error, 'error');
                 else {
                     window.jbToast('¡Liga añadida con éxito!', 'success');
-                    renderGlobalMgmt();
+                    window.renderGlobalMgmt();
                 }
             };
             reader.readAsDataURL(compressedBlob);
@@ -4967,7 +4967,7 @@ document.addEventListener('DOMContentLoaded', () => {
         fileInput.click();
     }
 
-    async function handleEditGlobalLeague(id, oldName) {
+    window.handleEditGlobalLeague = async function(id, oldName) {
         const newName = await window.jbInput("📝 EDITAR LIGA", "Modificar nombre (dejar igual para no cambiar):");
         const finalName = newName || oldName;
 
@@ -4986,7 +4986,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         const { error } = await updateGlobalLeague(id, finalName, event.target.result);
                         window.jbLoading.hide();
                         if (error) window.jbToast(error, 'error');
-                        else { window.jbToast('¡Liga actualizada!', 'success'); renderGlobalMgmt(); }
+                        else { window.jbToast('¡Liga actualizada!', 'success'); window.renderGlobalMgmt(); }
                     };
                     reader.readAsDataURL(compressedBlob);
                 };
@@ -4996,12 +4996,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 const { error } = await updateGlobalLeague(id, finalName, null);
                 window.jbLoading.hide();
                 if (error) window.jbToast(error, 'error');
-                else { window.jbToast('¡Nombre de liga actualizado!', 'success'); renderGlobalMgmt(); }
+                else { window.jbToast('¡Nombre de liga actualizado!', 'success'); window.renderGlobalMgmt(); }
             }
         }
     }
 
-    async function handleAddGlobalTeam() {
+    window.handleAddGlobalTeam = async function() {
         const leagueId = document.getElementById('mgmt-league-filter').value;
         if (!leagueId) {
             window.jbToast('Selecciona primero una liga para añadir el equipo en ella.', 'warning');
@@ -5029,7 +5029,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (error) window.jbToast(error, 'error');
                 else {
                     window.jbToast('¡Equipo registrado!', 'success');
-                    renderGlobalMgmt();
+                    window.renderGlobalMgmt();
                 }
             };
             reader.readAsDataURL(compressedBlob);
@@ -5037,7 +5037,7 @@ document.addEventListener('DOMContentLoaded', () => {
         fileInput.click();
     }
 
-    async function handleEditGlobalTeam(id, oldName) {
+    window.handleEditGlobalTeam = async function(id, oldName) {
         const newName = await window.jbInput("📝 EDITAR RIVAL", "Nuevo nombre:", "text");
         const finalName = newName || oldName;
 
@@ -5056,7 +5056,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         const { error } = await updateGlobalTeam(id, finalName, event.target.result);
                         window.jbLoading.hide();
                         if (error) window.jbToast(error, 'error');
-                        else { window.jbToast('¡Equipo actualizado!', 'success'); renderGlobalMgmt(); }
+                        else { window.jbToast('¡Equipo actualizado!', 'success'); window.renderGlobalMgmt(); }
                     };
                     reader.readAsDataURL(compressedBlob);
                 };
@@ -5066,7 +5066,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 const { error } = await updateGlobalTeam(id, finalName, null);
                 window.jbLoading.hide();
                 if (error) window.jbToast(error, 'error');
-                else { window.jbToast('Nombre actualizado.', 'success'); renderGlobalMgmt(); }
+                else { window.jbToast('Nombre actualizado.', 'success'); window.renderGlobalMgmt(); }
             }
         }
     }
