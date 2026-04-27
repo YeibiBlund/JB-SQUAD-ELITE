@@ -3553,7 +3553,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         <h2 id="calendar-month-label" class="calendar-month-label">MES AÑO</h2>
                         <button class="calendar-nav" id="next-month">&gt;</button>
                     </div>
-                    <div class="calendar-weekdays">
+                    <div class="calendar-grid-header">
                         <div>LU</div><div>MA</div><div>MI</div><div>JU</div><div>VI</div><div>SÁ</div><div>DO</div>
                     </div>
                     <div id="calendar-days-grid" class="calendar-days-grid">
