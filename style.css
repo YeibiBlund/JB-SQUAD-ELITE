@@ -4415,6 +4415,25 @@ body.editing-tactic .tactical-slot {
     opacity: 0.6;
 }
 
+.calendar-day-stats {
+    position: absolute;
+    bottom: 5px;
+    left: 0;
+    width: 100%;
+    text-align: center;
+    font-size: 0.55rem;
+    font-weight: 800;
+    letter-spacing: 1px;
+    color: rgba(255, 255, 255, 0.7);
+    opacity: 0.8;
+}
+
+@media (max-width: 768px) {
+    .calendar-day-stats {
+        display: none;
+    }
+}
+
 .calendar-day.has-date {
     color: var(--text-main);
 }
@@ -4444,6 +4463,42 @@ body.editing-tactic .tactical-slot {
     border-color: var(--error);
     color: var(--error);
     font-weight: 900;
+}
+
+/* --- ESTILOS DE CABECERA JORNADAS --- */
+.jornadas-header-layout {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.jornadas-action-buttons {
+    display: flex;
+    gap: 10px;
+}
+
+.jornadas-action-buttons button {
+    width: auto;
+    padding: 10px 20px;
+}
+
+@media (max-width: 480px) {
+    .jornadas-header-layout {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 15px;
+    }
+    
+    .jornadas-action-buttons {
+        width: 100%;
+        gap: 10px;
+    }
+    
+    .jornadas-action-buttons button {
+        flex: 1; /* Esto hace que ocupen el 50% cada uno */
+        padding: 10px 0;
+        font-size: 0.7rem;
+    }
 }
 
 .calendar-day.today-highlight {

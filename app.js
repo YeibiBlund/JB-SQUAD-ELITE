@@ -2628,12 +2628,15 @@ document.addEventListener('DOMContentLoaded', () => {
                 // Calcular tendencia del día (v52.1)
                 let totalWins = 0;
                 let totalLosses = 0;
+                let totalDraws = 0;
                 
                 daySessions.forEach(s => {
                     const wins = s.matches.filter(m => m.scoreHome > m.scoreAway).length;
                     const losses = s.matches.filter(m => m.scoreHome < m.scoreAway).length;
+                    const draws = s.matches.filter(m => m.scoreHome === m.scoreAway).length;
                     totalWins += wins;
                     totalLosses += losses;
+                    totalDraws += draws;
                 });
                 
                 cell.classList.add('day-played');
@@ -2642,9 +2645,15 @@ document.addEventListener('DOMContentLoaded', () => {
                 else cell.classList.add('day-draw');
                 
                 cell.onclick = () => window.renderSessionDayDetails(dateString, daySessions);
+                
+                cell.innerHTML = `
+                    <span class="calendar-day-number">${d}</span>
+                    <div class="calendar-day-stats">V-${totalWins} E-${totalDraws} P-${totalLosses}</div>
+                `;
+            } else {
+                cell.innerHTML = `<span class="calendar-day-number">${d}</span>`;
             }
             
-            cell.innerHTML = `<span class="calendar-day-number">${d}</span>`;
             grid.appendChild(cell);
         }
 
