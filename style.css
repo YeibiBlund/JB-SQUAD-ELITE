@@ -5842,13 +5842,15 @@ body.editing-tactic .tactical-slot {
 }
 
 .league-card-edit.active::after {
-    content: '✓';
+    content: '';
     position: absolute;
-    bottom: 5px;
+    bottom: 8px;
     right: 8px;
-    color: var(--primary);
-    font-size: 0.7rem;
-    font-weight: 900;
+    width: 6px;
+    height: 6px;
+    background: var(--primary);
+    border-radius: 50%;
+    box-shadow: 0 0 10px var(--primary);
 }
 
 .league-edit-btn {

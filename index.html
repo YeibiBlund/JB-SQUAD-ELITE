@@ -937,8 +937,11 @@
                         <!-- Gestión de Ligas -->
                         <div class="mgmt-section" style="margin-bottom: 30px;">
                             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; background: rgba(255,255,255,0.03); padding: 10px 15px; border-radius: 8px; border-left: 3px solid var(--primary);">
-                                <h3 style="font-size: 0.8rem; color: #fff; letter-spacing: 2px; margin: 0;">🏆 COMPETICIONES</h3>
-                                <button id="btn-add-global-league" class="btn-gold" style="padding: 6px 15px; font-size: 0.6rem;">+ AÑADIR LIGA</button>
+                                <div style="display: flex; align-items: center; gap: 10px;">
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6M18 9h1.5a2.5 2.5 0 0 0 0-5H18M4 22h16M10 14.66V17c0 .55.45 1 1 1h2c.55 0 1-.45 1-1v-2.34M12 2v12.66"/></svg>
+                                    <h3 style="font-size: 0.75rem; color: #fff; letter-spacing: 2px; margin: 0; font-weight: 800;">COMPETICIONES</h3>
+                                </div>
+                                <button id="btn-add-global-league" class="btn-gold" style="width: auto !important; min-width: unset; padding: 6px 12px; font-size: 0.6rem; flex-shrink: 0;">+ AÑADIR LIGA</button>
                             </div>
                             <div id="global-leagues-list" class="grid-list" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 10px;">
                                 <!-- Cargado dinámicamente -->
@@ -950,8 +953,11 @@
                         <!-- Gestión de Equipos -->
                         <div class="mgmt-section">
                             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; background: rgba(255,255,255,0.03); padding: 10px 15px; border-radius: 8px; border-left: 3px solid var(--primary);">
-                                <h3 style="font-size: 0.8rem; color: #fff; letter-spacing: 2px; margin: 0;">🛡️ EQUIPOS RIVALES</h3>
-                                <button id="btn-add-global-team" class="btn-gold" style="padding: 6px 15px; font-size: 0.6rem;">+ AÑADIR EQUIPO</button>
+                                <div style="display: flex; align-items: center; gap: 10px;">
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                                    <h3 style="font-size: 0.75rem; color: #fff; letter-spacing: 2px; margin: 0; font-weight: 800;">EQUIPOS RIVALES</h3>
+                                </div>
+                                <button id="btn-add-global-team" class="btn-gold" style="width: auto !important; min-width: unset; padding: 6px 12px; font-size: 0.6rem; flex-shrink: 0;">+ AÑADIR EQUIPO</button>
                             </div>
                             <div id="global-teams-list" class="grid-list" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 12px;">
                                 <!-- Cargado dinámicamente -->

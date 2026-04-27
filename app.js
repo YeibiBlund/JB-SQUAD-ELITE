@@ -4891,10 +4891,12 @@ document.addEventListener('DOMContentLoaded', () => {
                          style="padding: 20px 15px; text-align: center; cursor: pointer; transition: 0.3s; position: relative; overflow: hidden;">
                         
                         <div class="league-edit-btn" title="Editar Liga" 
-                             onclick="event.stopPropagation(); window.handleEditGlobalLeague('${l.id}', '${l.name}')">✏️</div>
+                             onclick="event.stopPropagation(); window.handleEditGlobalLeague('${l.id}', '${l.name}')">
+                             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                        </div>
                         
-                        <img src="${l.logo_url || neutralCrest}" style="width: 60px; height: 60px; object-fit: contain; margin-bottom: 12px; filter: drop-shadow(0 0 8px rgba(255,255,255,0.1));">
-                        <div style="font-size: 0.75rem; font-weight: 900; color: #fff; letter-spacing: 1.5px;">${l.name.toUpperCase()}</div>
+                        <img src="${l.logo_url || neutralCrest}" style="width: 55px; height: 55px; object-fit: contain; margin-bottom: 12px; filter: drop-shadow(0 0 8px rgba(0,0,0,0.3));">
+                        <div style="font-size: 0.7rem; font-weight: 900; color: #fff; letter-spacing: 1.5px; opacity: ${isActive ? '1' : '0.6'}">${l.name.toUpperCase()}</div>
                     </div>
                 `;
             }).join('');
@@ -4933,15 +4935,17 @@ document.addEventListener('DOMContentLoaded', () => {
             list.innerHTML = teams.map(t => `
                 <div class="card-elite team-card-edit" 
                      onclick="window.handleEditGlobalTeam('${t.id}', '${t.name}')"
-                     style="padding: 12px 15px; display: flex; align-items: center; gap: 15px; border: 1px solid rgba(255,255,255,0.05); cursor: pointer; transition: 0.3s; background: rgba(0,0,0,0.2);">
-                    <div style="width: 35px; height: 35px; display: flex; align-items: center; justify-content: center; background: rgba(255,255,255,0.02); border-radius: 6px; padding: 4px;">
+                     style="padding: 10px 15px; display: flex; align-items: center; gap: 12px; border: 1px solid rgba(255,255,255,0.03); cursor: pointer; transition: 0.3s; background: rgba(255,255,255,0.01);">
+                    <div style="width: 30px; height: 30px; display: flex; align-items: center; justify-content: center; background: rgba(255,255,255,0.02); border-radius: 4px; padding: 4px;">
                         <img src="${t.crest_url || neutralCrest}" style="width: 100%; height: 100%; object-fit: contain;">
                     </div>
                     <div style="flex: 1;">
-                        <div style="font-size: 0.75rem; font-weight: 800; color: #fff; letter-spacing: 0.5px;">${t.name.toUpperCase()}</div>
-                        <div style="font-size: 0.55rem; color: var(--text-muted); text-transform: uppercase;">Rival Registrado</div>
+                        <div style="font-size: 0.7rem; font-weight: 800; color: #fff; letter-spacing: 0.5px;">${t.name.toUpperCase()}</div>
+                        <div style="font-size: 0.5rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px;">Rival Registrado</div>
                     </div>
-                    <div class="edit-icon" style="opacity: 0.3; font-size: 0.7rem;">✏️</div>
+                    <div class="edit-icon" style="opacity: 0; transition: 0.3s; color: var(--primary);">
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                    </div>
                 </div>
             `).join('');
         }
