@@ -3716,14 +3716,17 @@ document.addEventListener('DOMContentLoaded', () => {
 
         let matchesHtml = '';
         matchdayPosterData.matches.forEach(m => {
+            const team = m.rivalId !== 'manual' ? globalTeamsList.find(t => t.id === m.rivalId) : null;
+            const crestUrl = team?.crest_url || null;
+            const initials = (m.rivalName || 'R').substring(0, 2).toUpperCase();
+
             let rivalCrestHtml = '';
-            if (m.rivalId === 'manual') {
-                const initials = (m.rivalName || 'R').substring(0, 2).toUpperCase();
-                rivalCrestHtml = `<div class="poster-generic-crest-elite">${initials}</div>`;
+            if (crestUrl) {
+                // Si hay URL, intentamos cargar la imagen con fallback a iniciales si falla (onerror)
+                rivalCrestHtml = `<img src="${crestUrl}" class="poster-crest-img" crossOrigin="anonymous" onerror="this.onerror=null; this.outerHTML='<div class=\\'poster-generic-crest-elite\\'>${initials}</div>'">`;
             } else {
-                const team = globalTeamsList.find(t => t.id === m.rivalId);
-                const crest = team?.crest_url || neutralCrest;
-                rivalCrestHtml = `<img src="${crest}" class="poster-crest-img" crossOrigin="anonymous">`;
+                // Si no hay URL (o es manual), usamos el escudo de iniciales directamente
+                rivalCrestHtml = `<div class="poster-generic-crest-elite">${initials}</div>`;
             }
 
             matchesHtml += `
