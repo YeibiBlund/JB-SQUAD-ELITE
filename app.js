@@ -4935,20 +4935,20 @@ document.addEventListener('DOMContentLoaded', () => {
             list.innerHTML = teams.map(t => `
                 <div class="card-elite team-card-edit" 
                      onclick="window.handleEditGlobalTeam('${t.id}', '${t.name}')"
-                     style="padding: 12px 18px; display: flex; align-items: center; gap: 15px; border: 1px solid rgba(255,255,255,0.03); cursor: pointer; transition: 0.3s; background: rgba(255,255,255,0.02); border-radius: 12px;">
+                     style="padding: 15px 20px; display: flex; align-items: center; gap: 18px; border: 1px solid rgba(255,255,255,0.03); cursor: pointer; transition: 0.3s; background: rgba(255,255,255,0.02); border-radius: 12px; min-height: 90px;">
                     
-                    <!-- Escudo Premium: Círculo Blanco con Sombra -->
-                    <div style="width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; background: #fff; border-radius: 50%; padding: 6px; box-shadow: 0 3px 10px rgba(0,0,0,0.4); flex-shrink: 0; border: 2px solid rgba(255,255,255,0.1);">
+                    <!-- Escudo Premium: Círculo Blanco con Sombra (Tamaño XL) -->
+                    <div style="width: 60px; height: 60px; display: flex; align-items: center; justify-content: center; background: #fff; border-radius: 50%; padding: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.5); flex-shrink: 0; border: 2px solid rgba(255,255,255,0.15);">
                         <img src="${t.crest_url || neutralCrest}" style="width: 100%; height: 100%; object-fit: contain; filter: drop-shadow(0 1px 2px rgba(0,0,0,0.1));">
                     </div>
 
                     <div style="flex: 1;">
-                        <div style="font-size: 0.75rem; font-weight: 900; color: #fff; letter-spacing: 0.5px; text-shadow: 0 1px 2px rgba(0,0,0,0.5);">${t.name.toUpperCase()}</div>
-                        <div style="font-size: 0.55rem; color: var(--primary); text-transform: uppercase; letter-spacing: 1.5px; font-weight: 700; opacity: 0.8;">RIVAL ÉLITE</div>
+                        <div style="font-size: 0.85rem; font-weight: 900; color: #fff; letter-spacing: 0.5px; text-shadow: 0 1px 2px rgba(0,0,0,0.5);">${t.name.toUpperCase()}</div>
+                        <div style="font-size: 0.6rem; color: var(--primary); text-transform: uppercase; letter-spacing: 2px; font-weight: 700; opacity: 0.9;">RIVAL ÉLITE</div>
                     </div>
 
                     <div class="edit-icon" style="opacity: 0; transition: 0.3s; color: var(--primary);">
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
                     </div>
                 </div>
             `).join('');
