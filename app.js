@@ -3548,20 +3548,33 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 attendanceContainer.innerHTML = `
                     ${alwaysAvailableHTML}
-                    <div id="calendar-header" class="calendar-header">
-                        <button class="btn-cal-nav" id="prev-month" title="Mes Anterior">
-                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
-                        </button>
-                        <h2 id="calendar-month-label" class="calendar-month-label">MES AÑO</h2>
-                        <button class="btn-cal-nav" id="next-month" title="Mes Siguiente">
-                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
-                        </button>
-                    </div>
-                    <div class="calendar-grid-header">
-                        <div>LU</div><div>MA</div><div>MI</div><div>JU</div><div>VI</div><div>SÁ</div><div>DO</div>
-                    </div>
-                    <div id="calendar-days-grid" class="calendar-days-grid">
-                        <!-- Días inyectados por JS -->
+                    <div class="attendance-dual-layout">
+                        <div class="attendance-cal-column">
+                            <div class="calendar-header">
+                                <h2 class="calendar-title">HISTORIAL <span class="gradient-text">ASISTENCIA</span></h2>
+                                <div class="calendar-nav">
+                                    <button class="btn-cal-nav" id="prev-month" title="Mes Anterior">
+                                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+                                    </button>
+                                    <span id="calendar-month-label" class="calendar-month-label">MES AÑO</span>
+                                    <button class="btn-cal-nav" id="next-month" title="Mes Siguiente">
+                                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="calendar-grid-header">
+                                <div>LU</div><div>MA</div><div>MI</div><div>JU</div><div>VI</div><div>SÁ</div><div>DO</div>
+                            </div>
+                            <div id="calendar-days-grid" class="calendar-days-grid"></div>
+                            <div class="calendar-legend" style="margin-top: 20px; display: flex; gap: 15px; font-size: 0.6rem; opacity: 0.4; justify-content: center;">
+                                <div style="display:flex; align-items:center; gap:5px;"><span style="width:8px; height:8px; background:var(--success); border-radius:50%;"></span> DISPONIBLE</div>
+                                <div style="display:flex; align-items:center; gap:5px;"><span style="width:8px; height:8px; background:var(--primary); border-radius:50%;"></span> TARDE</div>
+                                <div style="display:flex; align-items:center; gap:5px;"><span style="width:8px; height:8px; background:var(--error); border-radius:50%;"></span> AUSENTE</div>
+                            </div>
+                        </div>
+                        <div id="calendar-details-list" class="attendance-stats-column">
+                            <!-- Inyectado por JS -->
+                        </div>
                     </div>
                 `;
 
