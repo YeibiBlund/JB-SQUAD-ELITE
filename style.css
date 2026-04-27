@@ -3637,27 +3637,25 @@ body.editing-tactic .tactical-slot {
     position: relative;
 }
 
-.poll-cancel-absolute {
-    position: absolute;
-    top: 15px;
-    right: 15px;
-    background: rgba(220, 38, 38, 0.1);
-    color: #dc2626;
-    border: 1px solid rgba(220, 38, 38, 0.3);
+.poll-cancel-btn {
+    background: rgba(255, 59, 48, 0.15);
+    color: #ff3b30;
+    border: 1px solid rgba(255, 59, 48, 0.4);
     width: 32px;
     height: 32px;
-    border-radius: 8px;
+    border-radius: 50%; /* Redondo en mobile */
     cursor: pointer;
     transition: all 0.3s ease;
     display: flex;
     align-items: center;
     justify-content: center;
-    z-index: 10;
+    flex-shrink: 0;
 }
 
-.poll-cancel-absolute:hover {
-    background: rgba(220, 38, 38, 0.2);
-    border-color: #dc2626;
+.poll-cancel-btn:hover {
+    background: rgba(255, 59, 48, 0.25);
+    border-color: #ff3b30;
+    transform: scale(1.05);
 }
 
 .results-group-title {
@@ -4067,6 +4065,13 @@ body.editing-tactic .tactical-slot {
 .btn-share-wa:hover {
     background: rgba(37,211,102,0.2);
     box-shadow: 0 0 15px rgba(37,211,102,0.2);
+}
+
+.poll-right-side {
+    background: rgba(255,255,255,0.02);
+    border-radius: 12px;
+    padding: 15px;
+    border: 1px solid rgba(255,255,255,0.05);
 }
 
 @media (min-width: 1024px) {
