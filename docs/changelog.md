@@ -5,6 +5,9 @@
 - **Generador de Escudos Genéricos**: Sistema de fallback que crea insignias dinámicas con iniciales para rivales manuales.
 - **Multi-Partido**: Soporte para hasta 3 partidos por cartel, ideal para noches de torneos o ligas.
 - **Renderizado Canvas**: Motor de exportación de alta fidelidad que integra branding del club y enlaces a redes sociales.
+### Corregido
+- **Carga de Escudos Externos**: Implementada la política `referrerpolicy="no-referrer"` y `crossOrigin` sincronizada con la vista de jornadas para asegurar la visibilidad de todos los equipos en el cartel.
+- **Layout de Vistas**: Corregido el anidamiento de secciones que provocaba pantallas en negro al abrir el creador.
 
 ## [v50.0.0] - 2026-04-24 | 22:35
 ### Añadido (Sistema de Auto-curación y Mantenimiento)

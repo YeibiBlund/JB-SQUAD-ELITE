@@ -3723,7 +3723,7 @@ document.addEventListener('DOMContentLoaded', () => {
             let rivalCrestHtml = '';
             if (crestUrl) {
                 // Si hay URL, intentamos cargar la imagen con fallback a iniciales si falla (onerror)
-                rivalCrestHtml = `<img src="${crestUrl}" class="poster-crest-img" crossOrigin="anonymous" onerror="this.onerror=null; this.outerHTML='<div class=\\'poster-generic-crest-elite\\'>${initials}</div>'">`;
+                rivalCrestHtml = `<img src="${crestUrl}" class="poster-crest-img" crossOrigin="anonymous" referrerpolicy="no-referrer" onerror="this.onerror=null; this.outerHTML='<div class=\\'poster-generic-crest-elite\\'>${initials}</div>'">`;
             } else {
                 // Si no hay URL (o es manual), usamos el escudo de iniciales directamente
                 rivalCrestHtml = `<div class="poster-generic-crest-elite">${initials}</div>`;
@@ -3733,7 +3733,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 <div class="poster-match-card">
                     <div class="poster-team-bundle">
                         <div class="poster-crest-container">
-                            <img src="${teamCrest}" class="poster-crest-img" crossOrigin="anonymous">
+                            <img src="${teamCrest}" class="poster-crest-img" crossOrigin="anonymous" referrerpolicy="no-referrer">
                         </div>
                         <div class="poster-team-name">${teamName}</div>
                     </div>
