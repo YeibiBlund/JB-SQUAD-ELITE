@@ -4104,6 +4104,13 @@ body.editing-tactic .tactical-slot {
         grid-template-columns: 1fr;
         gap: 30px;
     }
+
+    .poll-cancel-btn {
+        position: absolute;
+        top: 25px;
+        right: 25px;
+        border-radius: 8px; /* Cuadrado redondeado en PC */
+    }
 }
 
 /* Ajustes para el contenedor de historial en escritorio */
