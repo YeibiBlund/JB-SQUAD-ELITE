@@ -5828,43 +5828,60 @@ body.editing-tactic .tactical-slot {
    GESTIÓN GLOBAL (v57.3)
    ========================================================================== */
 
-.league-card-edit:hover {
-    transform: translateY(-5px);
+/* Estilos para Selección de Ligas (v57.4) */
+.league-card-edit {
+    position: relative;
+    border: 1px solid rgba(255,255,255,0.05) !important;
+    background: rgba(255,255,255,0.02) !important;
+}
+
+.league-card-edit.active {
     border-color: var(--primary) !important;
-    box-shadow: 0 10px 20px rgba(0,0,0,0.3), 0 0 15px rgba(var(--primary-rgb), 0.1);
-    background: rgba(255,255,255,0.06) !important;
+    background: rgba(var(--primary-rgb), 0.05) !important;
+    box-shadow: 0 0 20px rgba(var(--primary-rgb), 0.15);
 }
 
-.league-card-edit:hover .edit-overlay {
-    opacity: 1 !important;
-}
-
-.team-card-edit:hover {
-    background: rgba(255,255,255,0.08) !important;
-    border-color: rgba(var(--primary-rgb), 0.3) !important;
-    transform: translateX(5px);
-}
-
-.team-card-edit:hover .edit-icon {
-    opacity: 1 !important;
+.league-card-edit.active::after {
+    content: '✓';
+    position: absolute;
+    bottom: 5px;
+    right: 8px;
     color: var(--primary);
+    font-size: 0.7rem;
+    font-weight: 900;
 }
 
-.team-card-edit img {
+.league-edit-btn {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    width: 24px;
+    height: 24px;
+    background: rgba(0,0,0,0.6);
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.7rem;
+    opacity: 0;
     transition: 0.3s;
+    z-index: 2;
+    border: 1px solid rgba(255,255,255,0.1);
 }
 
-.team-card-edit:hover img {
+.league-card-edit:hover .league-edit-btn {
+    opacity: 1;
+}
+
+.league-edit-btn:hover {
+    background: var(--primary);
+    color: #000;
     transform: scale(1.1);
 }
 
-/* Scrollbar para listas de gestión */
-.grid-list {
-    max-height: 500px;
-    overflow-y: auto;
-    padding-right: 5px;
+/* Ajuste para el botón de añadir liga */
+#btn-add-global-league {
+    width: auto !important;
+    padding: 6px 15px !important;
+    white-space: nowrap;
 }
-
-.grid-list::-webkit-scrollbar { width: 4px; }
-.grid-list::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 10px; }
-.grid-list::-webkit-scrollbar-thumb:hover { background: var(--primary); }

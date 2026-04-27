@@ -4869,53 +4869,65 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('btn-unlock-global').onclick = window.unlockGlobalMgmt;
         document.getElementById('btn-add-global-league').onclick = window.handleAddGlobalLeague;
         document.getElementById('btn-add-global-team').onclick = window.handleAddGlobalTeam;
-        document.getElementById('mgmt-league-filter').onchange = window.renderGlobalTeams;
     }
 
     window.renderGlobalLeagues = async function() {
         const list = document.getElementById('global-leagues-list');
-        const selectFilter = document.getElementById('mgmt-league-filter');
         if (!list) return;
 
         const { data: leagues } = await supabase.from('global_leagues').select('*').order('name');
         
         if (leagues) {
-            list.innerHTML = leagues.map(l => `
-                <div class="card-elite league-card-edit" 
-                     onclick="window.handleEditGlobalLeague('${l.id}', '${l.name}')"
-                     style="padding: 15px; text-align: center; border: 1px solid rgba(255,255,255,0.05); cursor: pointer; transition: 0.3s; position: relative; overflow: hidden; background: rgba(255,255,255,0.03);">
-                    <div class="edit-overlay" style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: rgba(var(--primary-rgb), 0.1); opacity: 0; display: flex; align-items: center; justify-content: center; transition: 0.3s;">
-                        <span style="font-size: 0.5rem; color: var(--primary); font-weight: 800; background: rgba(0,0,0,0.8); padding: 4px 8px; border-radius: 4px;">EDITAR</span>
-                    </div>
-                    <img src="${l.logo_url || neutralCrest}" style="width: 50px; height: 50px; object-fit: contain; margin-bottom: 8px; filter: drop-shadow(0 0 5px rgba(255,255,255,0.1));">
-                    <div style="font-size: 0.7rem; font-weight: 800; color: #fff; letter-spacing: 1px;">${l.name.toUpperCase()}</div>
-                </div>
-            `).join('');
+            // Seleccionar la primera por defecto si no hay ninguna
+            if (!state.mgmtSelectedLeagueId && leagues.length > 0) {
+                state.mgmtSelectedLeagueId = leagues[0].id;
+            }
 
-            // Actualizar el filtro de equipos
-            const currentFilter = selectFilter.value;
-            selectFilter.innerHTML = '<option value="">TODAS LAS LIGAS</option>' + 
-                leagues.map(l => `<option value="${l.id}">${l.name.toUpperCase()}</option>`).join('');
-            selectFilter.value = currentFilter;
+            list.innerHTML = leagues.map(l => {
+                const isActive = state.mgmtSelectedLeagueId === l.id;
+                return `
+                    <div class="card-elite league-card-edit ${isActive ? 'active' : ''}" 
+                         onclick="window.selectGlobalLeague('${l.id}')"
+                         style="padding: 20px 15px; text-align: center; cursor: pointer; transition: 0.3s; position: relative; overflow: hidden;">
+                        
+                        <div class="league-edit-btn" title="Editar Liga" 
+                             onclick="event.stopPropagation(); window.handleEditGlobalLeague('${l.id}', '${l.name}')">✏️</div>
+                        
+                        <img src="${l.logo_url || neutralCrest}" style="width: 60px; height: 60px; object-fit: contain; margin-bottom: 12px; filter: drop-shadow(0 0 8px rgba(255,255,255,0.1));">
+                        <div style="font-size: 0.75rem; font-weight: 900; color: #fff; letter-spacing: 1.5px;">${l.name.toUpperCase()}</div>
+                    </div>
+                `;
+            }).join('');
         }
+    }
+
+    window.selectGlobalLeague = function(id) {
+        state.mgmtSelectedLeagueId = id;
+        window.renderGlobalLeagues();
+        window.renderGlobalTeams();
     }
 
     window.renderGlobalTeams = async function() {
         const list = document.getElementById('global-teams-list');
-        const leagueId = document.getElementById('mgmt-league-filter').value;
+        const leagueId = state.mgmtSelectedLeagueId;
         if (!list) return;
 
         list.innerHTML = '<div style="grid-column: 1/-1; text-align: center; padding: 20px; color: var(--primary); font-size: 0.7rem; letter-spacing: 2px;">SINCRONIZANDO EQUIPOS...</div>';
 
-        let query = supabase.from('global_teams').select('*').order('name');
-        
-        if (leagueId) {
-            const { data: linkData } = await supabase.from('league_teams').select('team_id').eq('league_id', leagueId);
-            const teamIds = linkData ? linkData.map(d => d.team_id) : [];
-            query = query.in('id', teamIds);
+        if (!leagueId) {
+            list.innerHTML = '<div style="grid-column: 1/-1; text-align: center; padding: 40px; color: var(--text-muted); font-size: 0.75rem;">Selecciona una liga para ver sus equipos.</div>';
+            return;
         }
 
-        const { data: teams } = await query;
+        const { data: linkData } = await supabase.from('league_teams').select('team_id').eq('league_id', leagueId);
+        const teamIds = linkData ? linkData.map(d => d.team_id) : [];
+
+        if (teamIds.length === 0) {
+            list.innerHTML = '<div style="grid-column: 1/-1; text-align: center; padding: 40px; color: var(--text-muted); font-size: 0.75rem; background: rgba(0,0,0,0.1); border-radius: 12px; border: 1px dashed rgba(255,255,255,0.05);">No hay equipos registrados en esta competición.</div>';
+            return;
+        }
+
+        const { data: teams } = await supabase.from('global_teams').select('*').in('id', teamIds).order('name');
         
         if (teams && teams.length > 0) {
             list.innerHTML = teams.map(t => `
@@ -4932,8 +4944,6 @@ document.addEventListener('DOMContentLoaded', () => {
                     <div class="edit-icon" style="opacity: 0.3; font-size: 0.7rem;">✏️</div>
                 </div>
             `).join('');
-        } else {
-            list.innerHTML = '<div style="grid-column: 1/-1; text-align: center; padding: 40px; color: var(--text-muted); font-size: 0.75rem; background: rgba(0,0,0,0.1); border-radius: 12px; border: 1px dashed rgba(255,255,255,0.05);">No hay equipos registrados en esta competición.</div>';
         }
     }
 
@@ -5001,7 +5011,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     window.handleAddGlobalTeam = async function() {
-        const leagueId = document.getElementById('mgmt-league-filter').value;
+        const leagueId = state.mgmtSelectedLeagueId;
         if (!leagueId) {
             window.jbToast('Selecciona primero una liga para añadir el equipo en ella.', 'warning');
             return;
