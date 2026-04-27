@@ -3717,9 +3717,11 @@ document.addEventListener('DOMContentLoaded', () => {
         if (captureArea) captureArea.innerHTML = html;
     }
 
-    function generatePosterHTML() {
+    function generatePosterHTML(base64Map = null) {
         const teamName = (state.team?.name || 'Mi Club').toUpperCase();
-        const teamCrest = state.team?.crest_url || neutralCrest;
+        const rawTeamCrest = state.team?.crest_url || neutralCrest;
+        // Si hay mapa de Base64 (exportación), usar la versión local; si no (previsualización), usar la URL directa
+        const teamCrest = (base64Map && base64Map[rawTeamCrest]) ? base64Map[rawTeamCrest] : rawTeamCrest;
         const twitter = state.team?.socials?.twitter || '';
         const twitch = state.team?.socials?.twitch || '';
 
@@ -3730,12 +3732,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
             let rivalCrestHtml = '';
             if (rawCrestUrl && rawCrestUrl.trim() !== '') {
-                // Usamos un proxy de CORS para que html2canvas pueda capturar la imagen (v57.2)
-                const finalCrestUrl = rawCrestUrl.startsWith('http') ? `https://corsproxy.io/?${encodeURIComponent(rawCrestUrl)}` : rawCrestUrl;
-                
-                rivalCrestHtml = `<img src="${finalCrestUrl}" class="poster-crest-img" crossOrigin="anonymous" referrerpolicy="no-referrer" onerror="this.onerror=null; this.src='${neutralCrest}';">`;
+                // Resolver la URL: Base64 para exportación, directa para previsualización (v57.2)
+                const resolvedUrl = (base64Map && base64Map[rawCrestUrl]) ? base64Map[rawCrestUrl] : rawCrestUrl;
+                rivalCrestHtml = `<img src="${resolvedUrl}" class="poster-crest-img" referrerpolicy="no-referrer" onerror="this.onerror=null; this.src='${neutralCrest}';">`;
             } else {
-                // Fallback a iniciales solo si no hay URL en absoluto
                 rivalCrestHtml = `<div class="poster-generic-crest-elite">${initials}</div>`;
             }
 
@@ -3743,7 +3743,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 <div class="poster-match-card">
                     <div class="poster-team-bundle">
                         <div class="poster-crest-container">
-                            <img src="${teamCrest}" class="poster-crest-img" crossOrigin="anonymous" referrerpolicy="no-referrer">
+                            <img src="${teamCrest}" class="poster-crest-img" referrerpolicy="no-referrer">
                         </div>
                         <div class="poster-team-name">${teamName}</div>
                     </div>
@@ -3783,34 +3783,98 @@ document.addEventListener('DOMContentLoaded', () => {
         `;
     }
 
+    // Función auxiliar: Convierte una URL de imagen a Base64 (v57.2)
+    async function imageUrlToBase64(url) {
+        try {
+            // Usar un proxy CORS para descargar la imagen como blob
+            const proxyUrl = `https://corsproxy.io/?${encodeURIComponent(url)}`;
+            const response = await fetch(proxyUrl);
+            const blob = await response.blob();
+            return new Promise((resolve) => {
+                const reader = new FileReader();
+                reader.onloadend = () => resolve(reader.result);
+                reader.onerror = () => resolve(null);
+                reader.readAsDataURL(blob);
+            });
+        } catch (err) {
+            console.warn('>>> [WARN] No se pudo convertir imagen a Base64:', url, err.message);
+            return null;
+        }
+    }
+
     async function exportMatchdayImage() {
-        window.jbLoading.show('Generando imagen...');
-        
-        // Asegurar que el área de captura esté actualizada
-        updatePosterPreview();
-        
-        const captureArea = document.getElementById('matchday-poster-capture-area');
+        window.jbLoading.show('Preparando imágenes para exportación...');
         
         try {
-            // Esperar un poco para asegurar carga de imágenes
-            await new Promise(r => setTimeout(r, 1000));
+            // 1. Recopilar todas las URLs únicas de imágenes externas
+            const imageUrls = new Set();
+            const teamCrest = state.team?.crest_url || null;
+            if (teamCrest && teamCrest.startsWith('http')) imageUrls.add(teamCrest);
             
-            const canvas = await html2canvas(captureArea, {
-                useCORS: true,
-                allowTaint: true,
-                scale: 1, // 1080x1350 es suficiente
-                backgroundColor: '#050505'
+            matchdayPosterData.matches.forEach(m => {
+                if (m.rivalCrest && m.rivalCrest.startsWith('http')) {
+                    imageUrls.add(m.rivalCrest);
+                }
             });
 
+            // 2. Pre-convertir TODAS las imágenes a Base64 en paralelo
+            const base64Map = {};
+            const conversions = [...imageUrls].map(async (url) => {
+                const b64 = await imageUrlToBase64(url);
+                if (b64) base64Map[url] = b64;
+            });
+            await Promise.all(conversions);
+            console.log(`>>> [EXPORT] ${Object.keys(base64Map).length}/${imageUrls.size} imágenes convertidas a Base64.`);
+
+            // 3. Generar el HTML del cartel con las imágenes ya en Base64
+            const exportHtml = generatePosterHTML(base64Map);
+
+            // 4. Inyectar en un contenedor oculto temporal para captura
+            let captureArea = document.getElementById('matchday-poster-capture-area');
+            if (!captureArea) {
+                captureArea = document.createElement('div');
+                captureArea.id = 'matchday-poster-capture-area';
+                captureArea.className = 'matchday-poster-preview';
+                captureArea.style.position = 'fixed';
+                captureArea.style.left = '-9999px';
+                captureArea.style.top = '0';
+                document.body.appendChild(captureArea);
+            }
+            captureArea.style.position = 'fixed';
+            captureArea.style.left = '-9999px';
+            captureArea.innerHTML = exportHtml;
+
+            // 5. Esperar a que las imágenes Base64 se rendericen
+            const imgs = captureArea.querySelectorAll('img');
+            await Promise.all([...imgs].map(img => {
+                if (img.complete) return Promise.resolve();
+                return new Promise(resolve => {
+                    img.onload = resolve;
+                    img.onerror = resolve;
+                });
+            }));
+            await new Promise(r => setTimeout(r, 500));
+
+            window.jbLoading.show('Generando imagen HD...');
+
+            // 6. Capturar con html2canvas (sin problemas CORS porque todo es Base64)
+            const canvas = await html2canvas(captureArea, {
+                scale: 1,
+                backgroundColor: '#050505',
+                useCORS: false,
+                allowTaint: false
+            });
+
+            // 7. Descargar
             const link = document.createElement('a');
             link.download = `MATCHDAY_${new Date().toISOString().split('T')[0]}.jpg`;
-            link.href = canvas.toDataURL('image/jpeg', 0.9);
+            link.href = canvas.toDataURL('image/jpeg', 0.92);
             link.click();
             
             window.jbToast('¡Cartel generado con éxito!', 'success');
         } catch (err) {
             console.error("Error al exportar cartel:", err);
-            window.jbToast('Error al generar la imagen.', 'error');
+            window.jbToast('Error al generar la imagen. Revisa la consola.', 'error');
         } finally {
             window.jbLoading.hide();
         }
