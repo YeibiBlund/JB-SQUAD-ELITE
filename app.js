@@ -351,19 +351,28 @@ document.addEventListener('DOMContentLoaded', () => {
             viewId = 'home';
         }
 
-        views.forEach(v => {
+        // Ocultar todas las vistas (v57.0)
+        document.querySelectorAll('.view').forEach(v => {
             v.classList.remove('active-view');
-            v.style.display = 'none'; // Asegurar ocultación total (v57.0)
+            v.style.display = 'none';
         });
 
         const targetView = document.getElementById(`view-${viewId}`);
         if (targetView) {
             targetView.classList.add('active-view');
-            targetView.style.display = (viewId === 'tacticas' || viewId === 'matchday-creator') ? 'flex' : 'block';
             
-            // Asegurar que si es el contenedor principal, se muestre sobre el !important del CSS inicial
+            // Layout específico por tipo de vista
+            if (viewId === 'tacticas' || viewId === 'matchday-creator') {
+                targetView.style.display = 'flex';
+            } else {
+                targetView.style.display = 'block';
+            }
+            
+            // Asegurar visibilidad del contenedor principal
             const mainApp = document.getElementById('main-app');
-            if (mainApp) mainApp.style.setProperty('display', 'flex', 'important');
+            if (mainApp) {
+                mainApp.style.setProperty('display', 'flex', 'important');
+            }
         }
 
         // Manejo específico de la vista de creador de Matchday (v57.0)
