@@ -3637,13 +3637,14 @@ body.editing-tactic .tactical-slot {
     position: relative;
 }
 
-.poll-cancel-btn {
+/* Botón Cancelar - Versión Móvil */
+.poll-cancel-btn-mobile {
     background: rgba(255, 59, 48, 0.15);
     color: #ff3b30;
     border: 1px solid rgba(255, 59, 48, 0.4);
     width: 32px;
     height: 32px;
-    border-radius: 50%; /* Redondo en mobile */
+    border-radius: 50%;
     cursor: pointer;
     transition: all 0.3s ease;
     display: flex;
@@ -3652,7 +3653,32 @@ body.editing-tactic .tactical-slot {
     flex-shrink: 0;
 }
 
-.poll-cancel-btn:hover {
+.poll-cancel-btn-mobile:hover {
+    background: rgba(255, 59, 48, 0.25);
+    border-color: #ff3b30;
+    transform: scale(1.05);
+}
+
+/* Botón Cancelar - Versión Escritorio (Oculto en móvil) */
+.poll-cancel-btn-desktop {
+    display: none;
+    position: absolute;
+    top: -15px; /* Por si necesita ajuste visual */
+    right: -15px;
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
+    background: rgba(255, 59, 48, 0.15);
+    color: #ff3b30;
+    border: 1px solid rgba(255, 59, 48, 0.4);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    align-items: center;
+    justify-content: center;
+    z-index: 10;
+}
+
+.poll-cancel-btn-desktop:hover {
     background: rgba(255, 59, 48, 0.25);
     border-color: #ff3b30;
     transform: scale(1.05);
@@ -4105,11 +4131,14 @@ body.editing-tactic .tactical-slot {
         gap: 30px;
     }
 
-    .poll-cancel-btn {
-        position: absolute;
+    .poll-cancel-btn-mobile {
+        display: none !important;
+    }
+
+    .poll-cancel-btn-desktop {
+        display: flex !important;
         top: 25px;
         right: 25px;
-        border-radius: 8px; /* Cuadrado redondeado en PC */
     }
 }
 

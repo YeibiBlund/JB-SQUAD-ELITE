@@ -5341,6 +5341,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
         activePollContainer.innerHTML = `
             <div class="poll-active-card fade-in">
+                ${isManagerOrCapitan ? `
+                <button onclick="window.jbOpenCancelPollModal('${poll.id}')" class="poll-cancel-btn-desktop" title="Cancelar Convocatoria">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                </button>
+                ` : ''}
                 <div class="poll-main-layout">
                     <div class="poll-left-side">
                         <div class="poll-header">
@@ -5353,7 +5358,7 @@ document.addEventListener('DOMContentLoaded', () => {
                                         </button>
                                         <button onclick="window.jbEditPoll('${poll.id}')" class="btn-poll-edit">EDITAR</button>
                                         <button onclick="window.jbClosePoll('${poll.id}', true)" class="btn-poll-align">CREAR ALINEACIÓN</button>
-                                        <button onclick="window.jbOpenCancelPollModal('${poll.id}')" class="poll-cancel-btn" title="Cancelar Convocatoria">
+                                        <button onclick="window.jbOpenCancelPollModal('${poll.id}')" class="poll-cancel-btn-mobile" title="Cancelar Convocatoria">
                                             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
                                         </button>
                                 ` : `<span class="poll-status-tag open">ABIERTA</span>`}
