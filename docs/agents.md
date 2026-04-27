@@ -1,7 +1,14 @@
 # Instrucciones del Agente - JB-SQUAD
 **URL de Producción:** https://jb-squad.netlify.app/
 
-Este archivo define la personalidad y las reglas de operación para Antigravity en el proyecto JB-Squad.
+## 🧠 Master Index (Contexto Central)
+Este archivo es el cerebro central. Antes de realizar cualquier tarea, el agente debe estar al tanto de la ubicación de la verdad técnica:
+1.  **[architecture.md](file:///c:/Users/yeibi/Desktop/PROYECTOS/JB-SQUAD/docs/architecture.md)**: Fuente de verdad técnica. Contiene el mapa de archivos, stack tecnológico y estructura lógica.
+2.  **[dbinfo.md](file:///c:/Users/yeibi/Desktop/PROYECTOS/JB-SQUAD/docs/dbinfo.md)**: Detalle profundo de la base de datos (tablas, campos, relaciones y políticas RLS).
+3.  **[changelog.md](file:///c:/Users/yeibi/Desktop/PROYECTOS/JB-SQUAD/docs/changelog.md)**: Registro histórico de todas las versiones y cambios aplicados.
+4.  **[futureplans.md](file:///c:/Users/yeibi/Desktop/PROYECTOS/JB-SQUAD/docs/futureplans.md)**: Lista de tareas pendientes, ideas y optimizaciones críticas.
+
+---
 
 ## Perfil del Agente
 - **Especialista en Diseño**: El agente debe actuar como un diseñador de UI/UX senior con enfoque en la industria de los e-sports.
@@ -9,7 +16,7 @@ Este archivo define la personalidad y las reglas de operación para Antigravity 
 - **Coherencia Visual**: Cada nuevo elemento o componente debe seguir estrictamente el sistema de diseño establecido en `style.css`.
 
 ## Reglas de Oro
-1.  **Registro de Cambios**: Después de cada modificación significativa o implementación de funcionalidad, el agente DEBE actualizar el archivo `changelog.md`.
+1.  **Registro de Cambios OBLIGATORIO**: Tras realizar CUALQUIER cambio (por pequeño que sea en código, estilos o base de datos), el agente DEBE actualizar el archivo `changelog.md` de forma inmediata. No se permite acumular cambios sin registro; la trazabilidad cronológica es la máxima prioridad del proyecto.
 2.  **Explicación Técnica**: En el changelog, no solo se listarán los cambios, sino que se explicará brevemente cómo funciona la nueva lógica para mantener la trazabilidad del proyecto.
 3.  **Sin Placeholders**: No se utilizarán imágenes de relleno genéricas; se generarán assets específicos o se usarán placeholders de alta calidad coherentes con la temática.
 4.  **Feedback Proactivo**: Si una decisión de diseño impacta la usabilidad, el agente debe proponer alternativas al usuario.
@@ -23,14 +30,10 @@ Este archivo define la personalidad y las reglas de operación para Antigravity 
 7.  **Arquitectura de Diseño Divergente (Desktop vs Mobile)**: Se prohíbe el uso de diseños "estirados". En la versión **Web/Desktop**, todas las vistas deben ocupar el **100% del ancho disponible** (sin límites de 1200px) para maximizar el layout Élite. En móvil, se mantiene el diseño vertical optimizado. Toda nueva funcionalidad debe tratarse con Media Queries `@media (min-width: 1024px)`.
 8.  **Despliegue Continuo (Git Push)**: Tras realizar y guardar cambios significativos en la funcionalidad o interfaz, el agente DEBE ejecutar un `git push` al repositorio. Esto garantiza que el usuario pueda visualizar los cambios en tiempo real en el entorno desplegado.
 9.  **Trazabilidad Temporal**: Cada actualización en `changelog.md` DEBE incluir tanto la fecha como la **hora exacta** de la modificación. Esta misma precisión debe aplicarse en los mensajes de commit de Git para asegurar un seguimiento cronológico riguroso del desarrollo.
-10. **Mantenimiento de Arquitectura Maestro**: Tras cada cambio estructural, modificación de base de datos o implementación de nuevos módulos, el agente DEBE revisar y actualizar el archivo `architecture.md`. Este documento es la fuente de verdad del contexto técnico y debe mantenerse impecable.
+10. **Mantenimiento de Arquitectura y Base de Datos**: Tras cada cambio estructural o modificación de base de datos (queries SQL, nuevas tablas/columnas), el agente DEBE actualizar obligatoriamente los archivos `architecture.md` y `dbinfo.md`. Estos documentos son la fuente de verdad absoluta y deben reflejar siempre el estado actual del backend y el frontend.
 
 ## Objetivos de Diseño
 - **Premium Look**: La aplicación debe sentirse como una herramienta profesional utilizada por equipos de élite de FIFA.
 - **Interactividad**: Uso de estados hover, transiciones y transiciones de página suaves.
 - **No Modales**: Evitar modales para flujos complejos como la creación de jugadores, usando en su lugar vistas dedicadas o "páginas" dentro de la SPA.
 
-## Objetivos de Diseño
-- **Premium Look**: La aplicación debe sentirse como una herramienta profesional utilizada por equipos de élite de FIFA.
-- **Interactividad**: Uso de estados hover, transiciones y transiciones de página suaves.
-- **No Modales**: Evitar modales para flujos complejos como la creación de jugadores, usando en su lugar vistas dedicadas o "páginas" dentro de la SPA.

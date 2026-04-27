@@ -184,6 +184,25 @@ async function fetchUnlinkedPolls() {
 }
 
 /**
+ * Obtiene la lista de equipos globales (rivales) para el generador de carteles.
+ */
+async function fetchGlobalTeams() {
+    if (!supabase) return [];
+    try {
+        const { data, error } = await supabase
+            .from('global_teams')
+            .select('id, name, crest_url')
+            .order('name', { ascending: true });
+        
+        if (error) throw error;
+        return data || [];
+    } catch (err) {
+        console.error(">>> [ERROR] fetchGlobalTeams:", err.message);
+        return [];
+    }
+}
+
+/**
  * Guarda todas las tácticas en Supabase.
  */
 async function saveTacticsCloud() {

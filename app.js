@@ -115,6 +115,22 @@ document.addEventListener('DOMContentLoaded', () => {
     let currentSessionsCalendarDate = new Date(); // v52.0
     let currentPollsCalendarDate = new Date();    // v53.0
     
+    // 2. Elementos Matchday Creator (v57.0)
+    const btnCreateMatchdayGraphic = document.getElementById('btn-create-matchday-graphic');
+    const viewMatchdayCreator = document.getElementById('view-matchday-creator');
+    const btnBackFromCreator = document.getElementById('btn-back-from-creator');
+    const matchdayMatchesConfig = document.getElementById('matchday-matches-config');
+    const btnAddMatchToPoster = document.getElementById('btn-add-match-to-poster');
+    const btnGeneratePoster = document.getElementById('btn-generate-poster');
+    const miniPosterPreview = document.getElementById('mini-poster-preview');
+
+    let matchdayPosterData = {
+        matches: [{ id: Date.now(), rivalId: 'manual', rivalName: '', time: '23:00' }]
+    };
+    let globalTeamsList = [];
+
+    let activeSlotId = null;
+
     // Listeners para Navegación del Calendario
     const btnCalPrev = document.getElementById('calendar-prev');
     const btnCalNext = document.getElementById('calendar-next');
@@ -344,6 +360,11 @@ document.addEventListener('DOMContentLoaded', () => {
             // Asegurar que si es el contenedor principal, se muestre sobre el !important del CSS inicial
             const mainApp = document.getElementById('main-app');
             if (mainApp) mainApp.style.setProperty('display', 'flex', 'important');
+        }
+
+        // Manejo específico de la vista de creador de Matchday (v57.0)
+        if (viewId === 'matchday-creator') {
+            if (typeof initMatchdayCreator === 'function') initMatchdayCreator();
         }
 
         if (viewId !== 'tacticas') {
@@ -584,6 +605,20 @@ document.addEventListener('DOMContentLoaded', () => {
             navToggle.addEventListener('click', () => {
                 mainNav.classList.toggle('collapsed');
             });
+        }
+
+        // Botón para abrir el creador de Matchday (v57.0)
+        if (btnCreateMatchdayGraphic) {
+            btnCreateMatchdayGraphic.onclick = () => switchView('matchday-creator');
+        }
+        if (btnBackFromCreator) {
+            btnBackFromCreator.onclick = () => switchView('jornadas');
+        }
+        if (btnAddMatchToPoster) {
+            btnAddMatchToPoster.onclick = addMatchToPoster;
+        }
+        if (btnGeneratePoster) {
+            btnGeneratePoster.onclick = exportMatchdayImage;
         }
     }
 
@@ -3557,6 +3592,202 @@ document.addEventListener('DOMContentLoaded', () => {
             <td style="font-weight: 800; color: var(--primary);">${totalWinRate}</td>
             <td style="color:var(--primary); font-weight:900;">⭐ ${mvp}</td>
         `;
+    }
+
+    // --- LÓGICA DEL CREADOR DE CARTELES MATCHDAY (v57.0) ---
+
+    async function initMatchdayCreator() {
+        window.jbLoading.show('Cargando equipos...');
+        globalTeamsList = await fetchGlobalTeams();
+        window.jbLoading.hide();
+        renderMatchdayConfig();
+        updatePosterPreview();
+    }
+
+    function renderMatchdayConfig() {
+        if (!matchdayMatchesConfig) return;
+        matchdayMatchesConfig.innerHTML = '';
+        
+        matchdayPosterData.matches.forEach((m, idx) => {
+            const row = document.createElement('div');
+            row.className = 'matchday-row-config fade-in';
+            
+            // Selector de Rival
+            let rivalOptions = `<option value="manual" ${m.rivalId === 'manual' ? 'selected' : ''}>-- INTRODUCIR MANUAL --</option>`;
+            globalTeamsList.forEach(team => {
+                rivalOptions += `<option value="${team.id}" ${m.rivalId === team.id ? 'selected' : ''}>${team.name.toUpperCase()}</option>`;
+            });
+
+            row.innerHTML = `
+                <div style="display: flex; flex-direction: column; gap: 5px;">
+                    <label style="font-size: 0.6rem; opacity: 0.6;">RIVAL</label>
+                    <select class="match-rival-select" data-idx="${idx}" style="width: 100%;">
+                        ${rivalOptions}
+                    </select>
+                    ${m.rivalId === 'manual' ? `<input type="text" class="match-manual-name" data-idx="${idx}" value="${m.rivalName}" placeholder="Nombre del rival..." style="margin-top:5px;">` : ''}
+                </div>
+                <div style="display: flex; flex-direction: column; gap: 5px;">
+                    <label style="font-size: 0.6rem; opacity: 0.6;">HORA</label>
+                    <input type="time" class="match-time-input" data-idx="${idx}" value="${m.time}">
+                </div>
+                <button class="btn-delete-row" onclick="window.removeMatchFromPoster(${idx})" style="margin-bottom: 5px;">🗑️</button>
+            `;
+
+            // Events
+            const select = row.querySelector('.match-rival-select');
+            select.onchange = (e) => {
+                matchdayPosterData.matches[idx].rivalId = e.target.value;
+                if (e.target.value !== 'manual') {
+                    const team = globalTeamsList.find(t => t.id === e.target.value);
+                    matchdayPosterData.matches[idx].rivalName = team ? team.name : '';
+                }
+                renderMatchdayConfig();
+                updatePosterPreview();
+            };
+
+            const nameInput = row.querySelector('.match-manual-name');
+            if (nameInput) {
+                nameInput.oninput = (e) => {
+                    matchdayPosterData.matches[idx].rivalName = e.target.value;
+                    updatePosterPreview();
+                };
+            }
+
+            const timeInput = row.querySelector('.match-time-input');
+            timeInput.oninput = (e) => {
+                matchdayPosterData.matches[idx].time = e.target.value;
+                updatePosterPreview();
+            };
+
+            matchdayMatchesConfig.appendChild(row);
+        });
+    }
+
+    function addMatchToPoster() {
+        if (matchdayPosterData.matches.length >= 3) {
+            window.jbToast('Máximo 3 partidos por cartel.', 'warning');
+            return;
+        }
+        matchdayPosterData.matches.push({ id: Date.now(), rivalId: 'manual', rivalName: '', time: '23:00' });
+        renderMatchdayConfig();
+        updatePosterPreview();
+    }
+
+    window.removeMatchFromPoster = function(idx) {
+        if (matchdayPosterData.matches.length <= 1) {
+            window.jbToast('Debe haber al menos un partido.', 'info');
+            return;
+        }
+        matchdayPosterData.matches.splice(idx, 1);
+        renderMatchdayConfig();
+        updatePosterPreview();
+    };
+
+    function updatePosterPreview() {
+        if (!miniPosterPreview) return;
+        
+        // Generar el HTML del cartel
+        const html = generatePosterHTML();
+        miniPosterPreview.innerHTML = html;
+        
+        // También actualizar el área de captura real
+        const captureArea = document.getElementById('matchday-poster-capture-area');
+        if (captureArea) captureArea.innerHTML = html;
+    }
+
+    function generatePosterHTML() {
+        const teamName = (state.team?.name || 'Mi Club').toUpperCase();
+        const teamCrest = state.team?.crest_url || neutralCrest;
+        const twitter = state.team?.socials?.twitter || '';
+        const twitch = state.team?.socials?.twitch || '';
+
+        let matchesHtml = '';
+        matchdayPosterData.matches.forEach(m => {
+            let rivalCrestHtml = '';
+            if (m.rivalId === 'manual') {
+                const initials = (m.rivalName || 'R').substring(0, 2).toUpperCase();
+                rivalCrestHtml = `<div class="poster-generic-crest-elite">${initials}</div>`;
+            } else {
+                const team = globalTeamsList.find(t => t.id === m.rivalId);
+                const crest = team?.crest_url || neutralCrest;
+                rivalCrestHtml = `<img src="${crest}" class="poster-crest-img" crossOrigin="anonymous">`;
+            }
+
+            matchesHtml += `
+                <div class="poster-match-card">
+                    <div class="poster-team-bundle">
+                        <div class="poster-crest-container">
+                            <img src="${teamCrest}" class="poster-crest-img" crossOrigin="anonymous">
+                        </div>
+                        <div class="poster-team-name">${teamName}</div>
+                    </div>
+                    
+                    <div class="poster-vs-box">
+                        <div class="poster-time-label">${m.time}</div>
+                        <div class="poster-vs-text">VS</div>
+                    </div>
+
+                    <div class="poster-team-bundle">
+                        <div class="poster-crest-container">
+                            ${rivalCrestHtml}
+                        </div>
+                        <div class="poster-team-name">${(m.rivalName || 'RIVAL').toUpperCase()}</div>
+                    </div>
+                </div>
+            `;
+        });
+
+        return `
+            <div class="poster-header">
+                <div class="poster-title">MATCHDAY</div>
+                <div class="poster-subtitle">ESTA NOCHE</div>
+            </div>
+            
+            <div class="poster-matches-list">
+                ${matchesHtml}
+            </div>
+
+            <div class="poster-footer">
+                <div class="poster-footer-club">JB-SQUAD ELITE SYSTEM</div>
+                <div class="poster-footer-social">
+                    ${twitter ? `<div class="poster-social-item"><span>𝕏</span> @${twitter.toUpperCase()}</div>` : ''}
+                    ${twitch ? `<div class="poster-social-item"><span>🎮</span> ${twitch.toUpperCase()}</div>` : ''}
+                </div>
+            </div>
+        `;
+    }
+
+    async function exportMatchdayImage() {
+        window.jbLoading.show('Generando imagen...');
+        
+        // Asegurar que el área de captura esté actualizada
+        updatePosterPreview();
+        
+        const captureArea = document.getElementById('matchday-poster-capture-area');
+        
+        try {
+            // Esperar un poco para asegurar carga de imágenes
+            await new Promise(r => setTimeout(r, 1000));
+            
+            const canvas = await html2canvas(captureArea, {
+                useCORS: true,
+                allowTaint: true,
+                scale: 1, // 1080x1350 es suficiente
+                backgroundColor: '#050505'
+            });
+
+            const link = document.createElement('a');
+            link.download = `MATCHDAY_${new Date().toISOString().split('T')[0]}.jpg`;
+            link.href = canvas.toDataURL('image/jpeg', 0.9);
+            link.click();
+            
+            window.jbToast('¡Cartel generado con éxito!', 'success');
+        } catch (err) {
+            console.error("Error al exportar cartel:", err);
+            window.jbToast('Error al generar la imagen.', 'error');
+        } finally {
+            window.jbLoading.hide();
+        }
     }
 
 

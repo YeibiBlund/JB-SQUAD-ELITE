@@ -1,3 +1,11 @@
+## [v57.0.0] - 2026-04-27 | 16:56
+### Añadido (Generador de Carteles Matchday)
+- **Nuevo Creador de Matchday**: Herramienta premium para generar carteles de partidos en formato 1080x1350 (4:5) optimizados para redes sociales.
+- **Integración Global Teams**: Selección dinámica de oponentes con carga de escudos oficiales desde la base de datos global.
+- **Generador de Escudos Genéricos**: Sistema de fallback que crea insignias dinámicas con iniciales para rivales manuales.
+- **Multi-Partido**: Soporte para hasta 3 partidos por cartel, ideal para noches de torneos o ligas.
+- **Renderizado Canvas**: Motor de exportación de alta fidelidad que integra branding del club y enlaces a redes sociales.
+
 ## [v50.0.0] - 2026-04-24 | 22:35
 ### Añadido (Sistema de Auto-curación y Mantenimiento)
 - **Recalculación Maestra de Estadísticas**: Implementación de un motor de sincronización que reconstruye los contadores de los jugadores (PJ, Goles, Asistencias, Victorias) basándose exclusivamente en las jornadas reales almacenadas en la base de datos.

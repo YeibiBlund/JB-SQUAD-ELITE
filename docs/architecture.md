@@ -25,8 +25,8 @@ graph TD
     B -- Sí --> C[Error: Invitación Requerida]
     B -- No --> D[Creación Profile en Supabase]
     D --> E[Vista: Selección de Club]
-    E --> F[Opción A: Fundar Club]
     E --> G[Opción B: Solicitar Unirse]
+    D --> F[Opción A: Fundar Club]
     F --> H[Crea Team + Membership Manager]
     G --> I[Crea Team Request]
     I --> J[Manager Acepta Solicitud]
@@ -129,4 +129,14 @@ Al cerrar la jornada:
 *   **Optimización de Imágenes**: Uso de `object-fit: contain` y contenedores circulares con `backdrop-filter` para un aspecto de "App de Apple".
 
 ---
-*Última actualización técnica: v56.5 - 26 de Abril de 2026*
+
+## 8. Social & Branding (v57.0)
+
+### 8.1. Generador de Carteles (Matchday Graphics)
+El sistema incluye un motor de diseño dinámico que transforma los datos de la noche en material gráfico profesional:
+- **Flujo de Renderizado**: `Configuración UI` -> `Inyección de Template Oculto` -> `html2canvas Capture` -> `Blob Download`.
+- **Composición Dinámica**: El cartel extrae automáticamente el escudo del club, el nombre, y los enlaces a redes sociales (X, Twitch) configurados en los ajustes del equipo.
+- **Resolución de Exportación**: Forzada a `1080x1350px` mediante contenedores con tamaños en píxeles duros para garantizar la consistencia en el recorte de las redes sociales.
+
+---
+*Última actualización técnica: v57.0.0 - 27 de Abril de 2026*
