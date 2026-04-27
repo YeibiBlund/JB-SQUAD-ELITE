@@ -3549,9 +3549,13 @@ document.addEventListener('DOMContentLoaded', () => {
                 attendanceContainer.innerHTML = `
                     ${alwaysAvailableHTML}
                     <div id="calendar-header" class="calendar-header">
-                        <button class="calendar-nav" id="prev-month">&lt;</button>
+                        <button class="btn-cal-nav" id="prev-month" title="Mes Anterior">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+                        </button>
                         <h2 id="calendar-month-label" class="calendar-month-label">MES AÑO</h2>
-                        <button class="calendar-nav" id="next-month">&gt;</button>
+                        <button class="btn-cal-nav" id="next-month" title="Mes Siguiente">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
+                        </button>
                     </div>
                     <div class="calendar-grid-header">
                         <div>LU</div><div>MA</div><div>MI</div><div>JU</div><div>VI</div><div>SÁ</div><div>DO</div>

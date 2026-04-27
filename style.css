@@ -4326,48 +4326,32 @@ body.editing-tactic .tactical-slot {
 /* --- Calendario de Asistencia Elite v36.3 --- */
 .calendar-header {
     display: flex;
-    justify-content: space-between;
+    justify-content: center;
     align-items: center;
-    margin-bottom: 20px;
-    gap: 15px;
-}
-
-.calendar-title {
-    font-size: 1.1rem;
-    border-left: 3px solid var(--primary);
-    padding-left: 15px;
-    margin: 0;
-}
-
-.calendar-nav {
-    display: flex;
-    gap: 10px;
-    align-items: center;
+    margin-bottom: 25px;
+    gap: 30px;
+    position: relative;
 }
 
 #calendar-month-label {
-    font-size: 0.75rem;
+    font-size: 0.85rem;
     font-weight: 800;
     text-transform: uppercase;
-    min-width: 100px;
     text-align: center;
     white-space: nowrap;
+    letter-spacing: 2px;
+    color: #fff;
+    min-width: 140px;
 }
 
 @media (max-width: 480px) {
     .calendar-header {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 10px;
-    }
-    
-    .calendar-nav {
-        width: 100%;
-        justify-content: space-between;
+        gap: 15px;
     }
     
     #calendar-month-label {
-        flex: 1;
+        font-size: 0.75rem;
+        min-width: 110px;
     }
 }
 
@@ -4599,22 +4583,41 @@ body.editing-tactic .tactical-slot {
 }
 
 .btn-cal-nav {
-    background: rgba(255,255,255,0.05);
-    border: 1px solid rgba(255,255,255,0.1);
-    color: #fff;
-    width: 30px;
-    height: 30px;
-    border-radius: 6px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: var(--text-muted);
+    width: 42px;
+    height: 42px;
+    border-radius: 12px;
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: var(--transition);
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .btn-cal-nav:hover {
-    background: var(--primary);
-    color: #000;
+    background: rgba(240, 165, 0, 0.1);
+    border-color: var(--primary);
+    color: var(--primary);
+    transform: scale(1.05);
+}
+
+.btn-cal-nav:active {
+    transform: scale(0.92);
+}
+
+@media (max-width: 480px) {
+    .btn-cal-nav {
+        width: 32px;
+        height: 32px;
+        border-radius: 8px;
+    }
+    
+    .btn-cal-nav svg {
+        width: 16px;
+        height: 16px;
+    }
 }
 
 /* --- Ajuste de DiseÃƒÂ±o Dual Asistencia v36.4 --- */
