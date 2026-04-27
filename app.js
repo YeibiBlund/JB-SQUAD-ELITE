@@ -2648,7 +2648,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 
                 cell.innerHTML = `
                     <span class="calendar-day-number">${d}</span>
-                    <div class="calendar-day-stats">V-${totalWins} E-${totalDraws} P-${totalLosses}</div>
+                    <div class="calendar-day-stats-column">
+                        <div class="stat-v">${totalWins} V</div>
+                        <div class="stat-e">${totalDraws} E</div>
+                        <div class="stat-d">${totalLosses} D</div>
+                    </div>
                 `;
             } else {
                 cell.innerHTML = `<span class="calendar-day-number">${d}</span>`;

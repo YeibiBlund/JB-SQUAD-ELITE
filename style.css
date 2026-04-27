@@ -4415,21 +4415,24 @@ body.editing-tactic .tactical-slot {
     opacity: 0.6;
 }
 
-.calendar-day-stats {
+.calendar-day-stats-column {
     position: absolute;
-    bottom: 5px;
-    left: 0;
-    width: 100%;
-    text-align: center;
-    font-size: 0.55rem;
-    font-weight: 800;
-    letter-spacing: 1px;
-    color: rgba(255, 255, 255, 0.7);
-    opacity: 0.8;
+    bottom: 4px;
+    left: 4px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1px;
+    font-size: 0.65rem;
+    font-weight: 900;
 }
 
+.calendar-day-stats-column .stat-v { color: var(--success); }
+.calendar-day-stats-column .stat-e { color: #FFC107; }
+.calendar-day-stats-column .stat-d { color: var(--error); }
+
 @media (max-width: 768px) {
-    .calendar-day-stats {
+    .calendar-day-stats-column {
         display: none;
     }
 }
@@ -4498,6 +4501,10 @@ body.editing-tactic .tactical-slot {
         flex: 1; /* Esto hace que ocupen el 50% cada uno */
         padding: 10px 0;
         font-size: 0.7rem;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
     }
 }
 

@@ -31,6 +31,7 @@ Este archivo es el cerebro central. Antes de realizar cualquier tarea, el agente
 8.  **Despliegue Continuo (Git Push)**: Tras realizar y guardar cambios significativos en la funcionalidad o interfaz, el agente DEBE ejecutar un `git push` al repositorio. Esto garantiza que el usuario pueda visualizar los cambios en tiempo real en el entorno desplegado.
 9.  **Trazabilidad Temporal**: Cada actualización en `changelog.md` DEBE incluir tanto la fecha como la **hora exacta** de la modificación. Esta misma precisión debe aplicarse en los mensajes de commit de Git para asegurar un seguimiento cronológico riguroso del desarrollo.
 10. **Mantenimiento de Arquitectura y Base de Datos**: Tras cada cambio estructural o modificación de base de datos (queries SQL, nuevas tablas/columnas), el agente DEBE actualizar obligatoriamente los archivos `architecture.md` y `dbinfo.md`. Estos documentos son la fuente de verdad absoluta y deben reflejar siempre el estado actual del backend y el frontend.
+11. **Prohibición de Emojis Básicos**: Queda terminantemente prohibido el uso de emojis genéricos tipo WhatsApp (🖼️, 📊, etc.) en elementos de la UI como botones o menús. Se deben utilizar siempre iconos vectoriales premium (SVG) o diseños integrados acordes a la estética E-sports del proyecto.
 
 ## Objetivos de Diseño
 - **Premium Look**: La aplicación debe sentirse como una herramienta profesional utilizada por equipos de élite de FIFA.
