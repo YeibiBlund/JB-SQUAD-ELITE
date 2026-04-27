@@ -4881,9 +4881,14 @@ document.addEventListener('DOMContentLoaded', () => {
         
         if (leagues) {
             list.innerHTML = leagues.map(l => `
-                <div class="card-elite" style="padding: 10px; text-align: center; border: 1px solid rgba(255,255,255,0.05);">
-                    <img src="${l.logo_url || neutralCrest}" style="width: 40px; height: 40px; object-fit: contain; margin-bottom: 5px;">
-                    <div style="font-size: 0.65rem; font-weight: 800; color: #fff;">${l.name.toUpperCase()}</div>
+                <div class="card-elite league-card-edit" 
+                     onclick="handleEditGlobalLeague('${l.id}', '${l.name}')"
+                     style="padding: 15px; text-align: center; border: 1px solid rgba(255,255,255,0.05); cursor: pointer; transition: 0.3s; position: relative; overflow: hidden; background: rgba(255,255,255,0.03);">
+                    <div class="edit-overlay" style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: rgba(var(--primary-rgb), 0.1); opacity: 0; display: flex; align-items: center; justify-content: center; transition: 0.3s;">
+                        <span style="font-size: 0.5rem; color: var(--primary); font-weight: 800; background: rgba(0,0,0,0.8); padding: 4px 8px; border-radius: 4px;">EDITAR</span>
+                    </div>
+                    <img src="${l.logo_url || neutralCrest}" style="width: 50px; height: 50px; object-fit: contain; margin-bottom: 8px; filter: drop-shadow(0 0 5px rgba(255,255,255,0.1));">
+                    <div style="font-size: 0.7rem; font-weight: 800; color: #fff; letter-spacing: 1px;">${l.name.toUpperCase()}</div>
                 </div>
             `).join('');
 
@@ -4900,12 +4905,11 @@ document.addEventListener('DOMContentLoaded', () => {
         const leagueId = document.getElementById('mgmt-league-filter').value;
         if (!list) return;
 
-        list.innerHTML = '<div style="grid-column: 1/-1; text-align: center; padding: 20px;">Cargando equipos...</div>';
+        list.innerHTML = '<div style="grid-column: 1/-1; text-align: center; padding: 20px; color: var(--primary); font-size: 0.7rem; letter-spacing: 2px;">SINCRONIZANDO EQUIPOS...</div>';
 
         let query = supabase.from('global_teams').select('*').order('name');
         
         if (leagueId) {
-            // Si hay filtro, usamos la tabla intermedia
             const { data: linkData } = await supabase.from('league_teams').select('team_id').eq('league_id', leagueId);
             const teamIds = linkData ? linkData.map(d => d.team_id) : [];
             query = query.in('id', teamIds);
@@ -4915,13 +4919,21 @@ document.addEventListener('DOMContentLoaded', () => {
         
         if (teams && teams.length > 0) {
             list.innerHTML = teams.map(t => `
-                <div class="card-elite" style="padding: 12px; display: flex; align-items: center; gap: 15px; border: 1px solid rgba(255,255,255,0.05);">
-                    <img src="${t.crest_url || neutralCrest}" style="width: 35px; height: 35px; object-fit: contain;">
-                    <div style="font-size: 0.75rem; font-weight: 700; color: #fff;">${t.name.toUpperCase()}</div>
+                <div class="card-elite team-card-edit" 
+                     onclick="handleEditGlobalTeam('${t.id}', '${t.name}')"
+                     style="padding: 12px 15px; display: flex; align-items: center; gap: 15px; border: 1px solid rgba(255,255,255,0.05); cursor: pointer; transition: 0.3s; background: rgba(0,0,0,0.2);">
+                    <div style="width: 35px; height: 35px; display: flex; align-items: center; justify-content: center; background: rgba(255,255,255,0.02); border-radius: 6px; padding: 4px;">
+                        <img src="${t.crest_url || neutralCrest}" style="width: 100%; height: 100%; object-fit: contain;">
+                    </div>
+                    <div style="flex: 1;">
+                        <div style="font-size: 0.75rem; font-weight: 800; color: #fff; letter-spacing: 0.5px;">${t.name.toUpperCase()}</div>
+                        <div style="font-size: 0.55rem; color: var(--text-muted); text-transform: uppercase;">Rival Registrado</div>
+                    </div>
+                    <div class="edit-icon" style="opacity: 0.3; font-size: 0.7rem;">✏️</div>
                 </div>
             `).join('');
         } else {
-            list.innerHTML = '<div style="grid-column: 1/-1; text-align: center; padding: 20px; color: var(--text-muted); font-size: 0.7rem;">No hay equipos en esta liga.</div>';
+            list.innerHTML = '<div style="grid-column: 1/-1; text-align: center; padding: 40px; color: var(--text-muted); font-size: 0.75rem; background: rgba(0,0,0,0.1); border-radius: 12px; border: 1px dashed rgba(255,255,255,0.05);">No hay equipos registrados en esta competición.</div>';
         }
     }
 
@@ -4929,7 +4941,6 @@ document.addEventListener('DOMContentLoaded', () => {
         const name = await window.jbInput("🏆 NUEVA LIGA", "Nombre de la competición:");
         if (!name) return;
 
-        // Crear input de archivo temporal para el logo
         const fileInput = document.createElement('input');
         fileInput.type = 'file';
         fileInput.accept = 'image/*';
@@ -4938,7 +4949,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (!file) return;
 
             window.jbLoading.show('Procesando logo...');
-            const compressedBlob = await compressImage(file, 200); // Logo pequeño
+            const compressedBlob = await compressImage(file, 200);
             const reader = new FileReader();
             reader.onload = async (event) => {
                 const base64 = event.target.result;
@@ -4947,7 +4958,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 if (error) window.jbToast(error, 'error');
                 else {
-                    window.jbToast('¡Liga añadida!', 'success');
+                    window.jbToast('¡Liga añadida con éxito!', 'success');
                     renderGlobalMgmt();
                 }
             };
@@ -4956,24 +4967,49 @@ document.addEventListener('DOMContentLoaded', () => {
         fileInput.click();
     }
 
-    async function handleAddGlobalTeam() {
-        const name = await window.jbInput("🛡️ NUEVO EQUIPO", "Nombre del equipo:");
-        if (!name) return;
+    async function handleEditGlobalLeague(id, oldName) {
+        const newName = await window.jbInput("📝 EDITAR LIGA", "Modificar nombre (dejar igual para no cambiar):");
+        const finalName = newName || oldName;
 
-        // Pedir liga (v57.2)
-        const { data: leagues } = await supabase.from('global_leagues').select('*').order('name');
-        if (!leagues || leagues.length === 0) {
-            window.jbToast('Crea primero una liga para asociar el equipo.', 'error');
-            return;
+        if (await window.jbConfirm(`¿Quieres actualizar los datos de ${oldName.toUpperCase()}?`)) {
+            if (await window.jbConfirm("¿Quieres también subir un NUEVO LOGO? (Cancelar para mantener el actual)")) {
+                const fileInput = document.createElement('input');
+                fileInput.type = 'file';
+                fileInput.accept = 'image/*';
+                fileInput.onchange = async (e) => {
+                    const file = e.target.files[0];
+                    if (!file) return;
+                    window.jbLoading.show('Actualizando liga...');
+                    const compressedBlob = await compressImage(file, 200);
+                    const reader = new FileReader();
+                    reader.onload = async (event) => {
+                        const { error } = await updateGlobalLeague(id, finalName, event.target.result);
+                        window.jbLoading.hide();
+                        if (error) window.jbToast(error, 'error');
+                        else { window.jbToast('¡Liga actualizada!', 'success'); renderGlobalMgmt(); }
+                    };
+                    reader.readAsDataURL(compressedBlob);
+                };
+                fileInput.click();
+            } else {
+                window.jbLoading.show('Guardando cambios...');
+                const { error } = await updateGlobalLeague(id, finalName, null);
+                window.jbLoading.hide();
+                if (error) window.jbToast(error, 'error');
+                else { window.jbToast('¡Nombre de liga actualizado!', 'success'); renderGlobalMgmt(); }
+            }
         }
+    }
 
-        // Simular un selector de liga simple con jbInput (usando prompt para simplicidad o un modal pequeño si fuera necesario)
-        // Pero vamos a hacerlo con el filtro actual si hay uno seleccionado, o pedir ID
+    async function handleAddGlobalTeam() {
         const leagueId = document.getElementById('mgmt-league-filter').value;
         if (!leagueId) {
-            window.jbToast('Selecciona primero una liga en el filtro para añadir el equipo en ella.', 'info');
+            window.jbToast('Selecciona primero una liga para añadir el equipo en ella.', 'warning');
             return;
         }
+
+        const name = await window.jbInput("🛡️ NUEVO EQUIPO", "Nombre del rival:");
+        if (!name) return;
 
         const fileInput = document.createElement('input');
         fileInput.type = 'file';
@@ -4983,7 +5019,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (!file) return;
 
             window.jbLoading.show('Optimizando escudo...');
-            const compressedBlob = await compressImage(file, 250); // Escudo ligero
+            const compressedBlob = await compressImage(file, 250);
             const reader = new FileReader();
             reader.onload = async (event) => {
                 const base64 = event.target.result;
@@ -4992,13 +5028,47 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 if (error) window.jbToast(error, 'error');
                 else {
-                    window.jbToast('¡Equipo añadido con éxito!', 'success');
+                    window.jbToast('¡Equipo registrado!', 'success');
                     renderGlobalMgmt();
                 }
             };
             reader.readAsDataURL(compressedBlob);
         };
         fileInput.click();
+    }
+
+    async function handleEditGlobalTeam(id, oldName) {
+        const newName = await window.jbInput("📝 EDITAR RIVAL", "Nuevo nombre:", "text");
+        const finalName = newName || oldName;
+
+        if (await window.jbConfirm(`¿Modificar datos de ${oldName.toUpperCase()}?`)) {
+            if (await window.jbConfirm("¿Quieres subir un NUEVO ESCUDO? (Se optimizará a imagen local)")) {
+                const fileInput = document.createElement('input');
+                fileInput.type = 'file';
+                fileInput.accept = 'image/*';
+                fileInput.onchange = async (e) => {
+                    const file = e.target.files[0];
+                    if (!file) return;
+                    window.jbLoading.show('Procesando cambios...');
+                    const compressedBlob = await compressImage(file, 250);
+                    const reader = new FileReader();
+                    reader.onload = async (event) => {
+                        const { error } = await updateGlobalTeam(id, finalName, event.target.result);
+                        window.jbLoading.hide();
+                        if (error) window.jbToast(error, 'error');
+                        else { window.jbToast('¡Equipo actualizado!', 'success'); renderGlobalMgmt(); }
+                    };
+                    reader.readAsDataURL(compressedBlob);
+                };
+                fileInput.click();
+            } else {
+                window.jbLoading.show('Guardando...');
+                const { error } = await updateGlobalTeam(id, finalName, null);
+                window.jbLoading.hide();
+                if (error) window.jbToast(error, 'error');
+                else { window.jbToast('Nombre actualizado.', 'success'); renderGlobalMgmt(); }
+            }
+        }
     }
 
     /* ==========================================================================

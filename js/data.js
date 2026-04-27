@@ -250,6 +250,48 @@ async function addGlobalTeam(name, crestBase64, leagueId) {
 }
 
 /**
+ * Actualiza una liga existente (v57.3).
+ */
+async function updateGlobalLeague(id, name, logoBase64) {
+    if (!supabase) return { error: 'No hay conexión a DB' };
+    try {
+        const updateData = { name };
+        if (logoBase64) updateData.logo_url = logoBase64;
+
+        const { error } = await supabase
+            .from('global_leagues')
+            .update(updateData)
+            .eq('id', id);
+        
+        if (error) throw error;
+        return { success: true };
+    } catch (err) {
+        return { error: err.message };
+    }
+}
+
+/**
+ * Actualiza un equipo rival existente (v57.3).
+ */
+async function updateGlobalTeam(id, name, crestBase64) {
+    if (!supabase) return { error: 'No hay conexión a DB' };
+    try {
+        const updateData = { name };
+        if (crestBase64) updateData.crest_url = crestBase64;
+
+        const { error } = await supabase
+            .from('global_teams')
+            .update(updateData)
+            .eq('id', id);
+        
+        if (error) throw error;
+        return { success: true };
+    } catch (err) {
+        return { error: err.message };
+    }
+}
+
+/**
  * Obtiene la lista de equipos globales (rivales) para el generador de carteles.
  */
 async function fetchGlobalTeams() {
