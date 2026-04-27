@@ -3717,13 +3717,13 @@ document.addEventListener('DOMContentLoaded', () => {
         let matchesHtml = '';
         matchdayPosterData.matches.forEach(m => {
             const team = m.rivalId !== 'manual' ? globalTeamsList.find(t => t.id === m.rivalId) : null;
-            const crestUrl = team?.crest_url || null;
+            const crestUrl = (team?.crest_url && team.crest_url.trim() !== '') ? team.crest_url : null;
             const initials = (m.rivalName || 'R').substring(0, 2).toUpperCase();
 
             let rivalCrestHtml = '';
             if (crestUrl) {
                 // Si hay URL, intentamos cargar la imagen con fallback a iniciales si falla (onerror)
-                rivalCrestHtml = `<img src="${crestUrl}" class="poster-crest-img" crossOrigin="anonymous" referrerpolicy="no-referrer" onerror="this.onerror=null; this.outerHTML='<div class=\\'poster-generic-crest-elite\\'>${initials}</div>'">`;
+                rivalCrestHtml = `<img src="${crestUrl}" class="poster-crest-img" referrerpolicy="no-referrer" onerror="this.onerror=null; this.outerHTML='<div class=\\'poster-generic-crest-elite\\'>${initials}</div>'">`;
             } else {
                 // Si no hay URL (o es manual), usamos el escudo de iniciales directamente
                 rivalCrestHtml = `<div class="poster-generic-crest-elite">${initials}</div>`;
@@ -3733,7 +3733,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 <div class="poster-match-card">
                     <div class="poster-team-bundle">
                         <div class="poster-crest-container">
-                            <img src="${teamCrest}" class="poster-crest-img" crossOrigin="anonymous" referrerpolicy="no-referrer">
+                            <img src="${teamCrest}" class="poster-crest-img" referrerpolicy="no-referrer">
                         </div>
                         <div class="poster-team-name">${teamName}</div>
                     </div>
