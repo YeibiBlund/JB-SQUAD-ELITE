@@ -4968,36 +4968,35 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     window.handleEditGlobalLeague = async function(id, oldName) {
-        const newName = await window.jbInput("📝 EDITAR LIGA", "Modificar nombre (dejar igual para no cambiar):");
-        const finalName = newName || oldName;
+        const newName = await window.jbInput("📝 EDITAR LIGA", "Nuevo nombre (cancela o deja vacío para mantener):");
+        const finalName = (newName !== null && newName.trim() !== "") ? newName : oldName;
 
-        if (await window.jbConfirm(`¿Quieres actualizar los datos de ${oldName.toUpperCase()}?`)) {
-            if (await window.jbConfirm("¿Quieres también subir un NUEVO LOGO? (Cancelar para mantener el actual)")) {
-                const fileInput = document.createElement('input');
-                fileInput.type = 'file';
-                fileInput.accept = 'image/*';
-                fileInput.onchange = async (e) => {
-                    const file = e.target.files[0];
-                    if (!file) return;
-                    window.jbLoading.show('Actualizando liga...');
-                    const compressedBlob = await compressImage(file, 200);
-                    const reader = new FileReader();
-                    reader.onload = async (event) => {
-                        const { error } = await updateGlobalLeague(id, finalName, event.target.result);
-                        window.jbLoading.hide();
-                        if (error) window.jbToast(error, 'error');
-                        else { window.jbToast('¡Liga actualizada!', 'success'); window.renderGlobalMgmt(); }
-                    };
-                    reader.readAsDataURL(compressedBlob);
+        // Preguntar directamente por el logo
+        if (await window.jbConfirm(`¿Quieres subir un NUEVO LOGO para ${finalName.toUpperCase()}?`)) {
+            const fileInput = document.createElement('input');
+            fileInput.type = 'file';
+            fileInput.accept = 'image/*';
+            fileInput.onchange = async (e) => {
+                const file = e.target.files[0];
+                if (!file) return;
+                window.jbLoading.show('Actualizando logo...');
+                const compressedBlob = await compressImage(file, 200);
+                const reader = new FileReader();
+                reader.onload = async (event) => {
+                    const { error } = await updateGlobalLeague(id, finalName, event.target.result);
+                    window.jbLoading.hide();
+                    if (error) window.jbToast(error, 'error');
+                    else { window.jbToast('¡Liga actualizada!', 'success'); window.renderGlobalMgmt(); }
                 };
-                fileInput.click();
-            } else {
-                window.jbLoading.show('Guardando cambios...');
-                const { error } = await updateGlobalLeague(id, finalName, null);
-                window.jbLoading.hide();
-                if (error) window.jbToast(error, 'error');
-                else { window.jbToast('¡Nombre de liga actualizado!', 'success'); window.renderGlobalMgmt(); }
-            }
+                reader.readAsDataURL(compressedBlob);
+            };
+            fileInput.click();
+        } else if (finalName !== oldName) {
+            window.jbLoading.show('Guardando cambios...');
+            const { error } = await updateGlobalLeague(id, finalName, null);
+            window.jbLoading.hide();
+            if (error) window.jbToast(error, 'error');
+            else { window.jbToast('¡Nombre actualizado!', 'success'); window.renderGlobalMgmt(); }
         }
     }
 
@@ -5038,36 +5037,35 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     window.handleEditGlobalTeam = async function(id, oldName) {
-        const newName = await window.jbInput("📝 EDITAR RIVAL", "Nuevo nombre:", "text");
-        const finalName = newName || oldName;
+        const newName = await window.jbInput("📝 EDITAR RIVAL", "Nuevo nombre (cancela o deja vacío para mantener):");
+        const finalName = (newName !== null && newName.trim() !== "") ? newName : oldName;
 
-        if (await window.jbConfirm(`¿Modificar datos de ${oldName.toUpperCase()}?`)) {
-            if (await window.jbConfirm("¿Quieres subir un NUEVO ESCUDO? (Se optimizará a imagen local)")) {
-                const fileInput = document.createElement('input');
-                fileInput.type = 'file';
-                fileInput.accept = 'image/*';
-                fileInput.onchange = async (e) => {
-                    const file = e.target.files[0];
-                    if (!file) return;
-                    window.jbLoading.show('Procesando cambios...');
-                    const compressedBlob = await compressImage(file, 250);
-                    const reader = new FileReader();
-                    reader.onload = async (event) => {
-                        const { error } = await updateGlobalTeam(id, finalName, event.target.result);
-                        window.jbLoading.hide();
-                        if (error) window.jbToast(error, 'error');
-                        else { window.jbToast('¡Equipo actualizado!', 'success'); window.renderGlobalMgmt(); }
-                    };
-                    reader.readAsDataURL(compressedBlob);
+        // Preguntar directamente por el escudo
+        if (await window.jbConfirm(`¿Quieres actualizar el ESCUDO de ${finalName.toUpperCase()}?`)) {
+            const fileInput = document.createElement('input');
+            fileInput.type = 'file';
+            fileInput.accept = 'image/*';
+            fileInput.onchange = async (e) => {
+                const file = e.target.files[0];
+                if (!file) return;
+                window.jbLoading.show('Procesando escudo...');
+                const compressedBlob = await compressImage(file, 250);
+                const reader = new FileReader();
+                reader.onload = async (event) => {
+                    const { error } = await updateGlobalTeam(id, finalName, event.target.result);
+                    window.jbLoading.hide();
+                    if (error) window.jbToast(error, 'error');
+                    else { window.jbToast('¡Rival actualizado!', 'success'); window.renderGlobalMgmt(); }
                 };
-                fileInput.click();
-            } else {
-                window.jbLoading.show('Guardando...');
-                const { error } = await updateGlobalTeam(id, finalName, null);
-                window.jbLoading.hide();
-                if (error) window.jbToast(error, 'error');
-                else { window.jbToast('Nombre actualizado.', 'success'); window.renderGlobalMgmt(); }
-            }
+                reader.readAsDataURL(compressedBlob);
+            };
+            fileInput.click();
+        } else if (finalName !== oldName) {
+            window.jbLoading.show('Guardando...');
+            const { error } = await updateGlobalTeam(id, finalName, null);
+            window.jbLoading.hide();
+            if (error) window.jbToast(error, 'error');
+            else { window.jbToast('Nombre actualizado.', 'success'); window.renderGlobalMgmt(); }
         }
     }
 
