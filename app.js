@@ -3725,13 +3725,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
         let matchesHtml = '';
         matchdayPosterData.matches.forEach(m => {
-            const crestUrl = m.rivalCrest || null;
+            const rawCrestUrl = m.rivalCrest || null;
             const initials = (m.rivalName || 'R').substring(0, 2).toUpperCase();
 
             let rivalCrestHtml = '';
-            if (crestUrl && crestUrl.trim() !== '') {
-                // Usamos la misma lógica que en el marcador de partidos (v57.1)
-                rivalCrestHtml = `<img src="${crestUrl}" class="poster-crest-img" referrerpolicy="no-referrer" onerror="this.onerror=null; this.src='${neutralCrest}';">`;
+            if (rawCrestUrl && rawCrestUrl.trim() !== '') {
+                // Usamos un proxy de CORS para que html2canvas pueda capturar la imagen (v57.2)
+                const finalCrestUrl = rawCrestUrl.startsWith('http') ? `https://corsproxy.io/?${encodeURIComponent(rawCrestUrl)}` : rawCrestUrl;
+                
+                rivalCrestHtml = `<img src="${finalCrestUrl}" class="poster-crest-img" crossOrigin="anonymous" referrerpolicy="no-referrer" onerror="this.onerror=null; this.src='${neutralCrest}';">`;
             } else {
                 // Fallback a iniciales solo si no hay URL en absoluto
                 rivalCrestHtml = `<div class="poster-generic-crest-elite">${initials}</div>`;
@@ -3741,7 +3743,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 <div class="poster-match-card">
                     <div class="poster-team-bundle">
                         <div class="poster-crest-container">
-                            <img src="${teamCrest}" class="poster-crest-img" referrerpolicy="no-referrer">
+                            <img src="${teamCrest}" class="poster-crest-img" crossOrigin="anonymous" referrerpolicy="no-referrer">
                         </div>
                         <div class="poster-team-name">${teamName}</div>
                     </div>
