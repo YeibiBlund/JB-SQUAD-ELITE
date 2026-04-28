@@ -229,13 +229,13 @@
                             </div>
                             <!-- Barra estilizada premium (Dorado, Gris medio, Gris oscuro) -->
                             <div style="width: 100%; height: 18px; background: rgba(0,0,0,0.8); border-radius: 9px; overflow: hidden; display: flex; box-shadow: inset 0 2px 5px rgba(0,0,0,0.5);">
-                                <div id="win-ratio-bar-w" style="height: 100%; background: linear-gradient(90deg, #d48a00, var(--primary)); width: 0%; transition: width 1s ease;"></div>
-                                <div id="win-ratio-bar-d" style="height: 100%; background: #444; width: 0%; transition: width 1s ease; border-left: 1px solid rgba(0,0,0,0.5);"></div>
-                                <div id="win-ratio-bar-l" style="height: 100%; background: #222; width: 0%; transition: width 1s ease; border-left: 1px solid rgba(0,0,0,0.5);"></div>
+                                <div id="win-ratio-bar-w" style="height: 100%; background: #4CAF50; width: 0%; transition: width 1s ease;"></div>
+                                <div id="win-ratio-bar-d" style="height: 100%; background: #FFC107; width: 0%; transition: width 1s ease; border-left: 1px solid rgba(0,0,0,0.5);"></div>
+                                <div id="win-ratio-bar-l" style="height: 100%; background: #F44336; width: 0%; transition: width 1s ease; border-left: 1px solid rgba(0,0,0,0.5);"></div>
                             </div>
                             <div style="display: flex; justify-content: space-between; margin-top: 10px; font-size: 0.75rem; font-weight: 800;">
-                                <span id="win-ratio-w-val" style="color: var(--primary);">0 V</span>
-                                <span id="win-ratio-d-val" style="color: #888;">0 E</span>
+                                <span id="win-ratio-w-val" style="color: #4CAF50;">0 V</span>
+                                <span id="win-ratio-d-val" style="color: #FFC107;">0 E</span>
                                 <span id="win-ratio-l-val" style="color: #F44336;">0 D</span>
                             </div>
                         </div>
@@ -255,7 +255,7 @@
                         <div class="card-elite" style="padding: 20px;">
                             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; padding-bottom: 15px; border-bottom: 1px solid rgba(255,255,255,0.05);">
                                 <span style="font-size: 0.75rem; font-weight: 800; letter-spacing: 1.5px; color: var(--text-muted);">TOP % VICTORIAS</span>
-                                <span style="font-size: 0.75rem; color: var(--primary);">Top 5 🏆</span>
+                                <span style="font-size: 0.75rem; color: var(--primary); display: flex; align-items: center; gap: 5px;">Top 5 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline><polyline points="17 6 23 6 23 12"></polyline></svg></span>
                             </div>
                             <div id="home-top-winrate-list" style="display: flex; flex-direction: column; gap: 10px;">
                                 <!-- Inyectados por JS -->
@@ -267,13 +267,17 @@
                     <div class="dash-col-side">
                         <div class="home-stats-grid">
                             <div class="card-elite" style="text-align: center; padding: 25px 15px;">
-                                <span style="font-size: 2rem; color: var(--primary);">👥</span>
-                                <h2 id="stats-total-players" style="font-size: 1.8rem; margin-top:15px; color: white;">0</h2>
+                                <span style="color: var(--primary); display: flex; justify-content: center; margin-bottom: 10px;">
+                                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+                                </span>
+                                <h2 id="stats-total-players" style="font-size: 1.8rem; margin-top:5px; color: white;">0</h2>
                                 <p style="font-size: 0.75rem; font-weight: 800; letter-spacing: 1px; margin-top: 5px;">JUGADORES</p>
                             </div>
                             <div class="card-elite" style="text-align: center; padding: 25px 15px;">
-                                <span style="font-size: 2rem; color: var(--primary);">🏆</span>
-                                <h2 id="stats-total-sessions" style="font-size: 1.8rem; margin-top:15px; color: white;">0</h2>
+                                <span style="color: var(--primary); display: flex; justify-content: center; margin-bottom: 10px;">
+                                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"></path><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"></path><path d="M4 22h16"></path><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"></path><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"></path><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"></path></svg>
+                                </span>
+                                <h2 id="stats-total-sessions" style="font-size: 1.8rem; margin-top:5px; color: white;">0</h2>
                                 <p style="font-size: 0.75rem; font-weight: 800; letter-spacing: 1px; margin-top: 5px;">JORNADAS</p>
                             </div>
                         </div>
@@ -282,7 +286,7 @@
                         <div class="card-elite" style="padding: 20px;">
                             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; padding-bottom: 15px; border-bottom: 1px solid rgba(255,255,255,0.05);">
                                 <span style="font-size: 0.75rem; font-weight: 800; letter-spacing: 1.5px; color: var(--text-muted);">TOP GOLEADORES</span>
-                                <span style="font-size: 0.75rem; color: var(--primary);">Top 5 ⚽</span>
+                                <span style="font-size: 0.75rem; color: var(--primary); display: flex; align-items: center; gap: 5px;">Top 5 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><circle cx="12" cy="12" r="6"></circle><circle cx="12" cy="12" r="2"></circle></svg></span>
                             </div>
                             <div id="home-top-scorers-list" style="display: flex; flex-direction: column; gap: 10px;">
                                 <!-- Inyectados por JS -->
@@ -293,7 +297,7 @@
                         <div class="card-elite" style="padding: 20px;">
                             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; padding-bottom: 15px; border-bottom: 1px solid rgba(255,255,255,0.05);">
                                 <span style="font-size: 0.75rem; font-weight: 800; letter-spacing: 1.5px; color: var(--text-muted);">TOP ASISTENTES</span>
-                                <span style="font-size: 0.75rem; color: var(--primary);">Top 5 👟</span>
+                                <span style="font-size: 0.75rem; color: var(--primary); display: flex; align-items: center; gap: 5px;">Top 5 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line></svg></span>
                             </div>
                             <div id="home-top-assists-list" style="display: flex; flex-direction: column; gap: 10px;">
                                 <!-- Inyectados por JS -->
