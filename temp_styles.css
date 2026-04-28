@@ -1,0 +1,51 @@
+
+/* =========================================================================
+   DASHBOARD FILTER BADGE (v58.2) - SUSTITUYE AL SELECT
+   ========================================================================= */
+.filter-badge-elite {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: var(--text-muted);
+    border-radius: 6px;
+    padding: 4px 12px;
+    font-size: 0.6rem;
+    font-weight: 900;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    user-select: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.filter-badge-elite:hover {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: rgba(255, 255, 255, 0.2);
+    transform: translateY(-1px);
+}
+
+.filter-badge-elite:active {
+    transform: scale(0.95);
+}
+
+/* Modos de Color */
+.filter-badge-elite[data-mode="official"] {
+    border-color: rgba(76, 175, 80, 0.4);
+    color: var(--success);
+    background: rgba(76, 175, 80, 0.05);
+}
+
+.filter-badge-elite[data-mode="friendly"] {
+    border-color: rgba(240, 165, 0, 0.4);
+    color: var(--primary);
+    background: rgba(240, 165, 0, 0.05);
+}
+
+.filter-badge-elite[data-mode="global"] {
+    border-color: rgba(255, 255, 255, 0.3);
+    color: #fff;
+    background: rgba(255, 255, 255, 0.1);
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.05);
+}

@@ -1,3 +1,8 @@
+## [v58.2] - 2026-04-29 | 00:55
+### Mejorado (Dashboard Interactivo)
+- **Pulsadores Cíclicos de Filtro**: Se han sustituido los menús desplegables (select) por botones de estado cíclico (Badges). Esto elimina los problemas de descuadre visual en navegadores de escritorio y ofrece una navegación más rápida (Oficial -> Amistoso -> Global -> Oficial).
+- **Feedback Visual Dinámico**: Los nuevos pulsadores cambian de color según el modo activo (Verde para Oficial, Naranja para Amistoso, Blanco/Brillante para Global).
+
 ## [v58.1] - 2026-04-29 | 00:35
 ### Mejorado (Dashboard Analytics)
 - **Filtros Interactivos**: Implementados selectores desplegables con diseño Élite (glassmorphism) en las tarjetas de Top Goleadores, Top Asistentes y Top % Victorias.

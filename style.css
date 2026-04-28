@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;700;800&display=swap');
+﻿@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;700;800&display=swap');
 
 :root {
     /* Nueva Paleta: Elite Obsidian & Electric Amber */
@@ -6,7 +6,7 @@
     --bg-surface: #111111;
     --bg-card: #1a1a1a;
     
-    --primary: #f0a500; /* Oro / ÃƒÂmbar ElÃƒÂ©ctrico */
+    --primary: #f0a500; /* Oro / ÃƒÆ’Ã‚Âmbar ElÃƒÆ’Ã‚Â©ctrico */
     --primary-glow: rgba(240, 165, 0, 0.3);
     --secondary: #222222;
     --text-main: #ffffff;
@@ -57,8 +57,8 @@ body {
     width: 100%;
     max-width: 600px;
     margin: 0 auto;
-    padding: 10px 15px 0 15px; /* ReducciÃƒÂ³n de padding lateral/superior en mÃƒÂ³vil */
-    height: calc(100vh - var(--nav-height-mobile) - 20px); /* Usar nueva altura mÃƒÂ³vil */
+    padding: 10px 15px 0 15px; /* ReducciÃƒÆ’Ã‚Â³n de padding lateral/superior en mÃƒÆ’Ã‚Â³vil */
+    height: calc(100vh - var(--nav-height-mobile) - 20px); /* Usar nueva altura mÃƒÆ’Ã‚Â³vil */
     display: flex;
     flex-direction: column;
     overflow-y: auto;
@@ -76,8 +76,8 @@ body {
 /* El area de tacticas es especial: NO SCROLL */
 #view-tacticas {
     height: 100%;
-    /* No usar display: flex aquÃƒÂ­ directo para permitir que display: none de .view funcione.
-       Se activa en #view-tacticas.active-view mÃƒÂ¡s abajo */
+    /* No usar display: flex aquÃƒÆ’Ã‚Â­ directo para permitir que display: none de .view funcione.
+       Se activa en #view-tacticas.active-view mÃƒÆ’Ã‚Â¡s abajo */
 }
 
 @media (min-width: 1024px) {
@@ -90,7 +90,7 @@ body {
     }
 }
 
-/* NavegaciÃƒÂ³n Inferior (Premium Bottom Nav) */
+/* NavegaciÃƒÆ’Ã‚Â³n Inferior (Premium Bottom Nav) */
 .bottom-nav {
     position: fixed;
     bottom: 20px;
@@ -144,7 +144,7 @@ body {
 }
 
 .bottom-nav.collapsed {
-    height: 18px; /* Pastilla pequeÃƒÂ±a */
+    height: 18px; /* Pastilla pequeÃƒÆ’Ã‚Â±a */
     width: 60px;
     bottom: 10px;
     border-radius: 30px;
@@ -262,7 +262,7 @@ body {
     box-shadow: 0 0 10px var(--primary);
 }
 
-/* Badge de VotaciÃƒÂ³n con Pulso */
+/* Badge de VotaciÃƒÆ’Ã‚Â³n con Pulso */
 #nav-poll-badge {
     box-shadow: 0 0 0 0 rgba(255, 68, 68, 0.7);
     animation: badgePulse 2s infinite;
@@ -283,7 +283,7 @@ body {
     }
 }
 
-/* TipografÃƒÂ­a y Textos */
+/* TipografÃƒÆ’Ã‚Â­a y Textos */
 h1 { font-size: 1.8rem; font-weight: 800; letter-spacing: -0.5px; margin-bottom: 8px; }
 p { color: var(--text-muted); font-size: 0.95rem; line-height: 1.5; }
 
@@ -294,7 +294,7 @@ p { color: var(--text-muted); font-size: 0.95rem; line-height: 1.5; }
     -webkit-text-fill-color: transparent;
 }
 
-/* Resaltado dinÃƒÂ¡mico para votaciÃƒÂ³n pendiente */
+/* Resaltado dinÃƒÆ’Ã‚Â¡mico para votaciÃƒÆ’Ã‚Â³n pendiente */
 .nav-btn.nav-highlight .icon {
     color: var(--primary);
     filter: drop-shadow(0 0 12px var(--primary-glow));
@@ -422,7 +422,7 @@ p { color: var(--text-muted); font-size: 0.95rem; line-height: 1.5; }
 
 .btn-gold:active { transform: scale(0.96); }
 
-/* Vistas de PÃƒÂ¡gina Completa */
+/* Vistas de PÃƒÆ’Ã‚Â¡gina Completa */
 .view {
     display: none;
     animation: slideIn 0.4s ease-out;
@@ -445,7 +445,7 @@ p { color: var(--text-muted); font-size: 0.95rem; line-height: 1.5; }
 
 
 
-/* Guardar TÃƒÂ¡ctica Item */
+/* Guardar TÃƒÆ’Ã‚Â¡ctica Item */
 .tactic-card {
     background: linear-gradient(145deg, var(--bg-surface), #000);
     border: 1px solid var(--glass-border);
@@ -608,13 +608,13 @@ p { color: var(--text-muted); font-size: 0.95rem; line-height: 1.5; }
     font-size: 0.8rem;
 }
 
-/* Colores DinÃƒÂ¡micos de PosiciÃƒÂ³n */
+/* Colores DinÃƒÆ’Ã‚Â¡micos de PosiciÃƒÆ’Ã‚Â³n */
 .pos-gk  { background-color: #2196F3 !important; color: #fff !important; }
 .pos-def { background-color: #FFC107 !important; color: #000 !important; }
 .pos-mid { background-color: #4CAF50 !important; color: #fff !important; }
 .pos-fwd { background-color: #F44336 !important; color: #fff !important; }
 
-/* BotÃƒÂ³n de Borrado de Fila */
+/* BotÃƒÆ’Ã‚Â³n de Borrado de Fila */
 .btn-delete-row {
     background: rgba(244, 67, 54, 0.1);
     color: #F44336;
@@ -671,7 +671,7 @@ p { color: var(--text-muted); font-size: 0.95rem; line-height: 1.5; }
     color: #fff;
 }
 
-/* --- Sistema de TÃƒÂ¡cticas & Pitch v2.5.0 --- */
+/* --- Sistema de TÃƒÆ’Ã‚Â¡cticas & Pitch v2.5.0 --- */
 .pitch-container {
     background: #1a4d1a;
     background-image: repeating-linear-gradient(90deg, 
@@ -683,9 +683,9 @@ p { color: var(--text-muted); font-size: 0.95rem; line-height: 1.5; }
     width: 100%;
     height: 100%;
     min-height: 400px;
-    max-width: 800px; /* Aumentado para que ocupe mÃƒÂ¡s espacio horizontal */
+    max-width: 800px; /* Aumentado para que ocupe mÃƒÆ’Ã‚Â¡s espacio horizontal */
     max-height: 75vh; /* Evita que al crecer se cree un scroll vertical inmenso */
-    aspect-ratio: 1 / 1.35; /* ProporciÃƒÂ³n elegante */
+    aspect-ratio: 1 / 1.35; /* ProporciÃƒÆ’Ã‚Â³n elegante */
     flex: 1 1 auto;
     border-radius: var(--radius-md);
     position: relative;
@@ -696,7 +696,7 @@ p { color: var(--text-muted); font-size: 0.95rem; line-height: 1.5; }
     container-type: inline-size;
 }
 
-/* LÃƒÂ­neas del campo Refinadas */
+/* LÃƒÆ’Ã‚Â­neas del campo Refinadas */
 .pitch-lines {
     position: absolute;
     top: 50%; left: 50%; transform: translate(-50%, -50%);
@@ -725,11 +725,11 @@ p { color: var(--text-muted); font-size: 0.95rem; line-height: 1.5; }
     border: 1px solid rgba(255,255,255,0.15);
 }
 
-/* Slots TÃƒÂ¡cticos Premium Escalables */
+/* Slots TÃƒÆ’Ã‚Â¡cticos Premium Escalables */
 .tactical-slot {
     position: absolute;
-    width: 12cqw;  /* Escala segÃƒÂºn el ancho */
-    height: 16cqw; /* ProporciÃƒÂ³n ideal */
+    width: 12cqw;  /* Escala segÃƒÆ’Ã‚Âºn el ancho */
+    height: 16cqw; /* ProporciÃƒÆ’Ã‚Â³n ideal */
     min-width: 45px;
     min-height: 60px;
     max-width: 90px;
@@ -820,7 +820,7 @@ p { color: var(--text-muted); font-size: 0.95rem; line-height: 1.5; }
     line-height: 1;
 }
 
-/* GalerÃƒÂ­a de Avatares */
+/* GalerÃƒÆ’Ã‚Â­a de Avatares */
 .avatar-grid-selector {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
@@ -862,7 +862,7 @@ p { color: var(--text-muted); font-size: 0.95rem; line-height: 1.5; }
     box-shadow: 0 0 15px var(--primary-glow);
 }
 
-/* RediseÃƒÂ±o Tarjeta TÃƒÂ¡ctica Filled (FUT Style) */
+/* RediseÃƒÆ’Ã‚Â±o Tarjeta TÃƒÆ’Ã‚Â¡ctica Filled (FUT Style) */
 .tactical-slot.filled {
     background: linear-gradient(135deg, #1a1a1a 0%, #0a0a0a 100%);
     border: 1.5px solid var(--primary);
@@ -941,7 +941,7 @@ p { color: var(--text-muted); font-size: 0.95rem; line-height: 1.5; }
 
 /* Mobile Optimizations for Tactical Field Detalle */
 @media (max-width: 1023px) {
-    /* --- HEADER COMPACTO MÃƒâ€œVIL --- */
+    /* --- HEADER COMPACTO MÃƒÆ’Ã¢â‚¬Å“VIL --- */
     #global-header {
         margin-bottom: 10px !important;
         padding: 5px 0 !important;
@@ -974,16 +974,16 @@ p { color: var(--text-muted); font-size: 0.95rem; line-height: 1.5; }
         font-size: 1rem !important;
     }
 
-    /* --- CAMPO TÃƒÂCTICO AMPLIADO --- */
+    /* --- CAMPO TÃƒÆ’Ã‚ÂCTICO AMPLIADO --- */
     .pitch-container {
-        min-height: 480px !important; /* MÃƒÂ¡s alto para aprovechar espacio */
+        min-height: 480px !important; /* MÃƒÆ’Ã‚Â¡s alto para aprovechar espacio */
         max-height: 82vh !important;
         width: 100% !important;
         margin-bottom: 5px !important;
     }
     
     .tactical-slot {
-        width: 14cqw !important; /* Ligeramente mÃƒÂ¡s grandes */
+        width: 14cqw !important; /* Ligeramente mÃƒÆ’Ã‚Â¡s grandes */
         height: 18.5cqw !important;
     }
 
@@ -993,9 +993,9 @@ p { color: var(--text-muted); font-size: 0.95rem; line-height: 1.5; }
         letter-spacing: -0.2px;
         background: linear-gradient(to right, transparent, rgba(0,0,0,0.95) 15%, rgba(0,0,0,0.95) 85%, transparent);
         white-space: nowrap;
-        overflow: visible !important; /* Permitir ver mÃƒÂ¡s del nombre escalado */
+        overflow: visible !important; /* Permitir ver mÃƒÆ’Ã‚Â¡s del nombre escalado */
         text-overflow: clip !important;
-        max-width: 125%; /* Un poco mÃƒÂ¡s de aire para el escalado */
+        max-width: 125%; /* Un poco mÃƒÆ’Ã‚Â¡s de aire para el escalado */
         margin: 0 auto;
     }
 
@@ -1030,7 +1030,7 @@ p { color: var(--text-muted); font-size: 0.95rem; line-height: 1.5; }
     }
 
     #nav-toggle-handle {
-        display: none !important; /* Ocultar tirador en mÃƒÂ³vil para ganar espacio */
+        display: none !important; /* Ocultar tirador en mÃƒÆ’Ã‚Â³vil para ganar espacio */
     }
 
     /* Roster Banquillo en Rejilla de 4 */
@@ -1059,7 +1059,7 @@ p { color: var(--text-muted); font-size: 0.95rem; line-height: 1.5; }
     }
 
     .player-roster-card::before {
-        display: none; /* Eliminar banda lateral en mÃƒÂ³vil */
+        display: none; /* Eliminar banda lateral en mÃƒÆ’Ã‚Â³vil */
     }
 
     .player-roster-card .roster-card-avatar {
@@ -1083,7 +1083,7 @@ p { color: var(--text-muted); font-size: 0.95rem; line-height: 1.5; }
         min-width: 30px;
     }
 
-    /* Ocultar detalles secundarios en rejilla mÃƒÂ³vil */
+    /* Ocultar detalles secundarios en rejilla mÃƒÆ’Ã‚Â³vil */
     .player-roster-card .roster-card-substats,
     .player-roster-card .roster-card-rating {
         display: none !important;
@@ -1150,7 +1150,7 @@ p { color: var(--text-muted); font-size: 0.95rem; line-height: 1.5; }
 }
 
 .roster-panel.locked::after {
-    content: 'GESTIÃƒâ€œN BLOQUEADA';
+    content: 'GESTIÃƒÆ’Ã¢â‚¬Å“N BLOQUEADA';
     position: absolute;
     top: 50%;
     left: 50%;
@@ -1184,7 +1184,7 @@ p { color: var(--text-muted); font-size: 0.95rem; line-height: 1.5; }
     padding: 10px 5px;
 }
 
-/* Forzar aspecto de tarjeta (IDÃƒâ€°NTICO A MÃƒâ€œVIL) dentro del modal para escritorio */
+/* Forzar aspecto de tarjeta (IDÃƒÆ’Ã¢â‚¬Â°NTICO A MÃƒÆ’Ã¢â‚¬Å“VIL) dentro del modal para escritorio */
 .modal-player-grid .player-roster-card {
     display: flex !important;
     flex-direction: column !important;
@@ -1467,7 +1467,7 @@ p { color: var(--text-muted); font-size: 0.95rem; line-height: 1.5; }
 @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 @keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
 
-/* --- SECCIÃƒâ€œN JORNADAS Y PARTIDOS --- */
+/* --- SECCIÃƒÆ’Ã¢â‚¬Å“N JORNADAS Y PARTIDOS --- */
 .session-card {
     background: linear-gradient(135deg, rgba(30, 30, 30, 0.8) 0%, rgba(10, 10, 10, 0.95) 100%);
     border: 1px solid var(--glass-border);
@@ -1508,12 +1508,12 @@ p { color: var(--text-muted); font-size: 0.95rem; line-height: 1.5; }
     display: none !important;
 }
 
-/* El loader debe ser lo ÃƒÂºnico visible al inicio */
+/* El loader debe ser lo ÃƒÆ’Ã‚Âºnico visible al inicio */
 #app-loader {
     display: flex !important;
 }
 
-/* --- SISTEMA DE AUTENTICACIÃƒâ€œN Y SELECCIÃƒâ€œN DE EQUIPO --- */
+/* --- SISTEMA DE AUTENTICACIÃƒÆ’Ã¢â‚¬Å“N Y SELECCIÃƒÆ’Ã¢â‚¬Å“N DE EQUIPO --- */
 .auth-container {
     background: rgba(15, 15, 15, 0.8) !important;
     backdrop-filter: blur(20px);
@@ -1559,9 +1559,9 @@ p { color: var(--text-muted); font-size: 0.95rem; line-height: 1.5; }
 .role-capitan { color: #5bc0de; background: rgba(91, 192, 222, 0.1); }
 .role-jugador { color: #aaa; background: rgba(255, 255, 255, 0.05); }
 
-/* RestricciÃƒÂ³n de UI segÃƒÂºn rol */
+/* RestricciÃƒÆ’Ã‚Â³n de UI segÃƒÆ’Ã‚Âºn rol */
 [data-role-required="manager"] {
-    display: none; /* Se mostrarÃƒÂ¡ vÃƒÂ­a JS solo si cumple */
+    display: none; /* Se mostrarÃƒÆ’Ã‚Â¡ vÃƒÆ’Ã‚Â­a JS solo si cumple */
 }
 
 @keyframes sideSlideIn {
@@ -1636,7 +1636,7 @@ p { color: var(--text-muted); font-size: 0.95rem; line-height: 1.5; }
 }
 
 .score-number {
-    font-family: 'Outfit', sans-serif; /* O una fuente mÃƒÂ¡s "digital/deportiva" si estuviera disponible */
+    font-family: 'Outfit', sans-serif; /* O una fuente mÃƒÆ’Ã‚Â¡s "digital/deportiva" si estuviera disponible */
     font-size: 4rem;
     font-weight: 900;
     line-height: 1;
@@ -1701,10 +1701,10 @@ body.editing-tactic .tactical-slot {
     z-index: 10;
 }
 
-/* TransiciÃƒÂ³n suave para cuando se posicionan */
+/* TransiciÃƒÆ’Ã‚Â³n suave para cuando se posicionan */
 .tactical-slot {
     transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.3s;
-    touch-action: none; /* Importante para que funcione el arrastre en mÃƒÂ³vil */
+    touch-action: none; /* Importante para que funcione el arrastre en mÃƒÆ’Ã‚Â³vil */
 }
 
 .goal-btn {
@@ -1947,7 +1947,7 @@ body.editing-tactic .tactical-slot {
         grid-template-columns: 1fr;
     }
     .preview-card-container {
-        order: -1; /* Preview arriba en mÃƒÂ³vil */
+        order: -1; /* Preview arriba en mÃƒÆ’Ã‚Â³vil */
         margin-bottom: 20px;
     }
 }
@@ -2042,7 +2042,7 @@ body.editing-tactic .tactical-slot {
     letter-spacing: 1px;
 }
 
-/* AnimaciÃƒÂ³n Pulse para Preview */
+/* AnimaciÃƒÆ’Ã‚Â³n Pulse para Preview */
 .pulse-border {
     animation: pulseGlow 2s infinite;
 }
@@ -2112,7 +2112,7 @@ body.editing-tactic .tactical-slot {
 .badge-official { background: var(--primary); color: #000; }
 .badge-friendly { background: #333; color: #fff; }
 
-/* Modal de Perfil EspecÃƒÂ­fico */
+/* Modal de Perfil EspecÃƒÆ’Ã‚Â­fico */
 #profile-modal .jb-dialog {
     background: radial-gradient(circle at top, #222, #050505);
     border: 1px solid var(--primary);
@@ -2379,7 +2379,7 @@ body.editing-tactic .tactical-slot {
     position: relative;
 }
 
-/* ÃƒÂrea del campo (No-Flex centering) */
+/* ÃƒÆ’Ã‚Ârea del campo (No-Flex centering) */
 .export-pitch-area {
     width: 1080px;
     height: 1100px;
@@ -2399,7 +2399,7 @@ body.editing-tactic .tactical-slot {
     background: transparent;
 }
 
-/* Carta TÃƒÂ¡ctica (No-Flex Architecture) */
+/* Carta TÃƒÆ’Ã‚Â¡ctica (No-Flex Architecture) */
 .tactical-slot-export {
     position: absolute;
     width: 150px;
@@ -2469,7 +2469,7 @@ body.editing-tactic .tactical-slot {
     letter-spacing: -0.5px;
 }
 
-/* Badge de PosiciÃƒÂ³n (Pure Absolute) */
+/* Badge de PosiciÃƒÆ’Ã‚Â³n (Pure Absolute) */
 .pos-badge-export {
     position: absolute;
     bottom: -15px;
@@ -2486,7 +2486,7 @@ body.editing-tactic .tactical-slot {
     z-index: 20;
 }
 
-/* Slots VacÃƒÂ­os EstÃƒÂ©ticos (No-Flex) */
+/* Slots VacÃƒÆ’Ã‚Â­os EstÃƒÆ’Ã‚Â©ticos (No-Flex) */
 .empty-pos-label {
     position: absolute;
     top: 50%;
@@ -2499,7 +2499,7 @@ body.editing-tactic .tactical-slot {
     letter-spacing: 2px;
 }
 
-/* Header Scorebug (DiseÃƒÂ±o Reestructurado v47.5) */
+/* Header Scorebug (DiseÃƒÆ’Ã‚Â±o Reestructurado v47.5) */
 .export-scorebug-banner {
     position: absolute;
     top: 60px;
@@ -2538,7 +2538,7 @@ body.editing-tactic .tactical-slot {
 }
 
 .scorebug-team-name {
-    font-size: 48px !important; /* TamaÃƒÂ±o optimizado */
+    font-size: 48px !important; /* TamaÃƒÆ’Ã‚Â±o optimizado */
     font-weight: 900 !important;
     letter-spacing: -2px !important;
     color: #fff;
@@ -2578,14 +2578,14 @@ body.editing-tactic .tactical-slot {
     color: #fff;
     text-transform: uppercase;
 }
-/* --- ESCRITORIO Ãƒâ€°LITE: SIDEBAR LAYOUT (v5.1.0 - Glass Reflect) --- */
+/* --- ESCRITORIO ÃƒÆ’Ã¢â‚¬Â°LITE: SIDEBAR LAYOUT (v5.1.0 - Glass Reflect) --- */
 @media (min-width: 1024px) {
     .bottom-nav {
         left: 0 !important;
         top: 0 !important;
         bottom: 0 !important;
         transform: none !important;
-        width: 100px !important; /* Ligeramente mÃƒÂ¡s ancho para mejor balance */
+        width: 100px !important; /* Ligeramente mÃƒÆ’Ã‚Â¡s ancho para mejor balance */
         height: 100vh !important;
         max-width: none !important;
         border-radius: 0 !important;
@@ -2615,7 +2615,7 @@ body.editing-tactic .tactical-slot {
     .bottom-nav .nav-content {
         flex-direction: column !important;
         justify-content: flex-start !important; /* Desde la parte superior */
-        gap: 15px !important; /* MÃƒÂ¡s juntos para cohesiÃƒÂ³n */
+        gap: 15px !important; /* MÃƒÆ’Ã‚Â¡s juntos para cohesiÃƒÆ’Ã‚Â³n */
         width: 90% !important;
         height: 100% !important; /* Ocupar todo el contenedor vertical */
     }
@@ -2651,7 +2651,7 @@ body.editing-tactic .tactical-slot {
         color: var(--text-muted);
     }
 
-    /* Texto mÃƒÂ¡s elegante en sidebar */
+    /* Texto mÃƒÆ’Ã‚Â¡s elegante en sidebar */
     .nav-btn {
         font-size: 0.65rem !important;
         letter-spacing: 1.5px !important;
@@ -2687,10 +2687,10 @@ body.editing-tactic .tactical-slot {
         display: none !important;
     }
 
-    /* --- CAMPO TÃƒÂCTICO XL (v20.1.0) --- */
+    /* --- CAMPO TÃƒÆ’Ã‚ÂCTICO XL (v20.1.0) --- */
     .pitch-container {
         max-height: 85vh !important;
-        aspect-ratio: 1 / 1.55 !important; /* Campo mÃƒÂ¡s largo */
+        aspect-ratio: 1 / 1.55 !important; /* Campo mÃƒÆ’Ã‚Â¡s largo */
         box-shadow: inset 0 0 120px rgba(0,0,0,1), 0 20px 50px rgba(0,0,0,0.8) !important;
     }
 
@@ -2737,7 +2737,7 @@ body.editing-tactic .tactical-slot {
     }
 }
 
-/* LÃƒÂ³gica de Logout Mobile */
+/* LÃƒÆ’Ã‚Â³gica de Logout Mobile */
 @media (max-width: 1023px) {
     #btn-global-logout {
         display: none !important;
@@ -2952,11 +2952,11 @@ body.editing-tactic .tactical-slot {
     to { transform: rotate(360deg); }
 }
 
-/* --- OPTIMIZACIÃƒâ€œN TÃƒÂCTICA MÃƒâ€œVIL ELITE (v22.9.0) --- */
+/* --- OPTIMIZACIÃƒÆ’Ã¢â‚¬Å“N TÃƒÆ’Ã‚ÂCTICA MÃƒÆ’Ã¢â‚¬Å“VIL ELITE (v22.9.0) --- */
 @media (max-width: 1024px) {
 
     /* ==== FORZAR OCULTAR BOTONES DEL HEADER ESCRITORIO ==== */
-    /* Usamos !important sobre inline style tambiÃƒÂ©n */
+    /* Usamos !important sobre inline style tambiÃƒÆ’Ã‚Â©n */
     #tactical-header-actions,
     #header-tactic-info {
         display: none !important;
@@ -2972,7 +2972,7 @@ body.editing-tactic .tactical-slot {
         scrollbar-width: none;    /* Firefox */
     }
     
-    /* Ocultar scrollbar visualmente en todo el viewport mÃƒÂ³vil pero mantener funcionalidad */
+    /* Ocultar scrollbar visualmente en todo el viewport mÃƒÆ’Ã‚Â³vil pero mantener funcionalidad */
     *::-webkit-scrollbar { 
         display: none !important; 
         width: 0 !important;
@@ -2984,7 +2984,7 @@ body.editing-tactic .tactical-slot {
         min-height: 100%;
     }
 
-    /* ==== BARRA TÃƒÂCTICA MÃƒâ€œVIL ==== */
+    /* ==== BARRA TÃƒÆ’Ã‚ÂCTICA MÃƒÆ’Ã¢â‚¬Å“VIL ==== */
     .mobile-tactic-topbar {
         flex-direction: column;
         gap: 10px;
@@ -3101,7 +3101,7 @@ body.editing-tactic .tactical-slot {
     }
 
     .pitch-container {
-        width: 94% !important; /* Ligeramente mÃƒÂ¡s estrecho para no tocar el bisel de la pantalla */
+        width: 94% !important; /* Ligeramente mÃƒÆ’Ã‚Â¡s estrecho para no tocar el bisel de la pantalla */
         margin: 0 auto !important; /* Centrado absoluto horizontal */
         border-radius: var(--radius-md) !important;
         border-left: 2px solid rgba(255,255,255,0.1) !important;
@@ -3182,11 +3182,11 @@ body.editing-tactic .tactical-slot {
         margin: 0 auto !important;
     }
 
-    /* ExpansiÃƒÂ³n Selectiva: Secciones Elite */
+    /* ExpansiÃƒÆ’Ã‚Â³n Selectiva: Secciones Elite */
     #view-mi-equipo, #view-my-profile, #view-convocatorias {
         max-width: 100% !important;
         margin: 0 !important;
-        padding: 5px 20px 40px 20px !important; /* ElevaciÃƒÂ³n Elite */
+        padding: 5px 20px 40px 20px !important; /* ElevaciÃƒÆ’Ã‚Â³n Elite */
     }
 }
 
@@ -3225,7 +3225,7 @@ body.editing-tactic .tactical-slot {
 
 
 /* ============================================================ */
-/* MI EQUIPO: DASHBOARD & GESTIÃƒâ€œN v31.0 */
+/* MI EQUIPO: DASHBOARD & GESTIÃƒÆ’Ã¢â‚¬Å“N v31.0 */
 /* ============================================================ */
 
 .team-dashboard-header {
@@ -3493,7 +3493,7 @@ body.editing-tactic .tactical-slot {
         font-size: 1.6rem;
     }
 
-    /* EstadÃƒÂ­sticas del Club Apretadas en 4 Columnas (Mobile) */
+    /* EstadÃƒÆ’Ã‚Â­sticas del Club Apretadas en 4 Columnas (Mobile) */
     .team-stats-grid {
         grid-template-columns: repeat(4, 1fr) !important;
         gap: 6px !important;
@@ -3637,7 +3637,7 @@ body.editing-tactic .tactical-slot {
     position: relative;
 }
 
-/* Botón Cancelar - Versión Móvil */
+/* BotÃ³n Cancelar - VersiÃ³n MÃ³vil */
 .poll-cancel-btn-mobile {
     background: rgba(255, 59, 48, 0.15);
     color: #ff3b30;
@@ -3659,7 +3659,7 @@ body.editing-tactic .tactical-slot {
     transform: scale(1.05);
 }
 
-/* Botón Cancelar - Versión Escritorio (Oculto en móvil) */
+/* BotÃ³n Cancelar - VersiÃ³n Escritorio (Oculto en mÃ³vil) */
 .poll-cancel-btn-desktop {
     display: none;
     position: absolute;
@@ -3700,7 +3700,7 @@ body.editing-tactic .tactical-slot {
 }
 
 .results-group-title::after {
-    content: 'â–¼';
+    content: 'Ã¢â€“Â¼';
     font-size: 0.5rem;
     opacity: 0.5;
     transition: transform 0.3s ease;
@@ -3818,7 +3818,7 @@ body.editing-tactic .tactical-slot {
         margin-bottom: 0.5rem !important;
     }
 
-    /* Forzar tarjeta al 100% ancho mÃƒÂ³vil */
+    /* Forzar tarjeta al 100% ancho mÃƒÆ’Ã‚Â³vil */
     .poll-active-card {
         max-width: 100% !important;
         width: 100% !important;
@@ -3828,7 +3828,7 @@ body.editing-tactic .tactical-slot {
         box-sizing: border-box !important;
     }
 
-    /* BotÃƒÂ³n Nueva mÃƒÂ¡s ancho, bajo y centrado */
+    /* BotÃƒÆ’Ã‚Â³n Nueva mÃƒÆ’Ã‚Â¡s ancho, bajo y centrado */
     #btn-new-poll {
         width: 100% !important;
         padding: 8px 0 !important;
@@ -3840,7 +3840,7 @@ body.editing-tactic .tactical-slot {
         text-align: center !important;
     }
 
-    /* Ocultar reloj en botÃƒÂ³n Llego Tarde mobile */
+    /* Ocultar reloj en botÃƒÆ’Ã‚Â³n Llego Tarde mobile */
     .btn-vote.vote-late .vote-icon {
         display: none !important;
     }
@@ -3866,7 +3866,7 @@ body.editing-tactic .tactical-slot {
     }
 
 
-    /* Lista de votantes compacta en mÃ³vil (sin imagen) */
+    /* Lista de votantes compacta en mÃƒÂ³vil (sin imagen) */
     .voter-row {
         padding: 5px 10px !important;
         gap: 8px !important;
@@ -3883,7 +3883,7 @@ body.editing-tactic .tactical-slot {
         width: 100%;
     }
 
-    /* Alinear posiciÃƒÂ³n a la derecha en la fila */
+    /* Alinear posiciÃƒÆ’Ã‚Â³n a la derecha en la fila */
     .voter-row-pos {
         margin-top: 0 !important;
         margin-left: auto !important;
@@ -4145,7 +4145,7 @@ body.editing-tactic .tactical-slot {
 /* Ajustes para el contenedor de historial en escritorio */
 #polls-history-container {
     margin-top: 30px;
-    padding: 0; /* MÃ³vil: sin padding lateral extra */
+    padding: 0; /* MÃƒÂ³vil: sin padding lateral extra */
 }
 
 @media (min-width: 1024px) {
@@ -4263,7 +4263,7 @@ body.editing-tactic .tactical-slot {
 .poll-status-tag.open { background: rgba(76,175,80,0.2); color: #4CAF50; }
 .poll-status-tag.closed { background: rgba(0,0,0,0.3); color: var(--text-muted); border: 1px solid rgba(255,255,255,0.1); }
 
-/* Banner flotante de notificaciÃƒÂ³n */
+/* Banner flotante de notificaciÃƒÆ’Ã‚Â³n */
 .availability-banner {
     position: fixed;
     top: 10px;
@@ -4288,7 +4288,7 @@ body.editing-tactic .tactical-slot {
 
 }
 
-/* --- Estados de AlineaciÃƒÂ³n Inteligente v33.1 --- */
+/* --- Estados de AlineaciÃƒÆ’Ã‚Â³n Inteligente v33.1 --- */
 /* Selectores combinados para Campo y Banquillo */
 .tactical-slot.status-si .player-card-fut,
 .player-roster-card.status-si {
@@ -4371,7 +4371,7 @@ body.editing-tactic .tactical-slot {
     transform: scale(0.98);
 }
 
-/* --- Reporte HistÃƒÂ³rico: Filtros de Asistencia v36.2 --- */
+/* --- Reporte HistÃƒÆ’Ã‚Â³rico: Filtros de Asistencia v36.2 --- */
 .stat-pill {
     cursor: pointer;
     transition: var(--transition);
@@ -4657,7 +4657,7 @@ body.editing-tactic .tactical-slot {
     }
 }
 
-/* Clases Semánticas para Convocatorias (v53.0) */
+/* Clases SemÃ¡nticas para Convocatorias (v53.0) */
 .calendar-day.poll-day-success {
     background: linear-gradient(135deg, rgba(76, 175, 80, 0.2), rgba(76, 175, 80, 0.05)) !important;
     border-color: var(--success) !important;
@@ -4677,9 +4677,9 @@ body.editing-tactic .tactical-slot {
     animation: pulse-border 2s infinite;
 }
 
-/* Optimización Hoy con Convocatoria (v53.9) */
+/* OptimizaciÃ³n Hoy con Convocatoria (v53.9) */
 .calendar-day.today-highlight.poll-day-active {
-    background: rgba(30, 136, 229, 0.5) !important; /* Azul más intenso */
+    background: rgba(30, 136, 229, 0.5) !important; /* Azul mÃ¡s intenso */
     box-shadow: inset 0 0 15px rgba(30, 136, 229, 0.6), 0 0 20px rgba(240, 165, 0, 0.4);
     border: 2px dashed var(--primary) !important;
 }
@@ -4793,7 +4793,7 @@ body.editing-tactic .tactical-slot {
     }
 }
 
-/* --- Ajuste de DiseÃƒÂ±o Dual Asistencia v36.4 --- */
+/* --- Ajuste de DiseÃƒÆ’Ã‚Â±o Dual Asistencia v36.4 --- */
 @media (min-width: 1024px) {
     #profile-attendance-container {
         max-width: 100%;
@@ -4971,7 +4971,7 @@ body.editing-tactic .tactical-slot {
 
 .poll-history-table-header {
     display: grid;
-    grid-template-columns: 65px 1fr 1fr 1fr; /* MÃ³vil: Fecha reducida */
+    grid-template-columns: 65px 1fr 1fr 1fr; /* MÃƒÂ³vil: Fecha reducida */
     gap: 8px;
 
     padding: 15px;
@@ -4987,7 +4987,7 @@ body.editing-tactic .tactical-slot {
     display: flex;
     flex-direction: column;
     overflow-y: auto;
-    max-height: calc(5 * 55px); /* MÃ³vil: 5 filas aprox */
+    max-height: calc(5 * 55px); /* MÃƒÂ³vil: 5 filas aprox */
 }
 
 @media (min-width: 1024px) {
@@ -5001,7 +5001,7 @@ body.editing-tactic .tactical-slot {
 
 .poll-history-row {
     display: grid;
-    grid-template-columns: 65px 1fr 1fr 1fr; /* MÃ³vil: Fecha reducida */
+    grid-template-columns: 65px 1fr 1fr 1fr; /* MÃƒÂ³vil: Fecha reducida */
     gap: 8px;
 
     padding: 8px 10px;
@@ -5106,7 +5106,7 @@ body.editing-tactic .tactical-slot {
 
 
 
-/* --- SISTEMA DE EXPORTACIÃ“N DE PLANTILLA (v49.4) --- */
+/* --- SISTEMA DE EXPORTACIÃƒâ€œN DE PLANTILLA (v49.4) --- */
 .squad-export-wrapper {
     position: fixed;
     top: -9999px;
@@ -5353,7 +5353,7 @@ body.editing-tactic .tactical-slot {
 
 /* --- Ajustes Mi Equipo en Mobile (v34.4) --- */
 @media (max-width: 768px) {
-    /* PestaÃ±as mÃ¡s compactas */
+    /* PestaÃƒÂ±as mÃƒÂ¡s compactas */
     .elite-tabs {
         gap: 5px !important;
         margin-bottom: 20px !important;
@@ -5368,7 +5368,7 @@ body.editing-tactic .tactical-slot {
         text-align: center;
     }
 
-    /* Cabecera de GestiÃ³n en Bloques (3 Filas) */
+    /* Cabecera de GestiÃƒÂ³n en Bloques (3 Filas) */
     .team-management-header-flex {
         flex-direction: column !important;
         align-items: flex-start !important;
@@ -5548,7 +5548,7 @@ body.editing-tactic .tactical-slot {
 
 /* --- Ajustes Mi Equipo en Mobile (v34.4) --- */
 @media (max-width: 768px) {
-    /* PestaÃ±as mÃ¡s compactas */
+    /* PestaÃƒÂ±as mÃƒÂ¡s compactas */
     .elite-tabs {
         gap: 5px !important;
         margin-bottom: 20px !important;
@@ -5563,7 +5563,7 @@ body.editing-tactic .tactical-slot {
         text-align: center;
     }
 
-    /* Cabecera de GestiÃ³n en Bloques (3 Filas) */
+    /* Cabecera de GestiÃƒÂ³n en Bloques (3 Filas) */
     .team-management-header-flex {
         flex-direction: column !important;
         align-items: flex-start !important;
@@ -5605,7 +5605,7 @@ body.editing-tactic .tactical-slot {
         padding: 4px 8px !important;
     }
 
-    /* MÃ¡s ancho para la tabla (menos margen) */
+    /* MÃƒÂ¡s ancho para la tabla (menos margen) */
     .view#view-equipo .container-elite {
         padding: 10px !important; /* Reducir padding exterior */
     }
@@ -5626,7 +5626,7 @@ body.editing-tactic .tactical-slot {
     }
 }
 
-/* --- SELECTOR DE FONDOS DE EXPORTACIÃ“N --- */
+/* --- SELECTOR DE FONDOS DE EXPORTACIÃƒâ€œN --- */
 .bg-selector-grid {
     display: flex;
     gap: 8px;
@@ -5669,7 +5669,7 @@ body.editing-tactic .tactical-slot {
     box-shadow: 0 0 15px var(--primary-glow);
 }
 .bg-option.selected::after {
-    content: '✓';
+    content: 'âœ“';
     position: absolute;
     top: 5px;
     right: 5px;
@@ -5801,7 +5801,7 @@ body.editing-tactic .tactical-slot {
 
 /* --- GENERADOR DE CARTEL MATCHDAY (v57.0) --- */
 
-/* Contenedor de Previsualización y Captura */
+/* Contenedor de PrevisualizaciÃ³n y Captura */
 .matchday-poster-preview {
     width: 1080px;
     height: 1350px;
@@ -5914,7 +5914,7 @@ body.editing-tactic .tactical-slot {
     -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
     overflow: hidden;
-    height: 72px; /* Espacio para dos líneas */
+    height: 72px; /* Espacio para dos lÃ­neas */
 }
 
 .poster-vs-box {
@@ -6001,10 +6001,10 @@ body.editing-tactic .tactical-slot {
 }
 
 /* ==========================================================================
-   GESTIÓN GLOBAL (v57.3)
+   GESTIÃ“N GLOBAL (v57.3)
    ========================================================================== */
 
-/* Estilos para Selección de Ligas (v57.4) */
+/* Estilos para SelecciÃ³n de Ligas (v57.4) */
 .league-card-edit {
     position: relative;
     border: 1px solid rgba(255,255,255,0.05) !important;
@@ -6057,7 +6057,7 @@ body.editing-tactic .tactical-slot {
     transform: scale(1.1);
 }
 
-/* Ajuste para el botón de añadir liga */
+/* Ajuste para el botÃ³n de aÃ±adir liga */
 #btn-add-global-league {
     width: auto !important;
     padding: 6px 15px !important;
@@ -6174,37 +6174,52 @@ input:disabled + .jb-slider {
 }
 
 /* =========================================================================
-   DASHBOARD FILTER SELECT (v58.1)
+   DASHBOARD FILTER BADGE (v58.2) - SUSTITUYE AL SELECT
    ========================================================================= */
-.filter-select-elite {
-    background-color: rgba(20, 20, 20, 0.8);
-    background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="%23d48a00" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>');
-    background-repeat: no-repeat;
-    background-position: right 6px center;
-    border: 1px solid rgba(212, 138, 0, 0.3);
-    color: var(--primary);
+.filter-badge-elite {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: var(--text-muted);
     border-radius: 6px;
-    padding: 3px 20px 3px 8px;
-    font-size: 0.65rem;
-    font-weight: 800;
-    font-family: inherit;
+    padding: 4px 12px;
+    font-size: 0.6rem;
+    font-weight: 900;
+    letter-spacing: 1px;
     text-transform: uppercase;
     cursor: pointer;
-    outline: none;
-    transition: all 0.2s ease;
-    -webkit-appearance: none;
-    appearance: none;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.5);
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    user-select: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
 }
 
-.filter-select-elite:hover, .filter-select-elite:focus {
-    border-color: var(--primary);
-    background-color: rgba(212, 138, 0, 0.1);
-    box-shadow: 0 0 8px rgba(212, 138, 0, 0.2);
+.filter-badge-elite:hover {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: rgba(255, 255, 255, 0.2);
+    transform: translateY(-1px);
 }
 
-.filter-select-elite option {
-    background-color: #111;
+.filter-badge-elite:active {
+    transform: scale(0.95);
+}
+
+/* Modos de Color */
+.filter-badge-elite[data-mode="official"] {
+    border-color: rgba(76, 175, 80, 0.4);
+    color: var(--success);
+    background: rgba(76, 175, 80, 0.05);
+}
+
+.filter-badge-elite[data-mode="friendly"] {
+    border-color: rgba(240, 165, 0, 0.4);
+    color: var(--primary);
+    background: rgba(240, 165, 0, 0.05);
+}
+
+.filter-badge-elite[data-mode="global"] {
+    border-color: rgba(255, 255, 255, 0.3);
     color: #fff;
-    font-weight: 600;
+    background: rgba(255, 255, 255, 0.1);
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.05);
 }

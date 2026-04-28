@@ -651,28 +651,23 @@ document.addEventListener('DOMContentLoaded', () => {
             btnGeneratePoster.onclick = exportMatchdayImage;
         }
 
-        // Event Listeners para Filtros del Dashboard (v58.1)
-        const filterScorers = document.getElementById('filter-scorers');
-        if (filterScorers) {
-            filterScorers.addEventListener('change', (e) => {
-                window.dashboardFilters.scorers = e.target.value;
-                window.renderHomeDashboard();
-            });
-        }
+        // Event Listeners para Filtros del Dashboard (v58.2) - Pulsadores Cíclicos
+        const cycleFilter = (key) => {
+            const modes = ['official', 'friendly', 'global'];
+            const current = window.dashboardFilters[key] || 'official';
+            const nextIndex = (modes.indexOf(current) + 1) % modes.length;
+            window.dashboardFilters[key] = modes[nextIndex];
+            window.renderHomeDashboard();
+        };
+
+        const filterGoals = document.getElementById('filter-goals');
+        if (filterGoals) filterGoals.onclick = () => cycleFilter('scorers');
+
         const filterAssists = document.getElementById('filter-assists');
-        if (filterAssists) {
-            filterAssists.addEventListener('change', (e) => {
-                window.dashboardFilters.assists = e.target.value;
-                window.renderHomeDashboard();
-            });
-        }
+        if (filterAssists) filterAssists.onclick = () => cycleFilter('assists');
+
         const filterWinrate = document.getElementById('filter-winrate');
-        if (filterWinrate) {
-            filterWinrate.addEventListener('change', (e) => {
-                window.dashboardFilters.winrate = e.target.value;
-                window.renderHomeDashboard();
-            });
-        }
+        if (filterWinrate) filterWinrate.onclick = () => cycleFilter('winrate');
     }
 
     // --- Lógica de Formularios ---
@@ -4029,6 +4024,19 @@ document.addEventListener('DOMContentLoaded', () => {
 
     window.renderHomeDashboard = function() {
         if (state.currentView !== 'home') return;
+
+        // --- Actualizar Badges de Filtro (v58.2) ---
+        const updateBadge = (id, val) => {
+            const el = document.getElementById(id);
+            if (!el) return;
+            el.dataset.mode = val;
+            if (val === 'official') el.textContent = 'Oficiales';
+            else if (val === 'friendly') el.textContent = 'Amistosos';
+            else el.textContent = 'Global';
+        };
+        updateBadge('filter-goals', window.dashboardFilters.scorers);
+        updateBadge('filter-assists', window.dashboardFilters.assists);
+        updateBadge('filter-winrate', window.dashboardFilters.winrate);
         
         const totalPlayersEl = document.getElementById('stats-total-players');
         const totalSessionsEl = document.getElementById('stats-total-sessions');
