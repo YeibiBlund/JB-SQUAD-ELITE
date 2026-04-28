@@ -6172,3 +6172,39 @@ input:disabled + .jb-slider {
     font-weight: 800;
     text-transform: uppercase;
 }
+
+/* =========================================================================
+   DASHBOARD FILTER SELECT (v58.1)
+   ========================================================================= */
+.filter-select-elite {
+    background-color: rgba(20, 20, 20, 0.8);
+    background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="%23d48a00" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>');
+    background-repeat: no-repeat;
+    background-position: right 6px center;
+    border: 1px solid rgba(212, 138, 0, 0.3);
+    color: var(--primary);
+    border-radius: 6px;
+    padding: 3px 20px 3px 8px;
+    font-size: 0.65rem;
+    font-weight: 800;
+    font-family: inherit;
+    text-transform: uppercase;
+    cursor: pointer;
+    outline: none;
+    transition: all 0.2s ease;
+    -webkit-appearance: none;
+    appearance: none;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.5);
+}
+
+.filter-select-elite:hover, .filter-select-elite:focus {
+    border-color: var(--primary);
+    background-color: rgba(212, 138, 0, 0.1);
+    box-shadow: 0 0 8px rgba(212, 138, 0, 0.2);
+}
+
+.filter-select-elite option {
+    background-color: #111;
+    color: #fff;
+    font-weight: 600;
+}
