@@ -650,6 +650,29 @@ document.addEventListener('DOMContentLoaded', () => {
         if (btnGeneratePoster) {
             btnGeneratePoster.onclick = exportMatchdayImage;
         }
+
+        // Event Listeners para Filtros del Dashboard (v58.1)
+        const filterScorers = document.getElementById('filter-scorers');
+        if (filterScorers) {
+            filterScorers.addEventListener('change', (e) => {
+                window.dashboardFilters.scorers = e.target.value;
+                window.renderHomeDashboard();
+            });
+        }
+        const filterAssists = document.getElementById('filter-assists');
+        if (filterAssists) {
+            filterAssists.addEventListener('change', (e) => {
+                window.dashboardFilters.assists = e.target.value;
+                window.renderHomeDashboard();
+            });
+        }
+        const filterWinrate = document.getElementById('filter-winrate');
+        if (filterWinrate) {
+            filterWinrate.addEventListener('change', (e) => {
+                window.dashboardFilters.winrate = e.target.value;
+                window.renderHomeDashboard();
+            });
+        }
     }
 
     // --- Lógica de Formularios ---
@@ -3998,6 +4021,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
 
+    window.dashboardFilters = {
+        scorers: 'official',
+        assists: 'official',
+        winrate: 'official'
+    };
+
     window.renderHomeDashboard = function() {
         if (state.currentView !== 'home') return;
         
@@ -4092,26 +4121,51 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         // --- 1. TOP GOLEADORES (5) ---
+        const filterScorers = window.dashboardFilters?.scorers || 'official';
         const scorers = state.players
-            .map(p => ({ ...mapPlayerForRanking(p), totalGoals: (p.stats?.official?.goals || 0) + (p.stats?.friendly?.goals || 0) }))
+            .map(p => {
+                let totalGoals = 0;
+                if (filterScorers === 'official') totalGoals = p.stats?.official?.goals || 0;
+                else if (filterScorers === 'friendly') totalGoals = p.stats?.friendly?.goals || 0;
+                else totalGoals = (p.stats?.official?.goals || 0) + (p.stats?.friendly?.goals || 0);
+                return { ...mapPlayerForRanking(p), totalGoals };
+            })
             .filter(s => s.totalGoals > 0)
             .sort((a, b) => b.totalGoals - a.totalGoals)
             .slice(0, 5);
         renderTopRow(scorersListEl, scorers, 'totalGoals', 'GLS');
 
         // --- 2. TOP ASISTENTES (5) ---
+        const filterAssists = window.dashboardFilters?.assists || 'official';
         const assistants = state.players
-            .map(p => ({ ...mapPlayerForRanking(p), totalAssists: (p.stats?.official?.assists || 0) + (p.stats?.friendly?.assists || 0) }))
+            .map(p => {
+                let totalAssists = 0;
+                if (filterAssists === 'official') totalAssists = p.stats?.official?.assists || 0;
+                else if (filterAssists === 'friendly') totalAssists = p.stats?.friendly?.assists || 0;
+                else totalAssists = (p.stats?.official?.assists || 0) + (p.stats?.friendly?.assists || 0);
+                return { ...mapPlayerForRanking(p), totalAssists };
+            })
             .filter(s => s.totalAssists > 0)
             .sort((a, b) => b.totalAssists - a.totalAssists)
             .slice(0, 5);
         renderTopRow(assistsListEl, assistants, 'totalAssists', 'AST');
 
         // --- 3. TOP % VICTORIAS INDIVIDUAL (5) ---
+        const filterWinrate = window.dashboardFilters?.winrate || 'official';
         const winRaters = state.players
             .map(p => {
-                const totalPJ = (p.stats?.official?.matches || 0) + (p.stats?.friendly?.matches || 0);
-                const totalW = (p.stats?.official?.wins || 0) + (p.stats?.friendly?.wins || 0);
+                let totalPJ = 0;
+                let totalW = 0;
+                if (filterWinrate === 'official') {
+                    totalPJ = p.stats?.official?.matches || 0;
+                    totalW = p.stats?.official?.wins || 0;
+                } else if (filterWinrate === 'friendly') {
+                    totalPJ = p.stats?.friendly?.matches || 0;
+                    totalW = p.stats?.friendly?.wins || 0;
+                } else {
+                    totalPJ = (p.stats?.official?.matches || 0) + (p.stats?.friendly?.matches || 0);
+                    totalW = (p.stats?.official?.wins || 0) + (p.stats?.friendly?.wins || 0);
+                }
                 const pct = totalPJ > 0 ? ((totalW / totalPJ) * 100) : 0;
                 return { ...mapPlayerForRanking(p), winPct: pct.toFixed(1) + '%', winPctNum: pct, totalPJ };
             })

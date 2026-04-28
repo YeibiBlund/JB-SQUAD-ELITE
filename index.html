@@ -254,7 +254,14 @@
                         <!-- TOP % VICTORIAS INDIVIDUAL -->
                         <div class="card-elite" style="padding: 20px;">
                             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; padding-bottom: 15px; border-bottom: 1px solid rgba(255,255,255,0.05);">
-                                <span style="font-size: 0.75rem; font-weight: 800; letter-spacing: 1.5px; color: var(--text-muted);">TOP % VICTORIAS</span>
+                                <div style="display: flex; align-items: center; gap: 10px;">
+                                    <span style="font-size: 0.75rem; font-weight: 800; letter-spacing: 1.5px; color: var(--text-muted);">TOP % VICTORIAS</span>
+                                    <select class="filter-select-elite" id="filter-winrate">
+                                        <option value="official">Oficiales</option>
+                                        <option value="friendly">Amistosos</option>
+                                        <option value="global">Global</option>
+                                    </select>
+                                </div>
                                 <span style="font-size: 0.75rem; color: var(--primary); display: flex; align-items: center; gap: 5px;">Top 5 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline><polyline points="17 6 23 6 23 12"></polyline></svg></span>
                             </div>
                             <div id="home-top-winrate-list" style="display: flex; flex-direction: column; gap: 10px;">
@@ -285,7 +292,14 @@
                         <!-- TOP GOLEADORES -->
                         <div class="card-elite" style="padding: 20px;">
                             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; padding-bottom: 15px; border-bottom: 1px solid rgba(255,255,255,0.05);">
-                                <span style="font-size: 0.75rem; font-weight: 800; letter-spacing: 1.5px; color: var(--text-muted);">TOP GOLEADORES</span>
+                                <div style="display: flex; align-items: center; gap: 10px;">
+                                    <span style="font-size: 0.75rem; font-weight: 800; letter-spacing: 1.5px; color: var(--text-muted);">TOP GOLEADORES</span>
+                                    <select class="filter-select-elite" id="filter-scorers">
+                                        <option value="official">Oficiales</option>
+                                        <option value="friendly">Amistosos</option>
+                                        <option value="global">Global</option>
+                                    </select>
+                                </div>
                                 <span style="font-size: 0.75rem; color: var(--primary); display: flex; align-items: center; gap: 5px;">Top 5 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><circle cx="12" cy="12" r="6"></circle><circle cx="12" cy="12" r="2"></circle></svg></span>
                             </div>
                             <div id="home-top-scorers-list" style="display: flex; flex-direction: column; gap: 10px;">
@@ -296,7 +310,14 @@
                         <!-- TOP ASISTENTES -->
                         <div class="card-elite" style="padding: 20px;">
                             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; padding-bottom: 15px; border-bottom: 1px solid rgba(255,255,255,0.05);">
-                                <span style="font-size: 0.75rem; font-weight: 800; letter-spacing: 1.5px; color: var(--text-muted);">TOP ASISTENTES</span>
+                                <div style="display: flex; align-items: center; gap: 10px;">
+                                    <span style="font-size: 0.75rem; font-weight: 800; letter-spacing: 1.5px; color: var(--text-muted);">TOP ASISTENTES</span>
+                                    <select class="filter-select-elite" id="filter-assists">
+                                        <option value="official">Oficiales</option>
+                                        <option value="friendly">Amistosos</option>
+                                        <option value="global">Global</option>
+                                    </select>
+                                </div>
                                 <span style="font-size: 0.75rem; color: var(--primary); display: flex; align-items: center; gap: 5px;">Top 5 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line></svg></span>
                             </div>
                             <div id="home-top-assists-list" style="display: flex; flex-direction: column; gap: 10px;">

@@ -1,3 +1,9 @@
+## [v58.1] - 2026-04-29 | 00:35
+### Mejorado (Dashboard Analytics)
+- **Filtros Interactivos**: Implementados selectores desplegables con diseño Élite (glassmorphism) en las tarjetas de Top Goleadores, Top Asistentes y Top % Victorias.
+- **Visualización Reactiva**: El Dashboard ahora permite alternar instantáneamente entre datos Oficiales (por defecto), Amistosos o Globales sin necesidad de recargar, leyendo de `state.players.stats`.
+- **Ajustes Estéticos**: La barra de ratio de victorias se ha actualizado para usar semántica de color estándar (Verde V, Ámbar E, Rojo D) e iconografía vectorial SVG premium en lugar de emojis básicos.
+
 ## [v58.0] - 2026-04-28 | 00:05
 ### Añadido (Auto-Asistencia "Siempre Disponible")
 - **Switch Premium de Auto-Voto**: Implementado un control elegante en "Mi Perfil" que permite a los jugadores automatizar su asistencia.
