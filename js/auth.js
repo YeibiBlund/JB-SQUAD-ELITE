@@ -116,8 +116,12 @@ function setupAuthHandlers() {
             if (data.user) {
                 // Registrar el uso de la invitación sumando +1 al contador
                 await supabase.from('invitations').update({ used_count: invData.used_count + 1 }).eq('id', invData.id);
-                // Crear el perfil
-                await supabase.from('profiles').insert({ id: data.user.id, full_name: username });
+                // Crear el perfil con rastro del código (v59.0)
+                await supabase.from('profiles').insert({ 
+                    id: data.user.id, 
+                    full_name: username,
+                    invite_code_used: inviteCode
+                });
                 window.jbToast('¡Cuenta creada! Iniciando sesión...', 'success');
             }
         };

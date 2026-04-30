@@ -6526,6 +6526,46 @@ document.addEventListener('DOMContentLoaded', () => {
     window.renderAdminDashboard = async function() {
         if (!state.user?.profile?.is_admin) return;
         
+        // --- SETUP LISTENERS UNA SOLA VEZ (v59.0) ---
+        if (!window._adminPanelInitialized) {
+            window._adminPanelInitialized = true;
+            
+            // Tab Switching para Admin
+            const adminTabs = document.querySelectorAll('#admin-tabs .elite-tab-btn');
+            adminTabs.forEach(btn => {
+                btn.onclick = () => {
+                    adminTabs.forEach(t => t.classList.remove('active'));
+                    btn.classList.add('active');
+                    const target = btn.dataset.target;
+                    document.querySelectorAll('.admin-panel-content').forEach(p => p.style.display = 'none');
+                    document.getElementById(target).style.display = 'block';
+                };
+            });
+
+            // Listener Generar Código
+            const btnGenerate = document.getElementById('btn-admin-generate-code');
+            if (btnGenerate) {
+                btnGenerate.onclick = async () => {
+                    const code = document.getElementById('admin-new-invite-code').value.trim().toUpperCase();
+                    const uses = parseInt(document.getElementById('admin-new-invite-uses').value) || 10;
+                    
+                    if (!code) { window.jbToast('Escribe un código válido.', 'warning'); return; }
+                    
+                    window.jbLoading.show('Generando invitación...');
+                    const { error } = await supabase.from('invitations').insert([{ code, max_uses: uses }]);
+                    window.jbLoading.hide();
+                    
+                    if (error) {
+                        window.jbToast('Error: ' + error.message, 'error');
+                    } else {
+                        window.jbToast('¡Código generado con éxito!', 'success');
+                        document.getElementById('admin-new-invite-code').value = '';
+                        window.renderAdminDashboard();
+                    }
+                };
+            }
+        }
+
         window.jbLoading.show('Cargando datos globales...');
         
         try {
@@ -6533,81 +6573,74 @@ document.addEventListener('DOMContentLoaded', () => {
             const { count: teamCount } = await supabase.from('teams').select('*', { count: 'exact', head: true });
             const { count: userCount } = await supabase.from('profiles').select('*', { count: 'exact', head: true });
             
-            // Contar partidos totales sumando los arrays 'matches' de todas las sesiones
             const { data: allSessions } = await supabase.from('sessions').select('matches');
             let totalMatches = 0;
-            if (allSessions) {
-                allSessions.forEach(s => {
-                    if (s.matches) totalMatches += s.matches.length;
-                });
-            }
+            if (allSessions) allSessions.forEach(s => { if (s.matches) totalMatches += s.matches.length; });
 
-            // Contar logins de hoy
             const today = new Date();
             today.setHours(0,0,0,0);
             const { count: loginCount } = await supabase.from('login_logs')
                 .select('*', { count: 'exact', head: true })
                 .gte('login_at', today.toISOString());
 
-            // Actualizar UI
-            const totalTeamsEl = document.getElementById('admin-total-teams');
-            const totalUsersEl = document.getElementById('admin-total-users');
-            const totalMatchesEl = document.getElementById('admin-total-matches');
-            const todayLoginsEl = document.getElementById('admin-today-logins');
-
-            if (totalTeamsEl) totalTeamsEl.textContent = teamCount || 0;
-            if (totalUsersEl) totalUsersEl.textContent = userCount || 0;
-            if (totalMatchesEl) totalMatchesEl.textContent = totalMatches || 0;
-            if (todayLoginsEl) todayLoginsEl.textContent = loginCount || 0;
+            document.getElementById('admin-total-teams').textContent = teamCount || 0;
+            document.getElementById('admin-total-users').textContent = userCount || 0;
+            document.getElementById('admin-total-matches').textContent = totalMatches || 0;
+            document.getElementById('admin-today-logins').textContent = loginCount || 0;
 
             // 2. Directorio de Clubes
-            const { data: teamsData } = await supabase
-                .from('teams')
-                .select('id, name, created_at');
-            
+            const { data: teamsData } = await supabase.from('teams').select('id, name, created_at');
             const teamListEl = document.getElementById('admin-teams-list');
             if (teamsData && teamListEl) {
-                // Obtener recuento de miembros para cada equipo
                 const { data: memberships } = await supabase.from('memberships').select('team_id, role');
-                
                 teamListEl.innerHTML = teamsData.map(team => {
                     const members = memberships?.filter(m => m.team_id === team.id) || [];
                     const manager = members.find(m => m.role === 'manager');
                     const managerName = manager ? 'EXISTE' : 'SIN ASIGNAR';
-                    const date = new Date(team.created_at).toLocaleDateString('es-ES');
-                    
                     return `
                         <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);">
                             <td style="padding: 12px 10px; font-weight: 800; color: var(--primary);">${team.name.toUpperCase()}</td>
                             <td style="padding: 12px 10px;">${members.length} MIEMBROS</td>
                             <td style="padding: 12px 10px; opacity: 0.7;">${managerName}</td>
-                            <td style="padding: 12px 10px; text-align: right; opacity: 0.5;">${date}</td>
+                            <td style="padding: 12px 10px; text-align: right; opacity: 0.5;">${new Date(team.created_at).toLocaleDateString()}</td>
                         </tr>
                     `;
                 }).join('');
             }
 
-            // 3. Ranking de Fidelidad (Logins)
-            const { data: loginStats } = await supabase
-                .from('login_logs')
-                .select('user_id');
-            
-            const loginCounts = {};
-            if (loginStats) {
-                loginStats.forEach(l => {
-                    loginCounts[l.user_id] = (loginCounts[l.user_id] || 0) + 1;
-                });
+            // 3. Gestión de Invitaciones (v59.0)
+            const { data: invites } = await supabase.from('invitations').select('*').order('created_at', { ascending: false });
+            const { data: profiles } = await supabase.from('profiles').select('full_name, invite_code_used');
+            const invitesListEl = document.getElementById('admin-invites-list');
+
+            if (invites && invitesListEl) {
+                invitesListEl.innerHTML = invites.map(inv => {
+                    const usersOfCode = profiles?.filter(p => p.invite_code_used === inv.code).map(p => p.full_name) || [];
+                    const userPreview = usersOfCode.length > 0 ? usersOfCode.join(', ').substring(0, 30) + (usersOfCode.join(', ').length > 30 ? '...' : '') : 'NINGUNO';
+                    
+                    return `
+                        <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);">
+                            <td style="padding: 12px 10px; font-weight: 900; color: #fff;">${inv.code}</td>
+                            <td style="padding: 12px 10px; color: var(--primary);">${inv.used_count}</td>
+                            <td style="padding: 12px 10px; opacity: 0.5;">${inv.max_uses}</td>
+                            <td style="padding: 12px 10px; font-size: 0.6rem; opacity: 0.6;" title="${usersOfCode.join(', ')}">${userPreview.toUpperCase()}</td>
+                            <td style="padding: 12px 10px; text-align: right;">
+                                <button onclick="window.deleteInviteCode('${inv.id}')" style="background: none; border: none; color: var(--error); cursor: pointer; padding: 5px;">🗑️</button>
+                            </td>
+                        </tr>
+                    `;
+                }).join('');
             }
 
-            // Obtener nombres de perfiles
-            const { data: profileNames } = await supabase.from('profiles').select('id, full_name');
+            // 4. Ranking de Fidelidad (Logins)
+            const { data: loginStats } = await supabase.from('login_logs').select('user_id');
+            const loginCounts = {};
+            if (loginStats) loginStats.forEach(l => { loginCounts[l.user_id] = (loginCounts[l.user_id] || 0) + 1; });
             const rankingEl = document.getElementById('admin-users-ranking');
-            
-            if (profileNames && rankingEl) {
-                const sortedUsers = profileNames
+            if (rankingEl) {
+                const sortedUsers = (profiles || [])
                     .map(p => ({ name: p.full_name, count: loginCounts[p.id] || 0 }))
-                    .sort((a, b) => b.count - a.count)
-                    .slice(0, 15); // Top 15
+                    .sort((a, b) => b.count - a.count).slice(0, 15);
 
                 rankingEl.innerHTML = sortedUsers.map((u, idx) => `
                     <div style="display: flex; justify-content: space-between; align-items: center; padding: 12px 15px; background: rgba(255,255,255,0.02); border-radius: 8px; border: 1px solid rgba(255,255,255,0.05);">
@@ -6625,6 +6658,23 @@ document.addEventListener('DOMContentLoaded', () => {
             window.jbToast('Error al cargar datos globales.', 'error');
         } finally {
             window.jbLoading.hide();
+        }
+    }
+
+    /**
+     * ELIMINA UN CÓDIGO DE INVITACIÓN (v59.0)
+     */
+    window.deleteInviteCode = async function(id) {
+        if (!await window.jbConfirm('¿Seguro que quieres eliminar este código? Ya no podrá usarse para nuevos registros.')) return;
+        
+        window.jbLoading.show('Eliminando...');
+        const { error } = await supabase.from('invitations').delete().eq('id', id);
+        window.jbLoading.hide();
+        
+        if (error) window.jbToast('Error al borrar: ' + error.message, 'error');
+        else {
+            window.jbToast('Código eliminado.', 'success');
+            window.renderAdminDashboard();
         }
     }
 });

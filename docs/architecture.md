@@ -142,5 +142,27 @@ El sistema incluye un motor de diseño dinámico que transforma los datos de la 
 - **Resolución de Exportación**: Forzada a `1080x1350px` mediante contenedores con tamaños en píxeles duros para garantizar la consistencia en el recorte de las redes sociales.
 
 ---
+
+## 9. Administración Global y Control de Accesos (v59.0)
+
+El sistema de administración global permite monitorizar y controlar la salud de toda la plataforma JB-SQUAD sin interferir en la gestión individual de los clubes.
+
+### 9.1. Jerarquía de Administración (Master Admin)
+A diferencia del rol de `manager` (que es específico de un club), el permiso **Master Admin** se otorga mediante el flag `is_admin` en la tabla `profiles`.
+- **Acceso**: Se habilita un botón oculto "⚙️ PANEL MASTER" exclusivamente en el perfil del administrador.
+- **Alcance**: Capacidad para ver estadísticas globales de todos los clubes, monitorizar la actividad de usuarios y gestionar los códigos de acceso a la plataforma.
+
+### 9.2. Auditoría de Actividad (`login_logs`)
+Para monitorizar la fidelidad y el uso real de la app, el sistema implementa un registro de sesiones:
+- **Lógica de Registro**: Cada inicio de sesión exitoso se registra en la tabla `login_logs`.
+- **Control de Inundación (Debounce)**: El sistema implementa un filtro de "anti-spam" que solo registra una entrada si han pasado más de 30 minutos desde el último login del usuario, evitando saturar la base de datos por refrescos accidentales.
+
+### 9.3. Gestión de Invitaciones y Accesos
+JB-SQUAD opera bajo un modelo de registro privado mediante códigos de invitación:
+- **Tabla `invitations`**: Controla los códigos, su límite de usos (`max_uses`) y cuántas veces han sido canjeados (`used_count`).
+- **Trazabilidad**: A partir de la v59.0, cada perfil almacena el código exacto utilizado durante el registro (`invite_code_used`), permitiendo al administrador saber qué invitación atrajo a qué usuarios.
+- **Panel de Control**: El Master Admin puede generar nuevos códigos bajo demanda y anular los existentes, controlando así el crecimiento de la base de usuarios de forma granular.
+
 ---
-*Última actualización técnica: v58.0.0 - 28 de Abril de 2026*
+---
+*Última actualización técnica: v59.0.0 - 30 de Abril de 2026*
