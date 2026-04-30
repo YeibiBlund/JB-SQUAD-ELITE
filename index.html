@@ -490,10 +490,10 @@
                                 <table style="width: 100%; border-collapse: collapse; font-size: 0.75rem; text-align: left;">
                                     <thead>
                                         <tr style="border-bottom: 1px solid rgba(255,255,255,0.1); opacity: 0.5;">
-                                            <th style="padding: 10px;">CLUB</th>
-                                            <th style="padding: 10px;">MIEMBROS</th>
-                                            <th style="padding: 10px;">MANAGER</th>
-                                            <th style="padding: 10px; text-align: right;">CREADO</th>
+                                            <th onclick="window.sortAdminTable('teams', 'name')" style="padding: 10px; cursor: pointer;">CLUB ↕</th>
+                                            <th onclick="window.sortAdminTable('teams', 'members')" style="padding: 10px; cursor: pointer;">MIEMBROS ↕</th>
+                                            <th onclick="window.sortAdminTable('teams', 'manager')" style="padding: 10px; cursor: pointer;">MANAGER ↕</th>
+                                            <th onclick="window.sortAdminTable('teams', 'created_at')" style="padding: 10px; text-align: right; cursor: pointer;">CREADO ↕</th>
                                         </tr>
                                     </thead>
                                     <tbody id="admin-teams-list">
@@ -520,10 +520,10 @@
                             <table style="width: 100%; border-collapse: collapse; font-size: 0.75rem; text-align: left;">
                                 <thead>
                                     <tr style="border-bottom: 1px solid rgba(255,255,255,0.1); opacity: 0.5;">
-                                        <th style="padding: 10px;">USUARIO</th>
-                                        <th style="padding: 10px;">EQUIPO</th>
-                                        <th style="padding: 10px;">REGISTRO</th>
-                                        <th style="padding: 10px;">ÚLTIMO LOGIN</th>
+                                        <th onclick="window.sortAdminTable('users', 'name')" style="padding: 10px; cursor: pointer;">USUARIO ↕</th>
+                                        <th onclick="window.sortAdminTable('users', 'team')" style="padding: 10px; cursor: pointer;">EQUIPO ↕</th>
+                                        <th onclick="window.sortAdminTable('users', 'created_at')" style="padding: 10px; cursor: pointer;">REGISTRO ↕</th>
+                                        <th onclick="window.sortAdminTable('users', 'last_login')" style="padding: 10px; cursor: pointer;">ÚLTIMO LOGIN ↕</th>
                                         <th style="padding: 10px; text-align: right;">ACCIÓN</th>
                                     </tr>
                                 </thead>
