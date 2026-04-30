@@ -6610,7 +6610,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             // 3. Gestión de Invitaciones (v59.0)
             const { data: invites } = await supabase.from('invitations').select('*').order('created_at', { ascending: false });
-            const { data: profiles } = await supabase.from('profiles').select('id, full_name, invite_code_used');
+            const { data: profiles } = await supabase.from('profiles').select('id, full_name, created_at, invite_code_used');
             const invitesListEl = document.getElementById('admin-invites-list');
 
             if (invites && invitesListEl) {
@@ -6632,10 +6632,39 @@ document.addEventListener('DOMContentLoaded', () => {
                 }).join('');
             }
 
-            // 4. Ranking de Fidelidad (Logins)
-            const { data: loginStats } = await supabase.from('login_logs').select('user_id');
+            // 4. Gestión Completa de Usuarios (v59.1)
+            const { data: allMemberships } = await supabase.from('memberships').select('user_id, team_id');
+            const { data: allTeams } = await supabase.from('teams').select('id, name');
+            const { data: allLogins } = await supabase.from('login_logs').select('user_id, login_at').order('login_at', { ascending: false });
+
+            const usersListEl = document.getElementById('admin-all-users-list');
+            if (profiles && usersListEl) {
+                usersListEl.innerHTML = profiles.map(u => {
+                    const membership = allMemberships?.find(m => m.user_id === u.id);
+                    const team = allTeams?.find(t => t.id === membership?.team_id);
+                    const teamName = team ? team.name.toUpperCase() : 'SIN EQUIPO';
+                    
+                    const lastLoginObj = allLogins?.find(l => l.user_id === u.id);
+                    const lastLogin = lastLoginObj ? new Date(lastLoginObj.login_at).toLocaleString('es-ES', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' }) : 'NUNCA';
+                    const registerDate = new Date(u.created_at).toLocaleDateString('es-ES');
+
+                    return `
+                        <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);">
+                            <td style="padding: 12px 10px; font-weight: 800; color: #fff;">${u.full_name.toUpperCase()}</td>
+                            <td style="padding: 12px 10px; opacity: 0.8; font-size: 0.65rem;">${teamName}</td>
+                            <td style="padding: 12px 10px; opacity: 0.5;">${registerDate}</td>
+                            <td style="padding: 12px 10px; opacity: 0.5;">${lastLogin}</td>
+                            <td style="padding: 12px 10px; text-align: right;">
+                                <button onclick="window.deleteUser('${u.id}', '${u.full_name}')" style="background: none; border: none; color: var(--error); cursor: pointer; padding: 5px; font-size: 0.6rem; font-weight: 900; border: 1px solid rgba(255,0,0,0.2); border-radius: 4px;">🗑️ BORRAR</button>
+                            </td>
+                        </tr>
+                    `;
+                }).join('');
+            }
+
+            // 5. Ranking de Fidelidad (Logins)
             const loginCounts = {};
-            if (loginStats) loginStats.forEach(l => { loginCounts[l.user_id] = (loginCounts[l.user_id] || 0) + 1; });
+            if (allLogins) allLogins.forEach(l => { loginCounts[l.user_id] = (loginCounts[l.user_id] || 0) + 1; });
             const rankingEl = document.getElementById('admin-users-ranking');
             if (rankingEl) {
                 const sortedUsers = (profiles || [])
@@ -6658,6 +6687,33 @@ document.addEventListener('DOMContentLoaded', () => {
             window.jbToast('Error al cargar datos globales.', 'error');
         } finally {
             window.jbLoading.hide();
+        }
+    }
+
+    /**
+     * ELIMINA UN USUARIO DE LA PLATAFORMA (v59.1)
+     */
+    window.deleteUser = async function(userId, userName) {
+        if (userId === state.user?.auth?.id) { 
+            window.jbToast('No puedes borrarte a ti mismo.', 'warning'); 
+            return; 
+        }
+        
+        const confirm = await window.jbConfirm(`¿ESTÁS COMPLETAMENTE SEGURO? Se borrará la cuenta de ${userName.toUpperCase()} y todos sus datos vinculados (ficha, votos, membresía) de forma permanente.`);
+        
+        if (confirm) {
+            window.jbLoading.show('Eliminando usuario...');
+            try {
+                const { error } = await supabase.rpc('delete_user_by_admin', { target_user_id: userId });
+                if (error) throw error;
+                window.jbToast('Usuario eliminado correctamente.', 'success');
+                window.renderAdminDashboard();
+            } catch (err) {
+                console.error(">>> [ERROR] deleteUser:", err);
+                window.jbToast('Error al eliminar usuario: ' + err.message, 'error');
+            } finally {
+                window.jbLoading.hide();
+            }
         }
     }
 

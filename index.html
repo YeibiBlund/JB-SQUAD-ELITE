@@ -458,6 +458,7 @@
                 <!-- TABS DEL PANEL ADMIN -->
                 <div id="admin-tabs" class="elite-tabs" style="margin-bottom: 20px; display: flex; gap: 10px;">
                     <button class="elite-tab-btn active" data-target="admin-stats-panel" style="flex: 1; padding: 12px; font-size: 0.7rem; font-weight: 800; letter-spacing: 1px;">📊 ESTADÍSTICAS</button>
+                    <button class="elite-tab-btn" data-target="admin-users-panel" style="flex: 1; padding: 12px; font-size: 0.7rem; font-weight: 800; letter-spacing: 1px;">👥 USUARIOS</button>
                     <button class="elite-tab-btn" data-target="admin-access-panel" style="flex: 1; padding: 12px; font-size: 0.7rem; font-weight: 800; letter-spacing: 1px;">🔑 ACCESOS</button>
                 </div>
 
@@ -511,7 +512,30 @@
                     </div>
                 </div>
 
-                <!-- PANEL 2: GESTIÓN DE ACCESOS (v59.0) -->
+                <!-- PANEL 2: GESTIÓN DE USUARIOS (v59.1) -->
+                <div id="admin-users-panel" class="admin-panel-content" style="display: none;">
+                    <div class="card-elite" style="padding: 20px;">
+                        <h3 style="font-size: 0.8rem; letter-spacing: 2px; margin-bottom: 20px; color: var(--primary);">BASE DE DATOS DE USUARIOS</h3>
+                        <div class="admin-table-wrapper" style="overflow-x: auto;">
+                            <table style="width: 100%; border-collapse: collapse; font-size: 0.75rem; text-align: left;">
+                                <thead>
+                                    <tr style="border-bottom: 1px solid rgba(255,255,255,0.1); opacity: 0.5;">
+                                        <th style="padding: 10px;">USUARIO</th>
+                                        <th style="padding: 10px;">EQUIPO</th>
+                                        <th style="padding: 10px;">REGISTRO</th>
+                                        <th style="padding: 10px;">ÚLTIMO LOGIN</th>
+                                        <th style="padding: 10px; text-align: right;">ACCIÓN</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="admin-all-users-list">
+                                    <!-- JS populate -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- PANEL 3: GESTIÓN DE ACCESOS (v59.0) -->
                 <div id="admin-access-panel" class="admin-panel-content" style="display: none;">
                     <div class="card-elite" style="padding: 25px; margin-bottom: 30px; border: 1px dashed rgba(240, 165, 0, 0.3);">
                         <h3 style="font-size: 0.8rem; letter-spacing: 2px; margin-bottom: 20px; color: var(--primary);">GENERAR NUEVO CÓDIGO</h3>
