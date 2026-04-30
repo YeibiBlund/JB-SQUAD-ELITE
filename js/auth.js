@@ -133,51 +133,87 @@ function setupAuthHandlers() {
             e.preventDefault();
             const submitBtn = e.target.querySelector('button');
             submitBtn.disabled = true;
-            submitBtn.textContent = 'Fundando Club...';
+            submitBtn.textContent = 'Verificando Código...';
 
             const teamName = document.getElementById('new-team-name').value.trim();
+            const code = document.getElementById('founding-code').value.trim().toUpperCase();
+            
             if (!state.user?.auth) { window.jbToast('Sesión no encontrada.', 'error'); return; }
 
-            const { data: team, error: tErr } = await supabase.from('teams').insert({ 
-                name: teamName, 
-                owner_id: state.user.auth.id 
-            }).select().single();
+            try {
+                // 1. Validar Código de Fundación en tabla 'invitations'
+                const { data: invData, error: invErr } = await supabase
+                    .from('invitations')
+                    .select('*')
+                    .eq('code', code)
+                    .eq('type', 'founding')
+                    .single();
 
-            if (tErr) {
-                submitBtn.disabled = false;
-                submitBtn.textContent = 'Fundar Ahora';
-                window.jbToast('Error al crear equipo: ' + tErr.message, 'error');
-                return;
-            }
+                if (invErr || !invData) {
+                    throw new Error('Código de fundación no válido o inexistente.');
+                }
 
-            const { error: mErr } = await supabase.from('memberships').insert({
-                user_id: state.user.auth.id,
-                team_id: team.id,
-                role: 'manager'
-            });
+                if (invData.used_count >= invData.max_uses) {
+                    throw new Error('Este código de fundación ya ha sido utilizado.');
+                }
 
-            if (mErr) {
-                submitBtn.disabled = false;
-                submitBtn.textContent = 'Fundar Ahora';
-                window.jbToast('Error al asignar rol: ' + mErr.message, 'error');
-                return;
-            }
+                // 2. Escudo de Perfil (Garantizar que existe en public.profiles antes de memberships)
+                let { data: profile } = await supabase.from('profiles').select('id').eq('id', state.user.auth.id).maybeSingle();
+                if (!profile) {
+                    const fallbackName = state.user.auth.user_metadata?.full_name || state.user.auth.email.split('@')[0];
+                    await supabase.from('profiles').insert({ 
+                        id: state.user.auth.id, 
+                        full_name: fallbackName
+                    });
+                }
 
-            // Sincronizar ficha del creador (v48.0 fix)
-            const { data: existingPlayer } = await supabase.from('players').select('id').eq('user_id', state.user.auth.id).maybeSingle();
-            if (existingPlayer) {
-                await supabase.from('players').update({ team_id: team.id }).eq('user_id', state.user.auth.id);
-            } else {
+                submitBtn.textContent = 'Fundando Club...';
+
+                // 3. Crear el Equipo
+                const { data: team, error: tErr } = await supabase.from('teams').insert({ 
+                    name: teamName, 
+                    owner_id: state.user.auth.id 
+                }).select().single();
+
+                if (tErr) throw new Error('Error al crear equipo: ' + tErr.message);
+
+                // 4. Asignar Rol de Manager
+                const { error: mErr } = await supabase.from('memberships').insert({
+                    user_id: state.user.auth.id,
+                    team_id: team.id,
+                    role: 'manager'
+                });
+                if (mErr) throw new Error('Error al asignar rol: ' + mErr.message);
+
+                // 5. Crear Ficha de Jugador
                 const username = state.user.auth.user_metadata?.full_name || state.user.auth.email.split('@')[0];
-                await supabase.from('players').insert({
+                const { error: pErr } = await supabase.from('players').insert({
                     user_id: state.user.auth.id,
                     team_id: team.id,
                     name: username
                 });
-            }
+                if (pErr) throw new Error('Error al crear ficha: ' + pErr.message);
 
-            window.jbToast(`¡Club ${teamName} fundado con éxito!`, 'success');
-            await handleUserSession(state.user.auth);
+                // 6. Marcar código como usado
+                await supabase.from('invitations')
+                    .update({ used_count: invData.used_count + 1 })
+                    .eq('id', invData.id);
+
+                window.jbToast(`¡Club ${teamName} fundado con éxito!`, 'success');
+                
+                // 7. ENTRAR AL CLUB (Reiniciar sesión para cargar el nuevo estado y cambiar de vista)
+                if (window.handleUserSession) {
+                    await window.handleUserSession(state.user.auth);
+                } else {
+                    window.location.reload();
+                }
+
+            } catch (err) {
+                console.error(">>> [ERROR] Fundar Club:", err);
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Fundar Ahora';
+                window.jbToast(err.message, 'error');
+            }
         };
     }
 
