@@ -3508,12 +3508,11 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         renderPlayerProfileDetail(player);
-        // Mostrar/Ocultar botón de Master Panel si es mi perfil y soy admin
+        // Mostrar/Ocultar botón de Master Panel si soy admin (v59.1)
         const btnMaster = document.getElementById('btn-master-panel');
         if (btnMaster) {
-            const isMyOwnProfile = state.userPlayer && state.userPlayer.id === playerId;
             const isMasterAdmin = state.user?.profile?.is_admin === true;
-            btnMaster.style.display = (isMyOwnProfile && isMasterAdmin) ? 'flex' : 'none';
+            btnMaster.style.display = isMasterAdmin ? 'flex' : 'none';
         }
 
         switchView('my-profile');
