@@ -158,13 +158,20 @@ function setupAuthHandlers() {
                 }
 
                 // 2. Escudo de Perfil (Garantizar que existe en public.profiles antes de memberships)
-                let { data: profile } = await supabase.from('profiles').select('id').eq('id', state.user.auth.id).maybeSingle();
+                console.log(">>> [AUTH] Verificando perfil para ID:", state.user.auth.id);
+                let { data: profile, error: pCheckErr } = await supabase.from('profiles').select('id').eq('id', state.user.auth.id).maybeSingle();
+                
                 if (!profile) {
+                    console.log(">>> [AUTH] Perfil no encontrado, creando...");
                     const fallbackName = state.user.auth.user_metadata?.full_name || state.user.auth.email.split('@')[0];
-                    await supabase.from('profiles').insert({ 
+                    const { error: pInsErr } = await supabase.from('profiles').insert({ 
                         id: state.user.auth.id, 
                         full_name: fallbackName
                     });
+                    if (pInsErr) throw new Error('No se pudo crear el perfil base: ' + pInsErr.message);
+                    
+                    // Pequeña espera para asegurar consistencia en BD
+                    await new Promise(resolve => setTimeout(resolve, 500));
                 }
 
                 submitBtn.textContent = 'Fundando Club...';

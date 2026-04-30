@@ -6549,9 +6549,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 btnGenerate.onclick = async () => {
                     const code = document.getElementById('admin-new-invite-code').value.trim().toUpperCase();
                     const uses = parseInt(document.getElementById('admin-new-invite-uses').value) || 10;
+                    const type = document.getElementById('admin-new-invite-type').value;
+
                     if (!code) { window.jbToast('Escribe un código válido.', 'warning'); return; }
                     window.jbLoading.show('Generando invitación...');
-                    const { error } = await supabase.from('invitations').insert([{ code, max_uses: uses }]);
+                    const { error } = await supabase.from('invitations').insert([{ code, max_uses: uses, type }]);
                     window.jbLoading.hide();
                     if (error) window.jbToast('Error: ' + error.message, 'error');
                     else {
@@ -6740,14 +6742,14 @@ document.addEventListener('DOMContentLoaded', () => {
         const invitesListEl = document.getElementById('admin-invites-list');
         if (invitesListEl) {
             invitesListEl.innerHTML = data.invites.map(inv => {
-                const usersOfCode = data.profiles.filter(p => p.invite_code_used === inv.code).map(p => p.full_name);
-                const userPreview = usersOfCode.length > 0 ? usersOfCode.join(', ').substring(0, 30) + (usersOfCode.join(', ').length > 30 ? '...' : '') : 'NINGUNO';
+                const typeLabel = inv.type === 'founding' ? 'FUNDACIÓN' : 'REGISTRO';
+                const typeColor = inv.type === 'founding' ? 'var(--primary)' : '#fff';
                 return `
                     <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);">
                         <td style="padding: 12px 10px; font-weight: 900; color: #fff;">${inv.code}</td>
+                        <td style="padding: 12px 10px; font-weight: 800; font-size: 0.6rem; color: ${typeColor};">${typeLabel}</td>
                         <td style="padding: 12px 10px; color: var(--primary);">${inv.used_count}</td>
                         <td style="padding: 12px 10px; opacity: 0.5;">${inv.max_uses}</td>
-                        <td style="padding: 12px 10px; font-size: 0.6rem; opacity: 0.6;" title="${usersOfCode.join(', ')}">${userPreview.toUpperCase()}</td>
                         <td style="padding: 12px 10px; text-align: right;">
                             <button onclick="window.deleteInviteCode('${inv.id}')" style="background: none; border: none; color: var(--error); cursor: pointer; padding: 5px;">🗑️</button>
                         </td>
