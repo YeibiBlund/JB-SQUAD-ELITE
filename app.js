@@ -6610,7 +6610,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             // 3. Gestión de Invitaciones (v59.0)
             const { data: invites } = await supabase.from('invitations').select('*').order('created_at', { ascending: false });
-            const { data: profiles } = await supabase.from('profiles').select('full_name, invite_code_used');
+            const { data: profiles } = await supabase.from('profiles').select('id, full_name, invite_code_used');
             const invitesListEl = document.getElementById('admin-invites-list');
 
             if (invites && invitesListEl) {
