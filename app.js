@@ -6524,7 +6524,7 @@ document.addEventListener('DOMContentLoaded', () => {
      * RENDERIZA EL DASHBOARD DE ADMINISTRACIÓN GLOBAL (v59.0)
      */
     /**
-     * RENDERIZA EL DASHBOARD DE ADMINISTRACIÓN GLOBAL (v59.2)
+     * RENDERIZA EL DASHBOARD DE ADMINISTRACIÓN GLOBAL (v59.3)
      */
     window.renderAdminDashboard = async function() {
         if (!state.user?.profile?.is_admin) return;
@@ -6570,7 +6570,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const [{ count: teamCount }, { count: userCount }, { data: allSessions }, { data: todayLogins }, { data: teamsData }, { data: invites }, { data: profiles }, { data: memberships }, { data: allLogins }] = await Promise.all([
                 supabase.from('teams').select('*', { count: 'exact', head: true }),
                 supabase.from('profiles').select('*', { count: 'exact', head: true }),
-                supabase.from('sessions').select('matches'),
+                supabase.from('sessions').select('team_id, matches'),
                 supabase.from('login_logs').select('id').gte('login_at', new Date(new Date().setHours(0,0,0,0)).toISOString()),
                 supabase.from('teams').select('id, name, created_at'),
                 supabase.from('invitations').select('*').order('created_at', { ascending: false }),
@@ -6589,7 +6589,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 invites: invites || [],
                 profiles: profiles || [],
                 memberships: memberships || [],
-                logins: allLogins || []
+                logins: allLogins || [],
+                sessions: allSessions || []
             };
 
             renderAdminUI();
@@ -6615,23 +6616,23 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('admin-total-matches').textContent = data.stats.matches;
         document.getElementById('admin-today-logins').textContent = data.stats.todayLogins;
 
-        // 2. Directorio de Clubes (Ordenable)
+        // 2. Directorio Rápido (Ordenable)
         const teamListEl = document.getElementById('admin-teams-list');
         if (teamListEl) {
             let sortedTeams = data.teams.map(t => {
                 const members = data.memberships.filter(m => m.team_id === t.id);
-                const manager = members.find(m => m.role === 'manager');
-                return { ...t, memberCount: members.length, managerStatus: manager ? 'EXISTE' : 'SIN ASIGNAR' };
+                const managerMem = members.find(m => m.role === 'manager');
+                const managerProfile = data.profiles.find(p => p.id === managerMem?.user_id);
+                return { ...t, memberCount: members.length, managerName: managerProfile ? managerProfile.full_name : 'SIN MANAGER' };
             });
 
-            // Aplicar ordenación si existe
             const sort = state.adminSort?.teams;
             if (sort) {
                 sortedTeams.sort((a, b) => {
                     let valA = a[sort.column];
                     let valB = b[sort.column];
                     if (sort.column === 'members') { valA = a.memberCount; valB = b.memberCount; }
-                    if (sort.column === 'manager') { valA = a.managerStatus; valB = b.managerStatus; }
+                    if (sort.column === 'manager') { valA = a.managerName; valB = b.managerName; }
                     if (typeof valA === 'string') return sort.direction === 'asc' ? valA.localeCompare(valB) : valB.localeCompare(valA);
                     return sort.direction === 'asc' ? valA - valB : valB - valA;
                 });
@@ -6641,7 +6642,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);">
                     <td style="padding: 12px 10px; font-weight: 800; color: var(--primary);">${team.name.toUpperCase()}</td>
                     <td style="padding: 12px 10px;">${team.memberCount} MIEMBROS</td>
-                    <td style="padding: 12px 10px; opacity: 0.7;">${team.managerStatus}</td>
+                    <td style="padding: 12px 10px; opacity: 0.7;">${team.managerName.toUpperCase()}</td>
                     <td style="padding: 12px 10px; text-align: right; opacity: 0.5;">${new Date(team.created_at).toLocaleDateString()}</td>
                 </tr>
             `).join('');
@@ -6688,7 +6689,54 @@ document.addEventListener('DOMContentLoaded', () => {
             `).join('');
         }
 
-        // 4. Invitaciones
+        // 4. Gestión Completa de Clubes (v59.3)
+        const clubsListEl = document.getElementById('admin-all-clubs-list');
+        if (clubsListEl) {
+            let sortedClubs = data.teams.map(t => {
+                const members = data.memberships.filter(m => m.team_id === t.id);
+                const managerMem = members.find(m => m.role === 'manager');
+                const managerProfile = data.profiles.find(p => p.id === managerMem?.user_id);
+                
+                const teamSessions = data.sessions.filter(s => s.team_id === t.id);
+                let matchCount = 0;
+                teamSessions.forEach(s => { if (s.matches) matchCount += s.matches.length; });
+
+                return { 
+                    ...t, 
+                    managerName: managerProfile ? managerProfile.full_name : 'SIN ASIGNAR',
+                    memberCount: members.length,
+                    matchCount: matchCount
+                };
+            });
+
+            const sort = state.adminSort?.clubs;
+            if (sort) {
+                sortedClubs.sort((a, b) => {
+                    let valA = a[sort.column];
+                    let valB = b[sort.column];
+                    if (sort.column === 'manager') { valA = a.managerName; valB = b.managerName; }
+                    if (sort.column === 'members') { valA = a.memberCount; valB = b.memberCount; }
+                    if (sort.column === 'matches') { valA = a.matchCount; valB = b.matchCount; }
+                    if (typeof valA === 'string') return sort.direction === 'asc' ? valA.localeCompare(valB) : valB.localeCompare(valA);
+                    return sort.direction === 'asc' ? valA - valB : valB - valA;
+                });
+            }
+
+            clubsListEl.innerHTML = sortedClubs.map(c => `
+                <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);">
+                    <td style="padding: 12px 10px; font-weight: 800; color: var(--primary);">${c.name.toUpperCase()}</td>
+                    <td style="padding: 12px 10px; opacity: 0.8;">${c.managerName.toUpperCase()}</td>
+                    <td style="padding: 12px 10px; opacity: 0.6;">${c.memberCount} MIEMBROS</td>
+                    <td style="padding: 12px 10px; color: #fff;">${c.matchCount} PJ</td>
+                    <td style="padding: 12px 10px; opacity: 0.5;">${new Date(c.created_at).toLocaleDateString()}</td>
+                    <td style="padding: 12px 10px; text-align: right;">
+                        <button onclick="window.deleteTeam('${c.id}', '${c.name}')" style="background: none; border: none; color: var(--error); cursor: pointer; padding: 5px; font-size: 0.6rem; font-weight: 900; border: 1px solid rgba(255,0,0,0.2); border-radius: 4px;">🗑️ DISOLVER</button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        // 5. Invitaciones
         const invitesListEl = document.getElementById('admin-invites-list');
         if (invitesListEl) {
             invitesListEl.innerHTML = data.invites.map(inv => {
@@ -6708,7 +6756,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }).join('');
         }
 
-        // 5. Ranking de Fidelidad
+        // 6. Ranking de Fidelidad
         const loginCounts = {};
         data.logins.forEach(l => { loginCounts[l.user_id] = (loginCounts[l.user_id] || 0) + 1; });
         const rankingEl = document.getElementById('admin-users-ranking');
@@ -6744,6 +6792,25 @@ document.addEventListener('DOMContentLoaded', () => {
         
         state.adminSort[tableKey] = current;
         renderAdminUI();
+    }
+
+    /**
+     * ELIMINA UN EQUIPO DE LA PLATAFORMA (v59.3)
+     */
+    window.deleteTeam = async function(teamId, teamName) {
+        if (!await window.jbConfirm(`¿ESTÁS COMPLETAMENTE SEGURO? Se disolverá el club ${teamName.toUpperCase()} borrando sus sesiones, estadísticas y miembros permanentemente.`)) return;
+        window.jbLoading.show('Disolviendo club...');
+        try {
+            const { error } = await supabase.rpc('delete_team_by_admin', { target_team_id: teamId });
+            if (error) throw error;
+            window.jbToast('Club disuelto correctamente.', 'success');
+            window.renderAdminDashboard();
+        } catch (err) {
+            console.error(">>> [ERROR] deleteTeam:", err);
+            window.jbToast('Error al disolver club.', 'error');
+        } finally {
+            window.jbLoading.hide();
+        }
     }
 
     /**
