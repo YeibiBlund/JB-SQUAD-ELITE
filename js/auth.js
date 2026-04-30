@@ -235,6 +235,7 @@ async function handleUserSession(authUser) {
         const username = authUser.user_metadata?.full_name || authUser.email.split('@')[0];
         console.log(">>> Entrando como:", username.toUpperCase());
         
+        // 1. Cargar perfil con campo is_admin
         let { data: profile } = await supabase.from('profiles').select('*').eq('id', authUser.id).maybeSingle();
         
         if (!profile) {
@@ -254,6 +255,19 @@ async function handleUserSession(authUser) {
             membership: membership,
             role: membership ? membership.role : null 
         };
+
+        // 2. Registro de Login (Anti-spam de 30 min)
+        if (profile) {
+            const lastLoginStr = localStorage.getItem(`jb_last_login_${profile.id}`);
+            const now = Date.now();
+            const thirtyMinutes = 30 * 60 * 1000;
+
+            if (!lastLoginStr || (now - parseInt(lastLoginStr)) > thirtyMinutes) {
+                console.log(">>> [LOG] Registrando inicio de sesión...");
+                await supabase.from('login_logs').insert({ user_id: profile.id });
+                localStorage.setItem(`jb_last_login_${profile.id}`, now.toString());
+            }
+        }
 
         // Sincronizar datos y preparar UI (v47.4 - Siempre inicializar)
         if (membership) window.state.team = membership.teams;

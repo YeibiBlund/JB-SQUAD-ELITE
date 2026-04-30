@@ -175,11 +175,23 @@ document.addEventListener('DOMContentLoaded', () => {
             renderPollsCalendar();
         };
     }
-    if (btnPollsCalNext) {
-        btnPollsCalNext.onclick = () => {
+    const btnPollsCalNextEl = document.getElementById('polls-calendar-next');
+    if (btnPollsCalNextEl) {
+        btnPollsCalNextEl.onclick = () => {
             currentPollsCalendarDate.setMonth(currentPollsCalendarDate.getMonth() + 1);
             renderPollsCalendar();
         };
+    }
+
+    // --- PANEL DE ADMINISTRACIÓN GLOBAL (v59.0) ---
+    const btnMasterPanel = document.getElementById('btn-master-panel');
+    const btnBackFromAdmin = document.getElementById('btn-back-from-admin');
+
+    if (btnMasterPanel) {
+        btnMasterPanel.addEventListener('click', () => switchView('admin'));
+    }
+    if (btnBackFromAdmin) {
+        btnBackFromAdmin.addEventListener('click', () => switchView('my-profile'));
     }
 
     let activeSlotId = null;
@@ -361,6 +373,12 @@ document.addEventListener('DOMContentLoaded', () => {
             viewId = 'home';
         }
 
+        // Bloqueo de seguridad: Solo el Master Admin accede al panel global (v59.0)
+        if (viewId === 'admin' && !state.user?.profile?.is_admin) {
+            window.jbToast('Acceso restringido: Solo el Master Admin puede entrar aquí.', 'error');
+            viewId = 'home';
+        }
+
         // --- RESTRICCIONES SIN CLUB (v47.2) ---
         const teamRestrictedViews = ['plantilla', 'tacticas', 'jornadas', 'convocatorias', 'mi-equipo'];
         if (!state.team && teamRestrictedViews.includes(viewId)) {
@@ -427,6 +445,8 @@ document.addEventListener('DOMContentLoaded', () => {
             renderAvailabilityPanel();
         } else if (viewId === 'home') {
             if (window.renderHomeDashboard) window.renderHomeDashboard();
+        } else if (viewId === 'admin') {
+            window.renderAdminDashboard();
         }
 
         // Actualizar estado del Nav Bar
@@ -3488,6 +3508,14 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         renderPlayerProfileDetail(player);
+        // Mostrar/Ocultar botón de Master Panel si es mi perfil y soy admin
+        const btnMaster = document.getElementById('btn-master-panel');
+        if (btnMaster) {
+            const isMyOwnProfile = state.userPlayer && state.userPlayer.id === playerId;
+            const isMasterAdmin = state.user?.profile?.is_admin === true;
+            btnMaster.style.display = (isMyOwnProfile && isMasterAdmin) ? 'flex' : 'none';
+        }
+
         switchView('my-profile');
     }
 
@@ -6493,4 +6521,111 @@ document.addEventListener('DOMContentLoaded', () => {
         window.jbLoading.hide();
     };
 
+    /**
+     * RENDERIZA EL DASHBOARD DE ADMINISTRACIÓN GLOBAL (v59.0)
+     */
+    window.renderAdminDashboard = async function() {
+        if (!state.user?.profile?.is_admin) return;
+        
+        window.jbLoading.show('Cargando datos globales...');
+        
+        try {
+            // 1. Estadísticas Generales
+            const { count: teamCount } = await supabase.from('teams').select('*', { count: 'exact', head: true });
+            const { count: userCount } = await supabase.from('profiles').select('*', { count: 'exact', head: true });
+            
+            // Contar partidos totales sumando los arrays 'matches' de todas las sesiones
+            const { data: allSessions } = await supabase.from('sessions').select('matches');
+            let totalMatches = 0;
+            if (allSessions) {
+                allSessions.forEach(s => {
+                    if (s.matches) totalMatches += s.matches.length;
+                });
+            }
+
+            // Contar logins de hoy
+            const today = new Date();
+            today.setHours(0,0,0,0);
+            const { count: loginCount } = await supabase.from('login_logs')
+                .select('*', { count: 'exact', head: true })
+                .gte('login_at', today.toISOString());
+
+            // Actualizar UI
+            const totalTeamsEl = document.getElementById('admin-total-teams');
+            const totalUsersEl = document.getElementById('admin-total-users');
+            const totalMatchesEl = document.getElementById('admin-total-matches');
+            const todayLoginsEl = document.getElementById('admin-today-logins');
+
+            if (totalTeamsEl) totalTeamsEl.textContent = teamCount || 0;
+            if (totalUsersEl) totalUsersEl.textContent = userCount || 0;
+            if (totalMatchesEl) totalMatchesEl.textContent = totalMatches || 0;
+            if (todayLoginsEl) todayLoginsEl.textContent = loginCount || 0;
+
+            // 2. Directorio de Clubes
+            const { data: teamsData } = await supabase
+                .from('teams')
+                .select('id, name, created_at');
+            
+            const teamListEl = document.getElementById('admin-teams-list');
+            if (teamsData && teamListEl) {
+                // Obtener recuento de miembros para cada equipo
+                const { data: memberships } = await supabase.from('memberships').select('team_id, role');
+                
+                teamListEl.innerHTML = teamsData.map(team => {
+                    const members = memberships?.filter(m => m.team_id === team.id) || [];
+                    const manager = members.find(m => m.role === 'manager');
+                    const managerName = manager ? 'EXISTE' : 'SIN ASIGNAR';
+                    const date = new Date(team.created_at).toLocaleDateString('es-ES');
+                    
+                    return `
+                        <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);">
+                            <td style="padding: 12px 10px; font-weight: 800; color: var(--primary);">${team.name.toUpperCase()}</td>
+                            <td style="padding: 12px 10px;">${members.length} MIEMBROS</td>
+                            <td style="padding: 12px 10px; opacity: 0.7;">${managerName}</td>
+                            <td style="padding: 12px 10px; text-align: right; opacity: 0.5;">${date}</td>
+                        </tr>
+                    `;
+                }).join('');
+            }
+
+            // 3. Ranking de Fidelidad (Logins)
+            const { data: loginStats } = await supabase
+                .from('login_logs')
+                .select('user_id');
+            
+            const loginCounts = {};
+            if (loginStats) {
+                loginStats.forEach(l => {
+                    loginCounts[l.user_id] = (loginCounts[l.user_id] || 0) + 1;
+                });
+            }
+
+            // Obtener nombres de perfiles
+            const { data: profileNames } = await supabase.from('profiles').select('id, full_name');
+            const rankingEl = document.getElementById('admin-users-ranking');
+            
+            if (profileNames && rankingEl) {
+                const sortedUsers = profileNames
+                    .map(p => ({ name: p.full_name, count: loginCounts[p.id] || 0 }))
+                    .sort((a, b) => b.count - a.count)
+                    .slice(0, 15); // Top 15
+
+                rankingEl.innerHTML = sortedUsers.map((u, idx) => `
+                    <div style="display: flex; justify-content: space-between; align-items: center; padding: 12px 15px; background: rgba(255,255,255,0.02); border-radius: 8px; border: 1px solid rgba(255,255,255,0.05);">
+                        <div style="display: flex; align-items: center; gap: 12px;">
+                            <span style="font-weight: 900; color: var(--primary); opacity: 0.5;">#${idx + 1}</span>
+                            <span style="font-weight: 700;">${u.name.toUpperCase()}</span>
+                        </div>
+                        <span style="background: var(--primary); color: #000; padding: 2px 8px; border-radius: 4px; font-size: 0.7rem; font-weight: 900;">${u.count} LOGINS</span>
+                    </div>
+                `).join('');
+            }
+
+        } catch (err) {
+            console.error(">>> [ERROR] renderAdminDashboard:", err);
+            window.jbToast('Error al cargar datos globales.', 'error');
+        } finally {
+            window.jbLoading.hide();
+        }
+    }
 });

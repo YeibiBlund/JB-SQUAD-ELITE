@@ -1,4 +1,4 @@
-﻿@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;700;800&display=swap');
 
 :root {
     /* Nueva Paleta: Elite Obsidian & Electric Amber */
@@ -6222,4 +6222,48 @@ input:disabled + .jb-slider {
     color: #fff;
     background: rgba(255, 255, 255, 0.1);
     box-shadow: 0 0 10px rgba(255, 255, 255, 0.05);
+}
+/* =========================================================================
+   ADMIN MASTER PANEL STYLES (v59.0)
+   ========================================================================= */
+#view-admin h1 {
+    font-size: 1.5rem;
+    margin: 0;
+}
+
+.admin-stats-grid .card-elite {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    min-height: 100px;
+}
+
+.admin-table-wrapper::-webkit-scrollbar {
+    height: 4px;
+}
+
+.admin-table-wrapper::-webkit-scrollbar-thumb {
+    background: var(--primary);
+    border-radius: 10px;
+}
+
+#admin-teams-list tr:last-child {
+    border-bottom: none;
+}
+
+/* Efecto Hover en filas del ranking */
+#admin-users-ranking div {
+    transition: var(--transition);
+}
+
+#admin-users-ranking div:hover {
+    border-color: var(--primary-glow) !important;
+    background: rgba(255,255,255,0.04) !important;
+    transform: translateX(5px);
+}
+
+@media (max-width: 600px) {
+    .admin-stats-grid {
+        grid-template-columns: 1fr 1fr !important;
+    }
 }

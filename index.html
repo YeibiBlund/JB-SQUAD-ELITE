@@ -344,6 +344,7 @@
                 <div class="profile-header-flex" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
                     <h1 id="profile-header-title">Mi Perfil Elite</h1>
                     <div class="profile-header-actions" style="display: flex; gap: 10px;">
+                        <button id="btn-master-panel" class="btn-gold" style="display: none; padding: 10px 20px; font-size: 0.75rem; width: auto; background: linear-gradient(135deg, #FFD700, #FFA500); color: #000;">⚙️ PANEL MASTER</button>
                         <button id="btn-mgmt-team-shortcut" class="btn-elite" data-role-required="manager" style="display: none;">MI EQUIPO</button>
                         <button id="btn-edit-my-ficha" class="btn-elite">EDITAR FICHA</button>
                     </div>
@@ -439,6 +440,62 @@
                         SALIR DE LA SESIÓN
                     </button>
                     <p class="app-version-footer">JB-SQUAD ELITE v32.0.6</p>
+                </div>
+            </section>
+
+            <!-- VIEW: Panel de Administración Global (v59.0) -->
+            <section id="view-admin" class="view">
+                <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 2rem; margin-top: 20px;">
+                    <button id="btn-back-from-admin" style="background: none; border: none; color: var(--primary); font-size: 1.5rem; cursor: pointer;">←</button>
+                    <h1>Panel <span class="gradient-text">Master Admin</span></h1>
+                </div>
+
+                <!-- Tarjetas de Estadísticas Globales -->
+                <div class="admin-stats-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 15px; margin-bottom: 25px;">
+                    <div class="card-elite" style="text-align: center;">
+                        <span style="font-size: 0.65rem; color: var(--text-muted); text-transform: uppercase;">Equipos Totales</span>
+                        <h2 id="admin-total-teams" style="color: var(--primary); font-size: 2rem; margin-top: 5px;">0</h2>
+                    </div>
+                    <div class="card-elite" style="text-align: center;">
+                        <span style="font-size: 0.65rem; color: var(--text-muted); text-transform: uppercase;">Usuarios Totales</span>
+                        <h2 id="admin-total-users" style="color: #fff; font-size: 2rem; margin-top: 5px;">0</h2>
+                    </div>
+                    <div class="card-elite" style="text-align: center;">
+                        <span style="font-size: 0.65rem; color: var(--text-muted); text-transform: uppercase;">Partidos Jugados</span>
+                        <h2 id="admin-total-matches" style="color: #fff; font-size: 2rem; margin-top: 5px;">0</h2>
+                    </div>
+                    <div class="card-elite" style="text-align: center;">
+                        <span style="font-size: 0.65rem; color: var(--text-muted); text-transform: uppercase;">Logins (Hoy)</span>
+                        <h2 id="admin-today-logins" style="color: var(--success); font-size: 2rem; margin-top: 5px;">0</h2>
+                    </div>
+                </div>
+
+                <!-- Lista de Equipos Activos -->
+                <div class="card-elite">
+                    <h3 style="font-size: 0.8rem; color: var(--primary); margin-bottom: 15px; letter-spacing: 1px; text-transform: uppercase; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 10px;">DIRECTORIO DE CLUBES</h3>
+                    <div class="admin-table-wrapper" style="overflow-x: auto;">
+                        <table style="width: 100%; border-collapse: collapse; font-size: 0.8rem; text-align: left;">
+                            <thead>
+                                <tr style="color: var(--text-muted); font-size: 0.65rem; border-bottom: 1px solid rgba(255,255,255,0.1);">
+                                    <th style="padding: 10px;">CLUB</th>
+                                    <th style="padding: 10px;">MIEMBROS</th>
+                                    <th style="padding: 10px;">MANAGER</th>
+                                    <th style="padding: 10px; text-align: right;">CREACIÓN</th>
+                                </tr>
+                            </thead>
+                            <tbody id="admin-teams-list">
+                                <!-- Inyectado por JS -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Ranking de Actividad de Usuarios -->
+                <div class="card-elite" style="margin-top: 25px;">
+                    <h3 style="font-size: 0.8rem; color: var(--primary); margin-bottom: 15px; letter-spacing: 1px; text-transform: uppercase; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 10px;">RANKING DE FIDELIDAD (LOGINS)</h3>
+                    <div id="admin-users-ranking" style="display: flex; flex-direction: column; gap: 10px;">
+                        <!-- Inyectado por JS -->
+                    </div>
                 </div>
             </section>
 
