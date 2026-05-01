@@ -6270,10 +6270,27 @@ input:disabled + .jb-slider {
     }
 }
 
-/* Utilidad para simplificar UI en móviles (v59.1) */
+/* Utilidad para simplificar UI en móviles (v59.2) */
 .show-mobile-inline { display: none; }
+
+.ranking-header-elite {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+}
+
+.ranking-header-elite .filter-badge-elite {
+    margin-left: 10px;
+    margin-right: auto; /* Lo pega al título en escritorio */
+}
 
 @media (max-width: 1023px) {
     .hide-mobile { display: none !important; }
     .show-mobile-inline { display: inline !important; }
+    
+    .ranking-header-elite .filter-badge-elite {
+        margin-left: auto !important; /* Lo empuja a la derecha en móvil */
+        margin-right: 0 !important;
+    }
 }
