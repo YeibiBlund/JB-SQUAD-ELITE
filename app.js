@@ -688,6 +688,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const filterWinrate = document.getElementById('filter-winrate');
         if (filterWinrate) filterWinrate.onclick = () => cycleFilter('winrate');
+
+        const filterCleanSheets = document.getElementById('filter-cleansheets');
+        if (filterCleanSheets) filterCleanSheets.onclick = () => cycleFilter('cleansheets');
     }
 
     // --- Lógica de Formularios ---
@@ -2395,8 +2398,8 @@ document.addEventListener('DOMContentLoaded', () => {
                     // 2. Resetear stats de jugadores a 0
                     for (let p of state.players) {
                         p.stats = {
-                            official: { goals: 0, assists: 0, matches: 0, wins: 0, mvps: 0 },
-                            friendly: { goals: 0, assists: 0, matches: 0, wins: 0, mvps: 0 }
+                            official: { goals: 0, assists: 0, matches: 0, wins: 0, mvps: 0, cleanSheets: 0 },
+                            friendly: { goals: 0, assists: 0, matches: 0, wins: 0, mvps: 0, cleanSheets: 0 }
                         };
                         p.mvp_count = 0;
                         await savePlayerCloud(p); // Importado de data.js
@@ -2911,12 +2914,16 @@ document.addEventListener('DOMContentLoaded', () => {
             // 2. Revertir PJ y Wins usando la alineación guardada en el partido
             if (match.lineup && Array.isArray(match.lineup)) {
                 const isWin = match.scoreHome > match.scoreAway;
+                const isCleanSheet = (match.scoreAway === 0);
                 for (let playerId of match.lineup) {
                     const player = state.players.find(p => p.id.toString() === playerId.toString());
                     if (player && player.stats?.[mType]) {
                         player.stats[mType].matches = Math.max(0, player.stats[mType].matches - 1);
                         if (isWin) {
                             player.stats[mType].wins = Math.max(0, (player.stats[mType].wins || 0) - 1);
+                        }
+                        if (isCleanSheet) {
+                            player.stats[mType].cleanSheets = Math.max(0, (player.stats[mType].cleanSheets || 0) - 1);
                         }
                     }
                 }
@@ -3284,9 +3291,12 @@ document.addEventListener('DOMContentLoaded', () => {
         console.log(`>>> [STATS] Finalizando partido tipo: ${mType.toUpperCase()}`);
 
         const initStats = (p) => {
-            if (!p.stats) p.stats = { official: { goals: 0, assists: 0, matches: 0, wins: 0 }, friendly: { goals: 0, assists: 0, matches: 0, wins: 0 } };
-            if (!p.stats.official) p.stats.official = { goals: 0, assists: 0, matches: 0, wins: 0 };
-            if (!p.stats.friendly) p.stats.friendly = { goals: 0, assists: 0, matches: 0, wins: 0 };
+            if (!p.stats) p.stats = { 
+                official: { goals: 0, assists: 0, matches: 0, wins: 0, cleanSheets: 0 }, 
+                friendly: { goals: 0, assists: 0, matches: 0, wins: 0, cleanSheets: 0 } 
+            };
+            if (!p.stats.official) p.stats.official = { goals: 0, assists: 0, matches: 0, wins: 0, cleanSheets: 0 };
+            if (!p.stats.friendly) p.stats.friendly = { goals: 0, assists: 0, matches: 0, wins: 0, cleanSheets: 0 };
 
             if (p.mvp_count === undefined) p.mvp_count = 0;
         };
@@ -3341,8 +3351,14 @@ document.addEventListener('DOMContentLoaded', () => {
                     if (currentMatch.scoreHome > currentMatch.scoreAway) {
                         p.stats[mType].wins = (p.stats[mType].wins || 0) + 1;
                     }
+                    
+                    // Sumar Portería a 0 si el rival no marcó
+                    if (currentMatch.scoreAway === 0) {
+                        p.stats[mType].cleanSheets = (p.stats[mType].cleanSheets || 0) + 1;
+                    }
+
                     playersToSave.add(p);
-                    console.log(`>>> [STATS] PJ sumado a: ${p.name}`);
+                    console.log(`>>> [STATS] PJ/P.0 sumado a: ${p.name}`);
                 }
             }
         } else {
@@ -3726,6 +3742,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 <td>${off.matches || 0}</td>
                 <td>${off.goals || 0}</td>
                 <td>${off.assists || 0}</td>
+                <td>${off.cleanSheets || 0}</td>
                 <td style="font-weight: 800;">${offWinRate}</td>
                 <td>-</td>
             </tr>
@@ -3734,6 +3751,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 <td>${fri.matches || 0}</td>
                 <td>${fri.goals || 0}</td>
                 <td>${fri.assists || 0}</td>
+                <td>${fri.cleanSheets || 0}</td>
                 <td style="font-weight: 800;">${friWinRate}</td>
                 <td>-</td>
             </tr>
@@ -3742,6 +3760,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const totalPJ = (off.matches || 0) + (fri.matches || 0);
         const totalG = (off.goals || 0) + (fri.goals || 0);
         const totalA = (off.assists || 0) + (fri.assists || 0);
+        const totalCS = (off.cleanSheets || 0) + (fri.cleanSheets || 0);
         const totalW = (off.wins || 0) + (fri.wins || 0);
         const totalWinRate = canViewWinRate ? calcWinRate(totalPJ, totalW) : '<span title="Confidencial">🔒</span>';
 
@@ -3750,6 +3769,7 @@ document.addEventListener('DOMContentLoaded', () => {
             <td>${totalPJ}</td>
             <td>${totalG}</td>
             <td>${totalA}</td>
+            <td>${totalCS}</td>
             <td style="font-weight: 800; color: var(--primary);">${totalWinRate}</td>
             <td style="color:var(--primary); font-weight:900;">⭐ ${mvp}</td>
         `;
@@ -4046,7 +4066,8 @@ document.addEventListener('DOMContentLoaded', () => {
     window.dashboardFilters = {
         scorers: 'official',
         assists: 'official',
-        winrate: 'official'
+        winrate: 'official',
+        cleansheets: 'official'
     };
 
     window.renderHomeDashboard = function() {
@@ -4064,6 +4085,7 @@ document.addEventListener('DOMContentLoaded', () => {
         updateBadge('filter-goals', window.dashboardFilters.scorers);
         updateBadge('filter-assists', window.dashboardFilters.assists);
         updateBadge('filter-winrate', window.dashboardFilters.winrate);
+        updateBadge('filter-cleansheets', window.dashboardFilters.cleansheets);
         
         const totalPlayersEl = document.getElementById('stats-total-players');
         const totalSessionsEl = document.getElementById('stats-total-sessions');
@@ -4275,6 +4297,22 @@ document.addEventListener('DOMContentLoaded', () => {
                 });
             }
         }
+
+        // --- 5. TOP PORTERÍAS A 0 (5) ---
+        const csListEl = document.getElementById('home-top-cleansheets-list');
+        const filterCS = window.dashboardFilters?.cleansheets || 'official';
+        const cleansheeters = state.players
+            .map(p => {
+                let totalCS = 0;
+                if (filterCS === 'official') totalCS = p.stats?.official?.cleanSheets || 0;
+                else if (filterCS === 'friendly') totalCS = p.stats?.friendly?.cleanSheets || 0;
+                else totalCS = (p.stats?.official?.cleanSheets || 0) + (p.stats?.friendly?.cleanSheets || 0);
+                return { ...mapPlayerForRanking(p), totalCS };
+            })
+            .filter(s => s.totalCS > 0)
+            .sort((a, b) => b.totalCS - a.totalCS)
+            .slice(0, 5);
+        renderTopRow(csListEl, cleansheeters, 'totalCS', 'P.0');
     }
 
     // --- FUNCIÓN DE EXPORTACIÓN ELITE v4.8.0 ---
@@ -4754,11 +4792,12 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('edit-stats-id').value = playerId;
         document.getElementById('edit-stats-name').textContent = `EDITAR: ${player.name.toUpperCase()}`;
         
-        const off = player.stats?.official || { matches: 0, goals: 0, assists: 0, wins: 0 };
+        const off = player.stats?.official || { matches: 0, goals: 0, assists: 0, wins: 0, cleanSheets: 0 };
         document.getElementById('edit-pj-off').value = off.matches || 0;
         document.getElementById('edit-g-off').value = off.goals || 0;
         document.getElementById('edit-a-off').value = off.assists || 0;
         document.getElementById('edit-w-off').value = off.wins || 0;
+        document.getElementById('edit-cs-off').value = off.cleanSheets || 0;
 
         document.getElementById('modal-edit-stats').style.display = 'flex';
     };
@@ -4785,6 +4824,7 @@ document.addEventListener('DOMContentLoaded', () => {
             player.stats.official.goals = parseInt(document.getElementById('edit-g-off').value) || 0;
             player.stats.official.assists = parseInt(document.getElementById('edit-a-off').value) || 0;
             player.stats.official.wins = parseInt(document.getElementById('edit-w-off').value) || 0;
+            player.stats.official.cleanSheets = parseInt(document.getElementById('edit-cs-off').value) || 0;
 
             try {
                 // Guardar en Supabase (savePlayerCloud está en data.js)

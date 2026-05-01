@@ -322,6 +322,22 @@
                                 <!-- Inyectados por JS -->
                             </div>
                         </div>
+
+                        <!-- TOP PORTERÍAS A 0 -->
+                        <div class="card-elite" style="padding: 20px;">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; padding-bottom: 15px; border-bottom: 1px solid rgba(240,165,0,0.15);">
+                                <div style="display: flex; align-items: center; gap: 10px;">
+                                    <span style="font-size: 0.75rem; font-weight: 800; letter-spacing: 1.5px; color: var(--text-muted);">TOP PORTERÍAS A 0</span>
+                                    <div class="filter-badge-elite" id="filter-cleansheets" data-mode="official">Oficiales</div>
+                                </div>
+                                <span style="font-size: 0.75rem; color: var(--primary); display: flex; align-items: center; gap: 5px;">Top 5
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+                                </span>
+                            </div>
+                            <div id="home-top-cleansheets-list" style="display: flex; flex-direction: column; gap: 10px;">
+                                <!-- Inyectados por JS -->
+                            </div>
+                        </div>
                     </div>
                     
                 </div>
@@ -394,6 +410,7 @@
                                     <th>PJ</th>
                                     <th>GOLES</th>
                                     <th>ASIST.</th>
+                                    <th>P.0</th>
                                     <th>% VICT.</th>
                                     <th>MVP</th>
                                 </tr>
@@ -1657,6 +1674,13 @@
                             <div class="jb-form-group">
                                 <label style="display: block; font-size: 0.65rem; color: var(--text-muted); margin-bottom: 8px; text-transform: uppercase; font-weight: 700;">Victorias</label>
                                 <input type="number" id="edit-w-off" class="jb-input" min="0" style="width: 100%; text-align: center; font-size: 1.3rem; font-weight: 900; background: rgba(0,0,0,0.2); border: 1px solid rgba(255,255,255,0.1); color: #fff; padding: 10px; border-radius: 8px;">
+                            </div>
+                        </div>
+
+                        <div style="display: grid; grid-template-columns: 1fr; gap: 20px; margin-top: 20px;">
+                            <div class="jb-form-group">
+                                <label style="display: block; font-size: 0.65rem; color: var(--primary); margin-bottom: 8px; text-transform: uppercase; font-weight: 800; letter-spacing: 1px;">Porterías a 0 (Clean Sheets)</label>
+                                <input type="number" id="edit-cs-off" class="jb-input" min="0" style="width: 100%; text-align: center; font-size: 1.3rem; font-weight: 900; background: rgba(240, 165, 0, 0.05); border: 1px solid var(--primary); color: #fff; padding: 10px; border-radius: 8px;">
                             </div>
                         </div>
                     </div>

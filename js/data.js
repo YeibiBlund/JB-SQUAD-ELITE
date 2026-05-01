@@ -427,10 +427,10 @@ async function recalculateAllStats() {
         // 1. Resetear estadísticas locales de todos los jugadores
         state.players.forEach(p => {
             p.stats = {
-                official: { goals: 0, assists: 0, matches: 0, wins: 0, mvps: 0 },
-                friendly: { goals: 0, assists: 0, matches: 0, wins: 0, mvps: 0 }
+                official: { goals: 0, assists: 0, matches: 0, wins: 0, mvps: 0, cleanSheets: 0 },
+                friendly: { goals: 0, assists: 0, matches: 0, wins: 0, mvps: 0, cleanSheets: 0 }
             };
-            p.mvp_count = 0; // Si usas esta variable fuera del objeto stats
+            p.mvp_count = 0;
         });
 
         // 2. Cargar todas las sesiones del equipo
@@ -473,6 +473,8 @@ async function recalculateAllStats() {
             }
 
             // Determinar alineación maestra de la sesión (v51.0)
+            let masterLineup = null; // Reset por sesión (v59.5 fix)
+            
             if (session.lineup) {
                 const sl = session.lineup;
                 if (Array.isArray(sl) && sl.length > 0) {
@@ -492,6 +494,7 @@ async function recalculateAllStats() {
             matches.forEach(match => {
                 const mType = match.type || 'friendly';
                 const isWin = match.scoreHome > match.scoreAway;
+                const isCleanSheet = (match.scoreAway === 0);
 
                 // 3.1. Determinar quién jugó este partido (Prioridad: match.lineup > masterLineup)
                 let currentLineup = [];
@@ -509,12 +512,15 @@ async function recalculateAllStats() {
                     currentLineup = Array.from(involved);
                 }
 
-                // Sumar PJ y Victorias
+                // Sumar PJ, Victorias y Porterías a 0
                 currentLineup.forEach(pId => {
                     const player = state.players.find(p => p.id.toString() === pId.toString());
                     if (player) {
                         player.stats[mType].matches++;
                         if (isWin) player.stats[mType].wins++;
+                        if (isCleanSheet) {
+                            player.stats[mType].cleanSheets = (player.stats[mType].cleanSheets || 0) + 1;
+                        }
                     }
                 });
 
