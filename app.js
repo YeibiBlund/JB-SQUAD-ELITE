@@ -3893,8 +3893,8 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function addMatchToPoster() {
-        if (matchdayPosterData.matches.length >= 3) {
-            window.jbToast('Máximo 3 partidos por cartel.', 'warning');
+        if (matchdayPosterData.matches.length >= 5) {
+            window.jbToast('Máximo 5 partidos por cartel.', 'warning');
             return;
         }
         matchdayPosterData.matches.push({ id: Date.now(), rivalId: 'manual', rivalName: '', rivalCrest: null, time: '23:00' });
