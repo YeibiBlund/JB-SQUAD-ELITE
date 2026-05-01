@@ -6185,6 +6185,53 @@ body.editing-tactic .tactical-slot {
     animation: pulse-gold 2s infinite;
 }
 
+/* --- ADAPTATIVE POSTER LAYOUT (v60.3) --- */
+
+/* Ajustes para 4 partidos */
+.poster-matches-list.count-4 {
+    gap: 25px;
+    justify-content: flex-start;
+}
+.poster-matches-list.count-4 .poster-match-card {
+    padding: 20px 50px;
+    border-radius: 30px;
+}
+.poster-matches-list.count-4 .poster-crest-container {
+    width: 160px;
+    height: 160px;
+}
+.poster-matches-list.count-4 .poster-team-name {
+    font-size: 26px;
+    height: 58px;
+}
+.poster-matches-list.count-4 .poster-time-label {
+    font-size: 38px;
+}
+
+/* Ajustes críticos para 5 partidos (Modo Compacto) */
+.poster-matches-list.count-5 {
+    gap: 15px;
+    justify-content: flex-start;
+}
+.poster-matches-list.count-5 .poster-match-card {
+    padding: 12px 40px;
+    border-radius: 20px;
+}
+.poster-matches-list.count-5 .poster-crest-container {
+    width: 130px;
+    height: 130px;
+}
+.poster-matches-list.count-5 .poster-team-name {
+    font-size: 22px;
+    height: 48px;
+}
+.poster-matches-list.count-5 .poster-time-label {
+    font-size: 32px;
+}
+.poster-matches-list.count-5 .poster-vs-text {
+    font-size: 18px;
+}
+
 /* Refuerzo de visibilidad para el Creador de Matchday (v60.2) */
 #view-matchday-creator .card-elite {
     background: rgba(15, 15, 15, 0.8) !important;

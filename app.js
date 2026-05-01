@@ -3815,6 +3815,12 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!matchdayMatchesConfig) return;
         matchdayMatchesConfig.innerHTML = '';
         
+        // Limitar a 5 partidos (v60.3)
+        const canAddMore = matchdayPosterData.matches.length < 5;
+        if (btnAddMatchToPoster) {
+            btnAddMatchToPoster.style.display = canAddMore ? 'block' : 'none';
+        }
+
         matchdayPosterData.matches.forEach((m, idx) => {
             const row = document.createElement('div');
             row.className = 'matchday-row-config fade-in';
@@ -3913,12 +3919,22 @@ document.addEventListener('DOMContentLoaded', () => {
         const html = generatePosterHTML();
         miniPosterPreview.innerHTML = html;
         
+        // Añadir clase de conteo para CSS adaptativo (v60.3)
+        const matchesContainer = miniPosterPreview.querySelector('.poster-matches-list');
+        if (matchesContainer) {
+            matchesContainer.classList.add(`count-${matchdayPosterData.matches.length}`);
+        }
+
         // Actualizar escala tras inyectar contenido (v60.0)
         if (window.resizePosterPreview) window.resizePosterPreview();
 
         // También actualizar el área de captura real
         const captureArea = document.getElementById('matchday-poster-capture-area');
         if (captureArea) captureArea.innerHTML = html;
+        
+        // Repetir clase en el área de captura
+        const captureMatches = captureArea?.querySelector('.poster-matches-list');
+        if (captureMatches) captureMatches.classList.add(`count-${matchdayPosterData.matches.length}`);
     }
 
     function generatePosterHTML(base64Map = null) {

@@ -1,10 +1,9 @@
-## [v60.0] - 2026-05-01 | 22:30
-### ✨ Matchday Creator Elite: Rediseño UX/UI
-- **Layout Dual Responsivo**: Nueva interfaz dividida con panel de edición a la izquierda y previsualización persistente a la derecha (sticky) en escritorio.
-- **Escalado Dinámico (Live Preview)**: Sistema de escalado automático que adapta el cartel de alta resolución (1080x1350) al tamaño de la pantalla en tiempo real.
-- **Corrección de Contraste**: Forzado texto blanco y fondos optimizados en el editor para legibilidad total sobre fondos oscuros.
-- **Optimización Móvil Hotfix**: Layout adaptativo mejorado con previsualización prioritaria (arriba) y filas de edición apiladas verticalmente.
-- **Nitidez de Imagen**: Mejoras en el renderizado CSS para evitar distorsiones durante el escalado.
+## [v60.3] - 2026-05-01 | 22:45
+### 🚀 Matchday Creator: Multi-Match & Adaptive Layout
+- **Soporte Multi-Partido**: Incrementado el límite a 5 partidos por cartel.
+- **Layout Adaptativo Inteligente**: Sistema que reescala automáticamente escudos, fuentes y espaciado según el número de partidos (Modo Compacto para 4-5 partidos).
+- **Gestión de Límite**: El editor ahora oculta dinámicamente el botón de añadir al alcanzar el máximo de 5.
+- **UX Hotfix Final**: Ocultación de preview en móviles y escalado "Pixel Perfect" en web.
 
 ## [v59.1] - 2026-05-01 | 14:45
 ### Mejorado (UX Móvil Dashboard)
