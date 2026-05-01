@@ -3994,11 +3994,11 @@ document.addEventListener('DOMContentLoaded', () => {
             </div>
 
             <div class="poster-footer">
-                <div class="poster-footer-club">JB-SQUAD ELITE SYSTEM</div>
                 <div class="poster-footer-social">
                     ${twitter ? `<div class="poster-social-item"><span>𝕏</span> @${twitter.toUpperCase()}</div>` : ''}
                     ${twitch ? `<div class="poster-social-item"><span>🎮</span> ${twitch.toUpperCase()}</div>` : ''}
                 </div>
+                <img src="${teamCrest}" class="poster-footer-logo">
             </div>
         `;
     }

@@ -1,9 +1,9 @@
-## [v60.5] - 2026-05-01 | 23:30
-### 🎨 Matchday Creator: Ultra-Slim Redesign
-- **Tipografía Refinada**: Título reducido a 80px para un look más elegante y mayor espacio vertical.
-- **Modo Ultra-Slim (5 Partidos)**: Escudos de 90px y tarjetas compactas con padding optimizado.
-- **Arquitectura de Espacios**: Incrementado el margen superior a 220px y reajustado el área de partidos a 800px para garantizar la visibilidad total del footer.
-- **Distribución Inteligente**: Uso de `space-evenly` para una repartición perfecta de los bloques de partido.
+## [v60.7] - 2026-05-01 | 23:55
+### 💎 Matchday Creator: Pro Refinement
+- **Escudos "Breathable"**: Reducida la escala interna de los escudos al 70% para eliminar el efecto de zoom excesivo y asegurar que se vean completos dentro del marco dorado.
+- **Cabecera Minimalista**: Título "MATCH DAY" reducido a 70px para un look más sofisticado y equilibrado.
+- **Firma de Logo**: Sustituido el texto del footer por el logo del club en la esquina inferior derecha, funcionando como una marca de agua premium.
+- **Corrección de Layout**: Re-alineado el título del editor y optimizada la visualización de los iconos sociales en el cartel.
 
 ## [v59.1] - 2026-05-01 | 14:45
 ### Mejorado (UX Móvil Dashboard)
