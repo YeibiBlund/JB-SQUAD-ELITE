@@ -5617,34 +5617,36 @@ body.editing-tactic .tactical-slot {
 
 .poster-header {
     position: absolute;
-    top: 40px;
+    top: 50px;
     width: 100%;
-    text-align: center;
-    z-index: 10;
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 15px;
+    gap: 20px;
+    z-index: 10;
 }
 
 .poster-main-logo {
-    width: 180px;
-    height: 180px;
+    width: 200px;
+    height: 200px;
+    border-radius: 50%; /* Círculo perfecto */
+    border: 5px solid #d4af37;
+    background: #000;
     object-fit: contain;
-    filter: drop-shadow(0 0 25px rgba(212, 175, 55, 0.4));
+    box-shadow: 0 0 30px rgba(212, 175, 55, 0.4);
 }
 
 .poster-title {
-    font-size: 80px;
+    font-size: 90px;
     font-weight: 900;
     color: #fff;
     letter-spacing: 15px;
-    margin: 0;
     text-transform: uppercase;
     font-family: 'Outfit', sans-serif;
     background: linear-gradient(to bottom, #fff 40%, #ccc 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
+    margin: 0;
 }
 
 
@@ -5680,10 +5682,13 @@ body.editing-tactic .tactical-slot {
 }
 
 .poster-crest-container {
-    width: 120px;
-    height: 120px;
-    min-width: 120px; /* Forzar ancho fijo */
-    min-height: 120px; /* Forzar alto fijo */
+    width: 110px;
+    height: 110px;
+    min-width: 110px;
+    max-width: 110px;
+    min-height: 110px;
+    max-height: 110px;
+    flex-shrink: 0; /* EVITAR DEFORMACIÓN */
     border-radius: 50%;
     border: 3px solid #d4af37;
     background: #000;
@@ -5692,7 +5697,6 @@ body.editing-tactic .tactical-slot {
     justify-content: center;
     overflow: hidden;
     box-shadow: 0 0 20px rgba(212, 175, 55, 0.4);
-    aspect-ratio: 1 / 1; /* Círculo perfecto */
 }
 
 .poster-team-name {
@@ -5912,11 +5916,45 @@ body.editing-tactic .tactical-slot {
     margin-left: 15px;
 }
 
-/* Layout del Creador de Matchday Élite (v60.1) */
-#view-matchday-creator.active-view {
-    display: block !important;
+#view-matchday-creator {
+    display: grid !important;
+    grid-template-columns: 1fr;
+    width: 100% !important;
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 20px 40px 100px 40px;
+}
+
+.creator-header-zone {
+    grid-column: 1 / -1;
+    display: flex !important;
+    width: 100% !important;
+    margin-bottom: 40px !important;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+    padding-bottom: 20px;
+    align-items: center;
+    gap: 20px;
+}
+
+.btn-back-elite {
+    background: none;
+    border: none;
+    color: var(--primary);
+    font-size: 2rem;
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.btn-back-elite:hover {
+    transform: translateX(-5px);
+    text-shadow: 0 0 10px var(--primary-glow);
+}
+
+.matchday-layout-elite {
+    display: flex;
+    gap: 40px;
     width: 100%;
-    padding: 0 20px 100px 20px;
+    align-items: flex-start;
 }
 
 .poster-preview-label {
