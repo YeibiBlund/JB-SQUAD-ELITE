@@ -3969,15 +3969,15 @@ document.addEventListener('DOMContentLoaded', () => {
                     </div>
                     
                     <div class="poster-vs-box">
-                        <div class="poster-time-label">${m.time}</div>
                         <div class="poster-vs-text">VS</div>
+                        <div class="poster-time-label">${m.time}</div>
                     </div>
 
-                    <div class="poster-team-bundle">
+                    <div class="poster-team-bundle" style="justify-content: flex-end;">
+                        <div class="poster-team-name" style="text-align: right;">${(m.rivalName || 'RIVAL').toUpperCase()}</div>
                         <div class="poster-crest-container">
                             ${rivalCrestHtml}
                         </div>
-                        <div class="poster-team-name">${(m.rivalName || 'RIVAL').toUpperCase()}</div>
                     </div>
                 </div>
             `;
@@ -3985,7 +3985,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         return `
             <div class="poster-header">
-                <div class="poster-title">MATCHDAY</div>
+                <div class="poster-title">MATCH DAY</div>
                 <div class="poster-subtitle">ESTA NOCHE</div>
             </div>
             
