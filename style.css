@@ -5838,8 +5838,21 @@ body.editing-tactic .tactical-slot {
 .matchday-row-config select, .matchday-row-config input {
     font-size: 0.85rem !important;
     padding: 12px !important;
-    background: rgba(0,0,0,0.2) !important;
+    background: rgba(255,255,255,0.05) !important;
     border-radius: 8px !important;
+    color: #fff !important; /* Forzar texto blanco */
+    border: 1px solid rgba(255,255,255,0.1) !important;
+}
+
+.matchday-row-config select option {
+    background: #111;
+    color: #fff;
+}
+
+.matchday-row-config label {
+    color: #fff !important;
+    opacity: 0.9;
+    font-size: 0.7rem;
 }
 
 /* Elementos del Cartel Final */
@@ -5997,12 +6010,14 @@ body.editing-tactic .tactical-slot {
     box-shadow: 0 0 30px var(--primary-glow);
 }
 
-/* Layout del Creador de Matchday Élite (v60.0) */
+/* Layout del Creador de Matchday Élite (v60.1) */
 #view-matchday-creator.active-view {
-    display: block !important;
+    display: flex !important;
+    flex-direction: column;
     height: 100%;
     overflow-y: auto;
     padding: 0 20px 100px 20px;
+    align-items: center; /* Centrar contenido principal */
 }
 
 .matchday-layout-elite {
@@ -6010,6 +6025,8 @@ body.editing-tactic .tactical-slot {
     gap: 40px;
     align-items: flex-start;
     margin-top: 30px;
+    width: 100%;
+    max-width: 1200px; /* Limitar ancho para que no se estire demasiado en web */
 }
 
 .matchday-editor-side {
@@ -6033,17 +6050,22 @@ body.editing-tactic .tactical-slot {
 
 .poster-frame-container {
     width: 100%;
-    max-width: 450px; /* Tamaño máximo razonable en web */
+    max-width: 450px;
     aspect-ratio: 1080 / 1350;
     display: flex;
     justify-content: center;
     align-items: flex-start;
     overflow: hidden;
     position: relative;
-    background: #000;
+    background: #050505; /* Fondo sólido para el cartel */
     border-radius: 12px;
-    box-shadow: 0 30px 60px rgba(0,0,0,0.6);
-    border: 1px solid rgba(255,255,255,0.1);
+    box-shadow: 0 30px 60px rgba(0,0,0,0.8);
+    border: 1px solid rgba(240, 165, 0, 0.2);
+}
+
+#mini-poster-preview {
+    will-change: transform;
+    backface-visibility: hidden;
 }
 
 .poster-preview-label {
@@ -6059,16 +6081,29 @@ body.editing-tactic .tactical-slot {
 /* Responsivo para el creador */
 @media (max-width: 1024px) {
     .matchday-layout-elite {
-        flex-direction: column;
+        flex-direction: column-reverse; /* Primero el cartel abajo o arriba segun prefieras, probemos reverse para que el cartel este mas cerca del boton */
         gap: 30px;
     }
     .matchday-preview-side {
         position: static;
         width: 100%;
         padding: 20px;
+        order: -1; /* Poner la previsualización arriba en móvil */
     }
     .poster-frame-container {
-        max-width: 100%;
+        max-width: 320px; /* Tamaño controlado en móvil */
+        margin: 0 auto;
+    }
+}
+
+@media (max-width: 600px) {
+    .matchday-row-config {
+        grid-template-columns: 1fr; /* Columna única en móviles pequeños */
+        padding: 15px;
+    }
+    .matchday-row-config .btn-delete-row {
+        width: 100%;
+        margin-top: 10px;
     }
 }
 
@@ -6139,7 +6174,24 @@ body.editing-tactic .tactical-slot {
     animation: pulse-gold 2s infinite;
 }
 
-/* Ajuste para el botón de añadir liga */
+/* Refuerzo de visibilidad para el Creador de Matchday (v60.2) */
+#view-matchday-creator .card-elite {
+    background: rgba(15, 15, 15, 0.8) !important;
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    box-shadow: 0 15px 35px rgba(0,0,0,0.5);
+}
+
+#view-matchday-creator input, 
+#view-matchday-creator select {
+    color: #fff !important;
+    background: rgba(255,255,255,0.07) !important;
+    border: 1px solid rgba(255,255,255,0.15) !important;
+}
+
+#view-matchday-creator input::placeholder {
+    color: rgba(255,255,255,0.4);
+}
 #btn-add-global-league {
     width: auto !important;
     padding: 6px 15px !important;
