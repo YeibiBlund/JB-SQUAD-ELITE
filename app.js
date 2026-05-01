@@ -3798,16 +3798,11 @@ document.addEventListener('DOMContentLoaded', () => {
     window.resizePosterPreview = function() {
         const frame = document.getElementById('poster-frame-container');
         const preview = document.getElementById('mini-poster-preview');
-        if (!frame || !preview) return;
+        if (!frame || !preview || frame.offsetWidth === 0) return;
 
         const frameWidth = frame.offsetWidth;
-        const posterWidth = 1080; // Ancho base del cartel
-        const scale = frameWidth / posterWidth;
-
+        const scale = frameWidth / 1080;
         preview.style.transform = `scale(${scale})`;
-        // Ajustar la altura del contenedor para que coincida con el cartel escalado
-        // 1350 es el alto base del cartel
-        frame.style.height = `${1350 * scale}px`;
     };
 
     window.addEventListener('resize', () => {

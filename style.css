@@ -1342,6 +1342,17 @@ p { color: var(--text-muted); font-size: 0.95rem; line-height: 1.5; }
     filter: grayscale(80%);
 }
 
+.matchday-preview-side.hide-mobile {
+    display: none;
+}
+@media (min-width: 1024px) {
+    .matchday-preview-side.hide-mobile {
+        display: block;
+        width: 300px;
+        flex-shrink: 0;
+    }
+}
+
 .roster-card-pos {
     font-size: 0.9rem;
     font-weight: 800;
@@ -5805,11 +5816,17 @@ body.editing-tactic .tactical-slot {
 
 /* Contenedor de PrevisualizaciÃ³n y Captura */
 .matchday-poster-preview {
-    width: 1080px;
-    height: 1350px;
+    width: 1080px !important;
+    min-width: 1080px !important;
+    height: 1350px !important;
+    min-height: 1350px !important;
     background: #050505;
-    position: relative;
+    position: absolute;
+    top: 0;
+    left: 0;
+    transform-origin: top left;
     overflow: hidden;
+    z-index: 1;
     background-image: 
         radial-gradient(circle at 50% 0%, rgba(240, 165, 0, 0.15) 0%, transparent 70%),
         radial-gradient(circle at 50% 100%, rgba(240, 165, 0, 0.05) 0%, transparent 70%),
@@ -5862,9 +5879,9 @@ body.editing-tactic .tactical-slot {
 }
 
 .poster-title {
-    font-size: 120px;
+    font-size: 110px;
     font-weight: 900;
-    letter-spacing: -5px;
+    letter-spacing: -3px;
     color: #fff;
     line-height: 0.8;
     margin-bottom: 10px;
@@ -6050,17 +6067,15 @@ body.editing-tactic .tactical-slot {
 
 .poster-frame-container {
     width: 100%;
-    max-width: 450px;
+    max-width: 400px; /* Reducido ligeramente para mejor encuadre */
     aspect-ratio: 1080 / 1350;
-    display: flex;
-    justify-content: center;
-    align-items: flex-start;
-    overflow: hidden;
+    display: block;
     position: relative;
-    background: #050505; /* Fondo sólido para el cartel */
-    border-radius: 12px;
+    background: #000;
+    border-radius: 8px;
     box-shadow: 0 30px 60px rgba(0,0,0,0.8);
-    border: 1px solid rgba(240, 165, 0, 0.2);
+    border: 1px solid rgba(240, 165, 0, 0.3);
+    overflow: hidden; /* Cortar lo que sobre del escalado */
 }
 
 #mini-poster-preview {
@@ -6081,18 +6096,14 @@ body.editing-tactic .tactical-slot {
 /* Responsivo para el creador */
 @media (max-width: 1024px) {
     .matchday-layout-elite {
-        flex-direction: column-reverse; /* Primero el cartel abajo o arriba segun prefieras, probemos reverse para que el cartel este mas cerca del boton */
-        gap: 30px;
+        flex-direction: column;
+        gap: 20px;
     }
-    .matchday-preview-side {
-        position: static;
+    .matchday-editor-side {
         width: 100%;
-        padding: 20px;
-        order: -1; /* Poner la previsualización arriba en móvil */
     }
-    .poster-frame-container {
-        max-width: 320px; /* Tamaño controlado en móvil */
-        margin: 0 auto;
+    .matchday-preview-side.hide-mobile {
+        display: none !important;
     }
 }
 
