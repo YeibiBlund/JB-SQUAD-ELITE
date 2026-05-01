@@ -1,9 +1,9 @@
-## [v60.4] - 2026-05-01 | 23:05
-### 💎 Matchday Creator: Ultra-Wide & Ultra-Compact
-- **Vista Previa Ampliada**: Incrementado el tamaño de previsualización en web a 550px para una edición más cómoda.
-- **Modo Ultra-Compacto (5 Partidos)**: Rediseño total del layout de 5 partidos con escudos de 110px y espaciado optimizado.
-- **Protección de Footer**: Implementada zona segura de 900px para partidos, garantizando que el pie de página y social media nunca se tapen.
-- **UX Refined**: Sombras y bordes del contenedor mejorados para un look más "Workstation".
+## [v60.5] - 2026-05-01 | 23:30
+### 🎨 Matchday Creator: Ultra-Slim Redesign
+- **Tipografía Refinada**: Título reducido a 80px para un look más elegante y mayor espacio vertical.
+- **Modo Ultra-Slim (5 Partidos)**: Escudos de 90px y tarjetas compactas con padding optimizado.
+- **Arquitectura de Espacios**: Incrementado el margen superior a 220px y reajustado el área de partidos a 800px para garantizar la visibilidad total del footer.
+- **Distribución Inteligente**: Uso de `space-evenly` para una repartición perfecta de los bloques de partido.
 
 ## [v59.1] - 2026-05-01 | 14:45
 ### Mejorado (UX Móvil Dashboard)
