@@ -4154,12 +4154,16 @@ document.addEventListener('DOMContentLoaded', () => {
                 row.onclick = () => {
                     if (window.viewPlayerProfileDetail) window.viewPlayerProfileDetail(s.id);
                 };
+                const posClass = getPositionColorClass(s.primaryPos);
                 row.innerHTML = `
                     <span style="font-size: 0.8rem; font-weight: 900; color: var(--primary); width: 15px;">${i+1}</span>
                     <div style="width: 25px; height: 25px; background: rgba(0,0,0,0.2); border-radius: 4px; padding: 2px; overflow: hidden; display: flex; align-items: center; justify-content: center;">
                         ${s.photo ? `<img src="${s.photo}" style="width:100%; height:100%; object-fit:cover; object-position: top; transform:${s.transform}">` : (s.avatar ? s.avatar.svg : '')}
                     </div>
-                    <span style="font-size: 0.75rem; font-weight: 800; flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${escapeHTML(s.name.toUpperCase())}</span>
+                    <div style="flex: 1; display: flex; align-items: center; gap: 8px; overflow: hidden;">
+                        <span style="font-size: 0.75rem; font-weight: 800; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${escapeHTML(s.name.toUpperCase())}</span>
+                        <span class="player-pos-badge ${posClass}" style="font-size: 0.5rem; padding: 1px 4px; border-radius: 3px; min-width: 22px; text-align: center; font-weight: 900;">${s.primaryPos || 'NA'}</span>
+                    </div>
                     <span style="font-size: 0.75rem; font-weight: 900; color: var(--primary);">${s[valueKey]} <small style="font-size:0.5rem;">${valueSuffix}</small></span>
                 `;
                 container.appendChild(row);
@@ -4171,6 +4175,7 @@ document.addEventListener('DOMContentLoaded', () => {
             return {
                 id: p.id,
                 name: p.name,
+                primaryPos: p.primaryPos || p.primary_pos,
                 photo: p.photo_url,
                 transform: getPlayerTransform(p),
                 avatar: AVATARS.find(av => av.id === (p.avatarID || p.avatar_id || 1))

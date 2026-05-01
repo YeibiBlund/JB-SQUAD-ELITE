@@ -1,3 +1,13 @@
+## [v59.0] - 2026-05-01 | 14:15
+### Añadido (Porterías a 0 - Clean Sheets)
+- **Métrica Defensiva Global**: Implementado el seguimiento de "Porterías a 0" para todos los jugadores de la plantilla.
+- **Automatización en Vivo**: El sistema ahora detecta automáticamente si el rival termina con 0 goles al finalizar un partido (`finalizeMatch`) y suma la estadística a todos los jugadores presentes en la alineación.
+- **Retrocompatibilidad**: Refactorizado el motor `recalculateAllStats` para permitir el recálculo masivo de porterías a 0 basado en el historial de partidos guardado en Supabase.
+- **Visualización en Dashboard**: Nueva tarjeta de ranking "TOP PORTERÍAS A 0" en el Home, con filtros cíclicos (Oficial, Amistoso, Global).
+- **Integración en Perfil**: Añadida la columna "P.0" en las tablas de rendimiento individual del jugador.
+- **Mejora de Rankings**: Ahora se muestra la posición principal del jugador junto a su nombre en todas las listas de Top del Dashboard para una mejor identificación táctica.
+- **Gestión Manual**: Incorporado el campo de Clean Sheets en el modal de edición de estadísticas para ajustes rápidos por parte del Manager.
+
 ## [v58.2] - 2026-04-29 | 00:55
 ### Mejorado (Dashboard Interactivo)
 - **Pulsadores Cíclicos de Filtro**: Se han sustituido los menús desplegables (select) por botones de estado cíclico (Badges). Esto elimina los problemas de descuadre visual en navegadores de escritorio y ofrece una navegación más rápida (Oficial -> Amistoso -> Global -> Oficial).
