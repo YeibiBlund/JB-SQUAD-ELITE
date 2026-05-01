@@ -188,30 +188,43 @@
         <!-- Dynamic Content Area -->
         <main id="content-container">
             
-            <!-- VIEW: Creador de Cartel Matchday (v57.0) -->
+            <!-- VIEW: Creador de Cartel Matchday (v60.0) -->
             <section id="view-matchday-creator" class="view">
                 <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 2rem; margin-top: 20px;">
                     <button id="btn-back-from-creator" style="background: none; border: none; color: var(--primary); font-size: 1.5rem; cursor: pointer;">←</button>
                     <h1>Creador de <span class="gradient-text">Cartel Matchday</span></h1>
                 </div>
 
-                <div class="card-elite">
-                    <h3 style="font-size: 0.8rem; color: var(--primary); margin-bottom: 15px; letter-spacing: 1px;">CONFIGURACIÓN DE LA NOCHE</h3>
-                    
-                    <div id="matchday-matches-config" style="display: flex; flex-direction: column; gap: 20px;">
-                        <!-- Filas de partidos se inyectan aquí -->
+                <div class="matchday-layout-elite">
+                    <!-- Lado Izquierdo: Configuración -->
+                    <div class="matchday-editor-side">
+                        <div class="card-elite" style="padding: 25px; margin-bottom: 20px; border: 1px solid rgba(255,255,255,0.05);">
+                            <h2 style="font-size: 0.8rem; color: var(--primary); letter-spacing: 2px; text-transform: uppercase; margin-bottom: 25px;">CONFIGURACIÓN DE LA NOCHE</h2>
+                            
+                            <div id="matchday-matches-config" style="display: flex; flex-direction: column; gap: 15px;">
+                                <!-- Filas de partidos se inyectan aquí -->
+                            </div>
+
+                            <button id="btn-add-match-to-poster" class="btn-detail" style="width: 100%; margin-top: 25px; border-style: dashed; padding: 15px; font-weight: 800;">
+                                + AÑADIR OTRO PARTIDO
+                            </button>
+                        </div>
+
+                        <button id="btn-generate-poster" class="btn-gold" style="width: 100%; padding: 20px; font-weight: 900; letter-spacing: 2px; box-shadow: 0 10px 30px rgba(240, 165, 0, 0.2);">
+                            GENERAR Y DESCARGAR IMAGEN HD
+                        </button>
                     </div>
 
-                    <button id="btn-add-match-to-poster" class="btn-detail" style="width: 100%; margin-top: 20px; border-style: dashed;">+ AÑADIR PARTIDO</button>
-                </div>
-
-                <div style="margin-top: 30px;">
-                    <p style="font-size: 0.7rem; color: var(--text-muted); text-align: center; margin-bottom: 15px; letter-spacing: 2px;">VISTA PREVIA DEL CARTEL</p>
-                    <div id="poster-preview-container" style="display: flex; justify-content: center; margin-bottom: 30px;">
-                        <div id="mini-poster-preview" class="matchday-poster-preview" style="transform: scale(0.3); transform-origin: top center;"></div>
+                    <!-- Lado Derecho: Vista Previa -->
+                    <div class="matchday-preview-side">
+                        <span class="poster-preview-label">VISTA PREVIA EN VIVO</span>
+                        <div class="poster-frame-container" id="poster-frame-container">
+                            <div id="mini-poster-preview" class="matchday-poster-preview" style="transform-origin: top center;"></div>
+                        </div>
+                        <p style="font-size: 0.6rem; color: var(--text-muted); margin-top: 20px; text-align: center; line-height: 1.4;">
+                            Este es un borrador en baja resolución.<br>La descarga final será en alta definición (1080x1350).
+                        </p>
                     </div>
-                    
-                    <button id="btn-generate-poster" class="btn-gold" style="box-shadow: 0 0 20px var(--primary-glow);">GENERAR Y DESCARGAR IMAGEN</button>
                 </div>
             </section>
             

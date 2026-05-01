@@ -413,6 +413,10 @@ document.addEventListener('DOMContentLoaded', () => {
         // Manejo específico de la vista de creador de Matchday (v57.0)
         if (viewId === 'matchday-creator') {
             if (typeof initMatchdayCreator === 'function') initMatchdayCreator();
+            // Asegurar escalado inicial (v60.0)
+            setTimeout(() => {
+                if (window.resizePosterPreview) window.resizePosterPreview();
+            }, 100);
         }
 
         if (viewId !== 'tacticas') {
@@ -3783,7 +3787,34 @@ document.addEventListener('DOMContentLoaded', () => {
         window.jbLoading.hide();
         renderMatchdayConfig();
         updatePosterPreview();
+        
+        // Ajustar escala inicial (v60.0)
+        setTimeout(() => {
+            if (window.resizePosterPreview) window.resizePosterPreview();
+        }, 50);
     }
+
+    // --- FUNCIÓN DE ESCALADO DINÁMICO (v60.0) ---
+    window.resizePosterPreview = function() {
+        const frame = document.getElementById('poster-frame-container');
+        const preview = document.getElementById('mini-poster-preview');
+        if (!frame || !preview) return;
+
+        const frameWidth = frame.offsetWidth;
+        const posterWidth = 1080; // Ancho base del cartel
+        const scale = frameWidth / posterWidth;
+
+        preview.style.transform = `scale(${scale})`;
+        // Ajustar la altura del contenedor para que coincida con el cartel escalado
+        // 1350 es el alto base del cartel
+        frame.style.height = `${1350 * scale}px`;
+    };
+
+    window.addEventListener('resize', () => {
+        if (state.currentView === 'matchday-creator') {
+            window.resizePosterPreview();
+        }
+    });
 
     function renderMatchdayConfig() {
         if (!matchdayMatchesConfig) return;
@@ -3800,18 +3831,25 @@ document.addEventListener('DOMContentLoaded', () => {
             });
 
             row.innerHTML = `
-                <div style="display: flex; flex-direction: column; gap: 5px;">
-                    <label style="font-size: 0.6rem; opacity: 0.6;">RIVAL</label>
-                    <select class="match-rival-select" data-idx="${idx}" style="width: 100%;">
+                <div style="display: flex; flex-direction: column; gap: 8px;">
+                    <label style="font-size: 0.65rem; color: var(--primary); font-weight: 800; letter-spacing: 1px;">EQUIPO RIVAL</label>
+                    <select class="match-rival-select" data-idx="${idx}" style="width: 100%; cursor: pointer;">
                         ${rivalOptions}
                     </select>
-                    ${m.rivalId === 'manual' ? `<input type="text" class="match-manual-name" data-idx="${idx}" value="${m.rivalName}" placeholder="Nombre del rival..." style="margin-top:5px;">` : ''}
+                    ${m.rivalId === 'manual' ? `
+                        <input type="text" class="match-manual-name" data-idx="${idx}" value="${m.rivalName}" 
+                               placeholder="Nombre del rival..." 
+                               style="margin-top:8px; background: rgba(255,255,255,0.05) !important;">
+                    ` : ''}
                 </div>
-                <div style="display: flex; flex-direction: column; gap: 5px;">
-                    <label style="font-size: 0.6rem; opacity: 0.6;">HORA</label>
-                    <input type="time" class="match-time-input" data-idx="${idx}" value="${m.time}">
+                <div style="display: flex; flex-direction: column; gap: 8px;">
+                    <label style="font-size: 0.65rem; color: var(--primary); font-weight: 800; letter-spacing: 1px;">HORA PARTIDO</label>
+                    <input type="time" class="match-time-input" data-idx="${idx}" value="${m.time}" style="cursor: pointer;">
                 </div>
-                <button class="btn-delete-row" onclick="window.removeMatchFromPoster(${idx})" style="margin-bottom: 5px;">🗑️</button>
+                <button class="btn-delete-row" onclick="window.removeMatchFromPoster(${idx})" 
+                        style="width: 45px; height: 45px; display: flex; align-items: center; justify-content: center; border-radius: 12px; background: rgba(244, 67, 54, 0.1); border: 1px solid rgba(244, 67, 54, 0.2); color: #F44336; font-size: 1.1rem; transition: 0.2s;">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+                </button>
             `;
 
             // Events
@@ -3880,6 +3918,9 @@ document.addEventListener('DOMContentLoaded', () => {
         const html = generatePosterHTML();
         miniPosterPreview.innerHTML = html;
         
+        // Actualizar escala tras inyectar contenido (v60.0)
+        if (window.resizePosterPreview) window.resizePosterPreview();
+
         // También actualizar el área de captura real
         const captureArea = document.getElementById('matchday-poster-capture-area');
         if (captureArea) captureArea.innerHTML = html;
