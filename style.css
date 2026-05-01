@@ -5901,9 +5901,11 @@ body.editing-tactic .tactical-slot {
     display: flex;
     flex-direction: column;
     justify-content: center;
-    height: calc(100% - 300px);
+    height: 900px; /* Altura fija para el área de partidos */
+    margin: 180px 0 120px 0; /* Márgenes para respetar header y footer */
     padding: 0 60px;
     gap: 40px;
+    box-sizing: border-box;
 }
 
 .poster-match-card {
@@ -6067,15 +6069,15 @@ body.editing-tactic .tactical-slot {
 
 .poster-frame-container {
     width: 100%;
-    max-width: 400px; /* Reducido ligeramente para mejor encuadre */
+    max-width: 550px; /* Aumentado de 400px a 550px */
     aspect-ratio: 1080 / 1350;
     display: block;
     position: relative;
     background: #000;
-    border-radius: 8px;
-    box-shadow: 0 30px 60px rgba(0,0,0,0.8);
-    border: 1px solid rgba(240, 165, 0, 0.3);
-    overflow: hidden; /* Cortar lo que sobre del escalado */
+    border-radius: 12px;
+    box-shadow: 0 40px 100px rgba(0,0,0,0.9);
+    border: 1px solid rgba(240, 165, 0, 0.4);
+    overflow: hidden;
 }
 
 #mini-poster-preview {
@@ -6208,28 +6210,28 @@ body.editing-tactic .tactical-slot {
     font-size: 38px;
 }
 
-/* Ajustes críticos para 5 partidos (Modo Compacto) */
+/* Ajustes críticos para 5 partidos (Modo Ultra-Compacto) */
 .poster-matches-list.count-5 {
-    gap: 15px;
-    justify-content: flex-start;
+    gap: 12px;
+    justify-content: center;
 }
 .poster-matches-list.count-5 .poster-match-card {
-    padding: 12px 40px;
+    padding: 10px 40px;
     border-radius: 20px;
 }
 .poster-matches-list.count-5 .poster-crest-container {
-    width: 130px;
-    height: 130px;
+    width: 110px;
+    height: 110px;
 }
 .poster-matches-list.count-5 .poster-team-name {
-    font-size: 22px;
-    height: 48px;
+    font-size: 20px;
+    height: 42px;
 }
 .poster-matches-list.count-5 .poster-time-label {
-    font-size: 32px;
+    font-size: 28px;
 }
 .poster-matches-list.count-5 .poster-vs-text {
-    font-size: 18px;
+    font-size: 16px;
 }
 
 /* Refuerzo de visibilidad para el Creador de Matchday (v60.2) */

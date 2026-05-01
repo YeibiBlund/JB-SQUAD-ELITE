@@ -1,9 +1,9 @@
-## [v60.3] - 2026-05-01 | 22:45
-### 🚀 Matchday Creator: Multi-Match & Adaptive Layout
-- **Soporte Multi-Partido**: Incrementado el límite a 5 partidos por cartel.
-- **Layout Adaptativo Inteligente**: Sistema que reescala automáticamente escudos, fuentes y espaciado según el número de partidos (Modo Compacto para 4-5 partidos).
-- **Gestión de Límite**: El editor ahora oculta dinámicamente el botón de añadir al alcanzar el máximo de 5.
-- **UX Hotfix Final**: Ocultación de preview en móviles y escalado "Pixel Perfect" en web.
+## [v60.4] - 2026-05-01 | 23:05
+### 💎 Matchday Creator: Ultra-Wide & Ultra-Compact
+- **Vista Previa Ampliada**: Incrementado el tamaño de previsualización en web a 550px para una edición más cómoda.
+- **Modo Ultra-Compacto (5 Partidos)**: Rediseño total del layout de 5 partidos con escudos de 110px y espaciado optimizado.
+- **Protección de Footer**: Implementada zona segura de 900px para partidos, garantizando que el pie de página y social media nunca se tapen.
+- **UX Refined**: Sombras y bordes del contenedor mejorados para un look más "Workstation".
 
 ## [v59.1] - 2026-05-01 | 14:45
 ### Mejorado (UX Móvil Dashboard)
