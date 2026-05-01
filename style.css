@@ -6269,3 +6269,8 @@ input:disabled + .jb-slider {
         grid-template-columns: 1fr 1fr !important;
     }
 }
+
+/* Utilidad para simplificar UI en móviles (v59.1) */
+@media (max-width: 1023px) {
+    .hide-mobile { display: none !important; }
+}

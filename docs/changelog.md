@@ -1,3 +1,8 @@
+## [v59.1] - 2026-05-01 | 14:45
+### Mejorado (UX Móvil Dashboard)
+- **Simplificación de Cabeceras**: Eliminados los iconos decorativos (SVG) en los encabezados de los rankings para móvil. Esto libera espacio crítico para que el nombre de la sección, el filtro y el texto "Top 5" no se solapen.
+- **Mantenimiento de Identidad**: Se conservan las fotos y avatars de los jugadores para mantener el look visual premium.
+
 ## [v59.0] - 2026-05-01 | 14:15
 ### Añadido (Porterías a 0 - Clean Sheets)
 - **Métrica Defensiva Global**: Implementado el seguimiento de "Porterías a 0" para todos los jugadores de la plantilla.
