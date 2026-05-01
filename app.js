@@ -3985,8 +3985,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
         return `
             <div class="poster-header">
+                <img src="${teamCrest}" class="poster-main-logo">
                 <div class="poster-title">MATCH DAY</div>
-                <div class="poster-subtitle">ESTA NOCHE</div>
             </div>
             
             <div class="poster-matches-list">

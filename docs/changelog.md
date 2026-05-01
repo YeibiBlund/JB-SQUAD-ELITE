@@ -1,9 +1,9 @@
-## [v60.7] - 2026-05-01 | 23:55
-### 💎 Matchday Creator: Pro Refinement
-- **Escudos "Breathable"**: Reducida la escala interna de los escudos al 70% para eliminar el efecto de zoom excesivo y asegurar que se vean completos dentro del marco dorado.
-- **Cabecera Minimalista**: Título "MATCH DAY" reducido a 70px para un look más sofisticado y equilibrado.
-- **Firma de Logo**: Sustituido el texto del footer por el logo del club en la esquina inferior derecha, funcionando como una marca de agua premium.
-- **Corrección de Layout**: Re-alineado el título del editor y optimizada la visualización de los iconos sociales en el cartel.
+## [v60.8] - 2026-05-02 | 00:55
+### 🏗️ Matchday Creator: Structural Overhaul
+- **Layout Top-Down**: Se ha reestructurado el editor para que el título y el botón de volver ocupen la parte superior de forma independiente, eliminando los desbordamientos laterales.
+- **Cabecera "Brand-First"**: Inyectado el escudo del club en la parte superior del cartel, seguido del título MATCH DAY. Eliminado el subtítulo "Esta Noche" para un look más limpio.
+- **Geometría Perfecta**: Forzado el uso de `aspect-ratio: 1/1` y dimensiones fijas en los contenedores de escudos para garantizar círculos perfectos, sin deformaciones.
+- **Escala de Impacto**: El escudo principal del cartel ahora tiene un tamaño de 180px con efecto de resplandor dorado.
 
 ## [v59.1] - 2026-05-01 | 14:45
 ### Mejorado (UX Móvil Dashboard)

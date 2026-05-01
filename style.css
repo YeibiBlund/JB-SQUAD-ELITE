@@ -5617,17 +5617,28 @@ body.editing-tactic .tactical-slot {
 
 .poster-header {
     position: absolute;
-    top: 80px;
+    top: 40px;
     width: 100%;
     text-align: center;
     z-index: 10;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+}
+
+.poster-main-logo {
+    width: 180px;
+    height: 180px;
+    object-fit: contain;
+    filter: drop-shadow(0 0 25px rgba(212, 175, 55, 0.4));
 }
 
 .poster-title {
-    font-size: 140px;
+    font-size: 80px;
     font-weight: 900;
     color: #fff;
-    letter-spacing: 12px;
+    letter-spacing: 15px;
     margin: 0;
     text-transform: uppercase;
     font-family: 'Outfit', sans-serif;
@@ -5636,14 +5647,6 @@ body.editing-tactic .tactical-slot {
     -webkit-text-fill-color: transparent;
 }
 
-.poster-subtitle {
-    font-size: 45px;
-    color: #d4af37;
-    letter-spacing: 20px;
-    margin-top: -25px;
-    font-weight: 300;
-    text-transform: uppercase;
-}
 
 .poster-matches-list {
     position: absolute;
@@ -5679,6 +5682,8 @@ body.editing-tactic .tactical-slot {
 .poster-crest-container {
     width: 120px;
     height: 120px;
+    min-width: 120px; /* Forzar ancho fijo */
+    min-height: 120px; /* Forzar alto fijo */
     border-radius: 50%;
     border: 3px solid #d4af37;
     background: #000;
@@ -5687,6 +5692,7 @@ body.editing-tactic .tactical-slot {
     justify-content: center;
     overflow: hidden;
     box-shadow: 0 0 20px rgba(212, 175, 55, 0.4);
+    aspect-ratio: 1 / 1; /* Círculo perfecto */
 }
 
 .poster-team-name {
@@ -5808,6 +5814,8 @@ body.editing-tactic .tactical-slot {
 .poster-matches-list.count-5 .poster-crest-container {
     width: 100px;
     height: 100px;
+    min-width: 100px;
+    min-height: 100px;
 }
 .poster-matches-list.count-5 .poster-team-name {
     font-size: 28px;
@@ -5906,12 +5914,9 @@ body.editing-tactic .tactical-slot {
 
 /* Layout del Creador de Matchday Élite (v60.1) */
 #view-matchday-creator.active-view {
-    display: flex !important;
-    flex-direction: column;
-    height: 100%;
-    overflow-y: auto;
+    display: block !important;
+    width: 100%;
     padding: 0 20px 100px 20px;
-    align-items: flex-start; /* Corregido: Alineación a la izquierda para el título */
 }
 
 .poster-preview-label {
