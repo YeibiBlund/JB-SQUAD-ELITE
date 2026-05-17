@@ -4605,9 +4605,16 @@ document.addEventListener('DOMContentLoaded', () => {
             const keepersData = state.players
                 .filter(p => {
                     // Filtrar: solo jugadores que tengan 'POR' como posición primaria o secundaria (v63.2)
-                    const isGKPrimary = (p.primary_pos || p.primaryPos) === 'POR';
-                    const isGKSecondary = Array.isArray(p.secondary_pos) && p.secondary_pos.includes('POR');
-                    return isGKPrimary || isGKSecondary;
+                    const prim = (p.primary_pos || p.primaryPos || '').toString().toUpperCase().trim();
+                    if (prim === 'POR') return true;
+                    
+                    const secVal = p.secondary_pos || p.secondaryPos;
+                    if (Array.isArray(secVal)) {
+                        return secVal.map(x => (x || '').toString().toUpperCase().trim()).includes('POR');
+                    } else if (typeof secVal === 'string') {
+                        return secVal.toUpperCase().split(',').map(x => x.trim()).includes('POR');
+                    }
+                    return false;
                 })
                 .map(p => {
                     let totalCS = 0;
