@@ -725,15 +725,23 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const filterGoals = document.getElementById('filter-goals');
         if (filterGoals) filterGoals.onclick = () => cycleFilter('scorers');
+        const filterGoalsM = document.getElementById('filter-goals-mobile');
+        if (filterGoalsM) filterGoalsM.onclick = () => cycleFilter('scorers');
 
         const filterAssists = document.getElementById('filter-assists');
         if (filterAssists) filterAssists.onclick = () => cycleFilter('assists');
+        const filterAssistsM = document.getElementById('filter-assists-mobile');
+        if (filterAssistsM) filterAssistsM.onclick = () => cycleFilter('assists');
 
         const filterWinrate = document.getElementById('filter-winrate');
         if (filterWinrate) filterWinrate.onclick = () => cycleFilter('winrate');
+        const filterWinrateM = document.getElementById('filter-winrate-mobile');
+        if (filterWinrateM) filterWinrateM.onclick = () => cycleFilter('winrate');
 
         const filterCleanSheets = document.getElementById('filter-cleansheets');
         if (filterCleanSheets) filterCleanSheets.onclick = () => cycleFilter('cleansheets');
+        const filterCleanSheetsM = document.getElementById('filter-cleansheets-mobile');
+        if (filterCleanSheetsM) filterCleanSheetsM.onclick = () => cycleFilter('cleansheets');
     }
 
     // --- Lógica de Formularios ---
@@ -4220,11 +4228,20 @@ document.addEventListener('DOMContentLoaded', () => {
         // --- Actualizar Badges de Filtro (v58.2) ---
         const updateBadge = (id, val) => {
             const el = document.getElementById(id);
-            if (!el) return;
-            el.dataset.mode = val;
-            if (val === 'official') el.textContent = 'Oficiales';
-            else if (val === 'friendly') el.textContent = 'Amistosos';
-            else el.textContent = 'Global';
+            if (el) {
+                el.dataset.mode = val;
+                if (val === 'official') el.textContent = 'Oficiales';
+                else if (val === 'friendly') el.textContent = 'Amistosos';
+                else el.textContent = 'Global';
+            }
+            
+            const mobileEl = document.getElementById(id + '-mobile');
+            if (mobileEl) {
+                mobileEl.dataset.mode = val;
+                if (val === 'official') mobileEl.textContent = 'Oficiales';
+                else if (val === 'friendly') mobileEl.textContent = 'Amistosos';
+                else mobileEl.textContent = 'Global';
+            }
         };
         updateBadge('filter-goals', window.dashboardFilters.scorers);
         updateBadge('filter-assists', window.dashboardFilters.assists);
@@ -4377,6 +4394,8 @@ document.addEventListener('DOMContentLoaded', () => {
             .sort((a, b) => b.totalGoals - a.totalGoals)
             .slice(0, 5);
         renderTopRow(scorersListEl, scorers, 'totalGoals', 'GLS');
+        const mobileScorersEl = document.getElementById('mobile-top-scorers-list');
+        if (mobileScorersEl) renderTopRow(mobileScorersEl, scorers, 'totalGoals', 'GLS');
 
         // --- 2. TOP ASISTENTES (5) ---
         const filterAssists = window.dashboardFilters?.assists || 'official';
@@ -4392,6 +4411,8 @@ document.addEventListener('DOMContentLoaded', () => {
             .sort((a, b) => b.totalAssists - a.totalAssists)
             .slice(0, 5);
         renderTopRow(assistsListEl, assistants, 'totalAssists', 'AST');
+        const mobileAssistsEl = document.getElementById('mobile-top-assists-list');
+        if (mobileAssistsEl) renderTopRow(mobileAssistsEl, assistants, 'totalAssists', 'AST');
 
         // --- 3. TOP % VICTORIAS INDIVIDUAL (5) ---
         const filterWinrate = window.dashboardFilters?.winrate || 'official';
@@ -4416,6 +4437,8 @@ document.addEventListener('DOMContentLoaded', () => {
             .sort((a, b) => b.winPctNum - a.winPctNum)
             .slice(0, 5);
         renderTopRow(winrateListEl, winRaters, 'winPct', '');
+        const mobileWinrateEl = document.getElementById('mobile-top-winrate-list');
+        if (mobileWinrateEl) renderTopRow(mobileWinrateEl, winRaters, 'winPct', '');
 
         // --- 4. RECOPILAR PARTIDOS PARA RATIO Y RACHA ---
         let allMatches = [];
@@ -4503,6 +4526,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 .sort((a, b) => b.totalCS - a.totalCS)
                 .slice(0, 5);
             renderTopRow(csListEl, cleansheeters, 'totalCS', 'P.0');
+            const mobileCsListEl = document.getElementById('mobile-top-cleansheets-list');
+            if (mobileCsListEl) renderTopRow(mobileCsListEl, cleansheeters, 'totalCS', 'P.0');
         }
         
         // 5B. Tabla Exclusiva de Porteros (Solo los que jugaron de portero, calcula PJ de portero y fuerza rol POR)
@@ -4562,6 +4587,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 .slice(0, 5);
                 
             renderTopKeepersRow(keepersListEl, keepersData);
+            const mobileKeepersListEl = document.getElementById('mobile-top-keepers-list');
+            if (mobileKeepersListEl) renderTopKeepersRow(mobileKeepersListEl, keepersData);
         }
         
         // Mantener persistencia del sub-tab de porterías a cero (v61.0)
@@ -7309,14 +7336,20 @@ document.addEventListener('DOMContentLoaded', () => {
     window.switchCSTab = function(tab) {
         window.activeCleanSheetsTab = tab;
         
+        // Elementos Escritorio
         const btnGeneral = document.getElementById('btn-cs-tab-general');
         const btnKeepers = document.getElementById('btn-cs-tab-keepers');
         const listGeneral = document.getElementById('home-top-cleansheets-list');
         const listKeepers = document.getElementById('home-top-keepers-list');
         
-        if (!listGeneral || !listKeepers) return;
+        // Elementos Móvil
+        const btnGeneralM = document.getElementById('btn-cs-tab-general-mobile');
+        const btnKeepersM = document.getElementById('btn-cs-tab-keepers-mobile');
+        const listGeneralM = document.getElementById('mobile-top-cleansheets-list');
+        const listKeepersM = document.getElementById('mobile-top-keepers-list');
         
         if (tab === 'keepers') {
+            // Desktop update
             if (btnGeneral) {
                 btnGeneral.style.background = 'transparent';
                 btnGeneral.style.borderColor = 'rgba(255,255,255,0.05)';
@@ -7327,9 +7360,24 @@ document.addEventListener('DOMContentLoaded', () => {
                 btnKeepers.style.borderColor = 'rgba(240, 165, 0, 0.3)';
                 btnKeepers.style.color = '#fff';
             }
-            listGeneral.style.setProperty('display', 'none', 'important');
-            listKeepers.style.setProperty('display', 'flex', 'important');
+            if (listGeneral) listGeneral.style.setProperty('display', 'none', 'important');
+            if (listKeepers) listKeepers.style.setProperty('display', 'flex', 'important');
+            
+            // Mobile update
+            if (btnGeneralM) {
+                btnGeneralM.style.background = 'transparent';
+                btnGeneralM.style.borderColor = 'rgba(255,255,255,0.05)';
+                btnGeneralM.style.color = 'var(--text-muted)';
+            }
+            if (btnKeepersM) {
+                btnKeepersM.style.background = 'rgba(240, 165, 0, 0.15)';
+                btnKeepersM.style.borderColor = 'rgba(240, 165, 0, 0.3)';
+                btnKeepersM.style.color = '#fff';
+            }
+            if (listGeneralM) listGeneralM.style.setProperty('display', 'none', 'important');
+            if (listKeepersM) listKeepersM.style.setProperty('display', 'flex', 'important');
         } else {
+            // Desktop update
             if (btnKeepers) {
                 btnKeepers.style.background = 'transparent';
                 btnKeepers.style.borderColor = 'rgba(255,255,255,0.05)';
@@ -7340,8 +7388,50 @@ document.addEventListener('DOMContentLoaded', () => {
                 btnGeneral.style.borderColor = 'rgba(240, 165, 0, 0.3)';
                 btnGeneral.style.color = '#fff';
             }
-            listKeepers.style.setProperty('display', 'none', 'important');
-            listGeneral.style.setProperty('display', 'flex', 'important');
+            if (listKeepers) listKeepers.style.setProperty('display', 'none', 'important');
+            if (listGeneral) listGeneral.style.setProperty('display', 'flex', 'important');
+            
+            // Mobile update
+            if (btnKeepersM) {
+                btnKeepersM.style.background = 'transparent';
+                btnKeepersM.style.borderColor = 'rgba(255,255,255,0.05)';
+                btnKeepersM.style.color = 'var(--text-muted)';
+            }
+            if (btnGeneralM) {
+                btnGeneralM.style.background = 'rgba(240, 165, 0, 0.15)';
+                btnGeneralM.style.borderColor = 'rgba(240, 165, 0, 0.3)';
+                btnGeneralM.style.color = '#fff';
+            }
+            if (listKeepersM) listKeepersM.style.setProperty('display', 'none', 'important');
+            if (listGeneralM) listGeneralM.style.setProperty('display', 'flex', 'important');
         }
-    }
+    };
+
+    /**
+     * CONMUTADOR DE PESTAÑAS PRINCIPALES DE RANKINGS EN MÓVIL v62.0
+     */
+    window.switchMobileRankingTab = function(activeTab) {
+        const tabs = ['goals', 'assists', 'winrate', 'cleansheets'];
+        
+        tabs.forEach(tab => {
+            const btn = document.getElementById(`m-btn-${tab}`);
+            const content = document.getElementById(`mobile-tab-${tab}`);
+            
+            if (btn) {
+                if (tab === activeTab) {
+                    btn.classList.add('active');
+                } else {
+                    btn.classList.remove('active');
+                }
+            }
+            
+            if (content) {
+                if (tab === activeTab) {
+                    content.style.setProperty('display', 'block', 'important');
+                } else {
+                    content.style.setProperty('display', 'none', 'important');
+                }
+            }
+        });
+    };
 });

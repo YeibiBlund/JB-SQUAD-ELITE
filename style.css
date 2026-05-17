@@ -321,44 +321,153 @@ p { color: var(--text-muted); font-size: 0.95rem; line-height: 1.5; }
     transform: scale(0.98);
 }
 
-/* Dashboard Desktop Divergent Layout */
-.dashboard-desktop-layout {
+/* --- DASHBOARD PREMIUM REVOLUTION v62.0 --- */
+.dashboard-grid-layout {
     display: flex;
     flex-direction: column;
-    gap: 15px;
+    gap: 20px;
+    animation: slideUpFade 0.6s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.home-stats-grid {
-    display: none !important;
+.dash-perf-column {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
 }
 
+.dash-rankings-section {
+    display: flex;
+    flex-direction: column;
+}
+
+/* Bento Grid Desktop */
+.rankings-desktop-grid {
+    display: none;
+}
+
+.rankings-mobile-tabs {
+    display: flex;
+    flex-direction: column;
+}
+
+/* Tarjetas Ultra Premium */
+.card-elite-premium {
+    background: linear-gradient(135deg, rgba(22, 22, 22, 0.75) 0%, rgba(8, 8, 8, 0.98) 100%) !important;
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(240, 165, 0, 0.08) !important;
+    border-radius: 14px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.6);
+    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.card-elite-premium:hover {
+    transform: translateY(-4px);
+    border-color: rgba(240, 165, 0, 0.25) !important;
+    box-shadow: 0 15px 45px rgba(240, 165, 0, 0.12);
+}
+
+/* Navegación de Rankings en Móvil */
+.mobile-rankings-nav-scroll {
+    display: flex;
+    gap: 8px;
+    overflow-x: auto;
+    padding: 12px 15px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    background: rgba(0, 0, 0, 0.2);
+    scrollbar-width: none; /* Firefox */
+}
+
+.mobile-rankings-nav-scroll::-webkit-scrollbar {
+    display: none; /* Safari/Chrome */
+}
+
+.mobile-ranking-nav-btn {
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    color: var(--text-muted);
+    font-size: 0.6rem;
+    font-weight: 900;
+    padding: 8px 14px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    white-space: nowrap;
+    letter-spacing: 0.5px;
+}
+
+.mobile-ranking-nav-btn.active {
+    background: rgba(240, 165, 0, 0.18) !important;
+    border-color: rgba(240, 165, 0, 0.4) !important;
+    color: #fff !important;
+    box-shadow: 0 0 12px rgba(240, 165, 0, 0.15);
+}
+
+/* Efectos de Hover y Diseño Bento para Escritorio */
 @media (min-width: 1024px) {
-    .dashboard-desktop-layout {
+    .dashboard-grid-layout {
         flex-direction: row;
         align-items: flex-start;
         gap: 25px;
     }
-    .dash-col-main {
-        flex: 2;
-        display: flex;
-        flex-direction: column;
-        gap: 20px;
+    
+    .dash-perf-column {
+        flex: 1;
+        gap: 25px;
+        position: sticky;
+        top: 20px;
     }
-    .dash-col-side {
-        flex: 1.2;
-        display: flex;
-        flex-direction: column;
+    
+    .dash-rankings-section {
+        flex: 2.2;
+    }
+    
+    .rankings-desktop-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
         gap: 20px;
     }
     
-    .card-elite {
-        box-shadow: 0 5px 20px rgba(0,0,0,0.4);
+    .rankings-mobile-tabs {
+        display: none;
     }
-    .home-stats-grid {
-        display: grid !important;
-        grid-template-columns: 1fr 1fr;
-        gap: 15px;
+    
+    /* Bento themes */
+    .ranking-card-premium {
+        position: relative;
+        overflow: hidden;
     }
+    
+    .ranking-card-premium::before {
+        content: '';
+        position: absolute;
+        top: 0; left: 0; width: 4px; height: 100%;
+        background: transparent;
+        transition: background 0.3s;
+    }
+    
+    .ranking-card-premium.gold-theme:hover::before { background: var(--primary); }
+    .ranking-card-premium.silver-theme:hover::before { background: #b0c4de; }
+    .ranking-card-premium.emerald-theme:hover::before { background: #4CAF50; }
+    .ranking-card-premium.gloves-theme:hover::before { background: #FF9800; }
+}
+
+/* Animaciones */
+@keyframes slideUpFade {
+    from {
+        opacity: 0;
+        transform: translateY(15px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.counter-capsule:hover {
+    border-color: rgba(240, 165, 0, 0.2) !important;
+    transform: translateY(-2px);
+    background: rgba(240, 165, 0, 0.04) !important;
 }
 
 
