@@ -4556,24 +4556,67 @@ document.addEventListener('DOMContentLoaded', () => {
             if (totalM === 0) {
                 formStreakContainer.innerHTML = '<span style="opacity:0.5; font-size:0.7rem;">Sin datos registrados</span>';
             } else {
-                // Tomamos los últimos 5
+                formStreakContainer.style.cssText = 'display: flex; flex-direction: column; align-items: center; gap: 8px;';
+                
+                const badgesWrapper = document.createElement('div');
+                badgesWrapper.style.cssText = 'display: flex; gap: 8px; justify-content: center; align-items: center;';
+                
                 const last5 = allMatches.slice(-5);
-                last5.forEach(m => {
+                last5.forEach((m, idx) => {
                     const badge = document.createElement('div');
-                    badge.style.cssText = 'width: 25px; height: 25px; border-radius: 4px; display: flex; align-items: center; justify-content: center; font-size: 0.7rem; font-weight: 900; color: #000; box-shadow: 0 2px 5px rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.2);';
+                    
+                    const progress = idx / 4;
+                    const opacityVal = 0.5 + (progress * 0.5);
+                    const scaleVal = 0.85 + (progress * 0.2);
+                    const isLast = idx === 4;
+                    
+                    let bgStyle = '';
+                    let textSymbol = '';
+                    let borderHighlight = isLast ? 'border: 1.5px solid rgba(255,255,255,0.7); box-shadow: 0 0 10px rgba(255,255,255,0.25);' : 'border: 1px solid rgba(255,255,255,0.15);';
+                    
                     if (m.scoreHome > m.scoreAway) {
-                        badge.textContent = 'V';
-                        badge.style.background = '#4CAF50';
+                        textSymbol = 'V';
+                        bgStyle = 'linear-gradient(135deg, #2ecc71, #27ae60)';
                     } else if (m.scoreHome === m.scoreAway) {
-                        badge.textContent = 'E';
-                        badge.style.background = '#FFC107';
+                        textSymbol = 'E';
+                        bgStyle = 'linear-gradient(135deg, #f1c40f, #f39c12)';
                     } else {
-                        badge.textContent = 'D';
-                        badge.style.background = '#F44336';
-                        badge.style.color = '#fff';
+                        textSymbol = 'D';
+                        bgStyle = 'linear-gradient(135deg, #e74c3c, #c0392b)';
                     }
-                    formStreakContainer.appendChild(badge);
+                    
+                    badge.textContent = textSymbol;
+                    badge.style.cssText = `
+                        width: 25px; 
+                        height: 25px; 
+                        border-radius: 6px; 
+                        display: flex; 
+                        align-items: center; 
+                        justify-content: center; 
+                        font-size: 0.75rem; 
+                        font-weight: 900; 
+                        color: ${textSymbol === 'E' ? '#000' : '#fff'}; 
+                        background: ${bgStyle}; 
+                        opacity: ${opacityVal}; 
+                        transform: scale(${scaleVal}); 
+                        box-shadow: 0 2px 5px rgba(0,0,0,0.4); 
+                        ${borderHighlight}
+                        transition: all 0.3s;
+                    `;
+                    
+                    badge.title = `${m.scoreHome} - ${m.scoreAway} (${m.type === 'official' ? 'Oficial' : 'Amistoso'})`;
+                    badgesWrapper.appendChild(badge);
                 });
+                
+                formStreakContainer.appendChild(badgesWrapper);
+                
+                const legend = document.createElement('div');
+                legend.style.cssText = 'display: flex; justify-content: space-between; width: 145px; font-size: 0.5rem; color: var(--text-muted); font-weight: 800; text-transform: uppercase; letter-spacing: 0.8px; margin-top: 1px;';
+                legend.innerHTML = `
+                    <span style="opacity: 0.5;">◀ Antiguo</span>
+                    <span style="color: var(--primary); font-weight: 950; text-shadow: 0 0 5px rgba(240,165,0,0.2);">Reciente ▶</span>
+                `;
+                formStreakContainer.appendChild(legend);
             }
         }
 
