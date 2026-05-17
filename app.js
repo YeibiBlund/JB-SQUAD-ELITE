@@ -4314,6 +4314,43 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         }
 
+        function renderTopKeepersRow(container, items) {
+            if (!container) return;
+            container.innerHTML = '';
+            if (items.length === 0) {
+                container.innerHTML = '<p style="font-size:0.7rem; text-align:center; opacity:0.5;">No hay registros imbatidos.</p>';
+                return;
+            }
+            items.forEach((s, i) => {
+                const row = document.createElement('div');
+                row.className = 'card-elite';
+                row.style.cssText = 'padding: 8px 12px; margin: 0; display: flex; align-items: center; gap: 12px; border-color: rgba(240,165,0,0.1); border-radius: 8px; cursor: pointer; transition: transform 0.2s;';
+                row.onmouseover = () => row.style.transform = 'translateX(5px)';
+                row.onmouseout = () => row.style.transform = 'translateX(0)';
+                row.onclick = () => {
+                    if (window.viewPlayerProfileDetail) window.viewPlayerProfileDetail(s.id);
+                };
+                
+                const posClass = getPositionColorClass('POR');
+                
+                row.innerHTML = `
+                    <span style="font-size: 0.8rem; font-weight: 900; color: var(--primary); width: 15px;">${i+1}</span>
+                    <div style="width: 25px; height: 25px; background: rgba(0,0,0,0.2); border-radius: 4px; padding: 2px; overflow: hidden; display: flex; align-items: center; justify-content: center;">
+                        ${s.photo ? `<img src="${s.photo}" style="width:100%; height:100%; object-fit:cover; object-position: top; transform:${s.transform}">` : (s.avatar ? s.avatar.svg : '')}
+                    </div>
+                    <div style="flex: 1; display: flex; align-items: center; gap: 8px; overflow: hidden;">
+                        <span style="font-size: 0.75rem; font-weight: 800; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${escapeHTML(s.name.toUpperCase())}</span>
+                        <span class="player-pos-badge ${posClass}" style="font-size: 0.5rem; padding: 1px 4px; border-radius: 3px; min-width: 22px; text-align: center; font-weight: 900;">POR</span>
+                    </div>
+                    <span style="font-size: 0.75rem; font-weight: 900; color: var(--primary); display: flex; flex-direction: column; align-items: flex-end; line-height: 1.1;">
+                        <span>${s.totalCS} <small style="font-size:0.5rem; font-weight:700; color:var(--text-muted);">P.0</small></span>
+                        <span style="font-size: 0.55rem; color: var(--text-muted); font-weight: 700;">${s.totalMatches} PJ</span>
+                    </span>
+                `;
+                container.appendChild(row);
+            });
+        }
+
         // --- Mapeador de jugador para rankings ---
         function mapPlayerForRanking(p) {
             return {
@@ -4449,55 +4486,88 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // --- 5. TOP PORTERÍAS A 0 (5) ---
         const csListEl = document.getElementById('home-top-cleansheets-list');
+        const keepersListEl = document.getElementById('home-top-keepers-list');
         const filterCS = window.dashboardFilters?.cleansheets || 'official';
-        const cleansheeters = state.players
-            .map(p => {
-                let totalCS = 0;
-                
-                const sessionsToScan = [...(state.sessions || [])];
-                if (state.activeSession) {
-                    sessionsToScan.push(state.activeSession);
-                }
-                
-                sessionsToScan.forEach(sess => {
-                    const matches = sess.matches || [];
-                    matches.forEach(match => {
-                        const mType = match.type || 'friendly';
-                        if (filterCS !== 'all' && mType !== filterCS) return;
-                        
-                        const isCleanSheet = (match.scoreAway === 0);
-                        if (!isCleanSheet) return;
-                        
-                        let wasGK = false;
-                        if (sess.lineup && !Array.isArray(sess.lineup) && sess.lineup.assignments) {
-                            const gkId = sess.lineup.assignments.GK;
-                            if (gkId && gkId.toString() === p.id.toString()) {
-                                wasGK = true;
-                            }
-                        } else {
-                            if (p.primaryPos === 'POR') {
-                                let played = false;
-                                if (match.lineup && Array.isArray(match.lineup)) {
-                                    played = match.lineup.map(id => id.toString()).includes(p.id.toString());
-                                } else if (sess.lineup && Array.isArray(sess.lineup)) {
-                                    played = sess.lineup.map(id => id.toString()).includes(p.id.toString());
+        
+        // 5A. Tabla General (Todos los Jugadores)
+        if (csListEl) {
+            const cleansheeters = state.players
+                .map(p => {
+                    let totalCS = 0;
+                    if (filterCS === 'official') totalCS = p.stats?.official?.cleanSheets || 0;
+                    else if (filterCS === 'friendly') totalCS = p.stats?.friendly?.cleanSheets || 0;
+                    else totalCS = (p.stats?.official?.cleanSheets || 0) + (p.stats?.friendly?.cleanSheets || 0);
+                    return { ...mapPlayerForRanking(p), totalCS };
+                })
+                .filter(s => s.totalCS > 0)
+                .sort((a, b) => b.totalCS - a.totalCS)
+                .slice(0, 5);
+            renderTopRow(csListEl, cleansheeters, 'totalCS', 'P.0');
+        }
+        
+        // 5B. Tabla Exclusiva de Porteros (Solo los que jugaron de portero, calcula PJ de portero y fuerza rol POR)
+        if (keepersListEl) {
+            const keepersData = state.players
+                .map(p => {
+                    let totalCS = 0;
+                    let totalMatches = 0;
+                    
+                    const sessionsToScan = [...(state.sessions || [])];
+                    if (state.activeSession) {
+                        sessionsToScan.push(state.activeSession);
+                    }
+                    
+                    sessionsToScan.forEach(sess => {
+                        const matches = sess.matches || [];
+                        matches.forEach(match => {
+                            const mType = match.type || 'friendly';
+                            if (filterCS !== 'all' && mType !== filterCS) return;
+                            
+                            let wasGK = false;
+                            if (sess.lineup && !Array.isArray(sess.lineup) && sess.lineup.assignments) {
+                                const gkId = sess.lineup.assignments.GK;
+                                if (gkId && gkId.toString() === p.id.toString()) {
+                                    wasGK = true;
                                 }
-                                if (played) wasGK = true;
+                            } else {
+                                if (p.primaryPos === 'POR') {
+                                    let played = false;
+                                    if (match.lineup && Array.isArray(match.lineup)) {
+                                        played = match.lineup.map(id => id.toString()).includes(p.id.toString());
+                                    } else if (sess.lineup && Array.isArray(sess.lineup)) {
+                                        played = sess.lineup.map(id => id.toString()).includes(p.id.toString());
+                                    }
+                                    if (played) wasGK = true;
+                                }
                             }
-                        }
-                        
-                        if (wasGK) {
-                            totalCS++;
-                        }
+                            
+                            if (wasGK) {
+                                totalMatches++;
+                                if (match.scoreAway === 0) {
+                                    totalCS++;
+                                }
+                            }
+                        });
                     });
-                });
+                    
+                    return { ...mapPlayerForRanking(p), totalCS, totalMatches };
+                })
+                .filter(s => s.totalMatches > 0) // Solo jugadores que jugaron de portero
+                .sort((a, b) => {
+                    if (b.totalCS !== a.totalCS) {
+                        return b.totalCS - a.totalCS;
+                    }
+                    return b.totalMatches - a.totalMatches; // En caso de empate, ordena por PJ
+                })
+                .slice(0, 5);
                 
-                return { ...mapPlayerForRanking(p), totalCS };
-            })
-            .filter(s => s.totalCS > 0)
-            .sort((a, b) => b.totalCS - a.totalCS)
-            .slice(0, 5);
-        renderTopRow(csListEl, cleansheeters, 'totalCS', 'P.0');
+            renderTopKeepersRow(keepersListEl, keepersData);
+        }
+        
+        // Mantener persistencia del sub-tab de porterías a cero (v61.0)
+        if (window.activeCleanSheetsTab) {
+            window.switchCSTab(window.activeCleanSheetsTab);
+        }
     }
 
     // --- FUNCIÓN DE EXPORTACIÓN ELITE v4.8.0 ---
@@ -7230,6 +7300,48 @@ document.addEventListener('DOMContentLoaded', () => {
         else {
             window.jbToast('Código eliminado.', 'success');
             window.renderAdminDashboard();
+        }
+    }
+
+    /**
+     * CONMUTADOR DE SUB-PESTAÑAS DE PORTERÍAS A CERO (GENERAL / PORTEROS) v61.0
+     */
+    window.switchCSTab = function(tab) {
+        window.activeCleanSheetsTab = tab;
+        
+        const btnGeneral = document.getElementById('btn-cs-tab-general');
+        const btnKeepers = document.getElementById('btn-cs-tab-keepers');
+        const listGeneral = document.getElementById('home-top-cleansheets-list');
+        const listKeepers = document.getElementById('home-top-keepers-list');
+        
+        if (!listGeneral || !listKeepers) return;
+        
+        if (tab === 'keepers') {
+            if (btnGeneral) {
+                btnGeneral.style.background = 'transparent';
+                btnGeneral.style.borderColor = 'rgba(255,255,255,0.05)';
+                btnGeneral.style.color = 'var(--text-muted)';
+            }
+            if (btnKeepers) {
+                btnKeepers.style.background = 'rgba(240, 165, 0, 0.15)';
+                btnKeepers.style.borderColor = 'rgba(240, 165, 0, 0.3)';
+                btnKeepers.style.color = '#fff';
+            }
+            listGeneral.style.setProperty('display', 'none', 'important');
+            listKeepers.style.setProperty('display', 'flex', 'important');
+        } else {
+            if (btnKeepers) {
+                btnKeepers.style.background = 'transparent';
+                btnKeepers.style.borderColor = 'rgba(255,255,255,0.05)';
+                btnKeepers.style.color = 'var(--text-muted)';
+            }
+            if (btnGeneral) {
+                btnGeneral.style.background = 'rgba(240, 165, 0, 0.15)';
+                btnGeneral.style.borderColor = 'rgba(240, 165, 0, 0.3)';
+                btnGeneral.style.color = '#fff';
+            }
+            listKeepers.style.setProperty('display', 'none', 'important');
+            listGeneral.style.setProperty('display', 'flex', 'important');
         }
     }
 });

@@ -332,15 +332,18 @@
 
                         <!-- TOP PORTERÍAS A 0 -->
                         <div class="card-elite" style="padding: 20px;">
-                            <div class="ranking-header-elite" style="margin-bottom: 15px; padding-bottom: 15px; border-bottom: 1px solid rgba(240,165,0,0.15);">
-                            <span style="font-size: 0.75rem; font-weight: 800; letter-spacing: 1.5px; color: var(--text-muted);"><span class="show-mobile-inline">TOP 5 </span><span class="hide-mobile">TOP </span>PORTERÍAS A 0</span>
-                            <div class="filter-badge-elite" id="filter-cleansheets" data-mode="official">Oficiales</div>
-                            <span class="hide-mobile" style="font-size: 0.75rem; color: var(--primary); display: flex; align-items: center; gap: 5px;">Top 5
-                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
-                            </span>
-                        </div>
+                            <div class="ranking-header-elite" style="margin-bottom: 15px; padding-bottom: 15px; border-bottom: 1px solid rgba(240,165,0,0.15); display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap;">
+                                <div style="display: flex; gap: 6px; align-items: center;">
+                                    <button class="cs-tab-btn active" id="btn-cs-tab-general" style="background: rgba(240, 165, 0, 0.15); border: 1px solid rgba(240, 165, 0, 0.3); color: #fff; font-size: 0.6rem; font-weight: 800; padding: 4px 10px; border-radius: 6px; cursor: pointer; transition: all 0.3s; letter-spacing: 1px;" onclick="window.switchCSTab('general')">GENERAL</button>
+                                    <button class="cs-tab-btn" id="btn-cs-tab-keepers" style="background: transparent; border: 1px solid rgba(255,255,255,0.05); color: var(--text-muted); font-size: 0.6rem; font-weight: 800; padding: 4px 10px; border-radius: 6px; cursor: pointer; transition: all 0.3s; letter-spacing: 1px;" onclick="window.switchCSTab('keepers')">PORTEROS</button>
+                                </div>
+                                <div class="filter-badge-elite" id="filter-cleansheets" data-mode="official">Oficiales</div>
+                            </div>
                             <div id="home-top-cleansheets-list" style="display: flex; flex-direction: column; gap: 10px;">
-                                <!-- Inyectados por JS -->
+                                <!-- Inyectados por JS (General) -->
+                            </div>
+                            <div id="home-top-keepers-list" style="display: none; flex-direction: column; gap: 10px;">
+                                <!-- Inyectados por JS (Porteros) -->
                             </div>
                         </div>
                     </div>
