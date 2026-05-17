@@ -6429,3 +6429,167 @@ input:disabled + .jb-slider {
         margin-right: 0 !important;
     }
 }
+
+/* =========================================================================
+   RANKINGS ULTRAPREMIUM Y TABLA DE PORTEROS (v63.0)
+   ========================================================================= */
+.ranking-row-premium {
+    background: rgba(255, 255, 255, 0.02) !important;
+    border: 1px solid rgba(255, 255, 255, 0.03) !important;
+    border-radius: 12px;
+    padding: 10px 16px;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1) !important;
+    position: relative;
+    overflow: hidden;
+}
+
+.ranking-row-premium:hover {
+    background: rgba(240, 165, 0, 0.05) !important;
+    border-color: rgba(240, 165, 0, 0.2) !important;
+    transform: translateX(6px) scale(1.01) !important;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2), 0 0 10px rgba(240, 165, 0, 0.08);
+}
+
+.ranking-row-premium.rank-first {
+    background: linear-gradient(90deg, rgba(240, 165, 0, 0.08) 0%, rgba(240, 165, 0, 0.02) 100%) !important;
+    border-color: rgba(240, 165, 0, 0.25) !important;
+}
+
+.ranking-row-premium.rank-first:hover {
+    background: linear-gradient(90deg, rgba(240, 165, 0, 0.15) 0%, rgba(240, 165, 0, 0.04) 100%) !important;
+    border-color: rgba(240, 165, 0, 0.4) !important;
+    box-shadow: 0 6px 20px rgba(240, 165, 0, 0.12);
+}
+
+.rank-number-premium {
+    font-size: 0.95rem;
+    font-weight: 900;
+    color: var(--text-muted);
+    width: 24px;
+    text-align: center;
+    font-family: 'Outfit', sans-serif;
+    transition: color 0.3s;
+}
+
+.ranking-row-premium:hover .rank-number-premium {
+    color: #fff;
+}
+
+.rank-number-premium.rank-first-num {
+    color: var(--primary) !important;
+    text-shadow: 0 0 8px rgba(240, 165, 0, 0.5);
+    font-size: 1.1rem;
+}
+
+.rank-avatar-frame {
+    width: 32px;
+    height: 32px;
+    background: rgba(0, 0, 0, 0.4);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 8px;
+    padding: 2px;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.ranking-row-premium:hover .rank-avatar-frame {
+    border-color: var(--primary);
+    transform: scale(1.1);
+    box-shadow: 0 0 10px rgba(240, 165, 0, 0.25);
+}
+
+.rank-name-text {
+    font-size: 0.8rem;
+    font-weight: 800;
+    color: #fff;
+    letter-spacing: 0.5px;
+    transition: color 0.3s;
+}
+
+.ranking-row-premium:hover .rank-name-text {
+    color: var(--primary);
+}
+
+.rank-value-display {
+    font-size: 0.85rem;
+    font-weight: 950;
+    color: var(--primary);
+    display: flex;
+    align-items: baseline;
+    gap: 3px;
+    font-family: 'Outfit', sans-serif;
+    letter-spacing: 0.5px;
+}
+
+.rank-value-display small {
+    font-size: 0.55rem;
+    color: var(--text-muted);
+    font-weight: 800;
+}
+
+.ranking-keeper-row {
+    border-color: rgba(240, 165, 0, 0.15) !important;
+}
+
+.keepers-capsule-stat {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.keeper-pj-glass-badge {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    padding: 4px 10px;
+    border-radius: 6px;
+    font-size: 0.55rem;
+    font-weight: 900;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    transition: all 0.3s;
+}
+
+.ranking-row-premium:hover .keeper-pj-glass-badge {
+    background: rgba(255, 255, 255, 0.08);
+    color: #fff;
+    border-color: rgba(255, 255, 255, 0.12);
+}
+
+.keeper-cs-glass-badge {
+    background: rgba(240, 165, 0, 0.1);
+    border: 1px solid rgba(240, 165, 0, 0.25);
+    padding: 4px 10px;
+    border-radius: 6px;
+    font-size: 0.6rem;
+    font-weight: 900;
+    color: #fff;
+    text-shadow: 0 0 5px rgba(240, 165, 0, 0.3);
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.keeper-efficiency-pct {
+    font-size: 0.65rem;
+    font-weight: 900;
+    color: #4CAF50;
+    background: rgba(76, 175, 80, 0.1);
+    border: 1px solid rgba(76, 175, 80, 0.2);
+    padding: 4px 8px;
+    border-radius: 6px;
+    font-family: 'Outfit', sans-serif;
+    min-width: 48px;
+    text-align: center;
+}
+
+.ranking-row-premium:hover .keeper-efficiency-pct {
+    box-shadow: 0 0 8px rgba(76, 175, 80, 0.2);
+}

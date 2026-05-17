@@ -4308,24 +4308,26 @@ document.addEventListener('DOMContentLoaded', () => {
             }
             items.forEach((s, i) => {
                 const row = document.createElement('div');
-                row.className = 'card-elite';
-                row.style.cssText = 'padding: 8px 12px; margin: 0; display: flex; align-items: center; gap: 12px; border-color: rgba(240,165,0,0.1); border-radius: 8px; cursor: pointer; transition: transform 0.2s;';
-                row.onmouseover = () => row.style.transform = 'translateX(5px)';
-                row.onmouseout = () => row.style.transform = 'translateX(0)';
+                const isFirst = i === 0;
+                row.className = `ranking-row-premium ${isFirst ? 'rank-first' : ''}`;
                 row.onclick = () => {
                     if (window.viewPlayerProfileDetail) window.viewPlayerProfileDetail(s.id);
                 };
+                
                 const posClass = getPositionColorClass(s.primaryPos);
+                const rankNumClass = isFirst ? 'rank-number-premium rank-first-num' : 'rank-number-premium';
+                const rankDisplay = isFirst ? '👑' : `${i+1}`;
+                
                 row.innerHTML = `
-                    <span style="font-size: 0.8rem; font-weight: 900; color: var(--primary); width: 15px;">${i+1}</span>
-                    <div style="width: 25px; height: 25px; background: rgba(0,0,0,0.2); border-radius: 4px; padding: 2px; overflow: hidden; display: flex; align-items: center; justify-content: center;">
+                    <span class="${rankNumClass}">${rankDisplay}</span>
+                    <div class="rank-avatar-frame">
                         ${s.photo ? `<img src="${s.photo}" style="width:100%; height:100%; object-fit:cover; object-position: top; transform:${s.transform}">` : (s.avatar ? s.avatar.svg : '')}
                     </div>
                     <div style="flex: 1; display: flex; align-items: center; gap: 8px; overflow: hidden;">
-                        <span style="font-size: 0.75rem; font-weight: 800; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${escapeHTML(s.name.toUpperCase())}</span>
+                        <span class="rank-name-text">${escapeHTML(s.name.toUpperCase())}</span>
                         <span class="player-pos-badge ${posClass}" style="font-size: 0.5rem; padding: 1px 4px; border-radius: 3px; min-width: 22px; text-align: center; font-weight: 900;">${s.primaryPos || 'NA'}</span>
                     </div>
-                    <span style="font-size: 0.75rem; font-weight: 900; color: var(--primary);">${s[valueKey]} <small style="font-size:0.5rem;">${valueSuffix}</small></span>
+                    <span class="rank-value-display">${s[valueKey]} <small>${valueSuffix}</small></span>
                 `;
                 container.appendChild(row);
             });
@@ -4340,29 +4342,31 @@ document.addEventListener('DOMContentLoaded', () => {
             }
             items.forEach((s, i) => {
                 const row = document.createElement('div');
-                row.className = 'card-elite';
-                row.style.cssText = 'padding: 8px 12px; margin: 0; display: flex; align-items: center; gap: 12px; border-color: rgba(240,165,0,0.1); border-radius: 8px; cursor: pointer; transition: transform 0.2s;';
-                row.onmouseover = () => row.style.transform = 'translateX(5px)';
-                row.onmouseout = () => row.style.transform = 'translateX(0)';
+                const isFirst = i === 0;
+                row.className = `ranking-row-premium ranking-keeper-row ${isFirst ? 'rank-first' : ''}`;
                 row.onclick = () => {
                     if (window.viewPlayerProfileDetail) window.viewPlayerProfileDetail(s.id);
                 };
                 
                 const posClass = getPositionColorClass('POR');
+                const rankNumClass = isFirst ? 'rank-number-premium rank-first-num' : 'rank-number-premium';
+                const rankDisplay = isFirst ? '👑' : `${i+1}`;
+                const csRatio = s.totalMatches > 0 ? Math.round((s.totalCS / s.totalMatches) * 100) : 0;
                 
                 row.innerHTML = `
-                    <span style="font-size: 0.8rem; font-weight: 900; color: var(--primary); width: 15px;">${i+1}</span>
-                    <div style="width: 25px; height: 25px; background: rgba(0,0,0,0.2); border-radius: 4px; padding: 2px; overflow: hidden; display: flex; align-items: center; justify-content: center;">
+                    <span class="${rankNumClass}">${rankDisplay}</span>
+                    <div class="rank-avatar-frame">
                         ${s.photo ? `<img src="${s.photo}" style="width:100%; height:100%; object-fit:cover; object-position: top; transform:${s.transform}">` : (s.avatar ? s.avatar.svg : '')}
                     </div>
                     <div style="flex: 1; display: flex; align-items: center; gap: 8px; overflow: hidden;">
-                        <span style="font-size: 0.75rem; font-weight: 800; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${escapeHTML(s.name.toUpperCase())}</span>
+                        <span class="rank-name-text">${escapeHTML(s.name.toUpperCase())}</span>
                         <span class="player-pos-badge ${posClass}" style="font-size: 0.5rem; padding: 1px 4px; border-radius: 3px; min-width: 22px; text-align: center; font-weight: 900;">POR</span>
                     </div>
-                    <span style="font-size: 0.75rem; font-weight: 900; color: var(--primary); display: flex; flex-direction: column; align-items: flex-end; line-height: 1.1;">
-                        <span>${s.totalCS} <small style="font-size:0.5rem; font-weight:700; color:var(--text-muted);">P.0</small></span>
-                        <span style="font-size: 0.55rem; color: var(--text-muted); font-weight: 700;">${s.totalMatches} PJ</span>
-                    </span>
+                    <div class="keepers-capsule-stat">
+                        <span class="keeper-pj-glass-badge">${s.totalMatches} PJ</span>
+                        <span class="keeper-cs-glass-badge">🧤 ${s.totalCS} <small style="font-size:0.45rem; opacity:0.8; font-weight:700;">P.0</small></span>
+                        <span class="keeper-efficiency-pct" title="Ratio de Imbatibilidad">${csRatio}%</span>
+                    </div>
                 `;
                 container.appendChild(row);
             });
