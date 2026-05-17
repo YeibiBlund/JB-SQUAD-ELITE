@@ -4343,36 +4343,99 @@ document.addEventListener('DOMContentLoaded', () => {
                 container.innerHTML = '<p style="font-size:0.7rem; text-align:center; opacity:0.5;">No hay registros imbatidos.</p>';
                 return;
             }
-            items.forEach((s, i) => {
-                const row = document.createElement('div');
-                const isFirst = i === 0;
-                row.className = `ranking-row-premium ranking-keeper-row ${isFirst ? 'rank-first' : ''}`;
-                row.onclick = () => {
-                    if (window.viewPlayerProfileDetail) window.viewPlayerProfileDetail(s.id);
-                };
-                
-                const posClass = getPositionColorClass('POR');
-                const rankNumClass = isFirst ? 'rank-number-premium rank-first-num' : 'rank-number-premium';
-                const rankDisplay = isFirst ? '👑' : `${i+1}`;
-                const csRatio = s.totalMatches > 0 ? Math.round((s.totalCS / s.totalMatches) * 100) : 0;
-                
-                row.innerHTML = `
-                    <span class="${rankNumClass}">${rankDisplay}</span>
-                    <div class="rank-avatar-frame">
-                        ${s.photo ? `<img src="${s.photo}" style="width:100%; height:100%; object-fit:cover; object-position: top; transform:${s.transform}">` : (s.avatar ? s.avatar.svg : '')}
-                    </div>
-                    <div style="flex: 1; display: flex; align-items: center; gap: 8px; overflow: hidden;">
-                        <span class="rank-name-text">${escapeHTML(s.name.toUpperCase())}</span>
-                        <span class="player-pos-badge ${posClass}" style="font-size: 0.5rem; padding: 1px 4px; border-radius: 3px; min-width: 22px; text-align: center; font-weight: 900;">POR</span>
-                    </div>
-                    <div class="keepers-capsule-stat">
-                        <span class="keeper-pj-glass-badge">${s.totalMatches} PJ</span>
-                        <span class="keeper-cs-glass-badge">🧤 ${s.totalCS} <small style="font-size:0.45rem; opacity:0.8; font-weight:700;">P.0</small></span>
-                        <span class="keeper-efficiency-pct" title="Ratio de Imbatibilidad">${csRatio}%</span>
-                    </div>
-                `;
-                container.appendChild(row);
-            });
+            
+            const isDesktop = container.id === 'home-top-keepers-list';
+            
+            if (isDesktop) {
+                items.forEach((s, i) => {
+                    const row = document.createElement('div');
+                    const isFirst = i === 0;
+                    row.className = `ranking-row-premium ranking-keeper-row ${isFirst ? 'rank-first' : ''}`;
+                    row.style.cssText = 'padding: 12px 24px; display: flex; align-items: center; justify-content: space-between; gap: 20px;';
+                    row.onclick = () => {
+                        if (window.viewPlayerProfileDetail) window.viewPlayerProfileDetail(s.id);
+                    };
+                    
+                    const posClass = getPositionColorClass('POR');
+                    const rankNumClass = isFirst ? 'rank-number-premium rank-first-num' : 'rank-number-premium';
+                    const rankDisplay = isFirst ? '👑' : `${i+1}`;
+                    const csRatio = s.totalMatches > 0 ? Math.round((s.totalCS / s.totalMatches) * 100) : 0;
+                    
+                    row.innerHTML = `
+                        <!-- Identidad (Izquierda) -->
+                        <div style="display: flex; align-items: center; gap: 15px; flex: 1; overflow: hidden;">
+                            <span class="${rankNumClass}" style="width: 25px; text-align: center;">${rankDisplay}</span>
+                            <div class="rank-avatar-frame" style="width: 36px; height: 36px; border-radius: 8px; flex-shrink: 0;">
+                                ${s.photo ? `<img src="${s.photo}" style="width:100%; height:100%; object-fit:cover; object-position: top; transform:${s.transform}">` : (s.avatar ? s.avatar.svg : '')}
+                            </div>
+                            <div style="display: flex; flex-direction: column; overflow: hidden; gap: 2px;">
+                                <span class="rank-name-text" style="font-size: 0.85rem; font-weight: 900; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${escapeHTML(s.name.toUpperCase())}</span>
+                                <span class="player-pos-badge ${posClass}" style="font-size: 0.5rem; padding: 1px 5px; border-radius: 3px; width: fit-content; font-weight: 900;">POR</span>
+                            </div>
+                        </div>
+
+                        <!-- Estadísticas e Imbatibilidad Detallada (Derecha) -->
+                        <div style="display: flex; align-items: center; gap: 25px; flex-shrink: 0;">
+                            
+                            <!-- Caja Partidos Jugados -->
+                            <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05); padding: 4px 10px; border-radius: 8px; min-width: 70px;">
+                                <span style="font-size: 0.5rem; color: var(--text-muted); font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 2px;">Partidos</span>
+                                <span style="font-size: 0.85rem; font-weight: 900; color: #fff;">${s.totalMatches} <small style="font-size: 0.55rem; color: var(--text-muted); font-weight: 800;">PJ</small></span>
+                            </div>
+
+                            <!-- Caja Imbatido (Porterías a Cero) -->
+                            <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; background: rgba(240, 165, 0, 0.05); border: 1px solid rgba(240, 165, 0, 0.15); padding: 4px 10px; border-radius: 8px; min-width: 70px;">
+                                <span style="font-size: 0.5rem; color: rgba(240, 165, 0, 0.8); font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 2px;">Porterías a 0</span>
+                                <span style="font-size: 0.85rem; font-weight: 900; color: var(--primary);">🧤 ${s.totalCS}</span>
+                            </div>
+
+                            <!-- Caja Efectividad (Porcentaje y barra visual) -->
+                            <div style="display: flex; flex-direction: column; align-items: flex-end; min-width: 130px; gap: 4px;">
+                                <div style="display: flex; justify-content: space-between; width: 100%; align-items: center;">
+                                    <span style="font-size: 0.5rem; color: var(--text-muted); font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px;">Efectividad</span>
+                                    <span style="font-size: 0.75rem; font-weight: 900; color: #4CAF50;">${csRatio}%</span>
+                                </div>
+                                <div style="width: 100%; height: 5px; background: rgba(255,255,255,0.05); border-radius: 3px; overflow: hidden; border: 1px solid rgba(255,255,255,0.02);">
+                                    <div style="width: ${csRatio}%; height: 100%; background: linear-gradient(90deg, #4CAF50 0%, #8BC34A 100%); border-radius: 3px; box-shadow: 0 0 5px rgba(76, 175, 80, 0.3);"></div>
+                                </div>
+                            </div>
+
+                        </div>
+                    `;
+                    container.appendChild(row);
+                });
+            } else {
+                items.forEach((s, i) => {
+                    const row = document.createElement('div');
+                    const isFirst = i === 0;
+                    row.className = `ranking-row-premium ranking-keeper-row ${isFirst ? 'rank-first' : ''}`;
+                    row.onclick = () => {
+                        if (window.viewPlayerProfileDetail) window.viewPlayerProfileDetail(s.id);
+                    };
+                    
+                    const posClass = getPositionColorClass('POR');
+                    const rankNumClass = isFirst ? 'rank-number-premium rank-first-num' : 'rank-number-premium';
+                    const rankDisplay = isFirst ? '👑' : `${i+1}`;
+                    const csRatio = s.totalMatches > 0 ? Math.round((s.totalCS / s.totalMatches) * 100) : 0;
+                    
+                    row.innerHTML = `
+                        <span class="${rankNumClass}">${rankDisplay}</span>
+                        <div class="rank-avatar-frame">
+                            ${s.photo ? `<img src="${s.photo}" style="width:100%; height:100%; object-fit:cover; object-position: top; transform:${s.transform}">` : (s.avatar ? s.avatar.svg : '')}
+                        </div>
+                        <div style="flex: 1; display: flex; align-items: center; gap: 8px; overflow: hidden;">
+                            <span class="rank-name-text">${escapeHTML(s.name.toUpperCase())}</span>
+                            <span class="player-pos-badge ${posClass}" style="font-size: 0.5rem; padding: 1px 4px; border-radius: 3px; min-width: 22px; text-align: center; font-weight: 900;">POR</span>
+                        </div>
+                        <div class="keepers-capsule-stat">
+                            <span class="keeper-pj-glass-badge">${s.totalMatches} PJ</span>
+                            <span class="keeper-cs-glass-badge">🧤 ${s.totalCS} <small style="font-size:0.45rem; opacity:0.8; font-weight:700;">P.0</small></span>
+                            <span class="keeper-efficiency-pct" title="Ratio de Imbatibilidad">${csRatio}%</span>
+                        </div>
+                    `;
+                    container.appendChild(row);
+                });
+            }
         }
 
         // --- Mapeador de jugador para rankings ---
@@ -4540,6 +4603,12 @@ document.addEventListener('DOMContentLoaded', () => {
         // 5B. Tabla Exclusiva de Porteros (Solo los que jugaron de portero, calcula PJ de portero y fuerza rol POR)
         if (keepersListEl) {
             const keepersData = state.players
+                .filter(p => {
+                    // Filtrar: solo jugadores que tengan 'POR' como posición primaria o secundaria (v63.2)
+                    const isGKPrimary = (p.primary_pos || p.primaryPos) === 'POR';
+                    const isGKSecondary = Array.isArray(p.secondary_pos) && p.secondary_pos.includes('POR');
+                    return isGKPrimary || isGKSecondary;
+                })
                 .map(p => {
                     let totalCS = 0;
                     let totalMatches = 0;
@@ -4553,7 +4622,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         const matches = sess.matches || [];
                         matches.forEach(match => {
                             const mType = match.type || 'friendly';
-                            if (filterCS !== 'all' && mType !== filterCS) return;
+                            if (filterCS !== 'global' && mType !== filterCS) return;
                             
                             let wasGK = false;
                             if (sess.lineup && !Array.isArray(sess.lineup) && sess.lineup.assignments) {
