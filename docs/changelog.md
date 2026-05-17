@@ -1,3 +1,19 @@
+## [v64.0] - 2026-05-17 | 22:15
+### 📊 Historial de Enfrentamientos Directos (H2H - Head-to-Head) (v64.0)
+- **Módulo Reactivo Ultra Premium**: Integrado dentro del modal de creación de partidos en vivo (`matchModal`).
+- **Escaneo Predictivo e Instantáneo**: Al escribir el nombre de un rival o seleccionarlo desde el listado de equipos predefinidos, la aplicación escanea de forma proactiva y en milisegundos todo el historial de partidos previos (en todas las jornadas de `state.sessions` y `state.activeSession`).
+- **Tarjetas de Métricas de Rendimiento**: Muestra de forma condensada el Balance de resultados (Victorias/Empates/Derrotas), Ratio de Goles (Goles a Favor vs. Goles en Contra) y Ratio de Eficacia (Porcentaje de Éxito).
+- **Feed Cronológico de Enfrentamientos**: Muestra las últimas 3 citas directas en una lista premium interactiva con badges de resultado coloreados y tooltips.
+- **Limpieza Automática y Cierres**: Ocultación y vaciado proactivo del contenedor H2H al cerrar el modal o enviar el formulario para un flujo limpio y optimizado.
+
+## [v63.0] - 2026-05-17 | 19:10
+### 🎨 Rediseño Completo de Rankings y Estética Premium (v63.0)
+- **Rankings Bento Grid Unificado**: Rediseño estético completo del Dashboard, simplificando cabeceras y aplicando semántica de color premium.
+- **Estadísticas de Portería Expandidas en PC**: Nueva maquetación horizontal ancha en escritorio con cajas de estadísticas separadas para Partidos (`PJ`), Porterías a 0 (`🧤`) y porcentaje de efectividad con barra de progreso esmeralda dinámica.
+- **Filtro Oficial de Demarcación para Porteros**: Exclusión estricta de jugadores provisionales ("por risas") mediante un filtro ultra-robusto que valida las posiciones oficiales de la ficha del jugador (`primary_pos` o `secondary_pos` en formato array o string).
+- **Opacidad Progresiva en Racha en Curso**: Indicación implícita de recencia temporal mediante escalas y opacidades lineales en las chapas de racha, coronando el partido más actual con un resplandor e indicador explícito de dirección (`◀ Antiguo / Reciente ▶`).
+- **Corrección de Filtro Global de Porteros**: Reparado el bug de consulta que dejaba la tabla de porteros en blanco bajo el filtro "Global".
+
 ## [v61.0] - 2026-05-17 | 19:48
 ### 📊 Panel Élite de Asistencias e Imbatibilidad de Porteros (v61.0)
 - **Nueva Pestaña de Asistencia**: Añadida la pestaña "ASISTENCIA" en el menú de gestión de club (Mi Equipo). La visibilidad está protegida por rol y solo es accesible para Managers.

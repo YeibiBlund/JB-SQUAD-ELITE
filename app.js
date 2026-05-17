@@ -2347,9 +2347,155 @@ document.addEventListener('DOMContentLoaded', () => {
             };
         }
 
+        // --- FUNCIÓN HISTORIAL ENFRENTAMIENTOS H2H (v64.0) ---
+        const h2hContainer = document.getElementById('match-h2h-container');
+        const rivalInputEl = document.getElementById('rivalName');
+
+        function updateMatchH2H(rivalName) {
+            if (!h2hContainer) return;
+            if (!rivalName || rivalName.trim() === '') {
+                h2hContainer.style.display = 'none';
+                h2hContainer.innerHTML = '';
+                return;
+            }
+            
+            const cleanRivalName = rivalName.trim().toUpperCase();
+            let matchesVsRival = [];
+            
+            // Recopilar sesiones y partidos
+            const sessionsToScan = [...(state.sessions || [])];
+            if (state.activeSession) {
+                sessionsToScan.push(state.activeSession);
+            }
+            
+            sessionsToScan.forEach(sess => {
+                const matches = sess.matches || [];
+                matches.forEach(m => {
+                    if (m.rival && m.rival.trim().toUpperCase() === cleanRivalName) {
+                        matchesVsRival.push({
+                            ...m,
+                            sessionName: sess.name || `Jornada ${sess.id}`
+                        });
+                    }
+                });
+            });
+            
+            if (matchesVsRival.length === 0) {
+                h2hContainer.style.display = 'none';
+                h2hContainer.innerHTML = '';
+                return;
+            }
+            
+            // Ordenar por ID de partido de forma descendente (los más recientes primero)
+            matchesVsRival.sort((a, b) => b.id - a.id);
+            
+            // Métricas
+            let winC = 0, drawC = 0, lossC = 0;
+            let goalsF = 0, goalsC = 0;
+            
+            matchesVsRival.forEach(m => {
+                if (m.scoreHome > m.scoreAway) winC++;
+                else if (m.scoreHome === m.scoreAway) drawC++;
+                else lossC++;
+                goalsF += m.scoreHome || 0;
+                goalsC += m.scoreAway || 0;
+            });
+            
+            const totalPlayed = winC + drawC + lossC;
+            const successRatio = Math.round((winC / totalPlayed) * 100);
+            
+            // Render del Historial H2H
+            h2hContainer.innerHTML = `
+                <!-- Cabecera Premium -->
+                <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; border-bottom: 1px solid rgba(240,165,0,0.2); padding-bottom: 8px;">
+                    <span style="font-size: 0.7rem; font-weight: 900; letter-spacing: 1px; color: var(--primary); display: flex; align-items: center; gap: 6px;">
+                        📊 H2H VS ${escapeHTML(cleanRivalName)}
+                    </span>
+                    <span style="font-size: 0.55rem; background: rgba(240, 165, 0, 0.15); border: 1px solid rgba(240, 165, 0, 0.3); color: #fff; padding: 2px 6px; border-radius: 4px; font-weight: 800;">
+                        ${totalPlayed} ENCUENTROS
+                    </span>
+                </div>
+                
+                <!-- Tarjetas de Métricas -->
+                <div style="display: flex; gap: 8px; margin-bottom: 12px;">
+                    <!-- Balance W/D/L -->
+                    <div style="flex: 1; background: rgba(0,0,0,0.2); border: 1px solid rgba(255,255,255,0.02); border-radius: 6px; padding: 6px; display: flex; flex-direction: column; align-items: center;">
+                        <span style="font-size: 0.5rem; color: var(--text-muted); font-weight: 800; text-transform: uppercase; margin-bottom: 4px; letter-spacing: 0.5px;">Balance</span>
+                        <div style="display: flex; gap: 4px; font-size: 0.75rem; font-weight: 900;">
+                            <span style="color: #4CAF50;">${winC}V</span>
+                            <span style="color: #FFC107; opacity: 0.8;">${drawC}E</span>
+                            <span style="color: #F44336;">${lossC}D</span>
+                        </div>
+                    </div>
+                    
+                    <!-- Goles Favor / Contra -->
+                    <div style="flex: 1; background: rgba(0,0,0,0.2); border: 1px solid rgba(255,255,255,0.02); border-radius: 6px; padding: 6px; display: flex; flex-direction: column; align-items: center;">
+                        <span style="font-size: 0.5rem; color: var(--text-muted); font-weight: 800; text-transform: uppercase; margin-bottom: 4px; letter-spacing: 0.5px;">Goles</span>
+                        <span style="font-size: 0.75rem; font-weight: 900; color: #fff;">
+                            ${goalsF} <small style="font-size:0.5rem; color:var(--text-muted);">GF</small> - ${goalsC} <small style="font-size:0.5rem; color:var(--text-muted);">GC</small>
+                        </span>
+                    </div>
+
+                    <!-- Eficacia -->
+                    <div style="flex: 1; background: rgba(0,0,0,0.2); border: 1px solid rgba(255,255,255,0.02); border-radius: 6px; padding: 6px; display: flex; flex-direction: column; align-items: center;">
+                        <span style="font-size: 0.5rem; color: var(--text-muted); font-weight: 800; text-transform: uppercase; margin-bottom: 4px; letter-spacing: 0.5px;">Éxito</span>
+                        <span style="font-size: 0.75rem; font-weight: 900; color: #2ecc71;">
+                            ${successRatio}%
+                        </span>
+                    </div>
+                </div>
+                
+                <!-- Lista de Partidos Previos (Máx 3 para mantener el modal compacto) -->
+                <div style="display: flex; flex-direction: column; gap: 6px; max-height: 110px; overflow-y: auto; padding-right: 4px;">
+                    ${matchesVsRival.slice(0, 3).map(m => {
+                        const isWin = m.scoreHome > m.scoreAway;
+                        const isDraw = m.scoreHome === m.scoreAway;
+                        let outcomeSymbol = isWin ? 'V' : (isDraw ? 'E' : 'D');
+                        let outcomeColor = isWin ? '#2ecc71' : (isDraw ? '#f1c40f' : '#e74c3c');
+                        let conditionLabel = (m.matchCondition || 'local') === 'local' ? 'Local' : 'Vis.';
+                        let typeLabel = (m.type || 'official') === 'official' ? 'Ofic.' : 'Amis.';
+                        
+                        return `
+                            <div class="card-elite" style="padding: 6px 10px; margin: 0; display: flex; align-items: center; justify-content: space-between; font-size: 0.65rem; border-color: rgba(255,255,255,0.02); background: rgba(255,255,255,0.01);">
+                                <div style="display: flex; align-items: center; gap: 8px; overflow: hidden; width: 65%;">
+                                    <span style="width: 15px; height: 15px; border-radius: 3px; background: ${outcomeColor}; color: ${outcomeSymbol === 'E' ? '#000' : '#fff'}; display: flex; align-items: center; justify-content: center; font-size: 0.5rem; font-weight: 900; flex-shrink: 0;">
+                                        ${outcomeSymbol}
+                                    </span>
+                                    <span style="font-weight: 800; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" title="${escapeHTML(m.sessionName)}">
+                                        ${escapeHTML(m.sessionName)}
+                                    </span>
+                                </div>
+                                <div style="display: flex; align-items: center; gap: 8px; flex-shrink: 0;">
+                                    <span style="color: var(--text-muted); font-size: 0.55rem; font-weight: 700;">(${conditionLabel} | ${typeLabel})</span>
+                                    <span style="font-weight: 900; font-size: 0.7rem; color: var(--primary); letter-spacing: 0.5px;">
+                                        ${m.scoreHome} - ${m.scoreAway}
+                                    </span>
+                                </div>
+                            </div>
+                        `;
+                    }).join('')}
+                </div>
+            `;
+            h2hContainer.style.display = 'block';
+        }
+
         if (rivalSelect) {
             rivalSelect.onchange = () => {
-                manualRivalContainer.style.display = rivalSelect.value === 'manual' ? 'block' : 'none';
+                const isManual = rivalSelect.value === 'manual';
+                manualRivalContainer.style.display = isManual ? 'block' : 'none';
+                
+                if (isManual) {
+                    updateMatchH2H(rivalInputEl ? rivalInputEl.value : '');
+                } else {
+                    const selectedTeam = globalTeams.find(t => t.id === rivalSelect.value);
+                    updateMatchH2H(selectedTeam ? selectedTeam.name : '');
+                }
+            };
+        }
+
+        if (rivalInputEl) {
+            rivalInputEl.oninput = () => {
+                updateMatchH2H(rivalInputEl.value);
             };
         }
 
@@ -2368,7 +2514,13 @@ document.addEventListener('DOMContentLoaded', () => {
             };
         }
 
-        closeMatchModal.onclick = () => matchModal.style.display = 'none';
+        closeMatchModal.onclick = () => {
+            matchModal.style.display = 'none';
+            if (h2hContainer) {
+                h2hContainer.style.display = 'none';
+                h2hContainer.innerHTML = '';
+            }
+        };
 
         matchForm.addEventListener('submit', (e) => {
             e.preventDefault();
@@ -2396,6 +2548,10 @@ document.addEventListener('DOMContentLoaded', () => {
             
             matchModal.style.display = 'none';
             matchForm.reset();
+            if (h2hContainer) {
+                h2hContainer.style.display = 'none';
+                h2hContainer.innerHTML = '';
+            }
         });
 
         // Controles de partido en vivo (v55.0 - Dinámicos)
