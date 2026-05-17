@@ -1124,6 +1124,7 @@
                     <button class="elite-tab-btn" data-target="team-requests-panel">
                         SOLICITUDES <span id="requests-tab-badge" style="display: none; background: var(--primary); color: #000; padding: 2px 6px; border-radius: 10px; font-size: 0.6rem; margin-left: 5px;">0</span>
                     </button>
+                    <button class="elite-tab-btn" data-target="team-attendance-panel">ASISTENCIA</button>
                     <button class="elite-tab-btn" data-target="team-global-panel">LIGAS</button>
                     <button class="elite-tab-btn" data-target="team-settings-panel">AJUSTES</button>
                 </div>
@@ -1249,6 +1250,33 @@
                     </div>
                     <div id="team-requests-list" style="display: flex; flex-direction: column; gap: 15px;">
                         <!-- Inyección vía JS -->
+                    </div>
+                </div>
+
+                <!-- Panel de Asistencias (v61.0) -->
+                <div id="team-attendance-panel" class="card-elite fade-in" style="display: none; border: 1px solid var(--glass-border); padding: 25px; margin-bottom: 20px; background: rgba(255,255,255,0.02);">
+                    <div class="panel-header" style="margin-bottom: 20px; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 12px; display: flex; justify-content: space-between; align-items: center;">
+                        <div>
+                            <h2 style="font-size: 1.1rem; letter-spacing: 1px; color: var(--primary); font-weight: 800; margin-bottom: 5px;">ASISTENCIA Y CONVOCATORIAS</h2>
+                            <p style="font-size: 0.65rem; color: var(--text-muted); text-transform: uppercase; margin: 0;">Análisis y control de compromiso de la plantilla</p>
+                        </div>
+                    </div>
+                    
+                    <div class="table-responsive-elite" style="overflow-x: auto; background: rgba(0,0,0,0.2); border-radius: 10px; border: 1px solid rgba(255,255,255,0.05);">
+                        <table id="table-attendance-stats" style="width: 100%; border-collapse: collapse; text-align: left; font-size: 0.75rem;">
+                            <thead>
+                                <tr style="border-bottom: 1px solid rgba(255,255,255,0.1); background: rgba(255,255,255,0.02);">
+                                    <th style="padding: 15px; color: var(--primary); font-weight: 900; cursor: pointer; user-select: none;" data-sort="name">JUGADOR <span style="opacity: 0.3; margin-left: 4px;">↕</span></th>
+                                    <th style="padding: 15px; color: var(--primary); font-weight: 900; text-align: center; cursor: pointer; user-select: none;" data-sort="yesCount">SÍ <span style="opacity: 0.3; margin-left: 4px;">↕</span></th>
+                                    <th style="padding: 15px; color: var(--primary); font-weight: 900; text-align: center; cursor: pointer; user-select: none;" data-sort="noCount">NO <span style="opacity: 0.3; margin-left: 4px;">↕</span></th>
+                                    <th style="padding: 15px; color: var(--primary); font-weight: 900; text-align: center; cursor: pointer; user-select: none;" data-sort="ratio">RATIO VOTO <span style="opacity: 0.3; margin-left: 4px;">↕</span></th>
+                                    <th style="padding: 15px; color: var(--primary); font-weight: 900; text-align: center; cursor: pointer; user-select: none;" data-sort="lineupsCount">CONVOCADOS <span style="opacity: 0.3; margin-left: 4px;">↕</span></th>
+                                </tr>
+                            </thead>
+                            <tbody id="attendance-stats-tbody">
+                                <!-- Inyectado dinámicamente -->
+                            </tbody>
+                        </table>
                     </div>
                 </div>
 

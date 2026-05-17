@@ -205,7 +205,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Listeners for Elite Tabs (Mi Equipo)
     // Listeners for Elite Tabs (Mi Equipo)
     const teamTabs = document.querySelectorAll('#team-view-tabs .elite-tab-btn');
-    const teamPanels = ['team-roster-panel', 'team-requests-panel', 'team-settings-panel', 'team-global-panel'];
+    const teamPanels = ['team-roster-panel', 'team-requests-panel', 'team-settings-panel', 'team-global-panel', 'team-attendance-panel'];
     let isGlobalUnlocked = false; // Estado de desbloqueo de la sección Ligas (v57.2)
     
     teamTabs.forEach(btn => {
@@ -240,6 +240,45 @@ document.addEventListener('DOMContentLoaded', () => {
             if (targetId === 'team-global-panel' && isGlobalUnlocked) {
                 renderGlobalMgmt();
             }
+
+            // Si entramos en Asistencia (v61.0)
+            if (targetId === 'team-attendance-panel') {
+                renderAttendancePanel();
+            }
+        });
+    });
+
+    // --- ESTADO Y LISTENERS DE ORDENACIÓN PARA ASISTENCIA (v61.0) ---
+    let processedAttendancePlayers = [];
+    let attendanceSortKey = 'name';
+    let attendanceSortDesc = false;
+
+    const attendanceHeaders = document.querySelectorAll('#table-attendance-stats th[data-sort]');
+    attendanceHeaders.forEach(th => {
+        th.addEventListener('click', () => {
+            const key = th.getAttribute('data-sort');
+            if (attendanceSortKey === key) {
+                attendanceSortDesc = !attendanceSortDesc;
+            } else {
+                attendanceSortKey = key;
+                attendanceSortDesc = (key !== 'name');
+            }
+            
+            attendanceHeaders.forEach(h => {
+                const arrow = h.querySelector('span');
+                if (arrow) {
+                    const hKey = h.getAttribute('data-sort');
+                    if (hKey === attendanceSortKey) {
+                        arrow.textContent = attendanceSortDesc ? '↓' : '↑';
+                        arrow.style.opacity = '1';
+                    } else {
+                        arrow.textContent = '↕';
+                        arrow.style.opacity = '0.3';
+                    }
+                }
+            });
+            
+            renderAttendanceTableRows();
         });
     });
 
@@ -4892,6 +4931,164 @@ document.addEventListener('DOMContentLoaded', () => {
             window.jbToast('Error al procesar la solicitud', 'error');
         }
         window.jbLoading.hide();
+    }
+
+    async function renderAttendancePanel() {
+        const tbody = document.getElementById('attendance-stats-tbody');
+        if (!tbody) return;
+        
+        tbody.innerHTML = '<tr><td colspan="5" style="text-align: center; padding: 30px; font-size: 0.75rem; color: var(--text-muted);">Cargando estadísticas de asistencia...</td></tr>';
+        
+        try {
+            window.jbLoading.show('Consultando historial de convocatorias...');
+            
+            // 1. Obtener todas las convocatorias del equipo
+            const { data: polls, error: pollsErr } = await supabase
+                .from('availability_polls')
+                .select('id')
+                .eq('team_id', state.team.id);
+            
+            if (pollsErr) throw pollsErr;
+            
+            let votes = [];
+            if (polls && polls.length > 0) {
+                const pollIds = polls.map(p => p.id);
+                const { data: votesData, error: votesErr } = await supabase
+                    .from('availability_votes')
+                    .select('user_id, vote')
+                    .in('poll_id', pollIds);
+                
+                if (votesErr) throw votesErr;
+                votes = votesData || [];
+            }
+            
+            // 2. Obtener todas las alineaciones de jornadas finalizadas y activas
+            const sessionsToScan = [...(state.sessions || [])];
+            if (state.activeSession) {
+                sessionsToScan.push(state.activeSession);
+            }
+            
+            // 3. Procesar datos para cada jugador en memoria
+            processedAttendancePlayers = state.players.map(p => {
+                let yesCount = 0;
+                let noCount = 0;
+                
+                if (p.user_id) {
+                    const playerVotes = votes.filter(v => v.user_id === p.user_id);
+                    playerVotes.forEach(v => {
+                        if (v.vote === 'yes' || v.vote === 'late') yesCount++;
+                        else if (v.vote === 'no') noCount++;
+                    });
+                }
+                
+                let lineupsCount = 0;
+                sessionsToScan.forEach(sess => {
+                    if (sess.lineup) {
+                        let assignedIds = [];
+                        if (Array.isArray(sess.lineup)) {
+                            assignedIds = sess.lineup.map(id => id.toString());
+                        } else if (sess.lineup.assignments) {
+                            assignedIds = Object.values(sess.lineup.assignments).filter(id => id).map(id => id.toString());
+                        }
+                        
+                        if (assignedIds.includes(p.id.toString()) || assignedIds.includes(p.id)) {
+                            lineupsCount++;
+                        }
+                    }
+                });
+                
+                const totalVotes = yesCount + noCount;
+                const ratio = totalVotes > 0 ? Math.round((yesCount / totalVotes) * 100) : 0;
+                
+                return {
+                    id: p.id,
+                    name: p.name,
+                    primaryPos: p.primaryPos,
+                    dorsal: p.dorsal,
+                    photo_url: p.photo_url,
+                    photo_scale: p.photo_scale,
+                    photo_x: p.photo_x,
+                    photo_y: p.photo_y,
+                    avatarId: p.avatarId,
+                    yesCount,
+                    noCount,
+                    ratio,
+                    lineupsCount
+                };
+            });
+            
+            // 4. Renderizar filas ordenadas
+            renderAttendanceTableRows();
+            
+        } catch (err) {
+            console.error(">>> [ERROR] renderAttendancePanel:", err.message);
+            tbody.innerHTML = `<tr><td colspan="5" style="text-align: center; padding: 30px; font-size: 0.75rem; color: #F44336;">Error al cargar datos: ${err.message}</td></tr>`;
+        } finally {
+            window.jbLoading.hide();
+        }
+    }
+
+    function renderAttendanceTableRows() {
+        const tbody = document.getElementById('attendance-stats-tbody');
+        if (!tbody) return;
+        
+        if (processedAttendancePlayers.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="5" style="text-align: center; padding: 30px; font-size: 0.75rem; color: var(--text-muted);">No hay jugadores registrados en el equipo.</td></tr>';
+            return;
+        }
+        
+        // Algoritmo de ordenación
+        const sorted = [...processedAttendancePlayers].sort((a, b) => {
+            let valA = a[attendanceSortKey];
+            let valB = b[attendanceSortKey];
+            
+            if (typeof valA === 'string') {
+                return attendanceSortDesc ? valB.localeCompare(valA) : valA.localeCompare(valB);
+            }
+            
+            return attendanceSortDesc ? valB - valA : valA - valB;
+        });
+        
+        tbody.innerHTML = sorted.map(p => {
+            const avatar = AVATARS.find(av => {
+                const tid = (typeof p.avatarId === 'string') ? parseInt(p.avatarId) : p.avatarId;
+                return av.id === (tid || 1);
+            });
+            
+            // Lógica semántica de compromiso (FIFA/Elite)
+            let ratioColor = 'rgba(255,255,255,0.08)';
+            if (p.ratio >= 80) ratioColor = '#4CAF50';
+            else if (p.ratio >= 50) ratioColor = '#FF9800';
+            else if (p.ratio > 0) ratioColor = '#F44336';
+            
+            const transform = getPlayerTransform(p);
+            
+            return `
+                <tr style="border-bottom: 1px solid rgba(255,255,255,0.05); transition: 0.3s;" onmouseover="this.style.background='rgba(255,255,255,0.02)'" onmouseout="this.style.background='transparent'">
+                    <td style="padding: 12px 15px; display: flex; align-items: center; gap: 10px;">
+                        <div style="width: 32px; height: 32px; border-radius: 50%; overflow: hidden; border: 2px solid var(--primary); background: rgba(0,0,0,0.3); display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                            ${p.photo_url ? `<img src="${p.photo_url}" style="width:100%; height:100%; object-fit:cover; transform: ${transform}">` : (avatar ? avatar.svg : '👤')}
+                        </div>
+                        <div style="min-width: 0;">
+                            <div style="font-weight: 800; color: #fff; font-size: 0.8rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${(p.name || '').toUpperCase()}</div>
+                            <div style="font-size: 0.6rem; color: var(--text-muted); font-weight: 700; text-transform: uppercase;">${p.primaryPos || 'JUGADOR'} - Dorsal ${p.dorsal || 'S/D'}</div>
+                        </div>
+                    </td>
+                    <td style="padding: 12px 15px; text-align: center; font-weight: 900; color: #4CAF50; font-size: 0.85rem;">${p.yesCount}</td>
+                    <td style="padding: 12px 15px; text-align: center; font-weight: 900; color: #F44336; font-size: 0.85rem;">${p.noCount}</td>
+                    <td style="padding: 12px 15px; text-align: center; font-weight: 900;">
+                        <span style="background: ${ratioColor}; color: #000; padding: 3px 8px; border-radius: 6px; font-size: 0.65rem; font-weight: 900;">
+                            ${p.ratio}%
+                        </span>
+                    </td>
+                    <td style="padding: 12px 15px; text-align: center; font-weight: 900; color: var(--primary); font-size: 0.85rem;">
+                        <div style="display: inline-flex; align-items: center; gap: 5px; background: rgba(240, 165, 0, 0.1); border: 1px solid rgba(240, 165, 0, 0.2); padding: 2px 8px; border-radius: 4px;">
+                            <span style="font-size: 0.7rem;">🛡️</span> <span>${p.lineupsCount}</span>
+                        </div>
+                    </td>
+                </tr>
+            `;
+        }).join('');
     }
 
     // --- EDICIÓN MANUAL DE ESTADÍSTICAS (v50.4) ---
