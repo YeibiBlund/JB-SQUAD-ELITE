@@ -1622,8 +1622,21 @@ document.addEventListener('DOMContentLoaded', () => {
                 };
             }
             
-            const assignedPlayerId = activeTactic.assignments[slot.id];
-            const player = state.players.find(p => p.id == assignedPlayerId);
+            const assignedPlayerId = activeTactic.assignments ? activeTactic.assignments[slot.id] : null;
+            let player = state.players.find(p => p.id == assignedPlayerId);
+
+            // --- RECONOCER JUGADORES DE PRUEBA EN EL CAMPO (v60.9) ---
+            if (!player && assignedPlayerId && typeof assignedPlayerId === 'string' && assignedPlayerId.startsWith('prueba_')) {
+                const num = assignedPlayerId.split('_')[1];
+                player = {
+                    id: assignedPlayerId,
+                    name: `PRUEBA ${num}`,
+                    dorsal: `P${num}`,
+                    avatarId: 1,
+                    photo_url: null,
+                    primaryPos: 'PRU'
+                };
+            }
 
             if (player) {
                 const avatar = AVATARS.find(av => {
@@ -2172,6 +2185,34 @@ document.addEventListener('DOMContentLoaded', () => {
                     assignments: activeTactic.assignments,
                     customPositions: activeTactic.customPositions || {}
                 } : [];
+            }
+
+            // --- INYECCIÓN AUTOMÁTICA DE JUGADORES DE PRUEBA (TRIAL PLAYERS) (v60.9) ---
+            if (currentLineup) {
+                if (currentLineup.formation) {
+                    const formationSlots = FORMATIONS[currentLineup.formation] || [];
+                    const clonedAssignments = currentLineup.assignments ? { ...currentLineup.assignments } : {};
+                    
+                    let trialIndex = 1;
+                    formationSlots.forEach(slot => {
+                        const assignedVal = clonedAssignments[slot.id];
+                        if (!assignedVal) {
+                            clonedAssignments[slot.id] = `prueba_${trialIndex}`;
+                            trialIndex++;
+                        }
+                    });
+                    
+                    currentLineup = {
+                        ...currentLineup,
+                        assignments: clonedAssignments
+                    };
+                } else if (Array.isArray(currentLineup)) {
+                    let trialIndex = 1;
+                    while (currentLineup.length < 11) {
+                        currentLineup.push(`prueba_${trialIndex}`);
+                        trialIndex++;
+                    }
+                }
             }
 
             sessionStartModal.style.display = 'none';
@@ -3200,6 +3241,18 @@ document.addEventListener('DOMContentLoaded', () => {
             }
             
             relevantPlayers = state.players.filter(p => assignedIds.includes(p.id.toString()) || assignedIds.includes(p.id));
+
+            // --- INYECTAR JUGADORES DE PRUEBA EN EL SELECTOR DE GOLES (v60.9) ---
+            const trials = assignedIds.filter(id => id.startsWith('prueba_')).map(id => {
+                const num = id.split('_')[1];
+                return {
+                    id: id,
+                    name: `PRUEBA ${num}`,
+                    dorsal: `P${num}`,
+                    primaryPos: 'PRU'
+                };
+            });
+            relevantPlayers = [...relevantPlayers, ...trials];
         } else {
             // Fallback: Usar táctica más reciente guardada
             const lastTactic = state.savedTactics.find(t => t.id === state.activeTacticId);

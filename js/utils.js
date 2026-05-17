@@ -70,7 +70,12 @@ function getPlayerTransform(player) {
  * @returns {string}
  */
 function getPlayerNameById(id) {
-    if (!id || !window.state || !window.state.players) return '';
+    if (!id) return '';
+    if (typeof id === 'string' && id.startsWith('prueba_')) {
+        const num = id.split('_')[1];
+        return `PRUEBA ${num}`;
+    }
+    if (!window.state || !window.state.players) return '';
     const p = window.state.players.find(p => p.id == id);
     return p ? p.name.split(' ')[0].toUpperCase() : '';
 }

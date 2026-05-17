@@ -1,3 +1,11 @@
+## [v60.9] - 2026-05-17 | 19:15
+### 👥 Sistema de Jugadores de Prueba (Trial/Guest Players)
+- **Auto-Completado de Alineación**: Al iniciar una nueva jornada, las ranuras vacías en la alineación táctica de la convocatoria se completan automáticamente con identificadores secuenciales de prueba (`prueba_1`, `prueba_2`, etc.).
+- **Detección y Visualización Interactiva**: En el mini-pitch interactivo del partido en vivo, las ranuras de invitados se renderizan automáticamente como perfiles simulados en memoria local con dorsal virtual (`P1`, `P2`, etc.) y el nombre `PRUEBA X`.
+- **Integridad Estadística**: Los goles y asistencias marcados por los invitados se registran en los sucesos de los partidos (mostrándose en el acta de partidos de forma verídica y transparente), pero son completamente ignorados de forma intencional en las estadísticas individuales acumuladas de la plantilla oficial y en el sistema de auto-curación (`recalculateAllStats`), garantizando un balance de datos del club 100% limpio y real.
+- **Formateador Universal**: Modificada la función global helper `getPlayerNameById` para interceptar perfiles que comienzan con `prueba_` y resolverlos instantáneamente como `PRUEBA X` en toda la SPA.
+- **Selector de Goles En Vivo**: Incorporados dinámicamente los invitados en el selector manual del modal de goleador/asistente.
+
 ## [v60.8] - 2026-05-02 | 00:55
 ### 🏗️ Matchday Creator: Structural Overhaul
 - **Layout Top-Down**: Se ha reestructurado el editor para que el título y el botón de volver ocupen la parte superior de forma independiente, eliminando los desbordamientos laterales.
