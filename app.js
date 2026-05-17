@@ -4453,9 +4453,45 @@ document.addEventListener('DOMContentLoaded', () => {
         const cleansheeters = state.players
             .map(p => {
                 let totalCS = 0;
-                if (filterCS === 'official') totalCS = p.stats?.official?.cleanSheets || 0;
-                else if (filterCS === 'friendly') totalCS = p.stats?.friendly?.cleanSheets || 0;
-                else totalCS = (p.stats?.official?.cleanSheets || 0) + (p.stats?.friendly?.cleanSheets || 0);
+                
+                const sessionsToScan = [...(state.sessions || [])];
+                if (state.activeSession) {
+                    sessionsToScan.push(state.activeSession);
+                }
+                
+                sessionsToScan.forEach(sess => {
+                    const matches = sess.matches || [];
+                    matches.forEach(match => {
+                        const mType = match.type || 'friendly';
+                        if (filterCS !== 'all' && mType !== filterCS) return;
+                        
+                        const isCleanSheet = (match.scoreAway === 0);
+                        if (!isCleanSheet) return;
+                        
+                        let wasGK = false;
+                        if (sess.lineup && !Array.isArray(sess.lineup) && sess.lineup.assignments) {
+                            const gkId = sess.lineup.assignments.GK;
+                            if (gkId && gkId.toString() === p.id.toString()) {
+                                wasGK = true;
+                            }
+                        } else {
+                            if (p.primaryPos === 'POR') {
+                                let played = false;
+                                if (match.lineup && Array.isArray(match.lineup)) {
+                                    played = match.lineup.map(id => id.toString()).includes(p.id.toString());
+                                } else if (sess.lineup && Array.isArray(sess.lineup)) {
+                                    played = sess.lineup.map(id => id.toString()).includes(p.id.toString());
+                                }
+                                if (played) wasGK = true;
+                            }
+                        }
+                        
+                        if (wasGK) {
+                            totalCS++;
+                        }
+                    });
+                });
+                
                 return { ...mapPlayerForRanking(p), totalCS };
             })
             .filter(s => s.totalCS > 0)

@@ -1,10 +1,12 @@
-## [v61.0] - 2026-05-17 | 19:35
-### 📊 Panel Élite de Asistencias y Compromiso (Exclusivo Directores)
+## [v61.0] - 2026-05-17 | 19:43
+### 📊 Panel Élite de Asistencias e Imbatibilidad de Porteros (v61.0)
 - **Nueva Pestaña de Asistencia**: Añadida la pestaña "ASISTENCIA" en el menú de gestión de club (Mi Equipo). La visibilidad está protegida por rol y solo es accesible para Managers.
 - **Historial Completo de Convocatorias**: La tabla muestra a todos los jugadores del club con el conteo de votos de disponibilidad `"SÍ"` (incluyendo `"Tarde"`) y `"NO"` a lo largo de todas las convocatorias históricas en Supabase.
 - **Compromiso Semántico (Ratio)**: Incorporada la columna de Ratio de Compromiso, con badges HSL de colores dinámicos: Verde (alto compromiso), Naranja (compromiso regular) y Rojo (alerta de baja asistencia).
 - **Titularidades Acumuladas**: Añadida la columna "CONVOCADOS" que cuenta las veces que el jugador ha formado parte del once titular inicial con el que se disputó cada jornada finalizada o activa, consultando en caché ultra-rápida.
 - **Ordenación Bidireccional en Vivo**: Implementada ordenación reactiva en memoria al hacer clic en las cabeceras. Las columnas numéricas ordenan de forma descendente por defecto en el primer clic para maximizar la utilidad directiva.
+- **Top Porterías a Cero de Porteros**: Rediseñado el ranking "TOP PORTERÍAS A 0" del Dashboard de Inicio. En lugar de otorgar clean sheets a todos los jugadores de campo de forma redundante en la tabla principal, el sistema ahora escanea dinámicamente las asignaciones del slot `'GK'` (Portero) en cada jornada jugada para filtrar y atribuir las vallas invictas únicamente a quien efectivamente defendió el arco en ese partido.
+- **Compatibilidad Híbrida/Legacy**: Para partidos antiguos sin datos tácticos, aplica un fallback que comprueba si la demarcación principal del jugador participante es `'POR'`, manteniendo intacta su historia acumulativa.
 
 ## [v60.9] - 2026-05-17 | 19:15
 ### 👥 Sistema de Jugadores de Prueba (Trial/Guest Players)
