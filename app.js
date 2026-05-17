@@ -7406,6 +7406,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (listGeneralM) listGeneralM.style.setProperty('display', 'flex', 'important');
         }
     };
+    window.switchMobileCSTab = window.switchCSTab;
 
     /**
      * CONMUTADOR DE PESTAÑAS PRINCIPALES DE RANKINGS EN MÓVIL v62.0
