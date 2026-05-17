@@ -742,6 +742,8 @@ document.addEventListener('DOMContentLoaded', () => {
         if (filterCleanSheets) filterCleanSheets.onclick = () => cycleFilter('cleansheets');
         const filterCleanSheetsM = document.getElementById('filter-cleansheets-mobile');
         if (filterCleanSheetsM) filterCleanSheetsM.onclick = () => cycleFilter('cleansheets');
+        const filterKeepersD = document.getElementById('filter-keepers-desktop');
+        if (filterKeepersD) filterKeepersD.onclick = () => cycleFilter('cleansheets');
     }
 
     // --- Lógica de Formularios ---
@@ -4247,6 +4249,7 @@ document.addEventListener('DOMContentLoaded', () => {
         updateBadge('filter-assists', window.dashboardFilters.assists);
         updateBadge('filter-winrate', window.dashboardFilters.winrate);
         updateBadge('filter-cleansheets', window.dashboardFilters.cleansheets);
+        updateBadge('filter-keepers-desktop', window.dashboardFilters.cleansheets);
         
         const totalPlayersEl = document.getElementById('stats-total-players');
         const totalSessionsEl = document.getElementById('stats-total-sessions');
@@ -7335,16 +7338,10 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     /**
-     * CONMUTADOR DE SUB-PESTAÑAS DE PORTERÍAS A CERO (GENERAL / PORTEROS) v61.0
+     * CONMUTADOR DE SUB-PESTAÑAS DE PORTERÍAS A CERO (GENERAL / PORTEROS) v61.0 (Sólo Mobile en v63.0)
      */
     window.switchCSTab = function(tab) {
         window.activeCleanSheetsTab = tab;
-        
-        // Elementos Escritorio
-        const btnGeneral = document.getElementById('btn-cs-tab-general');
-        const btnKeepers = document.getElementById('btn-cs-tab-keepers');
-        const listGeneral = document.getElementById('home-top-cleansheets-list');
-        const listKeepers = document.getElementById('home-top-keepers-list');
         
         // Elementos Móvil
         const btnGeneralM = document.getElementById('btn-cs-tab-general-mobile');
@@ -7353,20 +7350,6 @@ document.addEventListener('DOMContentLoaded', () => {
         const listKeepersM = document.getElementById('mobile-top-keepers-list');
         
         if (tab === 'keepers') {
-            // Desktop update
-            if (btnGeneral) {
-                btnGeneral.style.background = 'transparent';
-                btnGeneral.style.borderColor = 'rgba(255,255,255,0.05)';
-                btnGeneral.style.color = 'var(--text-muted)';
-            }
-            if (btnKeepers) {
-                btnKeepers.style.background = 'rgba(240, 165, 0, 0.15)';
-                btnKeepers.style.borderColor = 'rgba(240, 165, 0, 0.3)';
-                btnKeepers.style.color = '#fff';
-            }
-            if (listGeneral) listGeneral.style.setProperty('display', 'none', 'important');
-            if (listKeepers) listKeepers.style.setProperty('display', 'flex', 'important');
-            
             // Mobile update
             if (btnGeneralM) {
                 btnGeneralM.style.background = 'transparent';
@@ -7381,20 +7364,6 @@ document.addEventListener('DOMContentLoaded', () => {
             if (listGeneralM) listGeneralM.style.setProperty('display', 'none', 'important');
             if (listKeepersM) listKeepersM.style.setProperty('display', 'flex', 'important');
         } else {
-            // Desktop update
-            if (btnKeepers) {
-                btnKeepers.style.background = 'transparent';
-                btnKeepers.style.borderColor = 'rgba(255,255,255,0.05)';
-                btnKeepers.style.color = 'var(--text-muted)';
-            }
-            if (btnGeneral) {
-                btnGeneral.style.background = 'rgba(240, 165, 0, 0.15)';
-                btnGeneral.style.borderColor = 'rgba(240, 165, 0, 0.3)';
-                btnGeneral.style.color = '#fff';
-            }
-            if (listKeepers) listKeepers.style.setProperty('display', 'none', 'important');
-            if (listGeneral) listGeneral.style.setProperty('display', 'flex', 'important');
-            
             // Mobile update
             if (btnKeepersM) {
                 btnKeepersM.style.background = 'transparent';

@@ -349,18 +349,23 @@
 
                             <!-- TOP PORTERÍAS A 0 -->
                             <div class="card-elite-premium ranking-card-premium gloves-theme" style="padding: 20px;">
-                                <div class="ranking-header-elite" style="margin-bottom: 15px; padding-bottom: 12px; border-bottom: 1px solid rgba(240,165,0,0.15); display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap;">
-                                    <div style="display: flex; gap: 6px; align-items: center;">
-                                        <button class="cs-tab-btn active" id="btn-cs-tab-general" style="background: rgba(240, 165, 0, 0.15); border: 1px solid rgba(240, 165, 0, 0.3); color: #fff; font-size: 0.6rem; font-weight: 800; padding: 4px 10px; border-radius: 6px; cursor: pointer; transition: all 0.3s; letter-spacing: 1px;" onclick="window.switchCSTab('general')">GENERAL</button>
-                                        <button class="cs-tab-btn" id="btn-cs-tab-keepers" style="background: transparent; border: 1px solid rgba(255,255,255,0.05); color: var(--text-muted); font-size: 0.6rem; font-weight: 800; padding: 4px 10px; border-radius: 6px; cursor: pointer; transition: all 0.3s; letter-spacing: 1px;" onclick="window.switchCSTab('keepers')">PORTEROS</button>
-                                    </div>
+                                <div class="ranking-header-elite" style="margin-bottom: 15px; padding-bottom: 12px; border-bottom: 1px solid rgba(240,165,0,0.15); display: flex; justify-content: space-between; align-items: center;">
+                                    <span style="font-size: 0.7rem; font-weight: 800; letter-spacing: 1.5px; color: var(--text-muted);"><span class="hide-mobile">TOP </span>PORTERÍAS A 0</span>
                                     <div class="filter-badge-elite" id="filter-cleansheets" data-mode="official">Oficiales</div>
                                 </div>
                                 <div id="home-top-cleansheets-list" style="display: flex; flex-direction: column; gap: 8px;">
                                     <!-- Inyectado por JS (General) -->
                                 </div>
-                                <div id="home-top-keepers-list" style="display: none; flex-direction: column; gap: 8px;">
-                                    <!-- Inyectado por JS (Porteros) -->
+                            </div>
+
+                            <!-- TOP PORTEROS DEDICADA Y ANCHA -->
+                            <div class="card-elite-premium ranking-card-premium gloves-theme keeper-exclusive-desktop-card" style="padding: 20px; grid-column: span 2;">
+                                <div class="ranking-header-elite" style="margin-bottom: 20px; padding-bottom: 15px; border-bottom: 1px solid rgba(240,165,0,0.15); display: flex; justify-content: space-between; align-items: center;">
+                                    <span style="font-size: 0.75rem; font-weight: 900; letter-spacing: 1.5px; color: #fff; display: flex; align-items: center; gap: 8px;">🧤 TOP PORTEROS <span style="font-size: 0.6rem; color: var(--text-muted); font-weight: 700;">(EFECTIVIDAD DE IMBATIBILIDAD)</span></span>
+                                    <div class="filter-badge-elite" id="filter-keepers-desktop" data-mode="official" style="cursor: pointer;">Oficiales</div>
+                                </div>
+                                <div id="home-top-keepers-list" style="display: grid; grid-template-columns: 1fr; gap: 12px;">
+                                    <!-- Inyectado por JS (Porteros - Ancho) -->
                                 </div>
                             </div>
                         </div>
