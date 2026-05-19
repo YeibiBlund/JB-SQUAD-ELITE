@@ -6641,7 +6641,9 @@ input:disabled + .jb-slider {
     width: 240px;
     height: 320px;
     margin: 0 auto;
-    transition: transform 0.4s cubic-bezier(0.25, 0.8, 0.25, 1) !important;
+    border-radius: 14px !important;
+    transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1) !important;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6) !important;
 }
 
 /* Cuerpo rotatorio */
@@ -6696,43 +6698,37 @@ input:disabled + .jb-slider {
 .cards-squad-grid .player-card-fut.large {
     width: 100% !important;
     height: 100% !important;
-    border: 4.5px solid #7b889b !important; /* Elegante metal de pizarra-platino */
+    border: 4.5px solid #18181b !important; /* Esport Matte Zinc Black */
     border-radius: 14px !important;
-    box-shadow: 0 15px 35px rgba(0,0,0,0.85), 
-                inset 0 0 0 1.5px rgba(255, 255, 255, 0.22), 
-                inset 0 0 15px rgba(255, 255, 255, 0.05) !important;
-    transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1) !important;
+    box-shadow: inset 0 0 0 1.5px rgba(255, 255, 255, 0.15), 
+                inset 0 0 15px rgba(0, 0, 0, 0.65) !important;
+    transition: border-color 0.4s cubic-bezier(0.25, 0.8, 0.25, 1) !important;
 }
 
 .cards-squad-grid .card-back {
-    border: 4.5px solid #7b889b !important; /* Elegante metal de pizarra-platino */
+    border: 4.5px solid #18181b !important; /* Esport Matte Zinc Black */
     border-radius: 14px !important;
-    box-shadow: 0 15px 35px rgba(0,0,0,0.85), 
-                inset 0 0 0 1.5px rgba(255, 255, 255, 0.22), 
-                inset 0 0 15px rgba(255, 255, 255, 0.05) !important;
-    transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1) !important;
+    box-shadow: inset 0 0 0 1.5px rgba(255, 255, 255, 0.15), 
+                inset 0 0 15px rgba(0, 0, 0, 0.65) !important;
+    transition: border-color 0.4s cubic-bezier(0.25, 0.8, 0.25, 1) !important;
 }
 
-/* Efecto Hover interactivo de Iluminación por debajo (Sin movimiento) */
+/* Efecto Hover interactivo Esport de Iluminación Tridimensional Flotante */
 @media (min-width: 769px) {
-    .cards-squad-grid .card-container {
-        transition: none !important;
-    }
-    
     .cards-squad-grid .card-container:hover {
-        transform: none !important;
-        z-index: 10 !important;
+        transform: translateY(-6px) scale(1.015) !important;
+        z-index: 50 !important;
+        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.85), 
+                    0 28px 70px rgba(245, 200, 83, 0.8),  /* Espectacular baño de luz dorada */
+                    0 12px 35px rgba(240, 165, 0, 0.55),  /* Núcleo de calor naranja */
+                    0 5px 18px rgba(255, 255, 255, 0.5) !important;  /* Destello focal blanco en la base */
     }
 
     .cards-squad-grid .card-container:hover .player-card-fut.large,
     .cards-squad-grid .card-container:hover .card-back {
-        border-color: #ffd043 !important; /* El borde se enciende en Oro Puro vibrante */
-        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.85), 
-                    0 25px 65px rgba(245, 200, 83, 0.75), /* Amplio baño de luz de fondo dorada */
-                    0 10px 30px rgba(240, 165, 0, 0.5),   /* Núcleo cálido naranja-dorado */
-                    0 5px 15px rgba(255, 255, 255, 0.45),  /* Destello blanco focal en la base */
-                    inset 0 0 0 2px rgba(255, 255, 255, 0.4), 
-                    inset 0 0 25px rgba(245, 200, 83, 0.65) !important;
+        border-color: #ffd043 !important; /* El borde negro se enciende en Oro Puro vibrante */
+        box-shadow: inset 0 0 0 1.5px rgba(255, 255, 255, 0.3), 
+                    inset 0 0 25px rgba(245, 200, 83, 0.4) !important;
     }
 }
 
@@ -7084,11 +7080,9 @@ input:disabled + .jb-slider {
     /* Reducir grosor de bordes en móvil para mantener la escala */
     .cards-squad-grid .player-card-fut.large,
     .cards-squad-grid .card-back {
-        border: 3px solid #7b889b !important;
+        border: 3px solid #18181b !important;
         border-radius: 10px !important;
-        box-shadow: 0 10px 22px rgba(0,0,0,0.85), 
-                    inset 0 0 0 1px rgba(255, 255, 255, 0.2),
-                    inset 0 0 10px rgba(255, 255, 255, 0.05) !important;
+        box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.15) !important;
     }
 
     /* Dorsal mucho más pequeño en móvil y alineado a la esquina */
