@@ -6982,10 +6982,66 @@ input:disabled + .jb-slider {
     border: 1px dashed rgba(255,255,255,0.1);
 }
 
+/* Botón premium de Ver Cartas */
+.btn-view-cards-premium {
+    background: linear-gradient(135deg, rgba(240, 165, 0, 0.18) 0%, rgba(20, 20, 20, 0.95) 100%) !important;
+    border: 1.5px solid var(--primary) !important;
+    border-radius: 8px !important;
+    color: #fff !important;
+    font-family: 'Outfit', sans-serif !important;
+    font-weight: 800 !important;
+    font-size: 0.85rem !important;
+    letter-spacing: 1px !important;
+    padding: 10px 20px !important;
+    cursor: pointer !important;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    box-shadow: 0 4px 15px rgba(240, 165, 0, 0.15), inset 0 0 10px rgba(240, 165, 0, 0.05) !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 8px !important;
+    text-transform: uppercase !important;
+    outline: none !important;
+}
+
+.btn-view-cards-premium:hover {
+    background: linear-gradient(135deg, rgba(240, 165, 0, 0.28) 0%, rgba(10, 10, 10, 0.98) 100%) !important;
+    transform: translateY(-2px) !important;
+    box-shadow: 0 6px 20px rgba(240, 165, 0, 0.3), inset 0 0 15px rgba(240, 165, 0, 0.1) !important;
+    color: var(--primary) !important;
+}
+
+.btn-view-cards-premium:active {
+    transform: translateY(0) !important;
+}
+
 /* ==========================================================================
    CSS RESPONSIVO PARA MÓVIL (VER CARTAS)
    ========================================================================== */
 @media (max-width: 768px) {
+    /* Ajustes del contenedor de cabecera de Plantilla para evitar solapamientos */
+    #view-plantilla > div:first-of-type {
+        flex-direction: row !important;
+        align-items: center !important;
+        justify-content: space-between !important;
+        margin-bottom: 1.5rem !important;
+        gap: 15px !important;
+        flex-wrap: nowrap !important;
+    }
+
+    #view-plantilla h1 {
+        font-size: 1.45rem !important;
+        white-space: nowrap !important;
+        margin: 0 !important;
+        flex-shrink: 0 !important;
+    }
+
+    .btn-view-cards-premium {
+        padding: 8px 12px !important;
+        font-size: 0.7rem !important;
+        letter-spacing: 0.5px !important;
+        flex-shrink: 0 !important;
+    }
+
     .cards-squad-grid {
         grid-template-columns: repeat(2, 1fr) !important;
         gap: 12px !important;
