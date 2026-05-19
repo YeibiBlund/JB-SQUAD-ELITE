@@ -439,7 +439,10 @@
             <section id="view-plantilla" class="view">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
                     <h1>Mi <span class="gradient-text">Plantilla</span></h1>
-                    <button class="btn-gold" id="btn-go-to-add-player" style="width: auto; padding: 10px 20px;"><span>MI FICHA</span></button>
+                    <div style="display: flex; gap: 10px;">
+                        <button class="btn-elite" id="btn-view-cards" style="width: auto; padding: 10px 15px;"><span>🎴 VER CARTAS</span></button>
+                        <button class="btn-gold" id="btn-go-to-add-player" style="width: auto; padding: 10px 20px;"><span>MI FICHA</span></button>
+                    </div>
                 </div>
 
                 <div class="player-table-container">
@@ -454,6 +457,23 @@
                     <div id="player-list" class="player-table-body">
                         <!-- Jugadores inyectados aquí -->
                     </div>
+                </div>
+            </section>
+
+            <!-- VIEW: Plantilla de Cartas 3D (v62.0) -->
+            <section id="view-cartas-squad" class="view" style="display: none; padding: 20px 15px 100px;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; flex-wrap: wrap; gap: 15px;">
+                    <div style="display: flex; align-items: center; gap: 15px;">
+                        <button id="btn-back-from-cards" class="btn-back-elite" style="background: none; border: none; color: var(--primary); font-size: 1.5rem; cursor: pointer; padding: 5px;">←</button>
+                        <div>
+                            <h1 class="gradient-text" style="font-size: 1.8rem; font-weight: 900; margin: 0;">Cartas de <span class="gradient-text">Plantilla</span></h1>
+                            <p style="font-size: 0.65rem; color: var(--text-muted); letter-spacing: 2px; text-transform: uppercase; margin: 2px 0 0 0;">ÁLBUM ELITE JB-SQUAD</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="cards-squad-container" style="min-height: 200px;">
+                    <!-- Se inyectan las categorías de posiciones y sus grids aquí -->
                 </div>
             </section>
 

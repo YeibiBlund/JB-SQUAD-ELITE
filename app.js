@@ -490,6 +490,8 @@ document.addEventListener('DOMContentLoaded', () => {
             if (window.renderHomeDashboard) window.renderHomeDashboard();
         } else if (viewId === 'admin') {
             window.renderAdminDashboard();
+        } else if (viewId === 'cartas-squad') {
+            renderCardsView();
         }
 
         // Actualizar estado del Nav Bar
@@ -689,6 +691,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (btnBackToPlantilla) {
             btnBackToPlantilla.addEventListener('click', () => switchView('plantilla'));
+        }
+
+        const btnViewCards = document.getElementById('btn-view-cards');
+        if (btnViewCards) {
+            btnViewCards.addEventListener('click', () => switchView('cartas-squad'));
+        }
+
+        const btnBackFromCards = document.getElementById('btn-back-from-cards');
+        if (btnBackFromCards) {
+            btnBackFromCards.addEventListener('click', () => switchView('plantilla'));
         }
 
         // Lógica de colapso para la barra de navegación
@@ -7683,4 +7695,387 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
     };
+
+    /**
+     * MÓDULO VISUAL: TARJETAS DE PLANTILLA 3D (v62.0)
+     */
+    async function loadAttendanceVotesForCards() {
+        if (state.attendanceRatioCache) return state.attendanceRatioCache;
+
+        try {
+            const { data: polls, error: pollsErr } = await supabase
+                .from('availability_polls')
+                .select('id')
+                .eq('team_id', state.team.id);
+
+            if (pollsErr) throw pollsErr;
+
+            let votes = [];
+            if (polls && polls.length > 0) {
+                const pollIds = polls.map(p => p.id);
+                const { data: votesData, error: votesErr } = await supabase
+                    .from('availability_votes')
+                    .select('user_id, vote')
+                    .in('poll_id', pollIds);
+
+                if (votesErr) throw votesErr;
+                votes = votesData || [];
+            }
+
+            const cache = {};
+            state.players.forEach(p => {
+                let yesCount = 0;
+                let noCount = 0;
+                if (p.user_id) {
+                    const playerVotes = votes.filter(v => v.user_id === p.user_id);
+                    playerVotes.forEach(v => {
+                        if (v.vote === 'yes' || v.vote === 'late') yesCount++;
+                        else if (v.vote === 'no') noCount++;
+                    });
+                }
+                const totalVotes = yesCount + noCount;
+                const ratio = totalVotes > 0 ? Math.round((yesCount / totalVotes) * 100) : 0;
+                cache[p.id] = ratio;
+            });
+
+            state.attendanceRatioCache = cache;
+            return cache;
+        } catch (err) {
+            console.error(">>> [ERROR] loadAttendanceVotesForCards:", err.message);
+            const cache = {};
+            state.players.forEach(p => cache[p.id] = 0);
+            return cache;
+        }
+    }
+
+    function generatePlayerStreakHTML(player) {
+        if (!state.sessions || state.sessions.length === 0) {
+            return `
+                <span class="streak-circle none" title="Sin partidos">-</span>
+                <span class="streak-circle none" title="Sin partidos">-</span>
+                <span class="streak-circle none" title="Sin partidos">-</span>
+                <span class="streak-circle none" title="Sin partidos">-</span>
+                <span class="streak-circle none" title="Sin partidos">-</span>
+            `;
+        }
+
+        const closedSessions = [...state.sessions]
+            .filter(s => s.status === 'closed')
+            .sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+
+        const playerMatches = [];
+
+        for (let sess of closedSessions) {
+            if (!sess.matches || sess.matches.length === 0) continue;
+
+            let sessionLineupIds = [];
+            if (sess.lineup) {
+                if (Array.isArray(sess.lineup)) {
+                    sessionLineupIds = sess.lineup.map(id => id.toString());
+                } else if (sess.lineup.assignments) {
+                    sessionLineupIds = Object.values(sess.lineup.assignments).filter(id => id).map(id => id.toString());
+                } else if (typeof sess.lineup === 'object') {
+                    sessionLineupIds = Object.values(sess.lineup).filter(id => id && typeof id !== 'object').map(id => id.toString());
+                }
+            }
+
+            if (!sessionLineupIds.includes(player.id.toString()) && !sessionLineupIds.includes(player.id)) {
+                continue;
+            }
+
+            const sessMatches = [...sess.matches].reverse();
+            for (let match of sessMatches) {
+                let result = 'E';
+                const sh = match.scoreHome || 0;
+                const sa = match.scoreAway || 0;
+
+                if (sh === sa) {
+                    result = 'E';
+                } else if (sh > sa) {
+                    if (match.matchCondition === 'visitor') {
+                        result = 'D';
+                    } else {
+                        result = 'V';
+                    }
+                } else {
+                    if (match.matchCondition === 'visitor') {
+                        result = 'V';
+                    } else {
+                        result = 'D';
+                    }
+                }
+
+                playerMatches.push({
+                    result: result,
+                    rival: match.rival || 'Rival'
+                });
+
+                if (playerMatches.length >= 5) break;
+            }
+
+            if (playerMatches.length >= 5) break;
+        }
+
+        if (playerMatches.length === 0) {
+            return `
+                <span class="streak-circle none" title="Sin partidos">-</span>
+                <span class="streak-circle none" title="Sin partidos">-</span>
+                <span class="streak-circle none" title="Sin partidos">-</span>
+                <span class="streak-circle none" title="Sin partidos">-</span>
+                <span class="streak-circle none" title="Sin partidos">-</span>
+            `;
+        }
+
+        const recentMatches = playerMatches.slice(0, 5).reverse();
+        const placeholdersNeeded = 5 - recentMatches.length;
+        let html = '';
+
+        for (let i = 0; i < placeholdersNeeded; i++) {
+            html += `<span class="streak-circle none" title="Sin partidos">-</span>`;
+        }
+
+        recentMatches.forEach(m => {
+            let className = 'draw';
+            let title = `Empate vs ${m.rival}`;
+            if (m.result === 'V') {
+                className = 'win';
+                title = `Victoria vs ${m.rival}`;
+            } else if (m.result === 'D') {
+                className = 'loss';
+                title = `Derrota vs ${m.rival}`;
+            }
+
+            html += `<span class="streak-circle ${className}" title="${title}">${m.result}</span>`;
+        });
+
+        return html;
+    }
+
+    function generateFUTCardFrontHTML(player) {
+        const avatar = AVATARS.find(av => av.id === (player.avatarID || player.avatar_id || 1));
+        const photo = player.photo_url;
+        const name = player.name || 'SIN NOMBRE';
+        const dorsal = player.dorsal || '00';
+        const pos = player.primaryPos || '??';
+
+        return `
+            <div class="player-card-fut large">
+                <div class="dorsal-large">${dorsal}</div>
+                <div class="pos-large">${pos}</div>
+                <div class="player-img-large">
+                    ${photo ? `<img src="${photo}">` : (avatar ? avatar.svg : '')}
+                </div>
+                <div class="name-banner-large">
+                    <h2 style="font-size: ${name.length > 10 ? '1.0rem' : '1.3rem'}">${name.toUpperCase()}</h2>
+                </div>
+            </div>
+        `;
+    }
+
+    function generateFUTCardBackHTML(player, attendanceRatio, streakHTML) {
+        const name = player.name || 'SIN NOMBRE';
+        const dorsal = player.dorsal || '00';
+        const pos = player.primaryPos || '??';
+
+        const offStats = player.stats?.official || { matches: 0, goals: 0, assists: 0, cleanSheets: 0 };
+        const friStats = player.stats?.friendly || { matches: 0, goals: 0, assists: 0, cleanSheets: 0 };
+        
+        const initMatches = (offStats.matches || 0) + (friStats.matches || 0);
+        const initGoals = (offStats.goals || 0) + (friStats.goals || 0);
+        const initAssists = (offStats.assists || 0) + (friStats.assists || 0);
+        const initCleanSheets = (offStats.cleanSheets || 0) + (friStats.cleanSheets || 0);
+
+        return `
+            <div class="card-back-header">
+                <div class="card-back-name">${name.toUpperCase()}</div>
+                <div class="card-back-meta">
+                    <span class="card-back-pos">${pos}</span>
+                    <span class="card-back-dorsal">#${dorsal}</span>
+                </div>
+            </div>
+
+            <div class="card-back-tabs">
+                <button class="card-back-tab-btn active" data-tab="glo" data-player-id="${player.id}">GLO</button>
+                <button class="card-back-tab-btn" data-tab="ofi" data-player-id="${player.id}">OFI</button>
+                <button class="card-back-tab-btn" data-tab="ami" data-player-id="${player.id}">AMI</button>
+            </div>
+
+            <div class="card-back-stats-list" id="card-back-stats-${player.id}" style="transition: opacity 0.15s ease;">
+                <div class="card-back-stat-row">
+                    <span class="card-back-stat-label">PARTIDOS JUGADOS</span>
+                    <span class="card-back-stat-value" data-stat="matches">${initMatches}</span>
+                </div>
+                <div class="card-back-stat-row">
+                    <span class="card-back-stat-label">GOLES</span>
+                    <span class="card-back-stat-value highlight" data-stat="goals">${initGoals}</span>
+                </div>
+                <div class="card-back-stat-row">
+                    <span class="card-back-stat-label">ASISTENCIAS</span>
+                    <span class="card-back-stat-value highlight" data-stat="assists">${initAssists}</span>
+                </div>
+                <div class="card-back-stat-row">
+                    <span class="card-back-stat-label">PORTERÍAS A 0</span>
+                    <span class="card-back-stat-value" data-stat="cleansheets">${initCleanSheets}</span>
+                </div>
+                <div class="card-back-stat-row">
+                    <span class="card-back-stat-label">ASISTENCIA (% SÍ)</span>
+                    <span class="card-back-stat-value" style="color:#4CAF50;">${attendanceRatio}%</span>
+                </div>
+            </div>
+
+            <div class="card-back-streak-zone">
+                <div class="card-back-streak-title">Últimos 5 Partidos (Racha)</div>
+                <div class="card-back-streak-row">
+                    ${streakHTML}
+                </div>
+            </div>
+        `;
+    }
+
+    function setupCardBackTabEvents(cardInner, player, attendanceRatio) {
+        const tabs = cardInner.querySelectorAll('.card-back-tab-btn');
+        tabs.forEach(tab => {
+            tab.addEventListener('click', (e) => {
+                e.stopPropagation();
+                
+                tabs.forEach(t => t.classList.remove('active'));
+                tab.classList.add('active');
+
+                const tabType = tab.getAttribute('data-tab');
+                const offStats = player.stats?.official || { matches: 0, goals: 0, assists: 0, cleanSheets: 0 };
+                const friStats = player.stats?.friendly || { matches: 0, goals: 0, assists: 0, cleanSheets: 0 };
+
+                let matches = 0, goals = 0, assists = 0, cleansheets = 0;
+
+                if (tabType === 'ofi') {
+                    matches = offStats.matches || 0;
+                    goals = offStats.goals || 0;
+                    assists = offStats.assists || 0;
+                    cleansheets = offStats.cleanSheets || 0;
+                } else if (tabType === 'ami') {
+                    matches = friStats.matches || 0;
+                    goals = friStats.goals || 0;
+                    assists = friStats.assists || 0;
+                    cleansheets = friStats.cleanSheets || 0;
+                } else {
+                    matches = (offStats.matches || 0) + (friStats.matches || 0);
+                    goals = (offStats.goals || 0) + (friStats.goals || 0);
+                    assists = (offStats.assists || 0) + (friStats.assists || 0);
+                    cleansheets = (offStats.cleanSheets || 0) + (friStats.cleanSheets || 0);
+                }
+
+                const statsListContainer = cardInner.querySelector(`#card-back-stats-${player.id}`);
+                if (statsListContainer) {
+                    statsListContainer.style.opacity = '0.2';
+                    setTimeout(() => {
+                        statsListContainer.querySelector('[data-stat="matches"]').textContent = matches;
+                        statsListContainer.querySelector('[data-stat="goals"]').textContent = goals;
+                        statsListContainer.querySelector('[data-stat="assists"]').textContent = assists;
+                        statsListContainer.querySelector('[data-stat="cleansheets"]').textContent = cleansheets;
+                        statsListContainer.style.opacity = '1';
+                    }, 120);
+                }
+            });
+        });
+    }
+
+    async function renderCardsView() {
+        const container = document.getElementById('cards-squad-container');
+        if (!container) return;
+
+        container.innerHTML = '<div style="text-align: center; padding: 50px; font-size: 0.9rem; color: var(--text-muted);">Cargando álbum de cartas...</div>';
+
+        window.jbLoading.show('Generando Álbum Elite...');
+        const attendanceCache = await loadAttendanceVotesForCards();
+        window.jbLoading.hide();
+
+        if (!state.players || state.players.length === 0) {
+            container.innerHTML = '<div style="text-align: center; padding: 50px; font-size: 0.9rem; color: var(--text-muted);">No hay jugadores registrados en el equipo.</div>';
+            return;
+        }
+
+        container.innerHTML = '';
+
+        const categories = {
+            porteros: { title: '🧤 Porteros', players: [], positions: ['GK', 'POR', 'PO'] },
+            defensas: { title: '🛡️ Defensas', players: [], positions: ['DFC', 'LI', 'LD', 'LTI', 'LTD', 'DFD', 'DFI', 'DF'] },
+            mediocampistas: { title: '🪄 Mediocampistas', players: [], positions: ['MCD', 'MC', 'MCO', 'MI', 'MD', 'VOL'] },
+            delanteros: { title: '⚡ Delanteros', players: [], positions: ['DC', 'ED', 'EI', 'SD', 'SP', 'DEL', 'PRU'] }
+        };
+
+        state.players.forEach(player => {
+            const pPos = (player.primaryPos || 'DC').toUpperCase();
+            if (categories.porteros.positions.includes(pPos)) {
+                categories.porteros.players.push(player);
+            } else if (categories.defensas.positions.includes(pPos)) {
+                categories.defensas.players.push(player);
+            } else if (categories.mediocampistas.positions.includes(pPos)) {
+                categories.mediocampistas.players.push(player);
+            } else {
+                categories.delanteros.players.push(player);
+            }
+        });
+
+        const POSITION_PRIORITY = {
+            'GK': 1, 'POR': 1, 'PO': 1,
+            'DFC': 2, 'DF': 2, 'LI': 3, 'LD': 3, 'LTI': 3, 'LTD': 3, 'DFD': 3, 'DFI': 3,
+            'MCD': 4, 'MC': 5, 'MI': 6, 'MD': 6, 'MCO': 7, 'VOL': 5,
+            'SD': 8, 'SP': 8, 'ED': 9, 'EI': 9, 'DC': 10, 'DEL': 10, 'PRU': 10
+        };
+
+        Object.keys(categories).forEach(catKey => {
+            categories[catKey].players.sort((a, b) => {
+                const prioA = POSITION_PRIORITY[a.primaryPos?.toUpperCase()] || 99;
+                const prioB = POSITION_PRIORITY[b.primaryPos?.toUpperCase()] || 99;
+                return prioA - prioB;
+            });
+        });
+
+        Object.keys(categories).forEach(catKey => {
+            const cat = categories[catKey];
+            if (cat.players.length === 0) return;
+
+            const catTitle = document.createElement('h2');
+            catTitle.className = 'position-group-title';
+            catTitle.textContent = `${cat.title} (${cat.players.length})`;
+            container.appendChild(catTitle);
+
+            const grid = document.createElement('div');
+            grid.className = 'cards-squad-grid';
+
+            cat.players.forEach(player => {
+                const cardCol = document.createElement('div');
+                cardCol.className = 'card-container';
+
+                const streakHTML = generatePlayerStreakHTML(player);
+                const frontCardHTML = generateFUTCardFrontHTML(player);
+                const backCardHTML = generateFUTCardBackHTML(player, attendanceCache[player.id] || 0, streakHTML);
+
+                cardCol.innerHTML = `
+                    <div class="card-inner" id="card-inner-${player.id}">
+                        <div class="card-front">
+                            ${frontCardHTML}
+                        </div>
+                        <div class="card-back">
+                            ${backCardHTML}
+                        </div>
+                    </div>
+                `;
+
+                const cardInner = cardCol.querySelector('.card-inner');
+                cardInner.addEventListener('click', (e) => {
+                    if (e.target.closest('.card-back-tab-btn')) {
+                        return;
+                    }
+                    cardInner.classList.toggle('flipped');
+                });
+
+                setupCardBackTabEvents(cardInner, player, attendanceCache[player.id] || 0);
+
+                grid.appendChild(cardCol);
+            });
+
+            container.appendChild(grid);
+        });
+    }
 });

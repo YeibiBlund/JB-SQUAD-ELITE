@@ -6593,3 +6593,379 @@ input:disabled + .jb-slider {
 .ranking-row-premium:hover .keeper-efficiency-pct {
     box-shadow: 0 0 8px rgba(76, 175, 80, 0.2);
 }
+
+/* ==========================================================================
+   MÓDULO VISUAL: TARJETAS DE PLANTILLA 3D (v62.0)
+   ========================================================================== */
+
+/* Cabecera de grupo de posición */
+.position-group-title {
+    font-size: 1.1rem;
+    color: var(--primary);
+    font-weight: 900;
+    letter-spacing: 2px;
+    margin: 35px 0 15px 0;
+    border-left: 3px solid var(--primary);
+    padding-left: 12px;
+    text-transform: uppercase;
+    text-shadow: 0 0 10px rgba(240, 165, 0, 0.2);
+    font-family: 'Outfit', sans-serif;
+}
+
+/* Grid de cartas adaptativo */
+.cards-squad-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 30px;
+    margin-bottom: 45px;
+}
+
+@media (max-width: 1024px) {
+    .cards-squad-grid {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 20px;
+    }
+}
+
+@media (max-width: 768px) {
+    .cards-squad-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
+        margin-bottom: 25px;
+    }
+}
+
+/* Contenedor principal de la carta (3D perspective) */
+.card-container {
+    perspective: 1000px;
+    width: 240px;
+    height: 320px;
+    margin: 0 auto;
+}
+
+/* Cuerpo rotatorio */
+.card-inner {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+    transform-style: preserve-3d;
+    cursor: pointer;
+}
+
+/* Rotación activa */
+.card-inner.flipped {
+    transform: rotateY(180deg);
+}
+
+/* Caras de la carta */
+.card-front, .card-back {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+.card-front {
+    z-index: 2;
+    transform: rotateY(0deg);
+}
+
+/* Dorso de estadísticas premium (Glassmorphism) */
+.card-back {
+    transform: rotateY(180deg);
+    background: linear-gradient(135deg, rgba(15, 15, 15, 0.98) 0%, rgba(5, 5, 5, 0.99) 100%);
+    border: 2px solid var(--primary);
+    box-shadow: 0 20px 40px rgba(0,0,0,0.8), 0 0 25px rgba(240, 165, 0, 0.15);
+    display: flex;
+    flex-direction: column;
+    padding: 15px;
+    justify-content: space-between;
+    z-index: 1;
+    font-family: 'Outfit', sans-serif;
+    box-sizing: border-box;
+}
+
+/* Estandarizar fotos dentro de las cartas de esta cuadrícula */
+.cards-squad-grid .player-card-fut.large {
+    width: 100% !important;
+    height: 100% !important;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+}
+
+.cards-squad-grid .player-img-large {
+    transform: none !important;
+    top: 5% !important;
+    left: 0 !important;
+    width: 100% !important;
+    height: 80% !important;
+}
+
+.cards-squad-grid .player-img-large img,
+.cards-squad-grid .player-img-large svg {
+    transform: none !important;
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: contain !important;
+    object-position: bottom center !important;
+    left: 0 !important;
+    top: 0 !important;
+}
+
+/* Cabecera del dorso */
+.card-back-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid rgba(240, 165, 0, 0.2);
+    padding-bottom: 8px;
+    margin-bottom: 6px;
+}
+
+.card-back-name {
+    font-size: 0.95rem;
+    font-weight: 900;
+    color: #fff;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    max-width: 130px;
+}
+
+.card-back-meta {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.card-back-pos {
+    font-size: 0.65rem;
+    background: var(--primary);
+    color: #000;
+    padding: 2px 5px;
+    border-radius: 4px;
+    font-weight: 800;
+}
+
+.card-back-dorsal {
+    font-size: 0.85rem;
+    font-weight: 900;
+    color: var(--primary);
+}
+
+/* Botonera de pestañas en el dorso */
+.card-back-tabs {
+    display: flex;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 6px;
+    padding: 2px;
+    margin-bottom: 8px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.card-back-tab-btn {
+    flex: 1;
+    background: none;
+    border: none;
+    color: var(--text-muted);
+    font-size: 0.55rem;
+    font-weight: 800;
+    padding: 4px 0;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.card-back-tab-btn:hover {
+    color: #fff;
+}
+
+.card-back-tab-btn.active {
+    background: var(--primary);
+    color: #000;
+}
+
+/* Listado de estadísticas */
+.card-back-stats-list {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    flex-grow: 1;
+    justify-content: center;
+}
+
+.card-back-stat-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.72rem;
+    color: #ddd;
+    border-bottom: 1px solid rgba(255,255,255,0.03);
+    padding-bottom: 4px;
+}
+
+.card-back-stat-label {
+    font-weight: 600;
+    opacity: 0.7;
+    font-size: 0.68rem;
+}
+
+.card-back-stat-value {
+    font-weight: 900;
+    color: #fff;
+    font-family: 'Outfit', sans-serif;
+}
+
+.card-back-stat-value.highlight {
+    color: var(--primary);
+}
+
+/* Racha */
+.card-back-streak-zone {
+    margin-top: 6px;
+    padding-top: 6px;
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.card-back-streak-title {
+    font-size: 0.55rem;
+    font-weight: 800;
+    color: var(--text-muted);
+    letter-spacing: 1px;
+    margin-bottom: 5px;
+    text-transform: uppercase;
+    text-align: center;
+}
+
+.card-back-streak-row {
+    display: flex;
+    gap: 5px;
+    justify-content: center;
+}
+
+.streak-circle {
+    width: 15px;
+    height: 15px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.5rem;
+    font-weight: 900;
+    color: #000;
+    transition: all 0.3s;
+}
+
+.streak-circle.win {
+    background: #4CAF50;
+    color: #fff;
+    box-shadow: 0 0 5px rgba(76,175,80,0.4);
+}
+
+.streak-circle.draw {
+    background: #FFC107;
+    color: #000;
+    box-shadow: 0 0 5px rgba(255,193,7,0.4);
+}
+
+.streak-circle.loss {
+    background: #F44336;
+    color: #fff;
+    box-shadow: 0 0 5px rgba(244,67,54,0.4);
+}
+
+.streak-circle.none {
+    background: rgba(255,255,255,0.08);
+    color: rgba(255,255,255,0.2);
+    border: 1px dashed rgba(255,255,255,0.1);
+}
+
+/* ==========================================================================
+   CSS RESPONSIVO PARA MÓVIL (VER CARTAS)
+   ========================================================================== */
+@media (max-width: 768px) {
+    .card-container {
+        width: 160px;
+        height: 220px;
+    }
+    
+    .card-back {
+        padding: 8px;
+    }
+    
+    .card-back-header {
+        padding-bottom: 4px;
+        margin-bottom: 4px;
+    }
+    
+    .card-back-name {
+        font-size: 0.72rem;
+        max-width: 75px;
+    }
+    
+    .card-back-pos {
+        font-size: 0.55rem;
+        padding: 1px 4px;
+    }
+    
+    .card-back-dorsal {
+        font-size: 0.7rem;
+    }
+    
+    .card-back-tabs {
+        margin-bottom: 4px;
+        border-radius: 4px;
+    }
+    
+    .card-back-tab-btn {
+        font-size: 0.45rem;
+        padding: 2px 0;
+    }
+    
+    .card-back-stats-list {
+        gap: 3px;
+    }
+    
+    .card-back-stat-row {
+        font-size: 0.6rem;
+        padding-bottom: 2px;
+    }
+    
+    .card-back-stat-label {
+        font-size: 0.58rem;
+    }
+    
+    .card-back-stat-value {
+        font-size: 0.65rem;
+    }
+    
+    .card-back-streak-zone {
+        margin-top: 4px;
+        padding-top: 4px;
+    }
+    
+    .card-back-streak-title {
+        font-size: 0.45rem;
+        margin-bottom: 3px;
+    }
+    
+    .streak-circle {
+        width: 12px;
+        height: 12px;
+        font-size: 0.42rem;
+    }
+    
+    .position-group-title {
+        font-size: 0.85rem;
+        margin: 20px 0 10px 0;
+    }
+}
