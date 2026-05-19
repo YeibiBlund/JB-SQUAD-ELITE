@@ -6700,13 +6700,24 @@ input:disabled + .jb-slider {
 
 .cards-squad-grid .player-img-large {
     transform: none !important;
-    top: 5% !important;
+    top: 0 !important;
     left: 0 !important;
     width: 100% !important;
-    height: 80% !important;
+    height: 100% !important;
 }
 
-.cards-squad-grid .player-img-large img,
+.cards-squad-grid .player-img-large img {
+    transform: none !important;
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: cover !important;
+    object-position: center top !important;
+    left: 0 !important;
+    top: 0 !important;
+    mask-image: none !important;
+    -webkit-mask-image: none !important;
+}
+
 .cards-squad-grid .player-img-large svg {
     transform: none !important;
     width: 100% !important;
@@ -6893,9 +6904,17 @@ input:disabled + .jb-slider {
    CSS RESPONSIVO PARA MÓVIL (VER CARTAS)
    ========================================================================== */
 @media (max-width: 768px) {
+    .cards-squad-grid {
+        grid-template-columns: repeat(2, 1fr) !important;
+        gap: 12px !important;
+        padding: 5px !important;
+    }
+
     .card-container {
-        width: 160px;
-        height: 220px;
+        width: 100% !important;
+        max-width: 145px !important;
+        height: 195px !important;
+        margin: 0 auto;
     }
     
     .card-back {
@@ -6908,17 +6927,17 @@ input:disabled + .jb-slider {
     }
     
     .card-back-name {
-        font-size: 0.72rem;
-        max-width: 75px;
+        font-size: 0.7rem;
+        max-width: 70px;
     }
     
     .card-back-pos {
-        font-size: 0.55rem;
+        font-size: 0.5rem;
         padding: 1px 4px;
     }
     
     .card-back-dorsal {
-        font-size: 0.7rem;
+        font-size: 0.65rem;
     }
     
     .card-back-tabs {
@@ -6927,7 +6946,7 @@ input:disabled + .jb-slider {
     }
     
     .card-back-tab-btn {
-        font-size: 0.45rem;
+        font-size: 0.42rem;
         padding: 2px 0;
     }
     
@@ -6936,16 +6955,16 @@ input:disabled + .jb-slider {
     }
     
     .card-back-stat-row {
-        font-size: 0.6rem;
+        font-size: 0.58rem;
         padding-bottom: 2px;
     }
     
     .card-back-stat-label {
-        font-size: 0.58rem;
+        font-size: 0.55rem;
     }
     
     .card-back-stat-value {
-        font-size: 0.65rem;
+        font-size: 0.6rem;
     }
     
     .card-back-streak-zone {
@@ -6954,14 +6973,14 @@ input:disabled + .jb-slider {
     }
     
     .card-back-streak-title {
-        font-size: 0.45rem;
+        font-size: 0.42rem;
         margin-bottom: 3px;
     }
     
     .streak-circle {
-        width: 12px;
-        height: 12px;
-        font-size: 0.42rem;
+        width: 11px;
+        height: 11px;
+        font-size: 0.4rem;
     }
     
     .position-group-title {
