@@ -6641,6 +6641,7 @@ input:disabled + .jb-slider {
     width: 240px;
     height: 320px;
     margin: 0 auto;
+    transition: transform 0.4s cubic-bezier(0.25, 0.8, 0.25, 1) !important;
 }
 
 /* Cuerpo rotatorio */
@@ -6695,25 +6696,37 @@ input:disabled + .jb-slider {
 .cards-squad-grid .player-card-fut.large {
     width: 100% !important;
     height: 100% !important;
-    border: 1.5px solid var(--primary) !important;
+    border: 4.5px solid var(--primary) !important;
     border-radius: 14px !important;
-    box-shadow: 0 18px 40px rgba(0,0,0,0.85),
-                0 0 0 1.5px rgba(10, 10, 10, 0.95), 
-                0 0 0 3.5px var(--primary),
-                0 0 20px rgba(240, 165, 0, 0.25),
-                inset 0 0 0 1.5px rgba(255, 255, 255, 0.15), 
-                inset 0 0 20px rgba(240, 165, 0, 0.4) !important;
+    box-shadow: 0 15px 35px rgba(0,0,0,0.85), 
+                inset 0 0 0 1.5px rgba(255, 255, 255, 0.2), 
+                inset 0 0 15px rgba(240, 165, 0, 0.3) !important;
+    transition: all 0.35s cubic-bezier(0.25, 0.8, 0.25, 1) !important;
 }
 
 .cards-squad-grid .card-back {
-    border: 1.5px solid var(--primary) !important;
+    border: 4.5px solid var(--primary) !important;
     border-radius: 14px !important;
-    box-shadow: 0 18px 40px rgba(0,0,0,0.85),
-                0 0 0 1.5px rgba(10, 10, 10, 0.95), 
-                0 0 0 3.5px var(--primary),
-                0 0 20px rgba(240, 165, 0, 0.25),
-                inset 0 0 0 1.5px rgba(255, 255, 255, 0.15), 
-                inset 0 0 20px rgba(240, 165, 0, 0.4) !important;
+    box-shadow: 0 15px 35px rgba(0,0,0,0.85), 
+                inset 0 0 0 1.5px rgba(255, 255, 255, 0.2), 
+                inset 0 0 15px rgba(240, 165, 0, 0.3) !important;
+    transition: all 0.35s cubic-bezier(0.25, 0.8, 0.25, 1) !important;
+}
+
+/* Efecto Hover interactivo de elevación y aura luminosa dorada */
+@media (min-width: 769px) {
+    .cards-squad-grid .card-container:hover {
+        transform: translateY(-10px) scale(1.03) !important;
+        z-index: 100 !important;
+    }
+
+    .cards-squad-grid .card-container:hover .player-card-fut.large,
+    .cards-squad-grid .card-container:hover .card-back {
+        border-color: #ffd043 !important; /* Brillo metálico encendido */
+        box-shadow: 0 25px 50px rgba(0, 0, 0, 0.95), 
+                    0 0 25px rgba(240, 165, 0, 0.65), 
+                    inset 0 0 20px rgba(240, 165, 0, 0.45) !important;
+    }
 }
 
 /* Dorsal Premium Outlined Style */
@@ -7064,14 +7077,11 @@ input:disabled + .jb-slider {
     /* Reducir grosor de bordes en móvil para mantener la escala */
     .cards-squad-grid .player-card-fut.large,
     .cards-squad-grid .card-back {
-        border: 1px solid var(--primary) !important;
+        border: 3px solid var(--primary) !important;
         border-radius: 10px !important;
-        box-shadow: 0 10px 25px rgba(0,0,0,0.85),
-                    0 0 0 1px rgba(10, 10, 10, 0.95), 
-                    0 0 0 2.5px var(--primary),
-                    0 0 15px rgba(240, 165, 0, 0.2),
-                    inset 0 0 0 1px rgba(255, 255, 255, 0.12), 
-                    inset 0 0 12px rgba(240, 165, 0, 0.35) !important;
+        box-shadow: 0 10px 22px rgba(0,0,0,0.85), 
+                    inset 0 0 0 1px rgba(255, 255, 255, 0.15),
+                    inset 0 0 10px rgba(240, 165, 0, 0.25) !important;
     }
 
     /* Dorsal mucho más pequeño en móvil y alineado a la esquina */
