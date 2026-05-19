@@ -6698,18 +6698,18 @@ input:disabled + .jb-slider {
 .cards-squad-grid .player-card-fut.large {
     width: 100% !important;
     height: 100% !important;
-    border: 4.5px solid #18181b !important; /* Esport Matte Zinc Black */
+    border: 4.5px solid #ffffff !important; /* Pristine Polar White Border */
     border-radius: 14px !important;
-    box-shadow: inset 0 0 0 1.5px rgba(255, 255, 255, 0.15), 
-                inset 0 0 15px rgba(0, 0, 0, 0.65) !important;
+    box-shadow: inset 0 0 0 1.5px rgba(255, 255, 255, 0.25), 
+                inset 0 0 15px rgba(0, 0, 0, 0.55) !important;
     transition: border-color 0.4s cubic-bezier(0.25, 0.8, 0.25, 1) !important;
 }
 
 .cards-squad-grid .card-back {
-    border: 4.5px solid #18181b !important; /* Esport Matte Zinc Black */
+    border: 4.5px solid #ffffff !important; /* Pristine Polar White Border */
     border-radius: 14px !important;
-    box-shadow: inset 0 0 0 1.5px rgba(255, 255, 255, 0.15), 
-                inset 0 0 15px rgba(0, 0, 0, 0.65) !important;
+    box-shadow: inset 0 0 0 1.5px rgba(255, 255, 255, 0.25), 
+                inset 0 0 15px rgba(0, 0, 0, 0.55) !important;
     transition: border-color 0.4s cubic-bezier(0.25, 0.8, 0.25, 1) !important;
 }
 
@@ -7080,9 +7080,9 @@ input:disabled + .jb-slider {
     /* Reducir grosor de bordes en móvil para mantener la escala */
     .cards-squad-grid .player-card-fut.large,
     .cards-squad-grid .card-back {
-        border: 3px solid #18181b !important;
+        border: 3px solid #ffffff !important; /* Pristine Polar White Border in mobile */
         border-radius: 10px !important;
-        box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.15) !important;
+        box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.2) !important;
     }
 
     /* Dorsal mucho más pequeño en móvil y alineado a la esquina */
