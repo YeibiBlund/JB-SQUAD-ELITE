@@ -7173,4 +7173,10 @@ input:disabled + .jb-slider {
         font-size: 0.85rem;
         margin: 20px 0 10px 0;
     }
+
+    /* Reducir tamaño del título Cartas de Plantilla en móvil */
+    #view-cartas-squad h1 {
+        font-size: 1.35rem !important;
+        white-space: nowrap !important;
+    }
 }
