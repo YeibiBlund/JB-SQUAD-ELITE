@@ -6722,6 +6722,12 @@ input:disabled + .jb-slider {
     font-weight: 950 !important;
     letter-spacing: -2px !important;
     z-index: 10;
+    font-size: 2.2rem !important;
+    top: 10px !important;
+    left: 12px !important;
+    width: 38px !important;
+    text-align: center !important;
+    line-height: 1 !important;
 }
 
 /* Position Badge Premium Glassmorphism */
@@ -6734,29 +6740,44 @@ input:disabled + .jb-slider {
     box-shadow: 0 4px 8px rgba(0,0,0,0.6) !important;
     backdrop-filter: blur(2px) !important;
     -webkit-backdrop-filter: blur(2px) !important;
-    padding: 3px 8px !important;
-    font-size: 0.95rem !important;
+    padding: 3px 0 !important;
+    font-size: 0.72rem !important;
     z-index: 10;
+    top: 48px !important;
+    left: 12px !important;
+    width: 38px !important;
+    text-align: center !important;
+    box-sizing: border-box !important;
+    border-radius: 4px !important;
 }
 
-/* Name Banner Premium Glassmorphism */
+/* Name Banner Premium Glassmorphism Floating Plaque */
 .cards-squad-grid .name-banner-large {
-    background: linear-gradient(to right, transparent, rgba(5, 5, 5, 0.9) 15%, rgba(5, 5, 5, 0.9) 85%, transparent) !important;
-    border-top: 1px solid rgba(240, 165, 0, 0.2) !important;
-    border-bottom: 1px solid rgba(240, 165, 0, 0.2) !important;
+    background: linear-gradient(135deg, rgba(10, 10, 10, 0.95) 0%, rgba(20, 20, 20, 0.98) 100%) !important;
+    border-top: 1.5px solid var(--primary) !important;
+    border-bottom: 1.5px solid var(--primary) !important;
+    border-radius: 6px !important;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.7) !important;
     padding: 8px 0 !important;
     bottom: 20px !important;
+    width: 85% !important;
+    left: 7.5% !important;
     backdrop-filter: blur(2px) !important;
     -webkit-backdrop-filter: blur(2px) !important;
     z-index: 15;
+    box-sizing: border-box !important;
 }
 
 .cards-squad-grid .name-banner-large h2 {
-    color: #fdfdfd !important;
+    background: linear-gradient(to bottom, #ffffff 0%, #f5c853 100%) !important;
+    -webkit-background-clip: text !important;
+    -webkit-text-fill-color: transparent !important;
+    font-family: 'Outfit', sans-serif !important;
     font-weight: 900 !important;
-    letter-spacing: 1px !important;
-    text-shadow: 0 2px 4px rgba(0,0,0,0.9) !important;
+    letter-spacing: 1.5px !important;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.5) !important;
     font-size: 1.15rem !important;
+    margin: 0 !important;
 }
 
 .cards-squad-grid .player-img-large {
@@ -6988,11 +7009,12 @@ input:disabled + .jb-slider {
                     inset 0 0 12px rgba(240, 165, 0, 0.2) !important;
     }
 
-    /* Dorsal mucho más pequeño en móvil */
+    /* Dorsal mucho más pequeño en móvil y alineado a la esquina */
     .cards-squad-grid .dorsal-large {
-        font-size: 1.8rem !important;
+        font-size: 1.4rem !important;
         top: 8px !important;
-        left: 10px !important;
+        left: 8px !important;
+        width: 28px !important;
         text-shadow: 1.5px 1.5px 0px #000, 
                      -1.5px -1.5px 0px #000, 
                      1.5px -1.5px 0px #000, 
@@ -7000,12 +7022,13 @@ input:disabled + .jb-slider {
                      3px 3px 5px rgba(0,0,0,0.8) !important;
     }
 
-    /* Posición mucho más pequeña en móvil */
+    /* Posición mucho más pequeña en móvil colocada justo debajo del dorsal */
     .cards-squad-grid .pos-large {
-        font-size: 0.58rem !important;
-        top: 40px !important;
-        left: 11px !important;
-        padding: 2px 4px !important;
+        font-size: 0.48rem !important;
+        top: 32px !important;
+        left: 8px !important;
+        width: 28px !important;
+        padding: 1.5px 0 !important;
         border-radius: 3px !important;
     }
 
@@ -7013,11 +7036,15 @@ input:disabled + .jb-slider {
     .cards-squad-grid .name-banner-large {
         padding: 4px 0 !important;
         bottom: 12px !important;
+        width: 85% !important;
+        left: 7.5% !important;
+        border-top-width: 1px !important;
+        border-bottom-width: 1px !important;
     }
 
     .cards-squad-grid .name-banner-large h2 {
         font-size: 0.62rem !important;
-        letter-spacing: 0.5px !important;
+        letter-spacing: 0.8px !important;
     }
     
     .card-back {
