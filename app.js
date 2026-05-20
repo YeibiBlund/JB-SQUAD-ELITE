@@ -8107,6 +8107,27 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    // Nueva función global para cerrar el modal del detalle del rival
+    window.closeRivalDetailModal = function() {
+        const modal = document.getElementById('rival-detail-modal');
+        if (modal) modal.style.display = 'none';
+        
+        // Quitar la selección visual de la fila
+        document.querySelectorAll('.rival-row').forEach(row => {
+            row.classList.remove('selected');
+        });
+    };
+
+    // Cerrar el modal al hacer clic en el fondo translúcido (overlay)
+    const rivalModal = document.getElementById('rival-detail-modal');
+    if (rivalModal) {
+        rivalModal.addEventListener('click', (e) => {
+            if (e.target === rivalModal) {
+                window.closeRivalDetailModal();
+            }
+        });
+    }
+
     // --- LÓGICA DE AGREGACIÓN HISTORIAL DE RIVALES (v65.0) ---
     let globalRivalsData = {}; // Cache local en memoria para búsquedas reactivas
 
@@ -8117,6 +8138,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Reset de la vista detallada
         if (detailPanel) detailPanel.style.display = 'none';
+        const modal = document.getElementById('rival-detail-modal');
+        if (modal) modal.style.display = 'none';
 
         // 1. Recopilar sesiones de state.sessions y state.activeSession
         const sessionsToScan = [...(state.sessions || [])];
@@ -8264,6 +8287,12 @@ document.addEventListener('DOMContentLoaded', () => {
                     <span style="font-size: 0.6rem; color: var(--primary); text-transform: uppercase; font-weight: 800; letter-spacing: 1.5px; display: block; margin-bottom: 3px;">HISTORIAL DETALLADO</span>
                     <h3 style="margin: 0; font-size: 1.3rem; color: #fff; font-weight: 900; line-height: 1.1; letter-spacing: 0.5px;">${escapeHTML(rival.displayName.toUpperCase())}</h3>
                 </div>
+                <button onclick="window.closeRivalDetailModal()" class="btn-cancel" style="margin-left: auto; width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; padding: 0; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: #fff; cursor: pointer; transition: all 0.2s;">
+                    <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                </button>
             </div>
 
             <!-- Bento Tarjetas de Métricas Rápidas -->
@@ -8333,6 +8362,8 @@ document.addEventListener('DOMContentLoaded', () => {
             </div>
         `;
 
+        const modal = document.getElementById('rival-detail-modal');
+        if (modal) modal.style.display = 'flex';
         detailPanel.style.display = 'flex';
     };
 

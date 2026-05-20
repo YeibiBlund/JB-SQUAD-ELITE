@@ -7299,7 +7299,7 @@ input:disabled + .jb-slider {
 @media (min-width: 1024px) {
     .rivals-bento-layout {
         display: grid;
-        grid-template-columns: 1.6fr 1fr; /* Asimétrico Bento */
+        grid-template-columns: 1fr; /* Ancho completo */
         gap: 25px;
         align-items: start;
         width: 100%; /* Aprovecha el 100% de la pantalla */

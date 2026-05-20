@@ -1,3 +1,10 @@
+## [v65.1.0] - 2026-05-21 | 00:55
+### 📊 Vista Expandida H2H & Modal de Detalle de Rivales (v65.1.0)
+- **Tabla Comparativa H2H de Ancho Completo**: Ajustado el layout `.rivals-bento-layout` en escritorio (`min-width: 1024px`) para usar `grid-template-columns: 1fr;`, logrando que la tabla H2H ocupe el 100% del ancho de la pantalla y proporcionando una lectura mucho más cómoda de las métricas.
+- **Módulo de Detalle en Modal Overlay**: Transicionado el panel de historial detallado de partidos (`#rival-detail-panel`) de un diseño dividido lado a lado a un modal superpuesto premium (`#rival-detail-modal`) con desenfoque de fondo glassmorphic (`backdrop-filter: blur(10px)`).
+- **Botón de Cierre Vectorial Premium**: Inyectado dinámicamente en la cabecera del panel un botón circular translúcido con icono SVG de "X" de alta fidelidad, con transiciones suaves en hover.
+- **Cierre Reactivo al Backdrop**: Integrada lógica interactiva para cerrar el modal automáticamente al hacer clic en cualquier área del fondo translúcido (overlay), además de limpiar la selección activa de la fila de la tabla.
+
 ## [v65.0] - 2026-05-21 | 00:30
 ### Historial Global de Rivales H2H (Vista Dedicada) (v65.0)
 - **Nueva Vista Completa**: Añadido un botón "HISTORIAL DE RIVALES" (con icono SVG de escudo vectorial) en la cabecera de Jornadas que navega a una vista dedicada (`#view-rivals-history`) con diseño Bento Grid responsivo.
