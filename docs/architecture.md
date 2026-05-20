@@ -92,6 +92,14 @@ Para garantizar la integridad de los datos en jornadas reportadas a posteriori:
 - **Renderizado Forzado**: El motor `renderPitch` permite inyectar una táctica histórica, ignorando la configuración actual del club para visualización y validación de sucesos.
 - **Normalización de IDs**: El sistema de estadísticas (`recalculateAllStats` y `finalizeMatch`) implementa un extractor flexible que soporta múltiples formatos de alineación (legacy, flat arrays y structured snapshots).
 
+### 4.4. Historial Global de Rivales H2H (v65.0)
+Vista dedicada accesible desde la cabecera de Jornadas que ofrece un análisis comparativo completo contra todos los rivales enfrentados históricamente.
+- **Agregación en Memoria**: La función `renderRivalsHistory()` escanea `state.sessions` y `state.activeSession`, consolida rivales por clave `.toUpperCase()` para evitar duplicados, y calcula PJ, V, E, D, GF, GC y % Victoria sin consultas adicionales a Supabase.
+- **Bento Grid Responsivo**: En desktop (≥1024px) usa `grid-template-columns: 1.6fr 1fr` para tabla + panel de detalle. En móvil se apila verticalmente.
+- **Panel de Detalle con Inversión de Localía**: `selectRivalDetail()` ordena partidos por ID descendente y aplica inversión estética del marcador cuando `matchCondition === 'visitor'`.
+- **Expansión de Eventos**: `toggleMatchEventsExpansion()` renderiza goleadores y asistentes con iconos SVG vectoriales, resolviendo IDs a nombres mediante `getPlayerNameById()`.
+- **Filtrado Reactivo**: `filterRivalsTable()` filtra la tabla en tiempo real contra la caché local `globalRivalsData`.
+
 ---
 
 ## 5. Comunicación entre Componentes
@@ -165,4 +173,4 @@ JB-SQUAD opera bajo un modelo de registro privado mediante códigos de invitaci�
 
 ---
 ---
-*Última actualización técnica: v59.0.0 - 30 de Abril de 2026*
+*Última actualización técnica: v65.0.0 - 21 de Mayo de 2026*

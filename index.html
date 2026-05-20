@@ -945,6 +945,12 @@
                     <h1>Mis <span class="gradient-text">Jornadas</span></h1>
                     <div class="jornadas-action-buttons">
                         <button class="btn-detail" id="btn-create-matchday-graphic" data-role-required="manager,capitan">CARTEL MATCHDAY</button>
+                        <button class="btn-detail" id="btn-rivals-history" style="display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 44px; padding: 10px 18px;">
+                            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink: 0;">
+                                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                            </svg>
+                            HISTORIAL DE RIVALES
+                        </button>
                         <button class="btn-gold" id="btn-new-session" data-role-required="manager">Nueva Jornada</button>
                     </div>
                 </div>
@@ -993,6 +999,60 @@
 
                 <div id="sessions-list" style="display: none;">
                     <!-- Inyectado por JS -->
+                </div>
+            </section>
+
+            <!-- VIEW: Historial Global de Rivales (v65.0) -->
+            <section id="view-rivals-history" class="view" style="display: none; padding: 20px 15px 100px;">
+                <!-- Cabecera de Navegación -->
+                <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 1.5rem;">
+                    <button id="btn-back-to-sessions-from-rivals" style="background: none; border: none; color: var(--primary); font-size: 1.5rem; cursor: pointer; transition: transform 0.2s; width: 44px; height: 44px; display: flex; align-items: center; justify-content: center;">
+                        ←
+                    </button>
+                    <h1 style="margin: 0;">Historial de <span class="gradient-text">Rivales</span></h1>
+                </div>
+
+                <!-- Buscador Reactivo con Lupa SVG (Regla de Oro 11) -->
+                <div class="card-elite" style="margin-bottom: 20px; padding: 15px; display: flex; gap: 12px; align-items: center;">
+                    <div style="flex: 1; position: relative;">
+                        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="var(--primary)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="position: absolute; left: 12px; top: 50%; transform: translateY(-50%); opacity: 0.7;">
+                            <circle cx="11" cy="11" r="8"></circle>
+                            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                        </svg>
+                        <input type="text" id="rivals-search" placeholder="Buscar oponente por nombre..." style="width: 100%; padding: 12px 12px 12px 38px; background: rgba(0,0,0,0.5); border: 1px solid var(--glass-border); color: #fff; border-radius: 8px; outline: none; transition: border-color 0.2s; min-height: 44px;">
+                    </div>
+                </div>
+
+                <!-- Layout Bento Responsivo de Ancho Completo -->
+                <div class="rivals-bento-layout">
+                    <!-- Tabla comparativa de Rivales -->
+                    <div class="card-elite" style="padding: 20px; overflow: hidden; width: 100%;">
+                        <h2 class="calendar-title" style="margin-top: 0; margin-bottom: 15px; font-size: 1rem; letter-spacing: 1px;">COMPARATIVA <span class="gradient-text">H2H GLOBAL</span></h2>
+                        <div class="stats-table-wrapper" style="overflow-x: auto;">
+                            <table class="stats-elite-table" id="table-rivals-compare" style="width: 100%; border-collapse: collapse;">
+                                <thead>
+                                    <tr>
+                                        <th style="min-width: 150px; text-align: left; padding: 12px 15px;">Rival</th>
+                                        <th style="text-align: center; width: 60px; padding: 12px 15px;">PJ</th>
+                                        <th style="text-align: center; width: 60px; padding: 12px 15px; color: #4CAF50;">V</th>
+                                        <th style="text-align: center; width: 60px; padding: 12px 15px; color: #FFC107;">E</th>
+                                        <th style="text-align: center; width: 60px; padding: 12px 15px; color: #F44336;">D</th>
+                                        <th style="text-align: center; width: 60px; padding: 12px 15px;">GF</th>
+                                        <th style="text-align: center; width: 60px; padding: 12px 15px;">GC</th>
+                                        <th style="text-align: center; width: 80px; padding: 12px 15px; color: #2ecc71;">% V</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="table-rivals-body">
+                                    <!-- Inyectado dinámicamente por JS -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- Panel Detallado del Rival Seleccionado -->
+                    <div id="rival-detail-panel" class="card-elite" style="padding: 20px; display: none; flex-direction: column; gap: 20px; width: 100%;">
+                        <!-- Inyectado dinámicamente por JS -->
+                    </div>
                 </div>
             </section>
 

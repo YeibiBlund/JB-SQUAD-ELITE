@@ -1,3 +1,16 @@
+## [v65.0] - 2026-05-21 | 00:30
+### Historial Global de Rivales H2H (Vista Dedicada) (v65.0)
+- **Nueva Vista Completa**: Añadido un botón "HISTORIAL DE RIVALES" (con icono SVG de escudo vectorial) en la cabecera de Jornadas que navega a una vista dedicada (`#view-rivals-history`) con diseño Bento Grid responsivo.
+- **Tabla Comparativa H2H Global**: Muestra todos los rivales enfrentados históricamente con estadísticas agregadas: Partidos Jugados (PJ), Victorias (V), Empates (E), Derrotas (D), Goles a Favor (GF), Goles en Contra (GC) y Porcentaje de Victorias (% V).
+- **Consolidación Inteligente por Mayúsculas**: Los rivales con diferencias de capitalización (ej. "Rival A" y "rival a") se unifican automáticamente bajo una única clave `.toUpperCase()` para evitar duplicados estadísticos.
+- **Buscador Reactivo en Tiempo Real**: Barra de búsqueda con icono SVG de lupa que filtra la tabla de rivales instantáneamente mientras el usuario escribe, sin consultas adicionales a Supabase (todo en memoria local).
+- **Panel de Detalle Individual**: Al pulsar en un rival se despliega un panel lateral (Bento Grid 1.6fr/1fr en desktop) con cabecera de escudo, balance global (V-E-D), eficacia H2H (%), y listado cronológico descendente de todos los partidos contra ese rival.
+- **Inversión Estética de Localía**: En los partidos disputados como visitante (`matchCondition === 'visitor'`), el marcador se invierte visualmente en la UI (`scoreAway - scoreHome`) para representar fielmente la posición en el campo.
+- **Expansión de Eventos por Partido**: Al pulsar en un partido concreto, se despliega con animación `slideDownFade` un sub-contenedor con los goleadores (icono SVG de balón dorado) y asistentes (icono SVG de flecha verde) de JB Squad, resolviendo nombres mediante `getPlayerNameById()`.
+- **Diseño Divergente Desktop/Móvil (Regla de Oro 7)**: En desktop (≥1024px) la vista ocupa el 100% de la pantalla con Grid asimétrico. En móvil se apila verticalmente con scroll horizontal encapsulado para la tabla.
+- **Áreas Táctiles Mínimas (Regla de Oro 5)**: Todas las filas y botones cumplen con un mínimo de 44x44px para usabilidad táctil.
+- **Iconografía SVG Premium (Regla de Oro 11)**: Eliminados todos los emojis básicos, sustituidos por iconos vectoriales SVG in-line de alta fidelidad (escudo, lupa, balón, flecha de asistencia, chevrons).
+
 ## [v64.0] - 2026-05-17 | 22:15
 ### 📊 Historial de Enfrentamientos Directos (H2H - Head-to-Head) (v64.0)
 - **Módulo Reactivo Ultra Premium**: Integrado dentro del modal de creación de partidos en vivo (`matchModal`).
