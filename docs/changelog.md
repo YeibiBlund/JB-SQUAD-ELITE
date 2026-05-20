@@ -1,3 +1,10 @@
+## [v65.2.0] - 2026-05-21 | 01:00
+### 📊 Ordenación H2H Interactiva & Fechas Legibles en Partidos (v65.2.0)
+- **Ordenación por Todas las Columnas**: Convertidas todas las cabeceras de la tabla H2H (Rival, PJ, V, E, D, GF, GC, % V) en interactivas y pulsables (`cursor: pointer`). Implementada ordenación reactiva bidireccional en memoria.
+- **Indicador Direccional Premium**: Inyectada la adición automática y discreta de iconos direccionales de ordenación (`▲` para ascendente y `▼` para descendente) en la cabecera activa de la tabla.
+- **Ordenación Inteligente por Tipo**: Las columnas numéricas (PJ, V, E, D, GF, GC, % V) inician de forma descendente por defecto en la primera pulsación para priorizar los oponentes más destacados, mientras que la columna "Rival" se ordena alfabéticamente de forma ascendente.
+- **Fechas Legibles en Partidos**: Eliminados los identificadores UUID largos ("números raros") del listado cronológico de partidos dentro del modal del rival, reemplazándolos de forma automática por la fecha de la sesión correspondiente en formato legible (`Jornada del DD/MM/YYYY`).
+
 ## [v65.1.0] - 2026-05-21 | 00:55
 ### 📊 Vista Expandida H2H & Modal de Detalle de Rivales (v65.1.0)
 - **Tabla Comparativa H2H de Ancho Completo**: Ajustado el layout `.rivals-bento-layout` en escritorio (`min-width: 1024px`) para usar `grid-template-columns: 1fr;`, logrando que la tabla H2H ocupe el 100% del ancho de la pantalla y proporcionando una lectura mucho más cómoda de las métricas.

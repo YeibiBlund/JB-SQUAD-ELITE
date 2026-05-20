@@ -8128,13 +8128,73 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // --- LÓGICA DE AGREGACIÓN HISTORIAL DE RIVALES (v65.0) ---
+    // --- LÓGICA DE AGREGACIÓN HISTORIAL DE RIVALES (v65.2.0) ---
     let globalRivalsData = {}; // Cache local en memoria para búsquedas reactivas
+    let rivalsSortConfig = {
+        key: 'displayName',
+        desc: false
+    };
+    let hasSetupRivalsSorting = false;
+
+    function setupRivalsTableSorting() {
+        if (hasSetupRivalsSorting) return;
+        hasSetupRivalsSorting = true;
+
+        document.querySelectorAll('.th-rivals-sortable').forEach(th => {
+            th.addEventListener('click', () => {
+                const key = th.getAttribute('data-sort');
+                if (rivalsSortConfig.key === key) {
+                    rivalsSortConfig.desc = !rivalsSortConfig.desc;
+                } else {
+                    rivalsSortConfig.key = key;
+                    // Por defecto, columnas numéricas ordenan desc (V, E, D, PJ, % V, GF, GC), alfabética asc
+                    rivalsSortConfig.desc = key !== 'displayName';
+                }
+                renderRivalsHistory();
+            });
+        });
+    }
+
+    function updateRivalsSortHeaders() {
+        document.querySelectorAll('.th-rivals-sortable').forEach(th => {
+            const key = th.getAttribute('data-sort');
+            let originalText = th.innerText.replace(' ▲', '').replace(' ▼', '');
+            if (key === rivalsSortConfig.key) {
+                originalText += rivalsSortConfig.desc ? ' ▼' : ' ▲';
+            }
+            th.innerText = originalText;
+        });
+    }
+
+    function sortRivalsData(list) {
+        const key = rivalsSortConfig.key;
+        const desc = rivalsSortConfig.desc;
+
+        return list.sort((a, b) => {
+            let valA = a[key];
+            let valB = b[key];
+
+            if (typeof valA === 'string') {
+                valA = valA.toUpperCase();
+                valB = valB.toUpperCase();
+                return desc ? valB.localeCompare(valA) : valA.localeCompare(valB);
+            }
+
+            // Numéricos (incluye winRatio, pj, v, e, d, gf, gc)
+            return desc ? valB - valA : valA - valB;
+        });
+    }
 
     window.renderRivalsHistory = function() {
         const tableBody = document.getElementById('table-rivals-body');
         const detailPanel = document.getElementById('rival-detail-panel');
         if (!tableBody) return;
+
+        // Inicializar listeners de ordenación perezosa
+        setupRivalsTableSorting();
+
+        // Actualizar visualmente indicadores de ordenación
+        updateRivalsSortHeaders();
 
         // Reset de la vista detallada
         if (detailPanel) detailPanel.style.display = 'none';
@@ -8169,6 +8229,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         d: 0,
                         gf: 0,
                         gc: 0,
+                        winRatio: 0,
                         matches: []
                     };
                 }
@@ -8191,17 +8252,18 @@ document.addEventListener('DOMContentLoaded', () => {
                     rData.d++;
                 }
 
-                // Guardar metadatos del partido para el desglose detallado
+                rData.winRatio = rData.pj > 0 ? Math.round((rData.v / rData.pj) * 100) : 0;
+
+                // Guardar metadatos del partido para el desglose detallado con fecha
                 rData.matches.push({
                     ...m,
-                    sessionName: sess.name || `Jornada ${sess.id}`
+                    sessionDate: sess.date || null,
+                    sessionName: sess.name || (sess.date ? `Jornada del ${sess.date}` : `Jornada #${sess.id.toString().substring(0, 8)}`)
                 });
             });
         });
 
         const rivalsList = Object.values(globalRivalsData);
-        // Ordenar alfabéticamente
-        rivalsList.sort((a, b) => a.displayName.localeCompare(b.displayName));
 
         if (rivalsList.length === 0) {
             tableBody.innerHTML = `
@@ -8214,7 +8276,10 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        renderRivalsTableRows(rivalsList);
+        // Ordenar dinámicamente según rivalsSortConfig
+        const sortedList = sortRivalsData(rivalsList);
+
+        renderRivalsTableRows(sortedList);
     };
 
     function renderRivalsTableRows(list) {
