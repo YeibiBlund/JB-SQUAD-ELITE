@@ -1596,8 +1596,20 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function renderPitch(targetPitch = pitch, forcedTactic = null) {
-        const activeTactic = forcedTactic || state.savedTactics.find(t => t.id === state.activeTacticId);
-        if (!activeTactic) return handleTacticViewDisplay();
+        // --- VALIDACIÓN DEFENSIVA DE ALINEACIONES MULTI-FORMATO (v65.1) ---
+        // Evitamos procesar forcedTactic si es un array plano legacy o carece de formación válida
+        let validForcedTactic = forcedTactic;
+        if (validForcedTactic && (Array.isArray(validForcedTactic) || !validForcedTactic.formation)) {
+            validForcedTactic = null;
+        }
+
+        const activeTactic = validForcedTactic || state.savedTactics.find(t => t.id === state.activeTacticId);
+        if (!activeTactic) {
+            if (targetPitch === pitch) {
+                return handleTacticViewDisplay();
+            }
+            return;
+        }
 
         if (targetPitch === pitch) {
             document.getElementById('current-formation-label').textContent = activeTactic.name;

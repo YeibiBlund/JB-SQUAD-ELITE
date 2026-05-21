@@ -7239,18 +7239,26 @@ input:disabled + .jb-slider {
 /* Filas interactivas con look deportivo premium */
 .rival-row {
     cursor: pointer;
-    transition: background-color 0.2s ease, transform 0.2s ease;
+    transition: background-color 0.2s ease;
     height: 52px; /* Altura cómoda táctil */
 }
 
 .rival-row:hover {
     background: rgba(240, 165, 0, 0.05) !important;
-    transform: translateX(4px);
 }
 
 .rival-row.selected {
     background: rgba(240, 165, 0, 0.1) !important;
     border-left: 3px solid var(--primary);
+}
+
+/* Cabeceras de rivales ordenables premium */
+.th-rivals-sortable {
+    transition: color 0.2s ease, background-color 0.2s ease !important;
+}
+.th-rivals-sortable:hover {
+    color: var(--primary) !important;
+    background-color: rgba(255, 255, 255, 0.02) !important;
 }
 
 /* Partidos individuales de la lista de encuentros */
