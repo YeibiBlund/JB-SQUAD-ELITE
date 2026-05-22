@@ -7412,3 +7412,32 @@ input:disabled + .jb-slider {
         transform: translateY(0);
     }
 }
+
+/* Asegurar que la tabla H2H sea completamente fija y no salte al ordenar (v65.4.1) */
+#table-rivals-compare {
+    table-layout: fixed !important;
+    width: 100% !important;
+}
+
+.th-rivals-sortable {
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+}
+
+/* Prevenir desbordamiento y saltos por nombres de rivales largos o saltos de línea */
+.rival-row td {
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+}
+
+.rival-row td > div {
+    overflow: hidden !important;
+}
+
+.rival-row td span {
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+}
