@@ -1,3 +1,9 @@
+## [v65.4.0] - 2026-05-23 | 01:20
+### 🎨 Eliminación de Hover en Cabeceras e Interacción de Ordenación (v65.4.0)
+- **Restricción de Hover de Fila a Tbody**: Cambiada la regla `.stats-elite-table tr:hover` a `.stats-elite-table tbody tr:hover` en `style.css`. Esto previene que el contenedor de cabecera (`thead tr`) reciba un color de fondo al pasar el cursor para hacer clic, eliminando el parpadeo molesto e inapropiado en la cabecera de la tabla comparativa H2H global.
+- **Eliminación de Hover de Fondo en Celdas de Cabecera**: Limpiado el selector `.th-rivals-sortable:hover` en `style.css` para eliminar el cambio de `background-color` a `rgba(255, 255, 255, 0.02)`. Ahora solo realiza una transición suave del color del texto a `var(--primary)` para resaltar la interactividad sin generar un efecto adhesivo o incómodo ("sticky hover") al hacer clic.
+- **Unificación de Transición Inline**: Actualizados los atributos `style` en `index.html` para todas las cabeceras `.th-rivals-sortable`, reemplazando `transition: background-color 0.2s` por `transition: color 0.2s` para una sincronía impecable con los nuevos estilos.
+
 ## [v65.3.0] - 2026-05-22 | 23:05
 ### 🎨 Rediseño Premium Modal Nuevo Partido (Desktop) (v65.3.0)
 - **Grid Layout a Dos Columnas**: Refactorizado el layout del modal de creación de partido (`#match-form`) para usar un diseño de cuadrícula (grid) en pantallas de escritorio (`min-width: 1024px`), abandonando el formato de columna única heredado de móvil.
