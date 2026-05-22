@@ -2398,7 +2398,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     if (m.rival && m.rival.trim().toUpperCase() === cleanRivalName) {
                         matchesVsRival.push({
                             ...m,
-                            sessionName: sess.name || `Jornada ${sess.id}`
+                            sessionName: sess.name || (sess.date ? `Jornada del ${sess.date}` : `Jornada #${sess.id.toString().substring(0, 8)}`)
                         });
                     }
                 });
@@ -2517,11 +2517,150 @@ document.addEventListener('DOMContentLoaded', () => {
             };
         }
 
+        // --- AUTOCOMPLETADO Y SUGERENCIAS DE RIVALES (v65.0) ---
+        const suggestionsDropdown = document.getElementById('rival-suggestions-dropdown');
+        let highlightedIndex = -1;
+        let filteredSuggestions = [];
+
+        function getHistoricalRivals() {
+            const rivals = new Set();
+            const sessionsToScan = [...(state.sessions || [])];
+            if (state.activeSession) {
+                sessionsToScan.push(state.activeSession);
+            }
+            sessionsToScan.forEach(sess => {
+                const matches = sess.matches || [];
+                matches.forEach(m => {
+                    if (m.rival) {
+                        const trimmed = m.rival.trim();
+                        if (trimmed) rivals.add(trimmed);
+                    }
+                });
+            });
+            return Array.from(rivals).sort((a, b) => a.localeCompare(b, 'es', { sensitivity: 'base' }));
+        }
+
+        function renderSuggestions(searchText) {
+            if (!suggestionsDropdown) return;
+            highlightedIndex = -1;
+            
+            if (!searchText || searchText.trim() === '') {
+                suggestionsDropdown.style.display = 'none';
+                suggestionsDropdown.innerHTML = '';
+                filteredSuggestions = [];
+                return;
+            }
+
+            const cleanSearch = searchText.trim().toLowerCase();
+            const allRivals = getHistoricalRivals();
+            
+            // Filtrar rivales que coincidan con el texto de búsqueda
+            filteredSuggestions = allRivals.filter(rival => 
+                rival.toLowerCase().includes(cleanSearch)
+            );
+
+            if (filteredSuggestions.length === 0) {
+                suggestionsDropdown.style.display = 'none';
+                suggestionsDropdown.innerHTML = '';
+                return;
+            }
+
+            // Renderizar los elementos
+            suggestionsDropdown.innerHTML = filteredSuggestions.map((rival, index) => {
+                return `<div class="rival-suggestion-item" data-index="${index}" data-value="${escapeHTML(rival)}">
+                    <span style="color: var(--primary); font-weight: 700; margin-right: 8px;">⚔️</span>${escapeHTML(rival)}
+                </div>`;
+            }).join('');
+
+            suggestionsDropdown.style.display = 'block';
+
+            // Añadir eventos click a los elementos de sugerencia
+            const items = suggestionsDropdown.querySelectorAll('.rival-suggestion-item');
+            items.forEach(item => {
+                item.onclick = (e) => {
+                    e.stopPropagation();
+                    selectSuggestion(item.getAttribute('data-value'));
+                };
+                item.onmouseenter = () => {
+                    highlightIndex(parseInt(item.getAttribute('data-index')));
+                };
+            });
+        }
+
+        function highlightIndex(index) {
+            highlightedIndex = index;
+            if (!suggestionsDropdown) return;
+            const items = suggestionsDropdown.querySelectorAll('.rival-suggestion-item');
+            items.forEach((item, idx) => {
+                if (idx === index) {
+                    item.classList.add('highlighted');
+                    // Hacer scroll automático si el elemento está fuera de vista en el dropdown
+                    item.scrollIntoView({ block: 'nearest' });
+                } else {
+                    item.classList.remove('highlighted');
+                }
+            });
+        }
+
+        function selectSuggestion(rivalName) {
+            if (!rivalInputEl) return;
+            rivalInputEl.value = rivalName;
+            if (suggestionsDropdown) {
+                suggestionsDropdown.style.display = 'none';
+                suggestionsDropdown.innerHTML = '';
+            }
+            filteredSuggestions = [];
+            highlightedIndex = -1;
+            
+            // Actualizar H2H inmediatamente
+            updateMatchH2H(rivalName);
+        }
+
         if (rivalInputEl) {
             rivalInputEl.oninput = () => {
-                updateMatchH2H(rivalInputEl.value);
+                const val = rivalInputEl.value;
+                updateMatchH2H(val);
+                renderSuggestions(val);
+            };
+
+            rivalInputEl.onkeydown = (e) => {
+                if (suggestionsDropdown && suggestionsDropdown.style.display === 'block') {
+                    if (e.key === 'ArrowDown') {
+                        e.preventDefault();
+                        const nextIdx = (highlightedIndex + 1) % filteredSuggestions.length;
+                        highlightIndex(nextIdx);
+                    } else if (e.key === 'ArrowUp') {
+                        e.preventDefault();
+                        const prevIdx = (highlightedIndex - 1 + filteredSuggestions.length) % filteredSuggestions.length;
+                        highlightIndex(prevIdx);
+                    } else if (e.key === 'Enter') {
+                        if (highlightedIndex >= 0 && highlightedIndex < filteredSuggestions.length) {
+                            e.preventDefault();
+                            selectSuggestion(filteredSuggestions[highlightedIndex]);
+                        }
+                    } else if (e.key === 'Escape') {
+                        suggestionsDropdown.style.display = 'none';
+                        suggestionsDropdown.innerHTML = '';
+                        filteredSuggestions = [];
+                        highlightedIndex = -1;
+                    }
+                }
+            };
+
+            rivalInputEl.onclick = (e) => {
+                e.stopPropagation();
+                renderSuggestions(rivalInputEl.value);
             };
         }
+
+        // Ocultar dropdown al hacer click fuera
+        document.addEventListener('click', (e) => {
+            if (suggestionsDropdown && !suggestionsDropdown.contains(e.target) && e.target !== rivalInputEl) {
+                suggestionsDropdown.style.display = 'none';
+                highlightedIndex = -1;
+                filteredSuggestions = [];
+            }
+        });
 
         if (btnSetLocal) {
             btnSetLocal.onclick = () => {

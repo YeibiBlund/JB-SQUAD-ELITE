@@ -1561,7 +1561,7 @@
 
     <!-- Modal Nuevo Partido -->
     <div id="match-modal-overlay" class="modal-overlay" style="display: none;">
-        <div class="modal-content" style="max-width: 450px;">
+        <div class="modal-content match-modal-content">
             <div class="modal-header">
                 <h2>NUEVO <span class="gradient-text">PARTIDO</span></h2>
                 <button id="close-match-modal" class="btn-close">✕</button>
@@ -1586,9 +1586,10 @@
                 </div>
 
                 <!-- CAMPO MANUAL (Solo si elige manual) -->
-                <div id="manual-rival-container" class="form-group">
+                <div id="manual-rival-container" class="form-group" style="position: relative;">
                     <label style="font-size: 0.65rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px;">Nombre del Rival</label>
-                    <input type="text" id="rivalName" placeholder="EJ: RIVAL CITY" style="background: rgba(255,255,255,0.05);">
+                    <input type="text" id="rivalName" placeholder="EJ: RIVAL CITY" style="background: rgba(255,255,255,0.05);" autocomplete="off">
+                    <div id="rival-suggestions-dropdown" class="rival-suggestions-dropdown" style="display: none;"></div>
                 </div>
 
                 <!-- HISTORIAL DE ENFRENTAMIENTOS (H2H) v64.0 -->
