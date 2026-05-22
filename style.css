@@ -1587,7 +1587,44 @@ p { color: var(--text-muted); font-size: 0.95rem; line-height: 1.5; }
 @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 @keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
 
-/* --- SECCIÃƒÆ’Ã¢â‚¬Å“N JORNADAS Y PARTIDOS --- */
+/* --- ESTILOS MODAL NUEVO PARTIDO --- */
+.match-form-layout {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    margin-top: 20px;
+}
+
+@media (min-width: 1024px) {
+    .match-modal-content {
+        max-width: 850px !important;
+        padding: 40px !important;
+    }
+    
+    .match-form-layout {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 25px;
+        align-items: start;
+    }
+    
+    .match-form-layout #manual-rival-container {
+        grid-column: 1 / -1;
+    }
+    
+    .match-form-layout #match-h2h-container {
+        grid-column: 1 / -1;
+    }
+    
+    .match-form-layout > button[type="submit"] {
+        grid-column: 1 / -1;
+        margin-top: 20px !important;
+        padding: 20px !important; /* Más grande en desktop */
+        font-size: 1.1rem !important; /* Más premium */
+    }
+}
+
+/* --- SECCIÓN JORNADAS Y PARTIDOS --- */
 .session-card {
     background: linear-gradient(135deg, rgba(30, 30, 30, 0.8) 0%, rgba(10, 10, 10, 0.95) 100%);
     border: 1px solid var(--glass-border);

@@ -1,3 +1,10 @@
+## [v65.3.0] - 2026-05-22 | 23:05
+### 🎨 Rediseño Premium Modal Nuevo Partido (Desktop) (v65.3.0)
+- **Grid Layout a Dos Columnas**: Refactorizado el layout del modal de creación de partido (`#match-form`) para usar un diseño de cuadrícula (grid) en pantallas de escritorio (`min-width: 1024px`), abandonando el formato de columna única heredado de móvil.
+- **Expansión de Anchura**: Incrementado el `max-width` del modal a `850px` en escritorio, aprovechando el espacio panorámico para presentar los selectores de liga, rival, condición y tipo de partido de forma agrupada y elegante.
+- **Manteniendo la Regla de Oro 7**: La versión móvil se mantiene intacta en su diseño optimizado vertical sin perder espacio.
+- **Ajustes de Interfaz Dinámica**: Los contenedores anchos (entrada manual de rival, widget H2H y botón de submit) se adaptan dinámicamente ocupando el ancho total disponible (`grid-column: 1 / -1`) para no romper la estética del formulario.
+
 ## [v65.2.0] - 2026-05-21 | 01:00
 ### 📊 Ordenación H2H Interactiva & Fechas Legibles en Partidos (v65.2.0)
 - **Ordenación por Todas las Columnas**: Convertidas todas las cabeceras de la tabla H2H (Rival, PJ, V, E, D, GF, GC, % V) en interactivas y pulsables (`cursor: pointer`). Implementada ordenación reactiva bidireccional en memoria.
