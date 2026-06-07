@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <!-- Content Security Policy (Blindaje Élite) -->
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: *; connect-src 'self' https://drzwawwlpsunprtfbytu.supabase.co wss://drzwawwlpsunprtfbytu.supabase.co https://cdn.jsdelivr.net https://www.virtualpronetwork.com https://*.virtualpronetwork.com;">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com; font-src 'self' https://fonts.gstatic.com https://cdnjs.cloudflare.com; img-src 'self' data: *; connect-src 'self' https://drzwawwlpsunprtfbytu.supabase.co wss://drzwawwlpsunprtfbytu.supabase.co https://cdn.jsdelivr.net https://www.virtualpronetwork.com https://*.virtualpronetwork.com;">
     <title>JB-SQUAD Elite | FIFA Pro Clubs</title>
     <!-- Solución al 404 del favicon -->
     <link rel="icon" href="img/logo.png" type="image/png">
@@ -16,7 +16,10 @@
     <meta name="apple-mobile-web-app-title" content="JB-SQUAD ELITE">
     <link rel="apple-touch-icon" href="img/logo.png">
     <link rel="manifest" href="manifest.json">
-    <link rel="stylesheet" href="style.css">
+    <!-- FontAwesome 6 (Logros y UI) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <link rel="stylesheet" href="style.css?v=50.0.0">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 </head>
@@ -94,54 +97,53 @@
         <h2 class="gradient-text" style="font-size: 2.5rem; margin-bottom: 0.5rem; text-align: center; font-weight: 900;">JB-SQUAD</h2>
         <p style="color: var(--text-muted); font-size: 0.8rem; margin-bottom: 3rem; text-transform: uppercase; letter-spacing: 4px;">Configura tu Ecosistema</p>
         
-        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 30px; width: 100%; max-width: 1000px;">
+        <div style="display: flex; flex-direction: column; gap: 40px; width: 100%; max-width: 1200px;">
             
-            <!-- Columna Izquierda: Acciones -->
-            <div style="display: flex; flex-direction: column; gap: 20px;">
-                <!-- Crear Equipo -->
-                <div class="card-elite" style="padding: 30px; border: 1px solid var(--primary); background: rgba(240, 165, 0, 0.03);">
-                    <h3 style="color: var(--primary); margin-bottom: 10px; font-size: 1.2rem;">Fundar un Club</h3>
-                    <p style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 25px; line-height: 1.4;">Crea tu propio equipo y asume el mando como Manager Principal.</p>
-                    <form id="create-team-form">
-                        <div class="form-group">
-                            <label style="font-size: 0.65rem; color: var(--text-muted); margin-bottom: 8px; display: block; font-weight: 800; letter-spacing: 1px;">NOMBRE DEL CLUB</label>
-                            <input type="text" id="new-team-name" placeholder="Nombre de tu Club" required>
-                        </div>
-                        <div class="form-group" style="margin-top: 15px;">
-                            <label style="font-size: 0.65rem; color: var(--primary); margin-bottom: 8px; display: block; font-weight: 800; letter-spacing: 1px;">CÓDIGO DE FUNDACIÓN ELITE</label>
-                            <input type="text" id="founding-code" placeholder="INTRODUCE TU CÓDIGO" required style="text-transform: uppercase; border-color: var(--primary); background: rgba(240, 165, 0, 0.05);">
-                        </div>
-                        <button type="submit" class="btn-gold" style="width: 100%; margin-top: 10px;">Fundar Ahora</button>
-                    </form>
+            <!-- Bloque Superior: Explorador -->
+            <div class="card-elite" style="padding: 30px; display: flex; flex-direction: column; background: linear-gradient(135deg, rgba(30, 30, 30, 0.6) 0%, rgba(10, 10, 10, 0.9) 100%); border: 1px solid rgba(255,255,255,0.05);">
+                <div style="display: flex; justify-content: space-between; align-items: flex-end; flex-wrap: wrap; gap: 15px; margin-bottom: 20px;">
+                    <div>
+                        <h3 style="margin-bottom: 5px; font-size: 1.5rem; display: flex; align-items: center; gap: 10px; color: #fff;">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M21 21L15 15M17 10C17 13.866 13.866 17 10 17C6.13401 17 3 13.866 3 10C3 6.13401 6.13401 3 10 3C13.866 3 17 6.13401 17 10Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                            Directorio de Clubes
+                            <button type="button" onclick="window.jbToast('Busca el nombre exacto de tu equipo en la barra lateral, envía tu solicitud de fichaje y espera pacientemente a que el Mánager del club apruebe tu entrada para poder acceder al vestuario.', 'info', 8000)" title="¿Cómo unirme a un club?" style="color: var(--primary); background: rgba(240,165,0,0.1); width: 22px; height: 22px; border-radius: 50%; display: flex; align-items: center; justify-content: center; text-decoration: none; font-weight: bold; border: 1px solid var(--primary); cursor: pointer; transition: 0.3s; font-size: 0.75rem; margin-left: 5px;" onmouseover="this.style.background='var(--primary)'; this.style.color='#000';" onmouseout="this.style.background='rgba(240,165,0,0.1)'; this.style.color='var(--primary)';">?</button>
+                        </h3>
+                        <p style="font-size: 0.9rem; color: var(--text-muted); margin: 0;">Únete a una comunidad activa enviando tu solicitud.</p>
+                    </div>
+                    <!-- Buscador integrado -->
+                    <div style="flex: 1; min-width: 250px; max-width: 400px; position: relative;">
+                        <input type="text" id="search-team-filter" placeholder="Buscar club por nombre..." style="width: 100%; padding: 12px 15px 12px 40px; background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; color: #fff; font-size: 0.9rem;">
+                        <span style="position: absolute; left: 15px; top: 50%; transform: translateY(-50%); font-size: 1.1rem; color: var(--text-muted);">🔍</span>
+                    </div>
                 </div>
-
-                <!-- Unirse Manual -->
-                <div class="card-elite" style="padding: 30px;">
-                    <h3 style="margin-bottom: 10px; font-size: 1.2rem;">Búsqueda Directa</h3>
-                    <p style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 25px; line-height: 1.4;">¿Sabes el nombre exacto? Búscalo aquí directamente.</p>
-                    <form id="join-team-form">
-                        <div class="form-group">
-                            <input type="text" id="search-team-name" placeholder="Nombre del Club..." required>
-                        </div>
-                        <button type="submit" class="btn-gold" style="background: rgba(255,255,255,0.05); color: #fff; border-color: rgba(255,255,255,0.2); width: 100%;">Buscar y Solicitar</button>
-                    </form>
-                </div>
-            </div>
-
-            <!-- Columna Derecha: Explorador -->
-            <div class="card-elite" style="padding: 30px; display: flex; flex-direction: column;">
-                <h3 style="margin-bottom: 10px; font-size: 1.2rem; display: flex; align-items: center; gap: 10px;">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M21 21L15 15M17 10C17 13.866 13.866 17 10 17C6.13401 17 3 13.866 3 10C3 6.13401 6.13401 3 10 3C13.866 3 17 6.13401 17 10Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-                    Explorar Clubes
-                </h3>
-                <p style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 25px;">Únete a una comunidad activa.</p>
                 
                 <!-- Lista de clubes disponibles -->
-                <div id="available-clubs-list" style="display: flex; flex-direction: column; gap: 12px; overflow-y: auto; max-height: 400px; padding-right: 5px;">
+                <div id="available-clubs-list" style="display: flex; flex-direction: column; gap: 12px; overflow-y: auto; max-height: 500px; padding-right: 5px;">
                     <p style="color: var(--text-muted); font-size: 0.8rem; text-align: center; padding: 20px;">Cargando clubes...</p>
                 </div>
             </div>
 
+            <!-- Bloque Inferior: Fundar -->
+            <div class="card-elite-premium" style="width: 100%; padding: 30px; border: 1px solid rgba(240, 165, 0, 0.3); background: linear-gradient(135deg, rgba(240, 165, 0, 0.08) 0%, rgba(10, 10, 10, 0.95) 100%);">
+                <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px;">
+                    <h3 style="color: var(--primary); font-size: 1.3rem; margin: 0;">Fundar un Club</h3>
+                    <button type="button" onclick="window.showFoundingInfo()" title="Cómo conseguir un código" style="color: var(--primary); background: rgba(240,165,0,0.1); width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; text-decoration: none; font-weight: bold; border: 1px solid var(--primary); cursor: pointer; transition: 0.3s;" onmouseover="this.style.background='var(--primary)'; this.style.color='#000';" onmouseout="this.style.background='rgba(240,165,0,0.1)'; this.style.color='var(--primary)';">?</button>
+                </div>
+                <p style="font-size: 0.85rem; color: #ccc; margin-bottom: 25px; line-height: 1.5;">Crea tu propio equipo y asume el mando como Manager Principal. <span style="color: var(--text-muted); font-size: 0.75rem;"><br>(Requiere código de administración)</span></p>
+                <form id="create-team-form">
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px;">
+                        <div class="form-group">
+                            <label style="font-size: 0.65rem; color: var(--text-muted); margin-bottom: 8px; display: block; font-weight: 800; letter-spacing: 1px;">NOMBRE DEL CLUB</label>
+                            <input type="text" id="new-team-name" placeholder="Nombre de tu Club" required>
+                        </div>
+                        <div class="form-group">
+                            <label style="font-size: 0.65rem; color: var(--primary); margin-bottom: 8px; display: block; font-weight: 800; letter-spacing: 1px;">CÓDIGO DE FUNDACIÓN ELITE</label>
+                            <input type="text" id="founding-code" placeholder="INTRODUCE TU CÓDIGO" required style="text-transform: uppercase; border-color: var(--primary); background: rgba(240, 165, 0, 0.05);">
+                        </div>
+                    </div>
+                    <button type="submit" style="width: 100%; margin-top: 25px; padding: 12px; font-size: 0.9rem; font-weight: 900; border-radius: 8px; letter-spacing: 1px; transition: 0.3s; cursor: pointer; text-transform: uppercase; border: 1px solid rgba(255,255,255,0.2); background: linear-gradient(135deg, rgba(30,30,30,0.8) 0%, rgba(10,10,10,1) 100%); color: #fff; box-shadow: 0 4px 15px rgba(0,0,0,0.5);" onmouseover="this.style.background='rgba(255,255,255,0.1)'; this.style.borderColor='#fff'; this.style.boxShadow='0 0 15px rgba(255,255,255,0.2)';" onmouseout="this.style.background='linear-gradient(135deg, rgba(30,30,30,0.8) 0%, rgba(10,10,10,1) 100%)'; this.style.borderColor='rgba(255,255,255,0.2)'; this.style.boxShadow='0 4px 15px rgba(0,0,0,0.5)';">Fundar Ahora</button>
+                </form>
+            </div>
         </div>
         <button id="btn-logout-temp" style="margin-top: 40px; background: none; border: none; color: var(--text-muted); text-decoration: underline; cursor: pointer; font-size: 0.8rem; opacity: 0.6; transition: 0.3s;" onmouseover="this.style.opacity=1" onmouseout="this.style.opacity=0.6">Cerrar Sesión</button>
     </section>
@@ -156,7 +158,7 @@
                     <img src="img/logo.png" alt="Club Logo" class="header-logo-img">
                 </div>
                 <div class="header-team-info">
-                    <h2 id="display-team-name" class="gradient-text" style="font-size: 1.8rem; letter-spacing: 1.2px; margin-bottom: 0; font-weight: 900; text-transform: uppercase;">CLUB NAME</h2>
+                    <h2 id="display-team-name" class="header-team-name">CLUB NAME</h2>
                     <p id="display-user-name" style="margin: 0; font-size: 0.75rem; color: var(--text-muted); font-weight: 600; letter-spacing: 1px;">USUARIO ELITE</p>
                 </div>
                 
@@ -232,16 +234,17 @@
             <section id="view-home" class="view" style="padding: 0;">
                 
                 <!-- 1. HERO HEADER DE BIENVENIDA (Ancho Completo) -->
-                <div class="card-elite welcome-card-premium" style="margin-bottom: 20px; padding: 25px; border-radius: 12px; background: linear-gradient(135deg, rgba(20, 20, 20, 0.7) 0%, rgba(8, 8, 8, 0.95) 100%); border: 1px solid rgba(240, 165, 0, 0.08); box-shadow: 0 10px 30px rgba(0,0,0,0.5);">
-                    <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px;">
-                        <div>
-                            <span style="font-size: 0.6rem; font-weight: 900; letter-spacing: 2.5px; color: var(--primary); text-transform: uppercase;">BIENVENIDO DE VUELTA</span>
-                            <h1 style="font-size: 2.2rem; display: flex; align-items: baseline; gap: 12px; margin: 6px 0 0 0; line-height: 1.1;">
-                                <span id="display-user-welcome" class="gradient-text">JUGADOR</span> 
-                                <span id="display-user-role" style="font-size: 0.65rem; background: rgba(240, 165, 0, 0.15); color: var(--primary); padding: 4px 10px; border-radius: 6px; letter-spacing: 1.5px; font-weight: 900; text-transform: uppercase; border: 1px solid rgba(240,165,0,0.25);">RANGO</span>
-                            </h1>
-                        </div>
-                        <div id="home-social-links" style="display: flex; gap: 15px; align-items: center;">
+                <div class="hero-welcome-card">
+                    <div class="hero-welcome-content">
+                        <span class="hero-welcome-subtitle">BIENVENIDO DE VUELTA</span>
+                        <h1 class="hero-welcome-title">
+                            <span id="display-user-welcome" class="gradient-text">JUGADOR</span> 
+                            <span id="display-user-role" class="hero-welcome-role">RANGO</span>
+                        </h1>
+                    </div>
+                    <div class="hero-social-wrapper">
+                        <span class="hero-social-label">SIGUE AL CLUB</span>
+                        <div id="home-social-links" class="hero-social-container">
                             <!-- Inyectado dinámicamente -->
                         </div>
                     </div>
@@ -252,16 +255,15 @@
                     
                     <!-- COLUMNA RENDIMIENTO (Izquierda) -->
                     <div class="dash-perf-column">
-                        
-                        <!-- TARJETA RENDIMIENTO DEL CLUB (Ratio + Racha) -->
-                        <div class="card-elite-premium performance-card-premium" style="padding: 22px; display: flex; flex-direction: column; gap: 18px;">
-                            <div style="display: flex; align-items: center; gap: 8px; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 10px;">
-                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
-                                <span style="font-size: 0.75rem; font-weight: 900; letter-spacing: 1.5px; color: var(--text-muted); text-transform: uppercase;">RENDIMIENTO DEL CLUB</span>
+                        <div class="glass-panel summary-theme">
+                            <div class="glass-panel-header" style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
+                                <span>RESUMEN DEL CLUB</span>
+                                <div class="filter-badge-elite" id="filter-club" data-mode="global" style="cursor: pointer;">Global</div>
                             </div>
+                        <div class="glass-panel-content">
                             
                             <!-- SUB-BLOQUE: RATIO DE VICTORIAS -->
-                            <div style="background: rgba(0,0,0,0.25); padding: 15px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.02);">
+                            <div class="glass-subcard">
                                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
                                     <span style="font-size: 0.7rem; font-weight: 800; color: var(--text-muted); letter-spacing: 0.5px;">RATIO DE VICTORIAS</span>
                                     <span id="win-ratio-text" style="font-size: 1.1rem; font-weight: 900; color: var(--primary);">0%</span>
@@ -279,93 +281,110 @@
                             </div>
 
                             <!-- SUB-BLOQUE: RACHA -->
-                            <div style="background: rgba(0,0,0,0.25); padding: 15px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.02);">
+                            <div class="glass-subcard">
                                 <div style="font-size: 0.7rem; font-weight: 800; color: var(--text-muted); margin-bottom: 10px; letter-spacing: 0.5px;">RACHA EN CURSO</div>
                                 <div id="form-streak-container" style="display: flex; gap: 8px; justify-content: center;">
                                     <span style="opacity:0.5; font-size:0.7rem;">Sin datos registrados</span>
                                 </div>
                             </div>
+
+                            <!-- CONTADORES HUB (Jugadores & Jornadas) -->
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 5px;">
+                                <div class="glass-subcard counter-capsule" style="text-align: center; padding: 15px 8px;">
+                                    <span style="color: var(--primary); display: flex; justify-content: center; margin-bottom: 5px; filter: drop-shadow(0 0 5px var(--primary-glow));">
+                                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+                                    </span>
+                                    <h2 id="stats-total-players" style="font-size: 1.8rem; margin: 2px 0 0 0; color: white; font-weight: 900; line-height: 1; text-shadow: 0 0 10px rgba(255,255,255,0.2);">0</h2>
+                                    <p style="font-size: 0.55rem; font-weight: 900; letter-spacing: 1px; color: var(--text-muted); margin: 5px 0 0 0; text-transform: uppercase;">JUGADORES</p>
+                                </div>
+                                <div class="glass-subcard counter-capsule" style="text-align: center; padding: 15px 8px;">
+                                    <span style="color: var(--primary); display: flex; justify-content: center; margin-bottom: 5px; filter: drop-shadow(0 0 5px var(--primary-glow));">
+                                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"></path><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"></path><path d="M4 22h16"></path><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"></path><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"></path><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"></path></svg>
+                                    </span>
+                                    <h2 id="stats-total-sessions" style="font-size: 1.8rem; margin: 2px 0 0 0; color: white; font-weight: 900; line-height: 1; text-shadow: 0 0 10px rgba(255,255,255,0.2);">0</h2>
+                                    <p style="font-size: 0.55rem; font-weight: 900; letter-spacing: 1px; color: var(--text-muted); margin: 5px 0 0 0; text-transform: uppercase;">JORNADAS</p>
+                                </div>
+                            </div>
+                        </div>
                         </div>
 
-                        <!-- TARJETA CONTADORES HUB (Jugadores & Jornadas) -->
-                        <div class="card-elite-premium stats-counters-card-premium" style="padding: 15px;">
-                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
-                                <div style="text-align: center; background: rgba(0,0,0,0.2); padding: 12px 8px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.02); transition: 0.3s;" class="counter-capsule">
-                                    <span style="color: var(--primary); display: flex; justify-content: center; margin-bottom: 5px;">
-                                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
-                                    </span>
-                                    <h2 id="stats-total-players" style="font-size: 1.5rem; margin: 2px 0 0 0; color: white; font-weight: 900; line-height: 1;">0</h2>
-                                    <p style="font-size: 0.55rem; font-weight: 900; letter-spacing: 1px; color: var(--text-muted); margin: 3px 0 0 0; text-transform: uppercase;">JUGADORES</p>
-                                </div>
-                                <div style="text-align: center; background: rgba(0,0,0,0.2); padding: 12px 8px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.02); transition: 0.3s;" class="counter-capsule">
-                                    <span style="color: var(--primary); display: flex; justify-content: center; margin-bottom: 5px;">
-                                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"></path><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"></path><path d="M4 22h16"></path><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"></path><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"></path><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"></path></svg>
-                                    </span>
-                                    <h2 id="stats-total-sessions" style="font-size: 1.5rem; margin: 2px 0 0 0; color: white; font-weight: 900; line-height: 1;">0</h2>
-                                    <p style="font-size: 0.55rem; font-weight: 900; letter-spacing: 1px; color: var(--text-muted); margin: 3px 0 0 0; text-transform: uppercase;">JORNADAS</p>
+                        <!-- TOP 5 LOGROS (Desktop) -->
+                        <div class="glass-panel achievements-theme">
+                            <div class="glass-panel-header" style="justify-content: flex-start; gap: 10px;">
+                                🏆 TOP 5 LOGROS
+                            </div>
+                            <div class="glass-panel-content" style="padding: 10px;">
+                                <div id="home-top-achievements-list" style="display: flex; flex-direction: column; gap: 4px;">
+                                    <!-- Inyectado por JS -->
                                 </div>
                             </div>
                         </div>
                     </div>
 
                     <!-- COLUMNA RANKINGS (Derecha / Grid Completo) -->
-                    <div class="dash-rankings-section">
-                        
-                        <!-- A. MODO DESKTOP: BENTO GRID 2x2 -->
-                        <div class="rankings-desktop-grid">
+                    <div class="dash-rankings-section glass-panel">
+                        <div class="glass-panel-header" style="justify-content: flex-start; gap: 10px;">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+                            TOP 5 GENERAL
+                        </div>
+                        <div class="glass-panel-content" style="padding: 0;">
                             
-                            <!-- TOP GOLEADORES -->
-                            <div class="card-elite-premium ranking-card-premium gold-theme" style="padding: 20px;">
-                                <div class="ranking-header-elite" style="margin-bottom: 15px; padding-bottom: 12px; border-bottom: 1px solid rgba(240, 165, 0, 0.15); display: flex; justify-content: space-between; align-items: center;">
-                                    <span style="font-size: 0.7rem; font-weight: 800; letter-spacing: 1.5px; color: var(--text-muted);"><span class="hide-mobile">TOP </span>GOLEADORES</span>
-                                    <div class="filter-badge-elite" id="filter-goals" data-mode="official">Oficiales</div>
+                            <!-- A. MODO DESKTOP: BENTO GRID 2x2 INTERNO -->
+                            <div class="rankings-desktop-grid inner-glass-grid">
+                                
+                                <!-- TOP GOLEADORES -->
+                                <div class="ranking-inner-card gold-theme">
+                                    <div class="ranking-header-elite">
+                                        <span class="ranking-title"><span class="hide-mobile">TOP </span>GOLEADORES</span>
+                                        <div class="filter-badge-elite" id="filter-goals" data-mode="official">Oficiales</div>
+                                    </div>
+                                    <div id="home-top-scorers-list" style="display: flex; flex-direction: column; gap: 4px;">
+                                        <!-- Inyectado por JS -->
+                                    </div>
                                 </div>
-                                <div id="home-top-scorers-list" style="display: flex; flex-direction: column; gap: 8px;">
-                                    <!-- Inyectado por JS -->
-                                </div>
-                            </div>
 
-                            <!-- TOP ASISTENTES -->
-                            <div class="card-elite-premium ranking-card-premium silver-theme" style="padding: 20px;">
-                                <div class="ranking-header-elite" style="margin-bottom: 15px; padding-bottom: 12px; border-bottom: 1px solid rgba(255,255,255,0.05); display: flex; justify-content: space-between; align-items: center;">
-                                    <span style="font-size: 0.7rem; font-weight: 800; letter-spacing: 1.5px; color: var(--text-muted);"><span class="hide-mobile">TOP </span>ASISTENTES</span>
-                                    <div class="filter-badge-elite" id="filter-assists" data-mode="official">Oficiales</div>
+                                <!-- TOP ASISTENTES -->
+                                <div class="ranking-inner-card silver-theme" style="border-left: 1px solid rgba(255,255,255,0.05);">
+                                    <div class="ranking-header-elite">
+                                        <span class="ranking-title"><span class="hide-mobile">TOP </span>ASISTENTES</span>
+                                        <div class="filter-badge-elite" id="filter-assists" data-mode="official">Oficiales</div>
+                                    </div>
+                                    <div id="home-top-assists-list" style="display: flex; flex-direction: column; gap: 4px;">
+                                        <!-- Inyectado por JS -->
+                                    </div>
                                 </div>
-                                <div id="home-top-assists-list" style="display: flex; flex-direction: column; gap: 8px;">
-                                    <!-- Inyectado por JS -->
-                                </div>
-                            </div>
 
-                            <!-- TOP % VICTORIAS -->
-                            <div class="card-elite-premium ranking-card-premium emerald-theme" style="padding: 20px;">
-                                <div class="ranking-header-elite" style="margin-bottom: 15px; padding-bottom: 12px; border-bottom: 1px solid rgba(255,255,255,0.05); display: flex; justify-content: space-between; align-items: center;">
-                                    <span style="font-size: 0.7rem; font-weight: 800; letter-spacing: 1.5px; color: var(--text-muted);"><span class="hide-mobile">TOP </span>% VICTORIAS</span>
-                                    <div class="filter-badge-elite" id="filter-winrate" data-mode="official">Oficiales</div>
+                                <!-- TOP % VICTORIAS -->
+                                <div class="ranking-inner-card emerald-theme" style="border-top: 1px solid rgba(255,255,255,0.05);">
+                                    <div class="ranking-header-elite">
+                                        <span class="ranking-title"><span class="hide-mobile">TOP </span>% VICTORIAS</span>
+                                        <div class="filter-badge-elite" id="filter-winrate" data-mode="official">Oficiales</div>
+                                    </div>
+                                    <div id="home-top-winrate-list" style="display: flex; flex-direction: column; gap: 4px;">
+                                        <!-- Inyectado por JS -->
+                                    </div>
                                 </div>
-                                <div id="home-top-winrate-list" style="display: flex; flex-direction: column; gap: 8px;">
-                                    <!-- Inyectado por JS -->
-                                </div>
-                            </div>
 
-                            <!-- TOP PORTERÍAS A 0 -->
-                            <div class="card-elite-premium ranking-card-premium gloves-theme" style="padding: 20px;">
-                                <div class="ranking-header-elite" style="margin-bottom: 15px; padding-bottom: 12px; border-bottom: 1px solid rgba(240,165,0,0.15); display: flex; justify-content: space-between; align-items: center;">
-                                    <span style="font-size: 0.7rem; font-weight: 800; letter-spacing: 1.5px; color: var(--text-muted);"><span class="hide-mobile">TOP </span>PORTERÍAS A 0</span>
-                                    <div class="filter-badge-elite" id="filter-cleansheets" data-mode="official">Oficiales</div>
+                                <!-- TOP PORTERÍAS A 0 -->
+                                <div class="ranking-inner-card gloves-theme" style="border-top: 1px solid rgba(255,255,255,0.05); border-left: 1px solid rgba(255,255,255,0.05);">
+                                    <div class="ranking-header-elite">
+                                        <span class="ranking-title"><span class="hide-mobile">TOP </span>PORTERÍAS A 0 (DFC)</span>
+                                        <div class="filter-badge-elite" id="filter-cleansheets" data-mode="official">Oficiales</div>
+                                    </div>
+                                    <div id="home-top-cleansheets-list" style="display: flex; flex-direction: column; gap: 4px;">
+                                        <!-- Inyectado por JS (General) -->
+                                    </div>
                                 </div>
-                                <div id="home-top-cleansheets-list" style="display: flex; flex-direction: column; gap: 8px;">
-                                    <!-- Inyectado por JS (General) -->
-                                </div>
-                            </div>
 
-                            <!-- TOP PORTEROS DEDICADA Y ANCHA -->
-                            <div class="card-elite-premium ranking-card-premium gloves-theme keeper-exclusive-desktop-card" style="padding: 20px; grid-column: span 2;">
-                                <div class="ranking-header-elite" style="margin-bottom: 20px; padding-bottom: 15px; border-bottom: 1px solid rgba(240,165,0,0.15); display: flex; justify-content: space-between; align-items: center;">
-                                    <span style="font-size: 0.75rem; font-weight: 900; letter-spacing: 1.5px; color: #fff; display: flex; align-items: center; gap: 8px;">🧤 TOP PORTEROS <span style="font-size: 0.6rem; color: var(--text-muted); font-weight: 700;">(EFECTIVIDAD DE IMBATIBILIDAD)</span></span>
-                                    <div class="filter-badge-elite" id="filter-keepers-desktop" data-mode="official" style="cursor: pointer;">Oficiales</div>
-                                </div>
-                                <div id="home-top-keepers-list" style="display: grid; grid-template-columns: 1fr; gap: 12px;">
-                                    <!-- Inyectado por JS (Porteros - Ancho) -->
+                                <!-- TOP PORTEROS DEDICADA Y ANCHA -->
+                                <div class="ranking-inner-card gloves-theme keeper-exclusive-desktop-card" style="border-top: 1px solid rgba(255,255,255,0.05); grid-column: span 2;">
+                                    <div class="ranking-header-elite" style="padding-bottom: 15px;">
+                                        <span class="ranking-title" style="color: #fff; gap: 8px;">🧤 TOP PORTEROS <span style="font-size: 0.6rem; color: var(--text-muted); font-weight: 700;">(EFECTIVIDAD DE IMBATIBILIDAD)</span></span>
+                                        <div class="filter-badge-elite" id="filter-keepers-desktop" data-mode="official" style="cursor: pointer;">Oficiales</div>
+                                    </div>
+                                    <div id="home-top-keepers-list" style="display: grid; grid-template-columns: 1fr; gap: 8px;">
+                                        <!-- Inyectado por JS (Porteros - Ancho) -->
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -374,11 +393,19 @@
                         <div class="rankings-mobile-tabs card-elite-premium" style="margin-top: 10px; overflow: hidden;">
                             
                             <!-- Selector Deslizable Superior -->
-                            <div class="mobile-rankings-nav-scroll">
-                                <button class="mobile-ranking-nav-btn active" id="m-btn-goals" onclick="window.switchMobileRankingTab('goals')">⚽ GOLES</button>
-                                <button class="mobile-ranking-nav-btn" id="m-btn-assists" onclick="window.switchMobileRankingTab('assists')">👟 ASISTENCIAS</button>
-                                <button class="mobile-ranking-nav-btn" id="m-btn-winrate" onclick="window.switchMobileRankingTab('winrate')">📈 WINRATE</button>
-                                <button class="mobile-ranking-nav-btn" id="m-btn-cleansheets" onclick="window.switchMobileRankingTab('cleansheets')">🧤 PORTERÍAS</button>
+                            <div class="mobile-tabs-container" style="position: relative; display: flex; align-items: center;">
+                                <div class="scroll-hint-arrow left-arrow" style="display: none;" onclick="document.querySelector('.mobile-rankings-nav-scroll').scrollBy({left: -150, behavior: 'smooth'})">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+                                </div>
+                                <div class="mobile-rankings-nav-scroll" onscroll="window.updateScrollArrows(this)">
+                                    <button class="mobile-ranking-nav-btn active" id="m-btn-goals" onclick="window.switchMobileRankingTab('goals')">⚽ GOLES</button>
+                                    <button class="mobile-ranking-nav-btn" id="m-btn-assists" onclick="window.switchMobileRankingTab('assists')">👟 ASISTENCIAS</button>
+                                    <button class="mobile-ranking-nav-btn" id="m-btn-winrate" onclick="window.switchMobileRankingTab('winrate')">📈 WINRATE</button>
+                                    <button class="mobile-ranking-nav-btn" id="m-btn-cleansheets" onclick="window.switchMobileRankingTab('cleansheets')">🧤 PORTERÍAS</button>
+                                </div>
+                                <div class="scroll-hint-arrow right-arrow" onclick="document.querySelector('.mobile-rankings-nav-scroll').scrollBy({left: 150, behavior: 'smooth'})">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
+                                </div>
                             </div>
 
                             <!-- Contenedor Goles Móvil -->
@@ -418,7 +445,7 @@
                             <div class="mobile-ranking-tab-content" id="mobile-tab-cleansheets" style="display: none; padding: 15px;">
                                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 8px; flex-wrap: wrap; gap: 8px;">
                                     <div style="display: flex; gap: 6px; align-items: center;">
-                                        <button class="cs-tab-btn active" id="btn-cs-tab-general-mobile" style="background: rgba(240, 165, 0, 0.15); border: 1px solid rgba(240, 165, 0, 0.3); color: #fff; font-size: 0.55rem; font-weight: 800; padding: 3px 8px; border-radius: 5px; cursor: pointer; transition: all 0.3s;" onclick="window.switchMobileCSTab('general')">GENERAL</button>
+                                        <button class="cs-tab-btn active" id="btn-cs-tab-general-mobile" style="background: rgba(240, 165, 0, 0.15); border: 1px solid rgba(240, 165, 0, 0.3); color: #fff; font-size: 0.55rem; font-weight: 800; padding: 3px 8px; border-radius: 5px; cursor: pointer; transition: all 0.3s;" onclick="window.switchMobileCSTab('general')">DFC</button>
                                         <button class="cs-tab-btn" id="btn-cs-tab-keepers-mobile" style="background: transparent; border: 1px solid rgba(255,255,255,0.05); color: var(--text-muted); font-size: 0.55rem; font-weight: 800; padding: 3px 8px; border-radius: 5px; cursor: pointer; transition: all 0.3s;" onclick="window.switchMobileCSTab('keepers')">PORTEROS</button>
                                     </div>
                                     <div class="filter-badge-elite filter-sync-cleansheets" id="filter-cleansheets-mobile" data-mode="official">Oficiales</div>
@@ -430,6 +457,16 @@
                                     <!-- Inyectado dinámicamente -->
                                 </div>
                             </div>
+
+                            <!-- Contenedor Logros Móvil -->
+                            <div class="mobile-ranking-tab-content achievements-theme" id="mobile-tab-achievements" style="display: none; padding: 15px;">
+                                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 8px;">
+                                    <span style="font-size: 0.65rem; font-weight: 800; color: var(--text-muted); letter-spacing: 1px;">TOP 5 LOGROS</span>
+                                </div>
+                                <div id="mobile-top-achievements-list" style="display: flex; flex-direction: column; gap: 8px;">
+                                    <!-- Inyectado dinámicamente -->
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -438,21 +475,34 @@
             <!-- VIEW: Plantilla (Player List) -->
             <section id="view-plantilla" class="view">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
-                    <h1>Mi <span class="gradient-text">Plantilla</span></h1>
-                    <button class="btn-view-cards-premium" id="btn-view-cards">🎴 Ver Cartas</button>
+                    <h1 style="margin:0;">Mi <span class="gradient-text">Plantilla</span></h1>
                 </div>
 
-                <div class="player-table-container">
-                    <div class="player-table-header">
-                        <div class="th-sortable" data-sort="primaryPos">POS</div>
-                        <div class="th-sortable" data-sort="name">JUGADOR</div>
-                        <div class="th-sortable cell-center" data-sort="matches" title="Partidos Jugados">PJ</div>
-                        <div class="th-sortable cell-center" data-sort="goals" title="Goles">G</div>
-                        <div class="th-sortable cell-center" data-sort="assists" title="Asistencias">A</div>
-                        <div style="text-align: right;">ACCIONES</div>
+                <div class="card-elite plantilla-dashboard-card" style="padding: 20px; margin-top: 10px;">
+                    <!-- Cabecera de Controles de la Tabla -->
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 15px;">
+                        <!-- Filtros integrados en la cabecera -->
+                        <div class="stats-filter-container" style="display: flex; gap: 8px;">
+                            <button class="pill-tab active" data-filter="official">OFICIAL</button>
+                            <button class="pill-tab" data-filter="friendly">AMISTOSO</button>
+                            <button class="pill-tab" data-filter="global">GLOBAL</button>
+                        </div>
+                        <button class="btn-view-cards-premium gold-glow-btn" id="btn-view-cards">🎴 Galería de Cartas</button>
                     </div>
-                    <div id="player-list" class="player-table-body">
-                        <!-- Jugadores inyectados aquí -->
+
+                    <div class="player-table-container" style="border: none; background: transparent; margin-bottom: 0;">
+                        <div class="player-table-header">
+                            <div class="th-sortable" data-sort="primaryPos">POS</div>
+                            <div class="th-sortable" data-sort="name">JUGADOR</div>
+                            <div class="th-sortable cell-center" data-sort="matches" title="Partidos Jugados">PJ</div>
+                            <div class="th-sortable cell-center" data-sort="goals" title="Goles">G</div>
+                            <div class="th-sortable cell-center" data-sort="assists" title="Asistencias">A</div>
+                            <div class="th-sortable cell-center" data-sort="cleanSheets" title="Porterías a 0">P.0</div>
+                            <div style="text-align: right;">ACCIONES</div>
+                        </div>
+                        <div id="player-list" class="player-table-body">
+                            <!-- Jugadores inyectados aquí -->
+                        </div>
                     </div>
                 </div>
             </section>
@@ -479,9 +529,18 @@
                 <div class="profile-header-flex" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
                     <h1 id="profile-header-title">Mi Perfil Elite</h1>
                     <div class="profile-header-actions" style="display: flex; gap: 10px;">
-                        <button id="btn-master-panel" class="btn-gold" style="display: none; padding: 10px 20px; font-size: 0.75rem; width: auto; background: linear-gradient(135deg, #FFD700, #FFA500); color: #000;">⚙️ PANEL MASTER</button>
-                        <button id="btn-mgmt-team-shortcut" class="btn-elite" data-role-required="manager" style="display: none;">MI EQUIPO</button>
-                        <button id="btn-edit-my-ficha" class="btn-elite">EDITAR FICHA</button>
+                        <button id="btn-master-panel" class="btn-header-action" style="display: none;">
+                            <svg viewBox="0 0 24 24"><path d="M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6z" stroke-width="2"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z" stroke-width="2"/></svg>
+                            PANEL MASTER
+                        </button>
+                        <button id="btn-mgmt-team-shortcut" class="btn-header-action" data-role-required="manager" style="display: none;">
+                            <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" stroke-width="2"/><circle cx="9" cy="7" r="4" stroke-width="2"/><path d="M23 21v-2a4 4 0 0 0-3-3.87" stroke-width="2"/><path d="M16 3.13a4 4 0 0 1 0 7.75" stroke-width="2"/></svg>
+                            MI EQUIPO
+                        </button>
+                        <button id="btn-edit-my-ficha" class="btn-header-action">
+                            <svg viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" stroke-width="2"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" stroke-width="2"/></svg>
+                            EDITAR FICHA
+                        </button>
                     </div>
                 </div>
 
@@ -494,22 +553,83 @@
                     </div>
 
                     <!-- Datos y Posiciones (Derecha) -->
-                    <div class="profile-info-column card-elite">
-                        <div class="info-block">
-                            <label>GAMER ID</label>
-                            <h2 id="profile-console-id">-</h2>
-                        </div>
-                        <div class="info-block" style="margin-top: 20px;">
-                            <label>POSICIONES SECUNDARIAS</label>
-                            <div id="profile-secondary-pos" class="pos-badge-grid">
-                                <!-- Badges inyectados -->
+                    <div class="profile-info-column card-elite" style="position: relative; overflow: hidden; background: rgba(15, 15, 15, 0.65); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border: 1px solid rgba(240, 165, 0, 0.3); border-top: 1px solid rgba(240, 165, 0, 0.6); box-shadow: 0 20px 40px rgba(0,0,0,0.8), inset 0 1px 0 rgba(255,255,255,0.1); border-radius: 16px; padding: 20px;">
+                        <!-- Watermark -->
+                        <div style="position: absolute; right: -20px; top: -30px; opacity: 0.02; font-size: 16rem; transform: rotate(15deg); pointer-events: none; filter: blur(2px);">🎮</div>
+                        
+                        <!-- Glow de fondo suave -->
+                        <div style="position: absolute; top: -50px; left: -50px; width: 150px; height: 150px; background: rgba(240, 165, 0, 0.15); filter: blur(60px); border-radius: 50%; pointer-events: none;"></div>
+
+                        <!-- Info Grid: 2 Columnas -->
+                        <div class="profile-info-grid" style="position: relative; z-index: 2;">
+                            
+                            <!-- Columna Izquierda: Identidad -->
+                            <div class="profile-col-left" style="display: flex; flex-direction: column; justify-content: flex-start; padding-right: 20px; border-right: 1px solid rgba(255,255,255,0.05);">
+                                <!-- Gamer ID Block -->
+                                <div class="info-block" style="display: flex; align-items: center; gap: 15px; padding-bottom: 20px; margin-bottom: 15px; border-bottom: 1px dashed rgba(255,255,255,0.1);">
+                                    <div style="background: linear-gradient(135deg, rgba(240,165,0,0.3), rgba(240,165,0,0.05)); padding: 14px; border-radius: 12px; border: 1px solid rgba(240, 165, 0, 0.5); box-shadow: 0 0 20px rgba(240,165,0,0.15), inset 0 2px 5px rgba(255,255,255,0.2);">
+                                        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="filter: drop-shadow(0 0 5px rgba(240,165,0,0.5));">
+                                            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+                                            <path d="M8 10h.01"></path>
+                                            <path d="M16 10h.01"></path>
+                                            <path d="M12 14h.01"></path>
+                                        </svg>
+                                    </div>
+                                    <div>
+                                        <label style="font-size: 0.6rem; letter-spacing: 3px; color: var(--primary); font-weight: 900; opacity: 0.9; display: block; margin-bottom: 4px; text-transform: uppercase;">Gamer ID Oficial</label>
+                                        <h2 id="profile-console-id" style="font-size: 2rem; font-weight: 900; margin: 0; color: #fff; text-shadow: 0 4px 15px rgba(0,0,0,0.6); letter-spacing: 1px;">-</h2>
+                                        
+                                        <!-- Redes Sociales Container -->
+                                        <div id="profile-social-links" style="display: flex; gap: 10px; margin-top: 8px;">
+                                            <!-- Inyectado por JS -->
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="info-block">
+                                    <label style="font-size: 0.65rem; letter-spacing: 2px; color: #fff; font-weight: 800; opacity: 0.7; display: flex; align-items: center; gap: 8px; margin-bottom: 12px; text-transform: uppercase;">
+                                        <span style="color: var(--primary); font-size: 1rem;">⬡</span> Roles Secundarios
+                                    </label>
+                                    <div id="profile-secondary-pos" class="pos-badge-grid" style="display: flex; gap: 8px; flex-wrap: wrap;">
+                                        <!-- Badges inyectados -->
+                                    </div>
+                                </div>
+                                
+                                <!-- Estado de Forma (Rachas Activas) -->
+                                <div class="info-block" id="profile-active-streaks-container" style="display: none; margin-top: 15px;">
+                                    <label style="font-size: 0.65rem; letter-spacing: 2px; color: #fff; font-weight: 800; opacity: 0.7; display: flex; align-items: center; gap: 8px; margin-bottom: 12px; text-transform: uppercase;">
+                                        <span style="color: #ff4757; font-size: 1rem;">🔥</span> Estado de Forma
+                                    </label>
+                                    <div id="profile-active-streaks" style="display: flex; flex-direction: column; gap: 8px;">
+                                        <!-- Rachas inyectadas -->
+                                    </div>
+                                </div>
                             </div>
+
+                            <!-- Columna Derecha: Logros -->
+                            <div class="profile-col-right" style="padding-left: 20px; display: flex; flex-direction: column;">
+                                <div class="info-block" style="background: rgba(0,0,0,0.2); border-radius: 12px; padding: 15px; border: 1px solid rgba(255,255,255,0.03); height: 100%;">
+                                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; padding-bottom: 10px; border-bottom: 1px solid rgba(255,255,255,0.05);">
+                                        <label style="font-size: 0.65rem; letter-spacing: 2px; color: #fff; font-weight: 800; opacity: 0.7; display: flex; align-items: center; gap: 8px; text-transform: uppercase; margin: 0;">
+                                            <span style="color: var(--primary); font-size: 1rem;">🏆</span> Logros
+                                        </label>
+                                        <button onclick="window.openAchievementsModal()" class="btn-header-action" style="padding: 5px 10px; font-size: 0.55rem; margin: 0;">
+                                            VER VITRINA
+                                        </button>
+                                    </div>
+                                    <!-- AQUI ESTARAN LOS LOGROS (NUEVO FORMATO) -->
+                                    <div id="profile-top-achievements" style="display: flex; flex-direction: column; gap: 8px;">
+                                        <p style="font-size: 0.7rem; color: var(--text-muted); opacity: 0.5; text-align: center; margin-top: 10px;">Cargando logros...</p>
+                                    </div>
+                                </div>
+                            </div>
+
                         </div>
                     </div>
                 </div>
 
                 <!-- TABLA DE ESTADÍSTICAS ELITE -->
-                <div id="profile-stats-container" class="card-elite fade-in" style="margin-top: 2rem; padding: 25px;">
+                <div id="profile-stats-container" class="card-elite fade-in" style="margin-top: 2rem; padding: 25px; border: 1px solid rgba(240, 165, 0, 0.4); background: linear-gradient(145deg, rgba(20,20,20,0.8) 0%, rgba(5,5,5,0.9) 100%); box-shadow: 0 10px 30px rgba(0,0,0,0.5), inset 0 0 20px rgba(240, 165, 0, 0.05);">
                     <h2 style="font-size: 1.1rem; margin-bottom: 20px; border-left: 3px solid var(--primary); padding-left: 15px;">RENDIMIENTO <span class="gradient-text">TEMPORADA</span></h2>
                     <div class="stats-table-wrapper">
                         <table class="stats-elite-table">
@@ -537,7 +657,7 @@
                 </div>
                 
                 <!-- CALENDARIO DE ASISTENCIA (v36.3) -->
-                <div id="profile-attendance-container" class="card-elite fade-in" style="margin-top: 2rem; padding: 25px;">
+                <div id="profile-attendance-container" class="card-elite fade-in" style="margin-top: 2rem; padding: 25px; border: 1px solid rgba(240, 165, 0, 0.4); background: linear-gradient(145deg, rgba(20,20,20,0.8) 0%, rgba(5,5,5,0.9) 100%); box-shadow: 0 10px 30px rgba(0,0,0,0.5), inset 0 0 20px rgba(240, 165, 0, 0.05);">
                     <div class="attendance-dual-layout">
                         <!-- LADO IZQUIERDO: Calendario -->
                         <div class="attendance-cal-column">
@@ -567,6 +687,13 @@
                             <!-- Inyectado por JS -->
                         </div>
                     </div>
+                </div>
+
+                <!-- CONTENEDOR PARA ABANDONAR CLUB -->
+                <div id="profile-abandon-container" style="display: none; margin-top: 30px; text-align: center;">
+                    <button id="btn-abandon-club" class="btn-detail" style="border-color: rgba(255, 68, 68, 0.4); color: #ff4444; font-weight: 800; padding: 15px 30px; border-radius: 8px;">
+                        ABANDONAR CLUB
+                    </button>
                 </div>
 
                 <!-- Botón Salir (Solo Movil) -->
@@ -615,7 +742,7 @@
                             <div id="admin-total-matches" style="font-size: 1.8rem; font-weight: 900; color: #fff;">0</div>
                         </div>
                         <div class="card-elite" style="text-align: center; padding: 20px; border: 1px solid rgba(76, 175, 80, 0.3);">
-                            <div style="font-size: 0.6rem; opacity: 0.6; margin-bottom: 8px; text-transform: uppercase;">Logins Hoy</div>
+                            <div style="font-size: 0.6rem; opacity: 0.6; margin-bottom: 8px; text-transform: uppercase;">Logins (30 días)</div>
                             <div id="admin-today-logins" style="font-size: 1.8rem; font-weight: 900; color: var(--success);">0</div>
                         </div>
                     </div>
@@ -777,6 +904,20 @@
                             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
                                 <select class="secondary-pos-select" id="secondaryPos1"></select>
                                 <select class="secondary-pos-select" id="secondaryPos2"></select>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group" style="margin-top: 1rem;">
+                            <label>Redes Sociales (Opcional)</label>
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                                <div style="position: relative;">
+                                    <span style="position: absolute; left: 12px; top: 14px; color: var(--text-muted);">@</span>
+                                    <input type="text" id="twitterHandle" placeholder="usuario_x" style="padding-left: 32px;" maxlength="30">
+                                </div>
+                                <div style="position: relative;">
+                                    <span style="position: absolute; left: 12px; top: 14px; color: var(--text-muted);"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M11.571 4.714h1.715v5.143H11.57zm4.715 0H18v5.143h-1.714zM6 0L1.714 4.286v15.428h5.143V24l4.286-4.286h3.428L22.286 12V0zm14.571 11.143l-3.428 3.428h-3.429l-3 3v-3H6.857V1.714h13.714Z"/></svg></span>
+                                    <input type="text" id="twitchHandle" placeholder="canal_twitch" style="padding-left: 32px;" maxlength="30">
+                                </div>
                             </div>
                         </div>
                         
@@ -990,12 +1131,7 @@
                 </div>
 
                 <!-- Detalles de la Jornada Seleccionada -->
-                <div id="sessions-day-details" style="display: none; padding-bottom: 40px;">
-                    <h3 id="selected-day-label" style="font-size: 0.8rem; margin-bottom: 1.5rem; color: var(--primary); letter-spacing: 2px; text-transform: uppercase; border-left: 3px solid var(--primary); padding-left: 15px;">PARTIDOS DEL --/--/----</h3>
-                    <div id="sessions-day-matches-list" style="display: flex; flex-direction: column; gap: 15px;">
-                        <!-- Inyectado por JS -->
-                    </div>
-                </div>
+                <!-- Detalles de la Jornada (Movido a Modal) -->
 
                 <div id="sessions-list" style="display: none;">
                     <!-- Inyectado por JS -->
@@ -1057,6 +1193,7 @@
                         <!-- Inyectado dinámicamente por JS -->
                     </div>
                 </div>
+
             </section>
 
             <!-- VIEW: Sesión Activa (Gestión de Partidos de la noche) -->
@@ -1100,67 +1237,86 @@
             </section>
 
             <!-- VIEW: Partido en Vivo (Durante el juego) -->
-            <section id="view-match-live" class="view" style="padding: 10px;">
+            <section id="view-match-live" class="view">
                 <div class="match-broadcast-layout">
-                    <!-- Lado A: Marcador y Controles -->
-                    <div class="match-info-column">
-                        <div id="live-match-header" style="text-align: center; margin-bottom: 15px;">
-                            <p style="font-size: 0.6rem; color: var(--text-muted); text-transform: uppercase;" id="match-type-label">PARTIDO AMISTOSO</p>
-                            <h2 id="rival-name-display" style="font-size: 1.2rem; color: var(--primary); margin-top: 5px;">RIVAL FC</h2>
-                        </div>
+                    <!-- Layout de dos columnas principales -->
+                    <!-- Columna Izquierda (40%): Marcador + Eventos -->
+                    <div class="live-left-column">
 
-                        <div class="scoreboard-elite" style="display: flex; align-items: center; justify-content: center; gap: 20px; padding: 30px 10px;">
-                            <!-- EQUIPO A (Local) -->
-                            <div class="score-team" style="flex: 1; display: flex; flex-direction: column; align-items: center; gap: 10px;">
-                                <div class="crest-container" style="width: 60px; height: 60px; display: flex; align-items: center; justify-content: center; background: rgba(255,255,255,0.03); border-radius: 50%; padding: 8px; border: 1px solid rgba(255,255,255,0.05);">
-                                    <img id="score-team-crest-a" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0iI2YwYTUwMCI+PHBhdGggZD0iTTEyIDlMMyA1djZjMCA1LjU1IDMuODQgMTAuNzQgOSAxMiA1LjE2LTEuMjYgOS02LjQ1IDktMTJWNWwtOS00em0wIDEwLjk5aDdjLS41MyA0LjEyLTMuMjggNy43OS03IDguOTRWMTJINVY2LjNsNy0zLjExdjguOHoiLz48L3N2Zz4=" referrerpolicy="no-referrer" style="width: 100%; height: 100%; object-fit: contain;">
+                        <!-- MARCADOR -->
+                        <div class="live-scoreboard-card">
+
+                            <!-- CABECERA: Tipo de Partido -->
+                            <div class="scoreboard-match-header">
+                                <div id="live-match-header">
+                                    <p id="match-type-label">PARTIDO AMISTOSO</p>
                                 </div>
-                                <span class="team-initials" id="score-team-name-a" style="font-size: 0.75rem; letter-spacing: 2px;">MI CLUB</span>
-                                <span id="score-home" class="score-number" style="font-size: 3rem; font-weight: 900; line-height: 1;">0</span>
                             </div>
 
-                            <div class="score-divider" style="font-size: 2rem; opacity: 0.3; margin-top: 20px;">-</div>
-
-                            <!-- EQUIPO B (Visitante) -->
-                            <div class="score-team" style="flex: 1; display: flex; flex-direction: column; align-items: center; gap: 10px;">
-                                <div class="crest-container" style="width: 60px; height: 60px; display: flex; align-items: center; justify-content: center; background: rgba(255,255,255,0.03); border-radius: 50%; padding: 8px; border: 1px solid rgba(255,255,255,0.05);">
-                                    <img id="score-team-crest-b" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0iI2YwYTUwMCI+PHBhdGggZD0iTTEyIDlMMyA1djZjMCA1LjU1IDMuODQgMTAuNzQgOSAxMiA1LjE2LTEuMjYgOS02LjQ1IDktMTJWNWwtOS00em0wIDEwLjk5aDdjLS41MyA0LjEyLTMuMjggNy43OS03IDguOTRWMTJINVY2LjNsNy0zLjExdjguOHoiLz48L3N2Zz4=" referrerpolicy="no-referrer" style="width: 100%; height: 100%; object-fit: contain;">
+                            <!-- FILA DE ESCUDOS + RESULTADO -->
+                            <div class="scoreboard-main-row">
+                                <!-- EQUIPO LOCAL -->
+                                <div class="score-team-block local">
+                                    <div class="crest-container">
+                                        <img id="score-team-crest-a" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0iI2YwYTUwMCI+PHBhdGggZD0iTTEyIDlMMyA1djZjMCA1LjU1IDMuODQgMTAuNzQgOSAxMiA1LjE2LTEuMjYgOS02LjQ1IDktMTJWNWwtOS00em0wIDEwLjk5aDdjLS41MyA0LjEyLTMuMjggNy43OS03IDguOTRWMTJINVY2LjNsNy0zLjExdjguOHoiLz48L3N2Zz4=" referrerpolicy="no-referrer">
+                                    </div>
+                                    <span class="team-name-label" id="score-team-name-a">MI CLUB</span>
                                 </div>
-                                <span class="team-initials" id="score-team-name-b" style="font-size: 0.75rem; letter-spacing: 2px;">RIVAL</span>
-                                <span id="score-away" class="score-number" style="font-size: 3rem; font-weight: 900; line-height: 1;">0</span>
+
+                                <!-- RESULTADO CENTRAL -->
+                                <div class="score-result-center">
+                                    <span id="score-home" class="score-number">0</span>
+                                    <span class="score-divider">:</span>
+                                    <span id="score-away" class="score-number">0</span>
+                                </div>
+
+                                <!-- EQUIPO VISITANTE -->
+                                <div class="score-team-block visitor">
+                                    <div class="crest-container">
+                                        <img id="score-team-crest-b" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0iI2YwYTUwMCI+PHBhdGggZD0iTTEyIDlMMyA1djZjMCA1LjU1IDMuODQgMTAuNzQgOSAxMiA1LjE2LTEuMjYgOS02LjQ1IDktMTJWNWwtOS00em0wIDEwLjk5aDdjLS41MyA0LjEyLTMuMjggNy43OS03IDguOTRWMTJINVY2LjNsNy0zLjExdjguOHoiLz48L3N2Zj4=" referrerpolicy="no-referrer">
+                                    </div>
+                                    <span class="team-name-label" id="score-team-name-b">RIVAL</span>
+                                    <div class="rival-micro-controls">
+                                        <button id="btn-add-goal-away" class="rival-micro-btn plus" title="Sumar Gol Rival">
+                                            <i class="fa-solid fa-plus"></i>
+                                        </button>
+                                        <button id="btn-sub-goal-away" class="rival-micro-btn minus" title="Restar Gol Rival">
+                                            <i class="fa-solid fa-minus"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Contenedor oculto para evitar errores de JS -->
+                            <div style="display: none !important;">
+                                <h2 id="rival-name-display">RIVAL FC</h2>
+                                <button id="btn-add-goal-home"></button>
+                                <button id="btn-sub-goal-home"></button>
                             </div>
                         </div>
 
-                        <div class="match-controls-grid">
-                            <div style="display: flex; flex-direction: column; gap: 10px;">
-                                <button id="btn-add-goal-home" class="control-btn goal-btn">
-                                    <span style="display: block; font-size: 1.5rem;">⚽</span>
-                                    <span id="goal-btn-team-name">GOL CLUB</span>
-                                </button>
-                                <button id="btn-sub-goal-home" class="control-btn goal-btn sub">
-                                    <span>- CORREGIR GOL</span>
-                                </button>
+                        <!-- EVENTOS -->
+                        <div class="live-events-panel">
+                            <div class="events-panel-header">
+                                <span class="events-panel-icon">⚡</span>
+                                <h3 class="events-panel-title">EVENTOS</h3>
                             </div>
-                            <div style="display: flex; flex-direction: column; gap: 10px;">
-                                <button id="btn-add-goal-away" class="control-btn rival-btn">
-                                    <span>+ GOL RIVAL</span>
-                                </button>
-                                <button id="btn-sub-goal-away" class="control-btn rival-btn sub">
-                                    <span>- GOL RIVAL</span>
-                                </button>
+                            <div id="match-events-log" class="events-vertical-premium">
+                                <div id="events-container" class="events-vertical-container"></div>
                             </div>
                         </div>
 
-                        <div id="match-events-log" class="card-elite" style="margin-top: 20px; max-height: 150px; overflow-y: auto; padding: 10px;">
-                            <p style="font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; margin-bottom: 5px; border-bottom: 1px solid var(--glass-border);">Sucesos</p>
-                            <div id="events-container" style="font-size: 0.8rem;"></div>
+                        <!-- BOTÓN FINALIZAR (debajo del panel de eventos) -->
+                        <div class="scoreboard-finish-row">
+                            <button id="btn-finish-match" class="btn-finish-live">
+                                <i class="fa-solid fa-flag-checkered"></i> Finalizar Partido
+                            </button>
                         </div>
-                        
-                        <button id="btn-finish-match" class="btn-gold" style="margin-top: 20px; background: #4CAF50; border-color: #4CAF50;">Finalizar Partido</button>
+
                     </div>
 
-                    <!-- Lado B: El Campo (Se ve solo en pantallas grandes al lado, o debajo en movil) -->
-                    <div class="match-pitch-column">
+                    <!-- Columna Derecha (60%): Campo de Fútbol -->
+                    <div class="live-right-column">
                         <div class="pitch-container" id="live-football-pitch">
                             <div class="pitch-lines">
                                 <div class="pitch-midline"></div>
@@ -1501,6 +1657,14 @@
                     <span class="icon"><svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg></span>
                     <span class="nav-label">TÁCTICAS</span>
                 </button>
+                <button class="nav-btn" data-view="mi-equipo" id="nav-btn-mi-equipo" data-role-required="manager" style="display: none;">
+                    <span class="icon"><svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6z"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></span>
+                    <span class="nav-label">MI EQUIPO</span>
+                </button>
+                <button class="nav-btn" data-view="mercado" id="nav-btn-mercado" style="display: none;">
+                    <span class="icon"><svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 21L15 15M17 10C17 13.866 13.866 17 10 17C6.13401 17 3 13.866 3 10C3 6.13401 6.13401 3 10 3C13.866 3 17 6.13401 17 10Z"/></svg></span>
+                    <span class="nav-label">MERCADO</span>
+                </button>
 
                 <button class="nav-btn" id="btn-global-logout">
                     <span class="icon"><svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg></span>
@@ -1597,14 +1761,6 @@
                     <!-- Inyectado por JS -->
                 </div>
 
-                <!-- SELECTOR LOCAL/VISITANTE (v55.0) -->
-                <div class="form-group">
-                    <label style="font-size: 0.65rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px;">Condición del Partido</label>
-                    <div style="display: flex; background: rgba(255,255,255,0.05); border-radius: 8px; padding: 4px; gap: 4px;">
-                        <button type="button" id="btn-set-local" class="btn-toggle-match active" style="flex: 1; border: none; padding: 10px; border-radius: 6px; font-size: 0.7rem; font-weight: 800; cursor: pointer; transition: 0.3s;">LOCAL</button>
-                        <button type="button" id="btn-set-visitor" class="btn-toggle-match" style="flex: 1; border: none; padding: 10px; border-radius: 6px; font-size: 0.7rem; font-weight: 800; cursor: pointer; transition: 0.3s;">VISITANTE</button>
-                    </div>
-                </div>
 
                 <div class="form-group">
                     <label style="font-size: 0.65rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px;">Tipo de Partido</label>
@@ -1957,13 +2113,89 @@
         <button id="btn-quick-cancel" class="btn-quick danger">CANCELAR</button>
     </div>
 
+    <!-- Modal: Vitrina de Logros -->
+    <div id="modal-achievements" class="jb-modal-overlay" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); align-items: center; justify-content: center; z-index: 3000; backdrop-filter: blur(8px);">
+        <div class="jb-modal-content" style="max-width: 900px; background: var(--bg-surface); padding: 0;">
+            <!-- Cabecera -->
+            <div style="padding: 30px; border-bottom: 1px solid var(--glass-border); position: relative; overflow: hidden;">
+                <!-- Watermark -->
+                <div style="position: absolute; right: -20px; top: -50px; font-size: 12rem; opacity: 0.03; pointer-events: none;">🏆</div>
+                <h2 style="font-size: 1.8rem; font-weight: 900; margin: 0; color: #fff; display: flex; align-items: center; gap: 12px;">
+                    <span style="color: var(--primary);">|</span> VITRINA DE TROFEOS
+                </h2>
+                <p style="font-size: 0.8rem; color: var(--text-muted); margin-top: 10px; max-width: 600px; line-height: 1.5;">
+                    Explora todos los logros disponibles en JB-SQUAD. Los trofeos bloqueados muestran los requisitos que necesitas alcanzar en el campo. ¡Conviértete en una Leyenda!
+                </p>
+                <button onclick="document.getElementById('modal-achievements').style.display='none'" class="btn-cancel" style="position: absolute; top: 30px; right: 30px; width: auto; padding: 8px 15px; font-size: 0.7rem;">CERRAR</button>
+            </div>
+            
+            <!-- Cuerpo -->
+            <div id="achievements-catalog-container" style="padding: 30px; max-height: 70vh; overflow-y: auto; display: flex; flex-direction: column; gap: 30px;">
+                <p style="text-align: center; color: var(--text-muted); font-size: 0.9rem;">Cargando vitrina...</p>
+            </div>
+        </div>
+        </div>
+    </div>
+
+    <!-- Modal: Detalles del Logro y Rareza -->
+    <div id="modal-ach-details" class="jb-modal-overlay" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); align-items: center; justify-content: center; z-index: 3001; backdrop-filter: blur(8px);">
+        <div class="jb-modal-content" style="max-width: 400px; width: 90%; background: var(--bg-surface); padding: 30px; text-align: center; border: 1px solid var(--glass-border); position: relative; border-radius: 12px; box-shadow: 0 20px 50px rgba(0,0,0,0.8);">
+            <button onclick="document.getElementById('modal-ach-details').style.display='none'" style="position: absolute; top: 15px; right: 15px; background: none; border: none; color: var(--text-muted); font-size: 1.5rem; cursor: pointer; transition: color 0.2s;">&times;</button>
+            
+            <div id="ach-detail-icon" style="width: 80px; height: 80px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px; font-size: 2rem;"></div>
+            
+            <h3 id="ach-detail-title" style="margin: 0 0 10px 0; font-size: 1.4rem; color: #fff; font-weight: 900;"></h3>
+            <p id="ach-detail-desc" style="color: var(--text-muted); font-size: 0.85rem; margin-bottom: 25px; line-height: 1.5; padding: 0 10px;"></p>
+            
+            <div id="ach-detail-progress-container" style="display: none; margin-bottom: 25px;">
+                <div style="display: flex; justify-content: space-between; font-size: 0.7rem; color: #aaa; margin-bottom: 8px; font-weight: 800;">
+                    <span>PROGRESO ACTUAL</span>
+                    <span id="ach-detail-progress-text">0/10</span>
+                </div>
+                <div style="width: 100%; height: 8px; background: rgba(255,255,255,0.1); border-radius: 4px; overflow: hidden; box-shadow: inset 0 1px 3px rgba(0,0,0,0.5);">
+                    <div id="ach-detail-progress-bar" style="height: 100%; width: 0%; background: linear-gradient(90deg, var(--primary-glow), var(--primary)); transition: width 0.5s ease;"></div>
+                </div>
+            </div>
+
+            <div style="background: rgba(240, 165, 0, 0.05); border: 1px solid rgba(240, 165, 0, 0.2); border-radius: 8px; padding: 15px; margin-top: 10px;">
+                <h4 style="margin: 0 0 5px 0; font-size: 0.7rem; letter-spacing: 1px; color: var(--primary); text-transform: uppercase;">Rareza en la Plantilla</h4>
+                <div id="ach-detail-rarity-value" style="font-size: 1.5rem; font-weight: 900; color: #fff;">Calculando...</div>
+                <div id="ach-detail-rarity-desc" style="font-size: 0.75rem; color: #aaa; margin-top: 5px;"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal para Detalles de Jornada Seleccionada (v66.0) (Corregido: Nivel Raíz) -->
+    <div id="session-day-modal" class="modal-overlay" style="display: none; z-index: 10000; padding: 15px; justify-content: center; align-items: center; background: rgba(0,0,0,0.85); backdrop-filter: blur(5px);">
+        <div id="session-day-panel" class="card-elite modal-content" style="padding: 30px; display: flex; flex-direction: column; gap: 25px; width: 100%; max-width: 850px; max-height: 85vh; overflow-y: auto; position: relative;">
+            <!-- Inyectado dinámicamente por JS -->
+        </div>
+    </div>
+
     <!-- Scripts Modulares -->
     <script src="js/config.js"></script>
     <script src="js/state.js"></script>
-    <script src="js/utils.js"></script>
+    <script src="js/utils.js?v=40.0.0"></script>
     <script src="js/auth.js"></script>
-    <script src="js/data.js"></script>
-    <script src="app.js?v=23.0.0"></script>
+    <script src="js/data.js?v=63.0.0"></script>
+    <!-- Módulos Extraídos -->
+    <!-- Archivo principal (Core y EventListeners globales) -->
+    <script src="core_logic.js?v=48.2.0"></script>
+
+    <!-- Módulos Extraídos -->
+    <script src="js/modules/master.js?v=38.0.0"></script>
+    <script src="js/modules/equipo.js?v=38.0.0"></script>
+    <script src="js/modules/achievements.js?v=67.0.0"></script>
+    <script src="js/modules/perfil.js?v=38.0.0"></script>
+    <script src="js/modules/navigation.js?v=38.0.0"></script>
+    <script src="js/modules/plantilla.js?v=38.0.0"></script>
+    <script src="js/modules/tacticas.js?v=38.0.0"></script>
+    <script src="js/modules/jornadas.js?v=40.0.0"></script>
+    <script src="js/modules/matchday.js?v=44.0.0"></script>
+    <script src="js/modules/convocatorias.js?v=38.0.0"></script>
+    <script src="js/modules/calendario.js?v=38.0.0"></script>
+    <script src="js/modules/dashboard.js?v=38.0.0"></script>
+    <script src="js/modules/rivales.js?v=38.0.0"></script>
 
 
     <!-- TEMPLATE PARA CAPTURA (Invisible en el DOM regular) -->

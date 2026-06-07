@@ -1,0 +1,557 @@
+/* --- SISTEMA DE VISTAS (v4.3.1) --- */
+#main-app, 
+#view-auth, 
+#view-team-select {
+    display: none !important;
+}
+
+/* El loader debe ser lo ÃƒÆ’Ã‚Âºnico visible al inicio */
+#app-loader {
+    display: flex !important;
+}
+
+/* --- SISTEMA DE AUTENTICACIÃƒÆ’Ã¢â‚¬Å“N Y SELECCIÃƒÆ’Ã¢â‚¬Å“N DE EQUIPO --- */
+.auth-container {
+    background: rgba(15, 15, 15, 0.8) !important;
+    backdrop-filter: blur(20px);
+    border: 1px solid var(--glass-border);
+    animation: sideSlideIn 0.6s cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+.auth-tab {
+    transition: all 0.3s ease;
+    opacity: 0.5;
+    padding-bottom: 5px;
+}
+
+.auth-tab.active {
+    opacity: 1;
+    color: var(--primary) !important;
+}
+
+.auth-tab.active::after {
+    content: '';
+    position: absolute;
+    bottom: -11px;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background: var(--primary);
+    box-shadow: 0 0 10px var(--primary);
+}
+
+/* Indicador de Rol en Header */
+.role-badge {
+    font-size: 0.6rem;
+    padding: 3px 8px;
+    border-radius: 4px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-left: 10px;
+    border: 1px solid currentColor;
+}
+
+.role-manager { color: #F0A500; background: rgba(240, 165, 0, 0.1); }
+.role-capitan { color: #5bc0de; background: rgba(91, 192, 222, 0.1); }
+.role-jugador { color: #aaa; background: rgba(255, 255, 255, 0.05); }
+
+/* RestricciÃƒÆ’Ã‚Â³n de UI segÃƒÆ’Ã‚Âºn rol */
+[data-role-required="manager"] {
+    display: none; /* Se mostrarÃƒÆ’Ã‚Â¡ vÃƒÆ’Ã‚Â­a JS solo si cumple */
+}
+
+@keyframes sideSlideIn {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.session-card .btn-delete-session {
+    padding: 10px;
+    background: rgba(244, 67, 54, 0.1);
+    color: #F44336;
+    border: 1px solid rgba(244, 67, 54, 0.2);
+    border-radius: 8px;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.session-card .btn-delete-session:hover {
+    background: #F44336;
+    color: #fff;
+    transform: scale(1.1);
+}
+
+.session-stat-value {
+    font-family: 'Outfit', sans-serif;
+    font-weight: 900;
+    font-size: 1.2rem;
+    color: #fff;
+}
+
+.stat-v { color: var(--primary); }
+.stat-e { color: #AAA; }
+.stat-d { color: var(--error); }
+
+.scoreboard-elite {
+    background: linear-gradient(180deg, #1a1a1a 0%, #000 100%);
+    border: 2px solid var(--glass-border);
+    border-radius: 15px;
+    padding: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 30px;
+    box-shadow: 0 0 30px rgba(0,0,0,0.5), inset 0 0 15px rgba(240, 165, 0, 0.1);
+    margin: 20px 0;
+}
+
+.score-team {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    min-width: 150px;
+    text-align: center;
+}
+
+.team-initials {
+    font-size: 0.85rem;
+    font-weight: 800;
+    color: var(--primary);
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    white-space: nowrap;
+    text-shadow: 0 0 10px rgba(240, 165, 0, 0.4);
+}
+
+.team-initials.rival {
+    color: #fff;
+    opacity: 0.7;
+}
+
+.score-number {
+    font-family: 'Outfit', sans-serif; /* O una fuente mÃƒÆ’Ã‚Â¡s "digital/deportiva" si estuviera disponible */
+    font-size: 4rem;
+    font-weight: 900;
+    line-height: 1;
+    color: #fff;
+    text-shadow: 0 0 20px rgba(255,255,255,0.2);
+}
+
+.score-divider {
+    font-size: 2rem;
+    font-weight: 900;
+    color: var(--glass-border);
+}
+
+.match-controls-grid {
+    display: grid;
+    grid-template-columns: 1.5fr 1fr;
+    gap: 15px;
+    margin-top: 20px;
+}
+
+.control-btn {
+    border-radius: 12px;
+    border: 1px solid var(--glass-border);
+    padding: 20px 10px;
+    font-weight: 800;
+    font-size: 0.8rem;
+    color: #fff;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    text-transform: uppercase;
+}
+
+.tactical-slot.dragging {
+    opacity: 0.8;
+    scale: 0.9;
+    z-index: 1000;
+    box-shadow: 0 0 30px var(--primary);
+    cursor: grabbing !important;
+}
+
+/* Indicador visual de que los slots son movibles */
+body.editing-tactic .tactical-slot {
+    outline: 2px dashed var(--primary);
+    outline-offset: 5px;
+    cursor: move !important;
+    animation: pulse-edit 1.5s infinite;
+}
+
+@keyframes pulse-edit {
+    0% { opacity: 1; }
+    50% { opacity: 0.7; }
+    100% { opacity: 1; }
+}
+
+.tactical-slot:hover {
+    scale: 1.05;
+    z-index: 10;
+}
+
+/* TransiciÃƒÆ’Ã‚Â³n suave para cuando se posicionan */
+.tactical-slot {
+    transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.3s;
+    touch-action: none; /* Importante para que funcione el arrastre en mÃƒÆ’Ã‚Â³vil */
+}
+
+.goal-btn {
+    background: linear-gradient(135deg, rgba(240, 165, 0, 0.2) 0%, rgba(0,0,0,0.5) 100%);
+    border-color: var(--primary);
+    box-shadow: 0 0 15px rgba(240, 165, 0, 0.1);
+}
+
+.goal-btn:active {
+    background: var(--primary);
+    color: #000;
+}
+
+.rival-btn {
+    background: rgba(255,255,255,0.03);
+}
+
+.rival-btn.sub {
+    padding: 10px;
+    font-size: 0.6rem;
+    opacity: 0.5;
+}
+
+/* Selector Selector de Goleador */
+.player-select-item {
+    background: rgba(255,255,255,0.05);
+    border: 1px solid var(--glass-border);
+    border-radius: 8px;
+    padding: 10px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+}
+
+.player-select-item.selected {
+    border-color: var(--primary);
+    background: rgba(240, 165, 0, 0.1);
+}
+
+.match-card {
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+    border-radius: 12px;
+    padding: 15px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.match-card-main {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.match-event-detail {
+    font-size: 0.65rem;
+    color: var(--text-muted);
+    padding: 6px 12px;
+    background: rgba(255,255,255,0.03);
+    border-radius: 6px;
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+}
+
+.match-events-list {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    border-top: 1px solid rgba(255,255,255,0.05);
+    padding-top: 10px;
+}
+
+.badge-live {
+    background: #F44336;
+    color: #fff;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-size: 0.55rem;
+    font-weight: 900;
+    margin-left: 8px;
+    animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+    0% { opacity: 1; }
+    50% { opacity: 0.5; }
+    100% { opacity: 1; }
+}
+
+.match-card .result {
+    font-weight: 900;
+    font-size: 1.2rem;
+}
+
+.badge-official {
+    background: rgba(240, 165, 0, 0.1);
+    color: var(--primary);
+    font-size: 0.5rem;
+    padding: 2px 5px;
+    border-radius: 3px;
+    border: 1px solid var(--primary);
+    font-weight: 800;
+}
+
+.badge-friendly {
+    background: rgba(255, 255, 255, 0.1);
+    color: #fff;
+    font-size: 0.5rem;
+    padding: 2px 5px;
+    border-radius: 3px;
+    border: 1px solid rgba(255,255,255,0.2);
+    font-weight: 800;
+}
+
+@media (min-width: 768px) {
+    .match-controls-grid {
+        grid-template-columns: 1fr 1fr;
+    }
+}
+
+@media (min-width: 1024px) {
+    /* ==== SCROLL FLUIDO SIN BARRA VISIBLE ==== */
+    .app-wrapper {
+        overflow-y: auto !important;
+        overflow-x: hidden !important;
+        -ms-overflow-style: none; /* IE y Edge */
+        scrollbar-width: none;    /* Firefox */
+    }
+    
+    /* Ocultar scrollbar visualmente en todo el viewport mÃƒÆ’Ã‚Â³vil pero mantener funcionalidad */
+    *::-webkit-scrollbar { 
+        display: none !important; 
+        width: 0 !important;
+    }
+
+    #view-tacticas.active-view {
+        overflow: visible !important;
+        height: auto;
+        min-height: 100%;
+    }
+
+    /* ==== BARRA TÃƒÆ’Ã‚Â CTICA MÃƒÆ’Ã‚Â³VIL ==== */
+    .mobile-tactic-topbar {
+        flex-direction: column;
+        gap: 10px;
+        padding: 12px 0;
+        border-bottom: 1px solid var(--glass-border);
+        width: 100%;
+        box-sizing: border-box;
+    }
+
+    .mobile-tactic-topbar__info {
+        display: flex;
+        align-items: baseline;
+        gap: 10px;
+    }
+
+    .mobile-tactic-topbar__name {
+        font-size: 1.1rem;
+        font-weight: 900;
+        background: linear-gradient(90deg, var(--primary), #fff);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+
+    .mobile-tactic-topbar__formation {
+        font-size: 0.7rem;
+        font-weight: 700;
+        color: rgba(255,255,255,0.4);
+        letter-spacing: 2px;
+    }
+
+    /* == FILA DE BOTONES: siempre horizontal == */
+    .mobile-tactic-topbar__actions {
+        display: flex;
+        flex-direction: row !important;
+        gap: 6px;
+        width: 100%;
+    }
+
+    .mobile-tactic-btn {
+        flex: 1;
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: center;
+        gap: 4px;
+        padding: 6px 4px;
+        border-radius: 8px;
+        font-size: 0.55rem;
+        font-weight: 800;
+        cursor: pointer;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        min-height: unset;
+        transition: all 0.2s ease;
+    }
+
+    .mobile-tactic-btn .btn-icon {
+        font-size: 0.75rem;
+        line-height: 1;
+    }
+
+    .mobile-tactic-btn span {
+        font-size: 0.55rem;
+        font-weight: 800;
+        letter-spacing: 0.5px;
+    }
+
+    .mobile-tactic-btn--edit {
+        background: rgba(255,255,255,0.05);
+        border: 1px solid rgba(240,165,0,0.3);
+        color: var(--primary);
+    }
+    .mobile-tactic-btn--edit:active {
+        background: rgba(240,165,0,0.15);
+    }
+
+    .mobile-tactic-btn--reset {
+        background: rgba(255,255,255,0.04);
+        border: 1px solid rgba(255,255,255,0.15);
+        color: #fff;
+    }
+
+    .mobile-tactic-btn--save-design {
+        background: linear-gradient(135deg, var(--primary), #d48a00);
+        border: none;
+        color: #000;
+        box-shadow: 0 0 12px var(--primary-glow);
+    }
+
+    .mobile-tactic-btn--export {
+        background: rgba(255,255,255,0.04);
+        border: 1px solid rgba(255,255,255,0.1);
+        color: rgba(255,255,255,0.7);
+    }
+    .mobile-tactic-btn--export:active {
+        background: rgba(255,255,255,0.1);
+    }
+
+    .mobile-tactic-btn--save {
+        background: rgba(240, 165, 0, 0.08);
+        border: 1px solid var(--primary);
+        color: var(--primary);
+    }
+    .mobile-tactic-btn--save:active {
+        background: rgba(240,165,0,0.2);
+    }
+
+    /* ==== CAMPO: CERO SCROLL HORIZONTAL ==== */
+    .pitch-container {
+        width: 94% !important;
+        margin: 0 auto !important;
+        border-radius: var(--radius-md) !important;
+        border-left: 2px solid rgba(255,255,255,0.1) !important;
+        border-right: 2px solid rgba(255,255,255,0.1) !important;
+        height: auto !important;
+        max-height: none !important;
+        aspect-ratio: 1 / 1.45;
+        min-height: unset;
+        flex: none;
+        container-type: inline-size;
+    }
+}
+
+/* Bento Grid del Módulo de Rivales (Diseño Móvil por defecto) */
+.rivals-bento-layout {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    width: 100%;
+}
+
+/* Filas interactivas con look deportivo premium */
+.rival-row {
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+    height: 52px; /* Altura cómoda táctil */
+}
+
+.rival-row:hover {
+    background: rgba(240, 165, 0, 0.05) !important;
+}
+
+.rival-row.selected {
+    background: rgba(240, 165, 0, 0.1) !important;
+    border-left: 3px solid var(--primary);
+}
+
+/* Cabeceras de rivales ordenables premium */
+.th-rivals-sortable {
+    transition: color 0.2s ease !important;
+}
+.th-rivals-sortable:hover {
+    color: var(--primary) !important;
+}
+
+/* Partidos individuales de la lista de encuentros */
+.rival-match-item {
+    cursor: pointer;
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid var(--glass-border);
+    border-radius: 8px;
+    padding: 12px 15px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    transition: all 0.2s ease;
+    min-height: 48px; /* Altura mínima táctil */
+}
+
+.rival-match-item:hover {
+    background: rgba(255, 255, 255, 0.05);
+    border-color: rgba(240, 165, 0, 0.3);
+}
+
+/* Contenedor colapsable para los goleadores y asistentes de cada partido */
+.rival-match-events {
+    background: rgba(0, 0, 0, 0.25);
+    border-left: 2.5px solid var(--primary);
+    border-radius: 0 0 8px 8px;
+    padding: 12px 15px;
+    margin-top: -4px;
+    margin-bottom: 8px;
+    display: none;
+    animation: slideDownFade 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@keyframes slideDownFade {
+    from {
+        opacity: 0;
+        transform: translateY(-8px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* DISEÑO DIVERGENTE WEB / DESKTOP (Regla de Oro 7) */
+@media (min-width: 1024px) {
+    .rivals-bento-layout {
+        display: grid;
+        grid-template-columns: 1fr; /* Ancho completo */
+        gap: 25px;
+        align-items: start;
+        width: 100%; /* Aprovecha el 100% de la pantalla */
+    }
+}
+

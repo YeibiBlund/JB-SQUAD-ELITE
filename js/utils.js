@@ -270,3 +270,39 @@ window.jbLoading = {
         if (overlay) overlay.classList.remove('active');
     }
 };
+
+/**
+ * Comprime una imagen usando Canvas para ahorrar ancho de banda.
+ */
+function compressImage(file, maxWidth = 800) {
+    return new Promise((resolve) => {
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = (event) => {
+            const img = new Image();
+            img.src = event.target.result;
+            img.onload = () => {
+                const canvas = document.createElement('canvas');
+                let width = img.width;
+                let height = img.height;
+
+                if (width > maxWidth) {
+                    height = (maxWidth / width) * height;
+                    width = maxWidth;
+                }
+
+                canvas.width = width;
+                canvas.height = height;
+                const ctx = canvas.getContext('2d');
+                ctx.drawImage(img, 0, 0, width, height);
+
+                canvas.toBlob((blob) => {
+                    resolve(blob);
+                }, 'image/jpeg', 0.7); // 70% calidad
+            };
+        };
+    });
+}
+window.compressImage = compressImage;
+window.escapeHTML = escapeHTML;
+window.getPlayerNameById = getPlayerNameById;

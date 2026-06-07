@@ -1,0 +1,617 @@
+/* --- EXPORT MATCHDAY STYLES v4.8.1 (Elite Dark Aesthetic) --- */
+/* --- STANDALONE EXPORT v26.0.0 (No-Flex Final) --- */
+.export-matchday-wrapper {
+    width: 1080px;
+    height: 1440px;
+    position: fixed;
+    top: -5000px;
+    left: 0;
+    z-index: -1000;
+    background: #000 url('img/emerald_pitch.png') no-repeat center center;
+    background-size: cover;
+    filter: contrast(105%) brightness(90%);
+    font-family: 'Outfit', sans-serif;
+    color: #fff;
+    overflow: hidden;
+}
+
+.export-matchday-wrapper::after {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: radial-gradient(circle, transparent 30%, rgba(0,0,0,0.85) 100%);
+    pointer-events: none;
+    z-index: 5;
+}
+
+.export-broadcast-container {
+    width: 1080px;
+    height: 1440px;
+    position: relative;
+}
+
+/* ÃƒÆ’Ã‚Â rea del campo (No-Flex centering) */
+.export-pitch-area {
+    width: 1080px;
+    height: 1100px;
+    position: absolute;
+    top: 240px;
+    left: 0;
+}
+
+/* El contenedor del campo (Re-centrado manual) */
+.pitch-container-export {
+    width: 960px; 
+    height: 1100px;
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    background: transparent;
+}
+
+/* Carta TÃƒÆ’Ã‚Â¡ctica (No-Flex Architecture) */
+.tactical-slot-export {
+    position: absolute;
+    width: 150px;
+    height: 205px;
+    background: rgba(0,0,0,0.2);
+    border-radius: 10px;
+}
+
+.tactical-slot-export.filled {
+    background: linear-gradient(135deg, #121212 0%, #000 100%);
+    border: 2.5px solid var(--primary);
+    box-shadow: 0 35px 70px rgba(0,0,0,0.85);
+}
+
+/* Renderizado de Foto (Absolute Forced) */
+.player-card-img-export {
+    position: absolute;
+    top: 0; 
+    left: 0; 
+    width: 150px; 
+    height: 205px;
+    background: #000;
+    overflow: hidden;
+    z-index: 1;
+    border-radius: 9px;
+}
+
+.player-card-img-export svg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 150px;
+    height: 205px;
+    object-fit: cover;
+}
+
+/* --- SISTEMA DE EXPORTACIÃƒâ€œN DE PLANTILLA (v49.4) --- */
+.squad-export-wrapper {
+    position: fixed;
+    top: -9999px;
+    left: -9999px;
+    width: 1200px;
+    background: #fff; /* Fondo blanco premium como el ejemplo */
+    padding: 60px;
+    font-family: 'Outfit', sans-serif;
+    color: #1a1a1a;
+}
+
+.squad-export-header {
+    margin-bottom: 50px;
+    border-bottom: 2px solid #f0f0f0;
+    padding-bottom: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center; /* Cambiado a center para el escudo */
+}
+
+.squad-export-logo-container {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.squad-export-crest {
+    width: 80px;
+    height: 80px;
+    object-fit: contain;
+}
+
+.poster-crest-img {
+    width: 70%; 
+    height: 70%;
+    object-fit: contain;
+}
+
+.squad-export-header h1 {
+    font-size: 2.8rem;
+    font-weight: 900;
+    letter-spacing: -1px;
+    color: #000;
+    margin: 0;
+}
+
+.squad-export-socials {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 5px;
+}
+
+.squad-social-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.9rem;
+    font-weight: 800;
+    color: #333;
+}
+
+.squad-social-icon {
+    width: 18px;
+    height: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.squad-group {
+    margin-bottom: 40px;
+}
+
+.squad-group-title {
+    font-size: 1.2rem;
+    font-weight: 800;
+    color: #333;
+    margin-bottom: 25px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    border-left: 5px solid #000;
+    padding-left: 15px;
+}
+
+.squad-cards-grid {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 20px;
+}
+
+.squad-export-card {
+    background: linear-gradient(180deg, #e0e0ff 0%, #ffffff 100%); /* Gradiente sutil azul/lavanda */
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+    display: flex;
+    flex-direction: column;
+    aspect-ratio: 1 / 1.4;
+    position: relative;
+    border: 1px solid #eee;
+}
+
+.squad-card-photo {
+    flex: 1;
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.squad-card-info {
+    height: 60px;
+    padding: 10px;
+    background: rgba(255,255,255,0.9);
+    backdrop-filter: blur(5px);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+}
+
+.squad-card-name-row {
+    display: flex;
+    align-items: baseline;
+    gap: 5px;
+}
+
+.squad-card-dorsal {
+    font-size: 1.1rem;
+    font-weight: 900;
+    color: #000;
+}
+
+.squad-card-name {
+    font-size: 0.85rem;
+    font-weight: 800;
+    color: #000;
+    text-transform: uppercase;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.squad-card-pos {
+    font-size: 0.6rem;
+    font-weight: 700;
+    color: #666;
+    text-transform: uppercase;
+}
+
+/* --- Layout del Reporte en Mobile (v34.3) --- */
+@media (max-width: 768px) {
+    .report-header {
+        flex-direction: column !important;
+        align-items: flex-start !important;
+        gap: 15px !important;
+        padding: 15px !important;
+    }
+
+    #report-poll-title {
+        font-size: 1.1rem !important;
+        margin-bottom: 5px !important;
+        width: 100%;
+        display: block;
+    }
+
+    #report-poll-date {
+        font-size: 0.65rem !important;
+        margin-bottom: 10px !important;
+        width: 100%;
+        display: block;
+    }
+
+    /* Fila de botones en el header */
+    .report-header > div:last-child {
+        width: 100% !important;
+        display: flex !important;
+        justify-content: flex-start !important;
+        gap: 10px !important;
+        margin-top: 5px;
+    }
+
+    #btn-reopen-report, #btn-delete-report {
+        flex: 1;
+        text-align: center;
+        padding: 10px 5px !important;
+        font-size: 0.65rem !important;
+    }
+
+    #close-poll-detail {
+        position: absolute !important;
+        top: 15px;
+        right: 15px;
+    }
+}
+
+/* --- Estilos para Secciones Colapsables del Reporte --- */
+.report-collapsible-section {
+    border: 1px solid var(--glass-border);
+    border-radius: 12px;
+    margin-bottom: 15px;
+    background: rgba(255, 255, 255, 0.02);
+    overflow: hidden;
+}
+
+.report-section-header {
+    padding: 12px 15px;
+    background: rgba(255, 255, 255, 0.05);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+}
+
+.report-section-header h4 {
+    margin: 0 !important;
+    font-size: 0.7rem;
+    color: var(--primary);
+}
+
+.report-section-header .chevron {
+    font-size: 0.6rem;
+    transition: transform 0.3s;
+    opacity: 0.5;
+}
+
+.report-section-content {
+    padding: 15px;
+    display: block; /* Abierto por defecto en PC */
+}
+
+@media (max-width: 768px) {
+    .report-section-content {
+        display: none; /* Cerrado por defecto en Mobile */
+    }
+}
+
+.report-collapsible-section.expanded .report-section-content {
+    display: block !important;
+}
+
+.report-collapsible-section.expanded .chevron {
+    transform: rotate(180deg);
+}
+
+/* --- SELECTOR DE FONDOS DE EXPORTACIÃƒâ€œN --- */
+.bg-selector-grid {
+    display: flex;
+    gap: 8px;
+    overflow-x: auto;
+    padding: 10px 5px;
+    margin-bottom: 20px;
+}
+.bg-option {
+    width: 65px;
+    height: 90px;
+    flex-shrink: 0;
+    border-radius: 8px;
+    border: 2px solid rgba(255, 255, 255, 0.1);
+    overflow: hidden;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    background: #111;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+}
+.bg-option img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+.bg-placeholder {
+    font-size: 0.7rem;
+    color: rgba(255,255,255,0.4);
+    text-align: center;
+    font-weight: 700;
+}
+.bg-option:hover {
+    border-color: rgba(240, 165, 0, 0.5);
+    transform: translateY(-2px);
+}
+.bg-option.selected {
+    border-color: var(--primary);
+    box-shadow: 0 0 15px var(--primary-glow);
+}
+.bg-option.selected::after {
+    content: 'âœ“';
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    background: var(--primary);
+    color: #000;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.6rem;
+    font-weight: 900;
+}
+/* --- GENERADOR DE CARTEL MATCHDAY (v60.6) - ESTILO E-SPORTS PRO --- */
+
+.matchday-poster-preview {
+    width: 1080px !important;
+    min-width: 1080px !important;
+    height: 1350px !important;
+    min-height: 1350px !important;
+    position: absolute;
+    top: 0;
+    left: 0;
+    transform-origin: top left;
+    overflow: hidden;
+    z-index: 1;
+    background: radial-gradient(circle at 50% 50%, #0a1f44 0%, #020814 100%);
+}
+
+.matchday-poster-preview::before {
+    content: "";
+    position: absolute;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background-image: linear-gradient(115deg, transparent 40%, rgba(212, 175, 55, 0.05) 45%, rgba(212, 175, 55, 0.1) 50%, rgba(212, 175, 55, 0.05) 55%, transparent 60%);
+    background-size: 200% 200%;
+    animation: shine 10s infinite linear;
+}
+
+@keyframes shine {
+    0% { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+}
+
+.poster-header {
+    position: absolute;
+    top: 50px;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+    z-index: 10;
+}
+
+.poster-main-logo {
+    width: 200px;
+    height: 200px;
+    border-radius: 50%; /* Círculo perfecto */
+    border: 5px solid #d4af37;
+    background: #000;
+    object-fit: contain;
+    box-shadow: 0 0 30px rgba(212, 175, 55, 0.4);
+}
+
+.poster-title {
+    font-size: 90px;
+    font-weight: 900;
+    color: #fff;
+    letter-spacing: 15px;
+    text-transform: uppercase;
+    font-family: 'Outfit', sans-serif;
+    background: linear-gradient(to bottom, #fff 40%, #ccc 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin: 0;
+}
+
+
+.poster-matches-list {
+    position: absolute;
+    top: 360px;
+    width: 100%;
+    padding: 0 50px;
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+    box-sizing: border-box;
+}
+
+.poster-match-card {
+    position: relative;
+    height: 160px;
+    background: linear-gradient(90deg, rgba(0, 43, 92, 0.9) 0%, rgba(0, 75, 150, 0.6) 50%, rgba(0, 43, 92, 0.9) 100%);
+    border-top: 2px solid #d4af37;
+    border-bottom: 2px solid #d4af37;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 60px;
+    clip-path: polygon(3% 0%, 97% 0%, 100% 50%, 97% 100%, 3% 100%, 0% 50%);
+}
+
+.poster-team-bundle {
+    display: flex;
+    align-items: center;
+    gap: 25px;
+    width: 380px;
+}
+
+.poster-crest-container {
+    width: 110px;
+    height: 110px;
+    min-width: 110px;
+    max-width: 110px;
+    min-height: 110px;
+    max-height: 110px;
+    flex-shrink: 0; /* EVITAR DEFORMACIÓN */
+    border-radius: 50%;
+    border: 3px solid #d4af37;
+    background: #000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    box-shadow: 0 0 20px rgba(212, 175, 55, 0.4);
+}
+
+.poster-team-name {
+    font-size: 36px;
+    font-weight: 900;
+    color: #fff;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.poster-vs-box {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(180deg, #d4af37 0%, #8a6d3b 100%);
+    width: 140px;
+    height: 100px;
+    clip-path: polygon(20% 0%, 80% 0%, 100% 50%, 80% 100%, 20% 100%, 0% 50%);
+    box-shadow: 0 0 20px rgba(0,0,0,0.5);
+    z-index: 5;
+}
+
+.poster-vs-text {
+    font-size: 44px;
+    font-weight: 900;
+    color: #000;
+    line-height: 0.9;
+}
+
+.poster-time-label {
+    font-size: 24px;
+    font-weight: 800;
+    color: #fff;
+    background: rgba(0,0,0,0.5);
+    padding: 2px 10px;
+    border-radius: 4px;
+    margin-top: 5px;
+}
+
+.poster-footer {
+    position: absolute;
+    bottom: 40px;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    padding: 0 80px;
+    z-index: 10;
+}
+
+.poster-footer-social {
+    display: flex;
+    gap: 30px;
+    background: rgba(0,0,0,0.4);
+    padding: 10px 25px;
+    border-radius: 50px;
+    border: 1px solid rgba(212, 175, 55, 0.2);
+}
+
+.poster-footer-logo {
+    width: 100px;
+    height: 100px;
+    filter: drop-shadow(0 0 10px rgba(212, 175, 55, 0.4));
+}
+
+.poster-social-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 18px;
+    font-weight: 700;
+    color: #fff;
+}
+
+/* Interfaz del Editor (Columna Única v61.0) */
+
+.poster-frame-container {
+    width: 100%;
+    max-width: 550px;
+    aspect-ratio: 1080 / 1350;
+    position: relative;
+    background: #000;
+    border-radius: 12px;
+    box-shadow: 0 40px 100px rgba(0,0,0,0.8);
+    overflow: hidden;
+    border: 1px solid rgba(212, 175, 55, 0.3);
+}
+
+/* ADAPTATIVO 5 PARTIDOS */
+.poster-matches-list.count-5 {
+    top: 320px;
+    gap: 15px;
+}
+.poster-matches-list.count-5 .poster-match-card {
+    height: 140px;
+}
+.poster-matches-list.count-5 .poster-crest-container {
+    width: 100px;
+    height: 100px;
+    min-width: 100px;
+    min-height: 100px;
+}
+.poster-matches-list.count-5 .poster-team-name {
+    font-size: 28px;
+}
+

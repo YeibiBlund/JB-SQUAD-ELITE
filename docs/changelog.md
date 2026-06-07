@@ -1,3 +1,34 @@
+## [v68.0.0] - 2026-05-25 | 11:30
+### 🎨 Renovación Premium de UI (Dashboard & Navbar) y Accesos Rápidos
+- **Rediseño Estructural del Dashboard**: Las tablas de métricas y componentes del inicio se han encapsulado en nuevas "tarjetas" con mucho más flow y diseño premium. El "Rendimiento del Club", "Racha en curso", "Jugadores" y "Jornadas" ahora viven en contenedores propios para mejorar la lectura y estética.
+- **Top 5 General (Salón de la Fama)**: Se ha rediseñado la antigua sección "Salón de la Fama" para mostrar un formato de "Top 5 General" más limpio y competitivo, mejorando también los estilos del "Club Overview".
+- **Rediseño del Navbar Global**: Se actualizó por completo la barra de navegación para modernizarla. Se le agregaron detalles de color y acentos en los bordes para separarla visualmente del fondo oscuro de la app, dándole un acabado vanguardista.
+- **Acceso Rápido a "Mi Equipo"**: Mejorada la UX para perfiles de alto rango. Los usuarios con rol de Manager ahora tienen un icono directo a "Mi Equipo" en el Navbar, eliminando la necesidad de dar dos clics pasando primero por "Mi Perfil".
+
+## [v67.0.0] - 2026-05-24 | 01:54
+### 🏆 Sistema de Logros Dinámicos
+- **Motor de Logros (`achievements.js`)**: Nuevo motor que calcula logros en tiempo real usando caché local basándose en el historial del jugador.
+- **Iconos Vectoriales y Rarezas**: Los logros están clasificados en 4 Tiers (Bronce, Plata, Oro, Platino) con estilos 3D y partículas CSS, preparados para custom SVGs.
+- **Top 4 Escaparate**: La tarjeta de Perfil ahora muestra dinámicamente los 4 logros más exclusivos del jugador.
+- **Vitrina de Trofeos**: Añadido un nuevo Modal a pantalla completa para explorar el catálogo de logros, incluyendo retos globales, posicionales y combinados.
+
+## [v66.1.1] - 2026-05-24 | 01:18
+### 🎨 Rediseño Tarjeta Gamer ID (Mi Perfil)
+- **Mejora Visual Premium**: Rediseñado el bloque derecho de la tarjeta de perfil en `index.html`. Se ha implementado un fondo `linear-gradient` tipo *glassmorphism*, sombras más profundas, una marca de agua sutil de un mando, tipografía de mayor impacto para el Gamer ID y un icono vectorial dorado para aportar una estética mucho más alineada al estándar Élite de la aplicación.
+
+## [v66.1.0] - 2026-05-24 | 01:13
+### 📊 Actualización del Panel Master (Métricas y Rankings)
+- **Métrica de Accesos Ampliada**: Modificada la tarjeta estadística principal del Panel Master. Anteriormente mostraba los logins del día actual ("Logins Hoy"); ahora calcula y muestra todos los accesos acumulados de la plataforma en los últimos 30 días, modificando la consulta `gte` en Supabase dentro de `dashboard.js`. Etiqueta HTML actualizada correspondientemente en `index.html`.
+- **Ranking de Fidelidad Ilimitado**: Eliminada la restricción de corte (`.slice(0, 15)`) en el algoritmo de ordenación del Ranking de Fidelidad en `dashboard.js`. Ahora la lista de clasificación renderiza a la totalidad de los usuarios registrados en la base de datos, ordenados de mayor a menor según su frecuencia de accesos (logins históricos).
+
+## [v66.0.0] - 2026-05-24 | 00:50
+### 🚀 Refactorización Arquitectónica Masiva (Modularización Total)
+- **Eliminación del Monolito `app.js`**: El archivo central gigante (más de 8,600 líneas) fue desmantelado de forma segura y sustituido por 12 submódulos independientes (`js/modules/*.js`) utilizando el patrón IIFE (Immediately Invoked Function Expression) para proteger el scope global y evitar colisiones de variables.
+- **Implementación de Boot Sequence**: Refactorización de `index.html` para establecer un orden de carga estricto: dependencias base (`config.js`, `state.js`, `utils.js`), autenticación (`auth.js`, `data.js`), inyección de referencias DOM globales (`core_logic.js`), módulos de dominio, y finalmente el gatillo de inicialización.
+- **Fragmentación del Framework CSS Propietario**: El gigantesco `style.css` (7,300+ líneas) fue refactorizado y dividido en 17 archivos altamente cohesivos, organizados por su responsabilidad (`base`, `layout`, `components`, `views`). `style.css` ahora actúa únicamente como un Manifiesto mediante directivas `@import`, asegurando un orden de cascada perfecto e inmutable.
+- **Limpieza de Workspace**: Se eliminaron los residuos de fases de migración anteriores (carpetas `scratch/` y `docs/archive/`) dejando el repositorio reluciente y listo para producción en la nube.
+- **Actualización de Documentación Core**: Reescritura absoluta de la Fuente de Verdad (`architecture.md`) documentando al detalle el nuevo flujo de módulos, y actualización de las directivas en `agents.md` instaurando la "Regla 12" de preservación de arquitectura modular.
+
 ## [v65.4.0] - 2026-05-23 | 01:22
 ### 🎨 Eliminación de Hover en Cabeceras e Interacción de Ordenación (v65.4.0)
 - **Fijación de Ancho de Tabla y Columnas (`table-layout: fixed`)**: Aplicada la regla `table-layout: fixed !important;` en `#table-rivals-compare` para bloquear el ancho de la tabla y de todas sus columnas. Esto evita por completo el molesto movimiento o parpadeo horizontal ("saltos de ancho") de la tabla completa al ordenar, ya que el navegador respeta estrictamente los anchos de cabecera definidos sin depender de la longitud de los textos en las celdas.
@@ -747,3 +778,5 @@
 ### Detalles de Diseño
 - **Pitch 3D**: Uso de gradientes lineales y líneas reglamentarias mediante pseudo-elementos CSS para un acabado profesional.
 - **Responsive Slots**: Ajuste de escala dinámico para asegurar que los 11 jugadores sean visibles y clickeables en pantallas pequeñas.
+
+*   **[2026-05-24 00:50] Cierre de Refactorizacion:** Eliminacion definitiva de las carpetas temporales scratch/ y docs/archive/ para liberar espacio. Actualizacion de architecture.md y agents.md para proteger la arquitectura modular v66.0.

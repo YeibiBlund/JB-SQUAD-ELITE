@@ -1,0 +1,792 @@
+/* Form Styles Professional */
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    display: block;
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-bottom: 8px;
+    font-weight: 700;
+}
+
+.form-group input, .form-group select {
+    width: 100%;
+    background: var(--bg-surface);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius-sm);
+    padding: 14px;
+    color: white;
+    font-size: 1rem;
+    transition: var(--transition);
+}
+
+.form-group input:focus {
+    border-color: var(--primary);
+    outline: none;
+    box-shadow: 0 0 0 4px var(--primary-glow);
+}
+
+/* Premium Range Input */
+.premium-range {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 100%;
+    height: 6px;
+    background: var(--bg-deep);
+    border-radius: 5px;
+    outline: none;
+    margin: 15px 0;
+}
+
+.premium-range::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 18px;
+    height: 18px;
+    background: var(--primary);
+    cursor: pointer;
+    border-radius: 50%;
+    box-shadow: 0 0 10px var(--primary-glow);
+    border: 2px solid #fff;
+}
+
+.upload-photo-container label:hover {
+    border-color: var(--primary) !important;
+    color: var(--primary) !important;
+    background: rgba(240, 165, 0, 0.05) !important;
+}
+/* --- Perfil Vista v4.2.3 --- */
+.profile-view-layout {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 40px;
+    align-items: stretch;
+    margin-bottom: 2rem;
+}
+
+.profile-card-column {
+    display: flex;
+    justify-content: center;
+}
+
+.profile-info-column {
+    padding: 30px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.info-block label {
+    display: block;
+    font-size: 0.65rem;
+    color: var(--primary);
+    font-weight: 800;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+}
+
+.info-block h2 {
+    font-size: 1.8rem;
+    font-weight: 900;
+    color: #fff;
+    margin: 0;
+}
+
+.pos-badge-grid {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-top: 10px;
+}
+
+.secondary-pos-badge {
+    padding: 6px 15px;
+    border-radius: 6px;
+    font-size: 0.8rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.1);
+    color: var(--text-muted);
+}
+
+.secondary-pos-badge.active {
+    border-color: var(--primary);
+    color: var(--primary);
+    background: rgba(240, 165, 0, 0.1);
+}
+
+@media (max-width: 768px) {
+    .profile-view-layout {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+    .profile-card-column {
+        order: -1;
+    }
+    .info-block h2 {
+        font-size: 1.4rem;
+    }
+}
+
+/* Switch Premium Lucide-Style */
+.jb-switch {
+    position: relative;
+    display: inline-block;
+    width: 48px;
+    height: 26px;
+    flex-shrink: 0;
+}
+
+.jb-switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.jb-slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(255, 255, 255, 0.1);
+    transition: .4s cubic-bezier(0.16, 1, 0.3, 1);
+    border-radius: 34px;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.jb-slider:before {
+    position: absolute;
+    content: "";
+    height: 18px;
+    width: 18px;
+    left: 4px;
+    bottom: 3px;
+    background-color: #fff;
+    transition: .4s cubic-bezier(0.16, 1, 0.3, 1);
+    border-radius: 50%;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.4);
+}
+
+input:checked + .jb-slider {
+    background-color: var(--success);
+}
+
+input:checked + .jb-slider:before {
+    transform: translateX(21px);
+}
+
+input:disabled + .jb-slider {
+    cursor: not-allowed;
+    opacity: 0.4;
+    filter: grayscale(1);
+}
+
+/* Icono Manager View */
+.always-available-status-badge {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 12px;
+    background: rgba(76, 175, 80, 0.1);
+    border: 1px solid rgba(76, 175, 80, 0.2);
+    border-radius: 20px;
+    color: var(--success);
+    font-size: 0.65rem;
+    font-weight: 800;
+    text-transform: uppercase;
+}
+
+/* =========================================================================
+   DASHBOARD FILTER BADGE (v58.2) - SUSTITUYE AL SELECT
+   ========================================================================= */
+.filter-badge-elite {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: var(--text-muted);
+    border-radius: 6px;
+    padding: 4px 12px;
+    font-size: 0.6rem;
+    font-weight: 900;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    user-select: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.filter-badge-elite:hover {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: rgba(255, 255, 255, 0.2);
+    transform: translateY(-1px);
+}
+
+.filter-badge-elite:active {
+    transform: scale(0.95);
+}
+
+/* Modos de Color */
+.filter-badge-elite[data-mode="official"] {
+    border-color: rgba(76, 175, 80, 0.4);
+    color: var(--success);
+    background: rgba(76, 175, 80, 0.05);
+}
+
+.filter-badge-elite[data-mode="friendly"] {
+    border-color: rgba(240, 165, 0, 0.4);
+    color: var(--primary);
+    background: rgba(240, 165, 0, 0.05);
+}
+
+.filter-badge-elite[data-mode="global"] {
+    border-color: rgba(255, 255, 255, 0.3);
+    color: #fff;
+    background: rgba(255, 255, 255, 0.1);
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.05);
+}
+/* =========================================================================
+   ADMIN MASTER PANEL STYLES (v59.0)
+   ========================================================================= */
+#view-admin h1 {
+    font-size: 1.5rem;
+    margin: 0;
+}
+
+.admin-stats-grid .card-elite {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    min-height: 100px;
+}
+
+.admin-table-wrapper::-webkit-scrollbar {
+    height: 4px;
+}
+
+.admin-table-wrapper::-webkit-scrollbar-thumb {
+    background: var(--primary);
+    border-radius: 10px;
+}
+
+#admin-teams-list tr:last-child {
+    border-bottom: none;
+}
+
+/* Efecto Hover en filas del ranking */
+#admin-users-ranking div {
+    transition: var(--transition);
+}
+
+#admin-users-ranking div:hover {
+    border-color: var(--primary-glow) !important;
+    background: rgba(255,255,255,0.04) !important;
+    transform: translateX(5px);
+}
+
+@media (max-width: 600px) {
+    .admin-stats-grid {
+        grid-template-columns: 1fr 1fr !important;
+    }
+}
+
+/* Utilidad para simplificar UI en móviles (v59.2) */
+.show-mobile-inline { display: none; }
+
+.ranking-header-elite {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+}
+
+.ranking-header-elite .filter-badge-elite {
+    margin-left: 10px;
+    margin-right: auto; /* Lo pega al título en escritorio */
+}
+
+@media (max-width: 1023px) {
+    .hide-mobile { display: none !important; }
+    .show-mobile-inline { display: inline !important; }
+    
+    .ranking-header-elite .filter-badge-elite {
+        margin-left: auto !important; /* Lo empuja a la derecha en móvil */
+        margin-right: 0 !important;
+    }
+}
+
+/* =========================================================================
+   RANKINGS ULTRAPREMIUM Y TABLA DE PORTEROS (v63.0)
+   ========================================================================= */
+.ranking-row-premium {
+    background: rgba(255, 255, 255, 0.02) !important;
+    border: 1px solid rgba(255, 255, 255, 0.03) !important;
+    border-radius: 12px;
+    padding: 10px 16px;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1) !important;
+    position: relative;
+    overflow: hidden;
+}
+
+.ranking-row-premium:hover {
+    background: rgba(240, 165, 0, 0.05) !important;
+    border-color: rgba(240, 165, 0, 0.2) !important;
+    transform: translateX(6px) scale(1.01) !important;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2), 0 0 10px rgba(240, 165, 0, 0.08);
+}
+
+.ranking-row-premium.rank-first {
+    background: linear-gradient(90deg, rgba(240, 165, 0, 0.08) 0%, rgba(240, 165, 0, 0.02) 100%) !important;
+    border-color: rgba(240, 165, 0, 0.25) !important;
+}
+
+.ranking-row-premium.rank-first:hover {
+    background: linear-gradient(90deg, rgba(240, 165, 0, 0.15) 0%, rgba(240, 165, 0, 0.04) 100%) !important;
+    border-color: rgba(240, 165, 0, 0.4) !important;
+    box-shadow: 0 6px 20px rgba(240, 165, 0, 0.12);
+}
+
+.rank-number-premium {
+    font-size: 0.95rem;
+    font-weight: 900;
+    color: var(--text-muted);
+    width: 24px;
+    text-align: center;
+    font-family: 'Outfit', sans-serif;
+    transition: color 0.3s;
+}
+
+.ranking-row-premium:hover .rank-number-premium {
+    color: #fff;
+}
+
+.rank-number-premium.rank-first-num {
+    color: var(--primary) !important;
+    text-shadow: 0 0 8px rgba(240, 165, 0, 0.5);
+    font-size: 1.1rem;
+}
+
+.rank-avatar-frame {
+    width: 32px;
+    height: 32px;
+    background: rgba(0, 0, 0, 0.4);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 8px;
+    padding: 2px;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.ranking-row-premium:hover .rank-avatar-frame {
+    border-color: var(--primary);
+    transform: scale(1.1);
+    box-shadow: 0 0 10px rgba(240, 165, 0, 0.25);
+}
+
+.rank-name-text {
+    font-size: 0.8rem;
+    font-weight: 800;
+    color: #fff;
+    letter-spacing: 0.5px;
+    transition: color 0.3s;
+}
+
+.ranking-row-premium:hover .rank-name-text {
+    color: var(--primary);
+}
+
+.rank-value-display {
+    font-size: 0.85rem;
+    font-weight: 950;
+    color: var(--primary);
+    display: flex;
+    align-items: baseline;
+    gap: 3px;
+    font-family: 'Outfit', sans-serif;
+    letter-spacing: 0.5px;
+}
+
+.rank-value-display small {
+    font-size: 0.55rem;
+    color: var(--text-muted);
+    font-weight: 800;
+}
+
+.ranking-keeper-row {
+    border-color: rgba(240, 165, 0, 0.15) !important;
+}
+
+.keepers-capsule-stat {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.keeper-pj-glass-badge {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    padding: 4px 10px;
+    border-radius: 6px;
+    font-size: 0.55rem;
+    font-weight: 900;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    transition: all 0.3s;
+}
+
+.ranking-row-premium:hover .keeper-pj-glass-badge {
+    background: rgba(255, 255, 255, 0.08);
+    color: #fff;
+    border-color: rgba(255, 255, 255, 0.12);
+}
+
+.keeper-cs-glass-badge {
+    background: rgba(240, 165, 0, 0.1);
+    border: 1px solid rgba(240, 165, 0, 0.25);
+    padding: 4px 10px;
+    border-radius: 6px;
+    font-size: 0.6rem;
+    font-weight: 900;
+    color: #fff;
+    text-shadow: 0 0 5px rgba(240, 165, 0, 0.3);
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.keeper-efficiency-pct {
+    font-size: 0.65rem;
+    font-weight: 900;
+    color: #4CAF50;
+    background: rgba(76, 175, 80, 0.1);
+    border: 1px solid rgba(76, 175, 80, 0.2);
+    padding: 4px 8px;
+    border-radius: 6px;
+    font-family: 'Outfit', sans-serif;
+    min-width: 48px;
+    text-align: center;
+}
+
+.ranking-row-premium:hover .keeper-efficiency-pct {
+    box-shadow: 0 0 8px rgba(76, 175, 80, 0.2);
+}
+
+/* ==========================================================================
+   MÓDULO VISUAL: TARJETAS DE PLANTILLA 3D (v62.0)
+   ========================================================================== */
+
+/* ==========================================================================
+   SISTEMA DE LOGROS Y TROFEOS (v67.0)
+   ========================================================================== */
+.achievement-badge {
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+    border: 2px solid rgba(255,255,255,0.1);
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    cursor: help;
+}
+
+.achievement-badge:hover {
+    transform: translateY(-5px) scale(1.1);
+}
+
+.ach-icon-wrapper {
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Tiers Colors & Glows */
+.tier-bronze {
+    background: linear-gradient(135deg, #4a3320 0%, #8c603a 100%);
+    border-color: #cd7f32;
+    color: #ffdcb8;
+}
+.tier-bronze:hover, .ach-card.tier-bronze:hover {
+    box-shadow: 0 5px 20px rgba(205, 127, 50, 0.3);
+    border-color: #e59a54;
+}
+
+.tier-silver {
+    background: linear-gradient(135deg, #404040 0%, #8c8c8c 100%);
+    border-color: #c0c0c0;
+    color: #ffffff;
+}
+.tier-silver:hover, .ach-card.tier-silver:hover {
+    box-shadow: 0 5px 20px rgba(192, 192, 192, 0.3);
+    border-color: #ffffff;
+}
+
+.ranking-row-premium.rank-first {
+    background: linear-gradient(90deg, rgba(240, 165, 0, 0.08) 0%, rgba(240, 165, 0, 0.02) 100%) !important;
+    border-color: rgba(240, 165, 0, 0.25) !important;
+}
+
+.ranking-row-premium.rank-first:hover {
+    background: linear-gradient(90deg, rgba(240, 165, 0, 0.15) 0%, rgba(240, 165, 0, 0.04) 100%) !important;
+    border-color: rgba(240, 165, 0, 0.4) !important;
+    box-shadow: 0 6px 20px rgba(240, 165, 0, 0.12);
+}
+
+.rank-number-premium {
+    font-size: 0.95rem;
+    font-weight: 900;
+    color: var(--text-muted);
+    width: 24px;
+    text-align: center;
+    font-family: 'Outfit', sans-serif;
+    transition: color 0.3s;
+}
+
+.ranking-row-premium:hover .rank-number-premium {
+    color: #fff;
+}
+
+.rank-number-premium.rank-first-num {
+    color: var(--primary) !important;
+    text-shadow: 0 0 8px rgba(240, 165, 0, 0.5);
+    font-size: 1.1rem;
+}
+
+.rank-avatar-frame {
+    width: 32px;
+    height: 32px;
+    background: rgba(0, 0, 0, 0.4);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 8px;
+    padding: 2px;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.ranking-row-premium:hover .rank-avatar-frame {
+    border-color: var(--primary);
+    transform: scale(1.1);
+    box-shadow: 0 0 10px rgba(240, 165, 0, 0.25);
+}
+
+.rank-name-text {
+    font-size: 0.8rem;
+    font-weight: 800;
+    color: #fff;
+    letter-spacing: 0.5px;
+    transition: color 0.3s;
+}
+
+.ranking-row-premium:hover .rank-name-text {
+    color: var(--primary);
+}
+
+.rank-value-display {
+    font-size: 0.85rem;
+    font-weight: 950;
+    color: var(--primary);
+    display: flex;
+    align-items: baseline;
+    gap: 3px;
+    font-family: 'Outfit', sans-serif;
+    letter-spacing: 0.5px;
+}
+
+.rank-value-display small {
+    font-size: 0.55rem;
+    color: var(--text-muted);
+    font-weight: 800;
+}
+
+.ranking-keeper-row {
+    border-color: rgba(240, 165, 0, 0.15) !important;
+}
+
+.keepers-capsule-stat {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.keeper-pj-glass-badge {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    padding: 4px 10px;
+    border-radius: 6px;
+    font-size: 0.55rem;
+    font-weight: 900;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    transition: all 0.3s;
+}
+
+.ranking-row-premium:hover .keeper-pj-glass-badge {
+    background: rgba(255, 255, 255, 0.08);
+    color: #fff;
+    border-color: rgba(255, 255, 255, 0.12);
+}
+
+.keeper-cs-glass-badge {
+    background: rgba(240, 165, 0, 0.1);
+    border: 1px solid rgba(240, 165, 0, 0.25);
+    padding: 4px 10px;
+    border-radius: 6px;
+    font-size: 0.6rem;
+    font-weight: 900;
+    color: #fff;
+    text-shadow: 0 0 5px rgba(240, 165, 0, 0.3);
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.keeper-efficiency-pct {
+    font-size: 0.65rem;
+    font-weight: 900;
+    color: #4CAF50;
+    background: rgba(76, 175, 80, 0.1);
+    border: 1px solid rgba(76, 175, 80, 0.2);
+    padding: 4px 8px;
+    border-radius: 6px;
+    font-family: 'Outfit', sans-serif;
+    min-width: 48px;
+    text-align: center;
+}
+
+.ranking-row-premium:hover .keeper-efficiency-pct {
+    box-shadow: 0 0 8px rgba(76, 175, 80, 0.2);
+}
+
+/* ==========================================================================
+   MÓDULO VISUAL: TARJETAS DE PLANTILLA 3D (v62.0)
+   ========================================================================== */
+
+/* ==========================================================================
+   SISTEMA DE LOGROS Y TROFEOS (v67.0)
+   ========================================================================== */
+.achievement-badge {
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+    border: 2px solid rgba(255,255,255,0.1);
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    cursor: help;
+}
+
+.achievement-badge:hover {
+    transform: translateY(-5px) scale(1.1);
+}
+
+.ach-icon-wrapper {
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Tiers Colors & Glows */
+.tier-bronze {
+    background: linear-gradient(135deg, #4a3320 0%, #8c603a 100%);
+    border-color: #cd7f32;
+    color: #ffdcb8;
+}
+.tier-bronze:hover, .ach-card.tier-bronze:hover {
+    box-shadow: 0 5px 20px rgba(205, 127, 50, 0.3);
+    border-color: #e59a54;
+}
+
+.tier-silver {
+    background: linear-gradient(135deg, #404040 0%, #8c8c8c 100%);
+    border-color: #c0c0c0;
+    color: #ffffff;
+}
+.tier-silver:hover, .ach-card.tier-silver:hover {
+    box-shadow: 0 5px 20px rgba(192, 192, 192, 0.3);
+    border-color: #ffffff;
+}
+
+.tier-gold {
+    background: linear-gradient(135deg, #594200 0%, #b8860b 100%);
+    border-color: #ffd700;
+    color: #fff9e6;
+}
+.tier-gold:hover, .ach-card.tier-gold:hover {
+    box-shadow: 0 5px 20px rgba(255, 215, 0, 0.4);
+    border-color: #ffe44d;
+}
+
+.tier-platinum {
+    background: linear-gradient(135deg, #1a4d66 0%, #4db8ff 100%);
+    border-color: #00ffff;
+    color: #e6ffff;
+    animation: platinumPulse 3s infinite;
+}
+.tier-platinum:hover, .ach-card.tier-platinum:hover {
+    box-shadow: 0 5px 25px rgba(0, 255, 255, 0.6);
+    border-color: #b3ffff;
+}
+
+@keyframes platinumPulse {
+    0% { box-shadow: 0 0 10px rgba(0, 255, 255, 0.2); }
+    50% { box-shadow: 0 0 20px rgba(0, 255, 255, 0.5); }
+    100% { box-shadow: 0 0 10px rgba(0, 255, 255, 0.2); }
+}
+
+.tier-ruby {
+    background: linear-gradient(135deg, #660022 0%, #ff1a66 100%);
+    border-color: #e0115f;
+    color: #ffcccc;
+    animation: rubyPulse 2.5s infinite;
+}
+.tier-ruby:hover, .ach-card.tier-ruby:hover {
+    box-shadow: 0 5px 30px rgba(224, 17, 95, 0.7);
+    border-color: #ff4d94;
+}
+
+@keyframes rubyPulse {
+    0% { box-shadow: 0 0 15px rgba(224, 17, 95, 0.3); }
+    50% { box-shadow: 0 0 30px rgba(224, 17, 95, 0.6); }
+    100% { box-shadow: 0 0 15px rgba(224, 17, 95, 0.3); }
+}
+
+/* Estilos de Tarjeta Modal Vitrina */
+.ach-card.locked {
+    filter: grayscale(100%);
+    opacity: 0.5;
+    background: rgba(255,255,255,0.01) !important;
+    border-color: rgba(255,255,255,0.02) !important;
+    box-shadow: none !important;
+}
+.ach-card:not(.locked):hover {
+    transform: translateY(-3px) scale(1.02);
+}

@@ -1,0 +1,49 @@
+/* Onboarding */
+#onboarding {
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: var(--bg-deep);
+    z-index: 2000;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 30px;
+}
+
+/* --- ESTILOS MODAL NUEVO PARTIDO --- */
+.match-form-layout {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    margin-top: 20px;
+}
+
+@media (min-width: 1024px) {
+    .match-modal-content {
+        max-width: 850px !important;
+        padding: 40px !important;
+    }
+    
+    .match-form-layout {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 25px;
+        align-items: start;
+    }
+    
+    .match-form-layout #manual-rival-container {
+        grid-column: 1 / -1;
+    }
+    
+    .match-form-layout #match-h2h-container {
+        grid-column: 1 / -1;
+    }
+    
+    .match-form-layout > button[type="submit"] {
+        grid-column: 1 / -1;
+        margin-top: 20px !important;
+        padding: 20px !important; /* Más grande en desktop */
+        font-size: 1.1rem !important; /* Más premium */
+    }
+}
+

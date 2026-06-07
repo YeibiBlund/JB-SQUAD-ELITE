@@ -1,0 +1,516 @@
+/* NavegaciÃƒÆ’Ã‚Â³n Inferior (Premium Bottom Nav) */
+.bottom-nav {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: calc(100% - 40px);
+    max-width: 700px;
+    height: var(--nav-height);
+    background: rgba(10, 10, 10, 0.6);
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
+    border: 1px solid rgba(240, 165, 0, 0.3);
+    border-top: 1px solid rgba(240, 165, 0, 0.5);
+    box-shadow: 0 10px 40px rgba(0,0,0,0.6), inset 0 2px 15px rgba(240, 165, 0, 0.1);
+    border-radius: var(--radius-lg);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    z-index: 1000;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    overflow: hidden;
+}
+
+@media (max-width: 1023px) {
+    .bottom-nav {
+        bottom: 0;
+        width: 100%;
+        max-width: none;
+        height: 70px;
+        border-radius: 0;
+        border-top: 1px solid rgba(240, 165, 0, 0.4);
+        box-shadow: 0 -5px 30px rgba(0,0,0,0.6), inset 0 2px 10px rgba(240, 165, 0, 0.1);
+        background: rgba(10, 10, 10, 0.85) !important;
+        backdrop-filter: blur(24px) !important;
+        -webkit-backdrop-filter: blur(24px) !important;
+        left: 0;
+        transform: none;
+    }
+
+    .nav-label {
+        display: none !important;
+    }
+
+    .nav-btn {
+        gap: 0 !important;
+        justify-content: center !important;
+    }
+
+    .nav-btn span.icon {
+        font-size: 1.4rem !important;
+    }
+
+    .app-wrapper {
+        padding-bottom: 75px; /* Espacio para el nav */
+    }
+}
+
+.bottom-nav.collapsed {
+    height: 18px; /* Pastilla pequeÃƒÆ’Ã‚Â±a */
+    width: 60px;
+    bottom: 10px;
+    border-radius: 30px;
+}
+
+.bottom-nav .nav-content {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+    opacity: 1;
+    transition: opacity 0.3s;
+}
+
+.bottom-nav.collapsed .nav-content {
+    opacity: 0;
+    pointer-events: none;
+    height: 0;
+}
+
+#nav-toggle-handle {
+    width: 100%;
+    height: 40px; /* click area */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    position: absolute;
+    top: -10px;
+    z-index: 10;
+}
+
+.bottom-nav.collapsed #nav-toggle-handle {
+    height: 100%;
+    top: 0;
+}
+
+.handle-bar {
+    width: 30px;
+    height: 4px;
+    background: var(--text-muted);
+    border-radius: 2px;
+}
+
+
+.nav-btn {
+    flex: 1;
+    height: 100%;
+    background: none;
+    border: none;
+    color: var(--text-muted);
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.85rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    transition: var(--transition);
+}
+
+.nav-btn .icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.nav-btn .icon svg {
+    width: 100%;
+    height: 100%;
+    stroke-width: 2px; /* Grosor constante Lucide-style */
+}
+
+.nav-btn:hover .icon {
+    transform: translateY(-3px);
+    filter: drop-shadow(0 0 5px var(--primary));
+}
+
+.nav-btn.active .icon {
+    color: var(--primary);
+    filter: drop-shadow(0 0 8px var(--primary-glow));
+}
+
+.nav-btn.active {
+    color: var(--primary);
+}
+
+#btn-global-logout {
+    color: var(--error);
+}
+
+#btn-global-logout.active {
+    color: var(--error);
+    filter: drop-shadow(0 0 8px var(--error-glow));
+}
+
+#btn-global-logout.active::after {
+    background: var(--error);
+    box-shadow: 0 0 10px var(--error);
+}
+
+.nav-btn.active::after {
+    display: none;
+}
+
+/* Badge de VotaciÃƒÆ’Ã‚Â³n con Pulso */
+#nav-poll-badge {
+    box-shadow: 0 0 0 0 rgba(255, 68, 68, 0.7);
+    animation: badgePulse 2s infinite;
+}
+
+@keyframes badgePulse {
+    0% {
+        transform: scale(0.95);
+        box-shadow: 0 0 0 0 rgba(255, 68, 68, 0.7);
+    }
+    70% {
+        transform: scale(1);
+        box-shadow: 0 0 0 6px rgba(255, 68, 68, 0);
+    }
+    100% {
+        transform: scale(0.95);
+        box-shadow: 0 0 0 0 rgba(255, 68, 68, 0);
+    }
+}
+
+/* TipografÃƒÆ’Ã‚Â­a y Textos */
+h1 { font-size: 1.8rem; font-weight: 800; letter-spacing: -0.5px; margin-bottom: 8px; }
+p { color: var(--text-muted); font-size: 0.95rem; line-height: 1.5; }
+
+.gradient-text {
+    background: linear-gradient(135deg, var(--primary), #ffffff);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+/* Resaltado dinÃƒÆ’Ã‚Â¡mico para votaciÃƒÆ’Ã‚Â³n pendiente */
+.nav-btn.nav-highlight .icon {
+    color: var(--primary);
+    filter: drop-shadow(0 0 12px var(--primary-glow));
+    animation: iconGlowPulse 2s infinite;
+}
+
+@keyframes iconGlowPulse {
+    0% { transform: scale(1); filter: drop-shadow(0 0 5px var(--primary-glow)); }
+    50% { transform: scale(1.1); filter: drop-shadow(0 0 15px var(--primary)); }
+    100% { transform: scale(1); filter: drop-shadow(0 0 5px var(--primary-glow)); }
+}
+
+    /* --- HEADER COMPACTO MÃƒÆ’Ã¢â‚¬Å“VIL --- */
+    #global-header {
+        margin-bottom: 10px !important;
+        padding: 5px 0 !important;
+    }
+    
+    #display-team-name {
+        font-size: 1.1rem !important;
+        margin-bottom: 2px !important;
+    }
+    
+    #display-user-name {
+        font-size: 0.6rem !important;
+    }
+    
+    #header-tactic-info h2 {
+        font-size: 1.1rem !important;
+    }
+
+    #header-tactic-info span {
+        font-size: 0.7rem !important;
+    }
+    
+    #btn-save-tactic {
+        padding: 8px 15px !important;
+        font-size: 0.7rem !important;
+    }
+    
+    #btn-global-logout {
+        padding: 8px !important;
+        font-size: 1rem !important;
+    }
+
+    /* --- CAMPO TÃƒÆ’Ã‚ÂCTICO AMPLIADO --- */
+    .pitch-container {
+        min-height: 480px !important; /* MÃƒÆ’Ã‚Â¡s alto para aprovechar espacio */
+        max-height: 82vh !important;
+        width: 100% !important;
+        margin-bottom: 5px !important;
+    }
+    
+    .tactical-slot {
+        width: 14cqw !important; /* Ligeramente mÃƒÆ’Ã‚Â¡s grandes */
+        height: 18.5cqw !important;
+    }
+
+    .tactical-slot.filled h4 {
+        bottom: 2px;
+        padding: 2px 0;
+        letter-spacing: -0.2px;
+        background: linear-gradient(to right, transparent, rgba(0,0,0,0.95) 15%, rgba(0,0,0,0.95) 85%, transparent);
+        white-space: nowrap;
+        overflow: visible !important; /* Permitir ver mÃƒÆ’Ã‚Â¡s del nombre escalado */
+        text-overflow: clip !important;
+        max-width: 125%; /* Un poco mÃƒÆ’Ã‚Â¡s de aire para el escalado */
+        margin: 0 auto;
+    }
+
+    .tactical-slot.filled .slot-pos {
+        bottom: -16px;
+        font-size: 0.5rem;
+        padding: 1px 4px;
+    }
+
+    /* --- NAV RECTANGULAR FIJA --- */
+    .bottom-nav {
+        bottom: 0 !important;
+        left: 0 !important;
+        transform: none !important;
+        width: 100% !important;
+        max-width: none !important;
+        height: var(--nav-height-mobile) !important;
+        border-radius: 0 !important;
+        border-left: none !important;
+        border-right: none !important;
+        border-bottom: none !important;
+        background: rgba(10, 10, 10, 0.85) !important;
+        backdrop-filter: blur(24px) !important;
+        -webkit-backdrop-filter: blur(24px) !important;
+    }
+
+    .nav-btn {
+        gap: 2px !important;
+        font-size: 0.6rem !important;
+    }
+
+    .nav-btn span.icon {
+        font-size: 1.1rem !important;
+    }
+
+    #nav-toggle-handle {
+        display: none !important; /* Ocultar tirador en mÃƒÆ’Ã‚Â³vil para ganar espacio */
+    }
+
+/* LÃƒÆ’Ã‚Â³gica de Logout Mobile */
+@media (max-width: 1023px) {
+    #btn-global-logout {
+        display: none !important;
+    }
+
+    .mobile-logout-container {
+        display: block;
+        margin-top: 40px;
+        padding: 20px;
+        border-top: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .btn-logout-elite {
+        background: rgba(220, 38, 38, 0.1);
+        border: 1px solid #dc2626;
+        color: #dc2626;
+        width: 100%;
+        padding: 18px;
+        border-radius: 12px;
+        font-weight: 800;
+        font-family: 'Outfit', sans-serif;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 12px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+
+    .btn-logout-elite:active {
+        background: rgba(220, 38, 38, 0.2);
+        transform: scale(0.98);
+    }
+
+    .app-version-footer {
+        text-align: center;
+        font-size: 0.7rem;
+        color: var(--text-muted);
+        margin-top: 15px;
+        letter-spacing: 1px;
+        font-weight: 600;
+    }
+}
+
+
+
+/* --- ESCRITORIO ÃƒÆ’Ã¢â‚¬Â°LITE: SIDEBAR LAYOUT (v5.1.0 - Glass Reflect) --- */
+@media (min-width: 1024px) {
+    .bottom-nav {
+        left: 0 !important;
+        top: 0 !important;
+        bottom: 0 !important;
+        transform: none !important;
+        width: 100px !important; /* Ligeramente mÃƒÆ’Ã‚Â¡s ancho para mejor balance */
+        height: 100vh !important;
+        max-width: none !important;
+        border-radius: 0 !important;
+        flex-direction: column !important;
+        background: rgba(10, 10, 10, 0.5) !important;
+        backdrop-filter: blur(30px) !important;
+        -webkit-backdrop-filter: blur(30px) !important;
+        border: none !important;
+        border-right: 1px solid rgba(240, 165, 0, 0.3) !important; /* Borde naranja/dorado */
+        box-shadow: 15px 0 40px rgba(0,0,0,0.6), inset -2px 0 10px rgba(240, 165, 0, 0.05) !important; /* Sombra y brillo interno */
+        padding: 40px 0 !important;
+        display: flex !important;
+        align-items: center !important;
+    }
+
+    /* Decoración de luz vertical en el borde derecho */
+    .bottom-nav::after {
+        content: '';
+        position: absolute;
+        right: 0;
+        top: 0;
+        height: 100%;
+        width: 1px;
+        background: linear-gradient(to bottom, transparent, var(--primary), transparent);
+        box-shadow: 0 0 15px var(--primary-glow);
+        opacity: 0.8;
+    }
+
+    .bottom-nav .nav-content {
+        flex-direction: column !important;
+        justify-content: flex-start !important; /* Desde la parte superior */
+        gap: 15px !important; /* MÃƒÆ’Ã‚Â¡s juntos para cohesiÃƒÆ’Ã‚Â³n */
+        width: 90% !important;
+        height: 100% !important; /* Ocupar todo el contenedor vertical */
+    }
+
+    #btn-global-logout {
+        margin-top: auto !important; /* Empujar abajo del todo */
+    }
+
+    .nav-btn {
+        width: 100% !important;
+        height: auto !important;
+        padding: 20px 0 !important;
+        flex: none !important;
+        position: relative !important;
+        border-radius: 16px !important;
+        transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1) !important;
+        border: 1px solid transparent !important;
+    }
+
+    .nav-btn:hover {
+        background: rgba(255, 255, 255, 0.03) !important;
+        border-color: rgba(255, 255, 255, 0.05) !important;
+        transform: translateY(-2px);
+    }
+
+    .nav-btn.active-nav {
+        background: linear-gradient(135deg, rgba(240, 165, 0, 0.15) 0%, rgba(240, 165, 0, 0.05) 100%) !important;
+        border: 1px solid rgba(240, 165, 0, 0.3) !important;
+        box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1), 0 5px 15px rgba(0, 0, 0, 0.3) !important;
+        transform: translateY(-2px);
+    }
+
+    .nav-btn span.icon {
+        font-size: 1.6rem !important;
+        margin-bottom: 5px !important;
+        transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        color: var(--text-muted);
+    }
+
+    /* Texto mÃƒÆ’Ã‚Â¡s elegante en sidebar */
+    .nav-btn {
+        font-size: 0.65rem !important;
+        letter-spacing: 1.5px !important;
+        color: var(--text-muted) !important;
+    }
+
+    .nav-btn:hover span.icon,
+    .nav-btn.active-nav span.icon {
+        transform: translateY(-3px) scale(1.1);
+        color: var(--primary);
+        filter: drop-shadow(0 0 10px var(--primary-glow));
+    }
+
+    .nav-btn.active-nav {
+        color: var(--primary) !important;
+        font-weight: 900 !important;
+    }
+
+    /* Indicador lateral minimalista eliminado en favor del bg premium */
+    .nav-btn.active-nav::after {
+        display: none !important;
+    }
+
+    #nav-toggle-handle {
+        display: none !important;
+    }
+
+    /* --- CAMPO TÃƒÆ’Ã‚Â CTICO XL (v20.1.0) --- */
+    .pitch-container {
+        max-height: 85vh !important;
+        aspect-ratio: 1 / 1.55 !important; /* Campo mÃƒÆ’Ã‚Â¡s largo */
+        box-shadow: inset 0 0 120px rgba(0,0,0,1), 0 20px 50px rgba(0,0,0,0.8) !important;
+    }
+
+    /* Ajuste de scroll para contenido con sidebar */
+    body {
+        overflow: auto;
+    }
+    
+    .app-wrapper {
+        height: auto;
+        min-height: 100vh;
+        padding-left: 130px; /* Ajuste para el nuevo ancho del sidebar */
+    }
+
+    /* --- SELECTORES GLOBALES DE PARTIDO (v55.0) --- */
+    .btn-toggle-match {
+        background: transparent;
+        color: var(--text-muted);
+    }
+
+    .btn-toggle-match.active {
+        background: var(--primary);
+        color: #000;
+        box-shadow: 0 4px 15px rgba(240, 165, 0, 0.3);
+    }
+
+    #match-modal-overlay select option {
+        background: #1a1a1a;
+        color: #fff;
+        padding: 10px;
+    }
+
+    #match-modal-overlay select:focus {
+        border-color: var(--primary);
+        background: rgba(0,0,0,0.6);
+    }
+
+    #btn-global-logout {
+        display: flex !important;
+    }
+
+    .mobile-logout-container {
+        display: none !important;
+    }
+}

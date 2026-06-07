@@ -1,0 +1,1001 @@
+/* Card Elite */
+.card-elite {
+    background: var(--bg-surface);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius-md);
+    padding: 20px;
+    margin-bottom: 15px;
+    transition: var(--transition);
+}
+
+.card-elite:active {
+    transform: scale(0.98);
+}
+
+/* Tarjetas Ultra Premium */
+.card-elite-premium {
+    background: linear-gradient(135deg, rgba(22, 22, 22, 0.75) 0%, rgba(8, 8, 8, 0.98) 100%) !important;
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(240, 165, 0, 0.08) !important;
+    border-radius: 14px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.6);
+    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.card-elite-premium:hover {
+    transform: translateY(-4px);
+    border-color: rgba(240, 165, 0, 0.25) !important;
+    box-shadow: 0 15px 45px rgba(240, 165, 0, 0.12);
+}
+
+/* Navegación de Rankings en Móvil */
+.mobile-rankings-nav-scroll {
+    display: flex;
+    gap: 8px;
+    overflow-x: auto;
+    padding: 12px 15px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    background: rgba(0, 0, 0, 0.2);
+    scrollbar-width: none; /* Firefox */
+}
+
+.mobile-rankings-nav-scroll::-webkit-scrollbar {
+    display: none; /* Safari/Chrome */
+}
+
+.mobile-ranking-nav-btn {
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    color: var(--text-muted);
+    font-size: 0.6rem;
+    font-weight: 900;
+    padding: 8px 14px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    white-space: nowrap;
+    letter-spacing: 0.5px;
+}
+
+.mobile-ranking-nav-btn.active {
+    background: rgba(240, 165, 0, 0.18) !important;
+    border-color: rgba(240, 165, 0, 0.4) !important;
+    color: #fff !important;
+    box-shadow: 0 0 12px rgba(240, 165, 0, 0.15);
+}
+
+/* Efectos de Hover y Diseño Bento para Escritorio */
+@media (min-width: 1024px) {
+    .dashboard-grid-layout {
+        flex-direction: row;
+        align-items: flex-start;
+        gap: 25px;
+    }
+    
+    .dash-perf-column {
+        flex: 1;
+        gap: 25px;
+        position: sticky;
+        top: 20px;
+    }
+    
+    .dash-rankings-section {
+        flex: 2.2;
+    }
+    
+    .rankings-desktop-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
+    }
+    
+    .rankings-mobile-tabs {
+        display: none;
+    }
+    
+    /* Bento themes */
+    .ranking-card-premium {
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .ranking-card-premium::before {
+        content: '';
+        position: absolute;
+        top: 0; left: 0; width: 4px; height: 100%;
+        background: transparent;
+        transition: background 0.3s;
+    }
+    
+    .ranking-card-premium.gold-theme:hover::before { background: var(--primary); }
+    .ranking-card-premium.silver-theme:hover::before { background: #b0c4de; }
+    .ranking-card-premium.emerald-theme:hover::before { background: #4CAF50; }
+    .ranking-card-premium.gloves-theme:hover::before { background: #FF9800; }
+}
+
+/* Tarjetas de Jugadores (Feed Videojuego - Tabla) */
+.player-roster-card {
+    display: grid;
+    grid-template-columns: 55px 45px 1fr 40px;
+    align-items: center;
+    gap: 12px;
+    background: linear-gradient(90deg, rgba(20,20,20,0.8), rgba(10,10,10,0.9));
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 8px;
+    padding: 8px 12px;
+    cursor: grab;
+    transition: var(--transition);
+    position: relative;
+    overflow: hidden;
+    margin-bottom: 5px;
+}
+
+.player-roster-card::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 6px;
+    background: rgba(255,255,255,0.1);
+}
+
+.player-roster-card:hover {
+    transform: translateX(4px);
+    border-color: var(--primary-glow);
+    background: linear-gradient(90deg, rgba(30,30,30,0.9), rgba(15,15,15,0.95));
+}
+
+.player-roster-card:active { cursor: grabbing; transform: scale(0.98); }
+
+.player-roster-card.match-primary {
+    border-color: var(--primary);
+    background: linear-gradient(90deg, rgba(240, 165, 0, 0.1), rgba(10,10,10,0.9));
+    box-shadow: 0 0 12px var(--primary-glow);
+}
+.player-roster-card.match-primary::before { background: var(--primary); }
+
+.roster-card-pos-badge {
+    padding: 4px 0;
+    border-radius: 4px;
+    font-size: 0.7rem;
+    font-weight: 900;
+    text-align: center;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    width: 100%;
+}
+
+.pos-gk { background: #E91E63; color: #fff; } /* Portero - Rosa Intenso */
+.pos-df { background: #2196F3; color: #fff; } /* Defensa - Azul */
+.pos-mf { background: #4CAF50; color: #fff; } /* Medio - Verde */
+.pos-fw { background: #FF9800; color: #000; } /* Delantero - Naranja */
+
+.roster-card-name {
+    font-weight: 800;
+    font-size: 0.85rem;
+    color: #fff;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.roster-card-substats {
+    font-size: 0.65rem;
+    color: var(--text-muted);
+    font-weight: 600;
+    margin-top: -2px;
+}
+
+.roster-card-rating {
+    font-weight: 900;
+    font-size: 1rem;
+    color: var(--primary);
+    text-align: center;
+}
+
+.roster-group-header {
+    font-size: 0.6rem;
+    color: var(--primary);
+    font-weight: 900;
+    letter-spacing: 2px;
+    padding: 15px 5px 5px 5px;
+    text-transform: uppercase;
+    opacity: 0.7;
+    border-bottom: 1px solid rgba(240,165,0,0.2);
+    margin-bottom: 10px;
+    display: flex;
+    justify-content: space-between;
+}
+
+.player-roster-card.match-secondary {
+    border-color: #888;
+}
+.player-roster-card.match-secondary::before { background: #888; }
+
+.player-roster-card.dimmed {
+    opacity: 0.4;
+    filter: grayscale(80%);
+}
+
+.matchday-preview-side.hide-mobile {
+    display: none;
+}
+@media (min-width: 1024px) {
+    .matchday-preview-side.hide-mobile {
+        display: block;
+        width: 300px;
+        flex-shrink: 0;
+    }
+}
+
+.roster-card-pos {
+    font-size: 0.9rem;
+    font-weight: 800;
+    color: var(--primary);
+    text-align: center;
+    border-right: 1px solid rgba(255,255,255,0.1);
+}
+
+.roster-card-name {
+    font-size: 0.95rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: #fff;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.roster-card-stats {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    font-weight: 600;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.roster-card-rating {
+    font-size: 1.1rem;
+    font-weight: 800;
+    color: var(--primary);
+    text-align: center;
+    border-left: 1px solid rgba(255,255,255,0.1);
+}
+
+/* Modal Overlay Centralizado */
+.modal-overlay {
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: var(--glass-bg);
+    backdrop-filter: blur(10px);
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    animation: fadeIn 0.3s ease-out;
+}
+
+.header-crest-container {
+    width: 60px;
+    height: 60px;
+    background: rgba(0,0,0,0.3);
+    border: 2px solid var(--glass-border);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.4), 0 0 10px var(--primary-glow);
+    transition: all 0.3s ease;
+}
+
+.header-crest-container:hover {
+    border-color: var(--primary);
+    transform: translateY(-1px);
+}
+
+.header-crest-container img {
+    width: 90%;
+    height: 90%;
+    object-fit: contain;
+}
+
+.header-crest-container span {
+    font-size: 1.2rem;
+}
+
+.header-team-info {
+    display: flex;
+    flex-direction: column;
+}
+
+#display-user-name {
+    margin-top: -2px;
+}
+
+.modal-content {
+    background: var(--bg-surface);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius-md);
+    width: 90%;
+    max-width: 500px;
+    padding: 20px;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.8);
+    animation: slideUp 0.3s ease-out;
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+}
+
+.modal-header h2 {
+    font-size: 1.2rem;
+    color: #fff;
+    margin: 0;
+}
+
+.btn-close {
+    background: none;
+    border: none;
+    color: var(--text-muted);
+    font-size: 1.5rem;
+    cursor: pointer;
+    transition: color 0.3s;
+}
+.btn-close:hover { color: #fff; }
+
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+@keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+
+/* Dorsal Premium */
+.dorsal-export {
+    position: absolute;
+    top: 8px;
+    left: 10px;
+    font-size: 26px;
+    font-weight: 950;
+    color: var(--primary);
+    z-index: 10;
+    text-shadow: 0 0 15px rgba(0,0,0,1);
+}
+
+/* Banner de Nombre (Pure Absolute) */
+.name-export {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 44px;
+    background: linear-gradient(to top, #000 0%, rgba(0,0,0,0.95) 85%, transparent 100%);
+    color: #fff;
+    font-size: 19px;
+    font-weight: 950;
+    text-align: center;
+    text-transform: uppercase;
+    margin: 0;
+    padding-top: 10px;
+    z-index: 5;
+    white-space: nowrap;
+    overflow: hidden;
+    letter-spacing: -0.5px;
+}
+
+/* Badge de PosiciÃƒÆ’Ã‚Â³n (Pure Absolute) */
+.pos-badge-export {
+    position: absolute;
+    bottom: -15px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--primary);
+    color: #000;
+    padding: 4px 18px;
+    border-radius: 6px;
+    font-size: 15px;
+    font-weight: 950;
+    text-transform: uppercase;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.8);
+    z-index: 20;
+}
+
+/* Slots VacÃƒÆ’Ã‚Â­os EstÃƒÆ’Ã‚Â©ticos (No-Flex) */
+.empty-pos-label {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 18px;
+    font-weight: 900;
+    color: rgba(255,255,255,0.1);
+    text-transform: uppercase;
+    letter-spacing: 2px;
+}
+
+/* Header Scorebug (DiseÃƒÆ’Ã‚Â±o Reestructurado v47.5) */
+.export-scorebug-banner {
+    position: absolute;
+    top: 60px;
+    left: 80px;
+    right: 80px;
+    height: 130px; /* Reducido para mayor elegancia */
+    background: rgba(10, 10, 10, 0.85);
+    backdrop-filter: blur(40px);
+    border-left: 6px solid var(--primary);
+    padding: 0 50px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 40px 100px rgba(0,0,0,0.8);
+    border-radius: 12px;
+    z-index: 100;
+}
+
+.scorebug-left {
+    display: flex;
+    align-items: center;
+    gap: 25px;
+    flex: 1;
+    overflow: hidden;
+}
+
+.export-team-crest {
+    height: 85px;
+    width: 85px;
+    min-width: 85px;
+    object-fit: contain;
+    border-radius: 50%;
+    background: #fff;
+    padding: 6px;
+    box-shadow: 0 0 25px rgba(255,255,255,0.2);
+}
+
+.scorebug-team-name {
+    font-size: 48px !important; /* TamaÃƒÆ’Ã‚Â±o optimizado */
+    font-weight: 900 !important;
+    letter-spacing: -2px !important;
+    color: #fff;
+    white-space: nowrap;
+    text-transform: uppercase;
+}
+
+.scorebug-divider {
+    width: 2px;
+    height: 60px;
+    background: rgba(255,255,255,0.1);
+    margin: 0 40px;
+}
+
+.scorebug-right {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    justify-content: center;
+    min-width: fit-content;
+}
+
+.scorebug-matchday {
+    font-size: 24px !important;
+    color: var(--primary) !important;
+    font-weight: 900 !important;
+    letter-spacing: 4px !important;
+    margin-bottom: 2px !important;
+    text-transform: uppercase;
+}
+
+.scorebug-formation {
+    font-size: 16px !important;
+    opacity: 0.5 !important;
+    font-weight: 800 !important;
+    letter-spacing: 6px !important;
+    color: #fff;
+    text-transform: uppercase;
+}
+
+/* --- Botones Elite v5.1 --- */
+.btn-elite {
+    background: linear-gradient(135deg, #F0A500 0%, #C49102 100%);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: #000 !important;
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-size: 0.75rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 120px;
+    text-decoration: none;
+}
+
+.btn-elite:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(240, 165, 0, 0.4);
+    filter: brightness(1.1);
+}
+
+.btn-elite:active {
+    transform: translateY(0);
+}
+
+/* --- Botones Header Acciones (Premium Glassmorphism) --- */
+.btn-header-action {
+    background: rgba(20, 20, 20, 0.6);
+    border: 1px solid rgba(240, 165, 0, 0.3);
+    color: #fff !important;
+    padding: 8px 16px;
+    border-radius: 8px;
+    font-size: 0.7rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3), inset 0 0 10px rgba(240, 165, 0, 0.05);
+    backdrop-filter: blur(10px);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    text-decoration: none;
+}
+
+.btn-header-action:hover {
+    transform: translateY(-2px);
+    background: rgba(240, 165, 0, 0.15);
+    border-color: var(--primary);
+    box-shadow: 0 6px 20px rgba(240, 165, 0, 0.3), inset 0 0 15px rgba(240, 165, 0, 0.2);
+    color: var(--primary) !important;
+}
+
+.btn-header-action:active {
+    transform: translateY(0);
+}
+
+.btn-header-action svg {
+    width: 14px;
+    height: 14px;
+    stroke: currentColor;
+    fill: none;
+    transition: stroke 0.3s;
+}
+
+
+
+
+/* ============================================================ */
+/* Cabecera de grupo de posición */
+.position-group-title {
+    font-size: 1.1rem;
+    color: var(--primary);
+    font-weight: 900;
+    letter-spacing: 2px;
+    margin: 35px 0 15px 0;
+    border-left: 3px solid var(--primary);
+    padding-left: 12px;
+    text-transform: uppercase;
+    text-shadow: 0 0 10px rgba(240, 165, 0, 0.2);
+    font-family: 'Outfit', sans-serif;
+}
+
+/* Grid de cartas adaptativo */
+.cards-squad-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 30px;
+    margin-bottom: 45px;
+}
+
+@media (max-width: 1024px) {
+    .cards-squad-grid {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 20px;
+    }
+}
+
+@media (max-width: 768px) {
+    .cards-squad-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
+        margin-bottom: 25px;
+    }
+}
+
+/* Contenedor principal de la carta (3D perspective) */
+.card-container {
+    perspective: 1000px;
+    width: 240px;
+    height: 320px;
+    margin: 0 auto;
+}
+
+/* Cuerpo rotatorio */
+.card-inner {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.4s cubic-bezier(0.25, 0.8, 0.25, 1) !important;
+    transform-style: preserve-3d;
+    cursor: pointer;
+    border-radius: 14px !important;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6) !important;
+}
+
+/* Rotación activa */
+.card-inner.flipped {
+    transform: rotateY(180deg) !important;
+}
+
+/* Caras de la carta */
+.card-front, .card-back {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+.card-front {
+    z-index: 2;
+    transform: rotateY(0deg);
+}
+
+/* Dorso de estadísticas premium (Glassmorphism) */
+.card-back {
+    transform: rotateY(180deg);
+    background: linear-gradient(135deg, rgba(15, 15, 15, 0.98) 0%, rgba(5, 5, 5, 0.99) 100%);
+    border: 2px solid var(--primary);
+    box-shadow: 0 20px 40px rgba(0,0,0,0.8), 0 0 25px rgba(240, 165, 0, 0.15);
+    display: flex;
+    flex-direction: column;
+    padding: 15px;
+    justify-content: space-between;
+    z-index: 1;
+    font-family: 'Outfit', sans-serif;
+    box-sizing: border-box;
+}
+
+/* Estandarizar fotos dentro de las cartas de esta cuadrícula */
+.cards-squad-grid .player-card-fut.large {
+    width: 100% !important;
+    height: 100% !important;
+    border: 4.5px solid #ffffff !important; /* Pristine Polar White Border */
+    border-radius: 14px !important;
+    box-shadow: inset 0 0 0 1.5px rgba(255, 255, 255, 0.25), 
+                inset 0 0 15px rgba(0, 0, 0, 0.55) !important;
+    transition: border-color 0.4s cubic-bezier(0.25, 0.8, 0.25, 1) !important;
+}
+
+.cards-squad-grid .card-back {
+    border: 4.5px solid #ffffff !important; /* Pristine Polar White Border */
+    border-radius: 14px !important;
+    box-shadow: inset 0 0 0 1.5px rgba(255, 255, 255, 0.25), 
+                inset 0 0 15px rgba(0, 0, 0, 0.55) !important;
+    transition: border-color 0.4s cubic-bezier(0.25, 0.8, 0.25, 1) !important;
+}
+
+/* Cambiar el color de borde de la carta a Oro cuando está volteada (Estadísticas) */
+.cards-squad-grid .card-inner.flipped .card-back {
+    border-color: #ffd043 !important;
+}
+
+/* Efecto Hover interactivo Esport de Iluminación Tridimensional Flotante */
+@media (min-width: 769px) {
+    .cards-squad-grid .card-container:hover {
+        z-index: 50 !important;
+    }
+
+    .cards-squad-grid .card-container:hover .card-inner {
+        transform: translateY(-6px) scale(1.015) !important;
+        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.85), 
+                    0 28px 70px rgba(245, 200, 83, 0.8),  /* Espectacular baño de luz dorada */
+                    0 12px 35px rgba(240, 165, 0, 0.55),  /* Núcleo de calor naranja */
+                    0 5px 18px rgba(255, 255, 255, 0.5) !important;  /* Destello focal blanco en la base */
+    }
+
+    /* Si la carta está flipped, combinamos la rotación 3D de 180deg con la elevación y escala */
+    .cards-squad-grid .card-container:hover .card-inner.flipped {
+        transform: rotateY(180deg) translateY(-6px) scale(1.015) !important;
+    }
+
+    .cards-squad-grid .card-container:hover .player-card-fut.large {
+        border-color: #ffd043 !important; /* El borde blanco se enciende en Oro Puro vibrante */
+        box-shadow: inset 0 0 0 1.5px rgba(255, 255, 255, 0.3), 
+                    inset 0 0 25px rgba(245, 200, 83, 0.4) !important;
+    }
+
+    /* Si está flipped, al hacer hover el borde dorado se enciende en blanco polar */
+    .cards-squad-grid .card-container:hover .card-inner.flipped .card-back {
+        border-color: #ffffff !important;
+        box-shadow: inset 0 0 0 1.5px rgba(255, 255, 255, 0.3), 
+                    inset 0 0 25px rgba(245, 200, 83, 0.4) !important;
+    }
+}
+
+/* Dorsal Premium Outlined Style */
+.cards-squad-grid .dorsal-large {
+    font-family: 'Outfit', sans-serif !important;
+    color: #f5c853 !important;
+    text-shadow: 2px 2px 0px #000, 
+                 -2px -2px 0px #000, 
+                 2px -2px 0px #000, 
+                 -2px 2px 0px #000,
+                 4px 4px 8px rgba(0,0,0,0.8) !important;
+    font-weight: 950 !important;
+    letter-spacing: -2px !important;
+    z-index: 10;
+    font-size: 2.2rem !important;
+    top: 10px !important;
+    left: 12px !important;
+    width: 38px !important;
+    text-align: center !important;
+    line-height: 1 !important;
+}
+
+/* Position Badge Premium Glassmorphism */
+.cards-squad-grid .pos-large {
+    background: rgba(10, 10, 10, 0.85) !important;
+    border: 1px solid var(--primary) !important;
+    color: var(--primary) !important;
+    font-weight: 900 !important;
+    text-shadow: 0 0 4px rgba(240, 165, 0, 0.3) !important;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.6) !important;
+    backdrop-filter: blur(2px) !important;
+    -webkit-backdrop-filter: blur(2px) !important;
+    padding: 3px 0 !important;
+    font-size: 0.72rem !important;
+    z-index: 10;
+    top: 48px !important;
+    left: 12px !important;
+    width: 38px !important;
+    text-align: center !important;
+    box-sizing: border-box !important;
+    border-radius: 4px !important;
+}
+
+/* Name Banner Premium Glassmorphism Floating Plaque */
+.cards-squad-grid .name-banner-large {
+    background: linear-gradient(135deg, rgba(10, 10, 10, 0.95) 0%, rgba(20, 20, 20, 0.98) 100%) !important;
+    border-top: 1.5px solid var(--primary) !important;
+    border-bottom: 1.5px solid var(--primary) !important;
+    border-radius: 6px !important;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.7) !important;
+    padding: 8px 0 !important;
+    bottom: 20px !important;
+    width: 85% !important;
+    left: 7.5% !important;
+    backdrop-filter: blur(2px) !important;
+    -webkit-backdrop-filter: blur(2px) !important;
+    z-index: 15;
+    box-sizing: border-box !important;
+}
+
+.cards-squad-grid .name-banner-large h2 {
+    background: linear-gradient(to bottom, #ffffff 0%, #f5c853 100%) !important;
+    -webkit-background-clip: text !important;
+    -webkit-text-fill-color: transparent !important;
+    font-family: 'Outfit', sans-serif !important;
+    font-weight: 900 !important;
+    letter-spacing: 1.5px !important;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.5) !important;
+    font-size: 1.15rem !important;
+    margin: 0 !important;
+}
+
+.cards-squad-grid .player-img-large {
+    transform: none !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+}
+
+.cards-squad-grid .player-img-large img {
+    transform: none !important;
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: cover !important;
+    object-position: center top !important;
+    left: 0 !important;
+    top: 0 !important;
+    mask-image: none !important;
+    -webkit-mask-image: none !important;
+}
+
+.cards-squad-grid .player-img-large svg {
+    transform: none !important;
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: contain !important;
+    object-position: bottom center !important;
+    left: 0 !important;
+    top: 0 !important;
+}
+
+/* Cabecera del dorso */
+.card-back-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid rgba(240, 165, 0, 0.2);
+    padding-bottom: 8px;
+    margin-bottom: 6px;
+}
+
+.card-back-name {
+    font-size: 0.95rem;
+    font-weight: 900;
+    color: #fff;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    max-width: 130px;
+}
+
+.card-back-meta {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.card-back-pos {
+    font-size: 0.65rem;
+    background: var(--primary);
+    color: #000;
+    padding: 2px 5px;
+    border-radius: 4px;
+    font-weight: 800;
+}
+
+.card-back-dorsal {
+    font-size: 0.85rem;
+    font-weight: 900;
+    color: var(--primary);
+}
+
+/* Botonera de pestañas en el dorso */
+.card-back-tabs {
+    display: flex;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 6px;
+    padding: 2px;
+    margin-bottom: 8px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.card-back-tab-btn {
+    flex: 1;
+    background: none;
+    border: none;
+    color: var(--text-muted);
+    font-size: 0.55rem;
+    font-weight: 800;
+    padding: 4px 0;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.card-back-tab-btn:hover {
+    color: #fff;
+}
+
+.card-back-tab-btn.active {
+    background: var(--primary);
+    color: #000;
+}
+
+/* Listado de estadísticas */
+.card-back-stats-list {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    flex-grow: 1;
+    justify-content: center;
+}
+
+.card-back-stat-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.72rem;
+    color: #ddd;
+    border-bottom: 1px solid rgba(255,255,255,0.03);
+    padding-bottom: 4px;
+}
+
+.card-back-stat-label {
+    font-weight: 600;
+    opacity: 0.7;
+    font-size: 0.68rem;
+}
+
+.card-back-stat-value {
+    font-weight: 900;
+    color: #fff;
+    font-family: 'Outfit', sans-serif;
+}
+
+.card-back-stat-value.highlight {
+    color: var(--primary);
+}
+
+/* Racha */
+.card-back-streak-zone {
+    margin-top: 6px;
+    padding-top: 6px;
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.card-back-streak-title {
+    font-size: 0.55rem;
+    font-weight: 800;
+    color: var(--text-muted);
+    letter-spacing: 1px;
+    margin-bottom: 5px;
+    text-transform: uppercase;
+    text-align: center;
+}
+
+.card-back-streak-row {
+    display: flex;
+    gap: 5px;
+    justify-content: center;
+}
+
+.streak-circle {
+    width: 15px;
+    height: 15px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.5rem;
+    font-weight: 900;
+    color: #000;
+    transition: all 0.3s;
+}
+
+.streak-circle.win {
+    background: #4CAF50;
+    color: #fff;
+    box-shadow: 0 0 5px rgba(76,175,80,0.4);
+}
+
+.streak-circle.draw {
+    background: #FFC107;
+    color: #000;
+    box-shadow: 0 0 5px rgba(255,193,7,0.4);
+}
+
+.streak-circle.loss {
+    background: #F44336;
+    color: #fff;
+    box-shadow: 0 0 5px rgba(244,67,54,0.4);
+}
+
+.streak-circle.none {
+    background: rgba(255,255,255,0.08);
+    color: rgba(255,255,255,0.2);
+    border: 1px dashed rgba(255,255,255,0.1);
+}
+

@@ -63,3 +63,6 @@ const EXPORT_BACKGROUNDS = [
     { id: 'dark', name: 'Obsidiana Gold', url: 'img/pitch_dark.png', preview: 'img/pitch_dark.png' },
     { id: 'classic', name: 'Clásico Retro', url: 'img/pitch_retro.png', preview: 'img/pitch_retro.png' }
 ];
+
+const neutralCrest = `data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0iI2YwYTUwMCI+PHBhdGggZD0iTTEyIDlMMyA1djZjMCA1LjU1IDMuODQgMTAuNzQgOSAxMiA1LjE2LTEuMjYgOS02LjQ1IDktMTJWNWwtOS00em0wIDEwLjk5aDdjLS41MyA0LjEyLTMuMjggNy43OS03IDguOTRWMTJINVY2LjNsNy0zLjExdjguOHoiLz48L3N2Zz4=`;
+window.neutralCrest = neutralCrest;

@@ -1,0 +1,708 @@
+/* Tabla de Plantilla Avanzada */
+.player-table-container {
+    width: 100%;
+    overflow-x: auto;
+    background: linear-gradient(180deg, rgba(20, 25, 35, 0.6) 0%, rgba(10, 12, 18, 0.8) 100%);
+    border: 1px solid rgba(240, 165, 0, 0.15);
+    border-radius: var(--radius-md);
+    margin-bottom: 2rem;
+    -webkit-overflow-scrolling: touch;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+}
+
+.plantilla-dashboard-card:active {
+    transform: none !important;
+}
+
+/* Scrollbar personalizado para la tabla */
+.player-table-container::-webkit-scrollbar {
+    height: 4px;
+}
+.player-table-container::-webkit-scrollbar-thumb {
+    background: var(--primary);
+    border-radius: 10px;
+}
+
+.player-table-header {
+    display: grid;
+    grid-template-columns: 45px 2.5fr 35px 35px 35px 40px 45px;
+    gap: 8px;
+    padding: 15px 15px;
+    background: linear-gradient(90deg, rgba(240, 165, 0, 0.15) 0%, rgba(255,255,255,0.02) 100%);
+    border-bottom: 1px solid rgba(240, 165, 0, 0.2);
+    font-size: 0.65rem;
+    font-weight: 800;
+    color: #fff;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    min-width: 550px;
+    border-radius: var(--radius-md) var(--radius-md) 0 0;
+}
+
+.th-sortable {
+    cursor: pointer;
+    user-select: none;
+    transition: color 0.2s;
+}
+
+.th-sortable:hover {
+    color: var(--primary);
+}
+
+.player-table-row {
+    display: grid;
+    grid-template-columns: 45px 2.5fr 35px 35px 35px 40px 45px;
+    gap: 8px;
+    align-items: center;
+    padding: 12px 15px;
+    margin: 8px 10px;
+    background: linear-gradient(90deg, rgba(255,255,255,0.04) 0%, rgba(255,255,255,0.01) 100%);
+    border: 1px solid rgba(255,255,255,0.05);
+    border-left: 3px solid rgba(240, 165, 0, 0.4);
+    border-radius: 8px;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    min-width: 530px;
+    position: relative;
+    overflow: hidden;
+}
+
+.player-table-row::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: linear-gradient(90deg, var(--primary) 0%, transparent 10%);
+    opacity: 0;
+    transition: opacity 0.3s;
+    pointer-events: none;
+}
+
+.player-table-row:hover {
+    background: linear-gradient(90deg, rgba(240, 165, 0, 0.08) 0%, rgba(255,255,255,0.01) 100%);
+    border-color: rgba(240, 165, 0, 0.3);
+    border-left-color: var(--primary);
+    transform: translateY(-2px) scale(1.005);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.4);
+}
+
+.player-table-row:hover::before {
+    opacity: 0.05;
+}
+
+/* Animación sutil de actualización al cambiar de filtro */
+.row-fade-in {
+    animation: rowUpdate 0.4s ease-out forwards;
+}
+
+@keyframes rowUpdate {
+    0% {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Filtros Pill Tabs */
+.stats-filter-container .pill-tab {
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.1);
+    color: var(--text-muted);
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-size: 0.7rem;
+    font-weight: 800;
+    cursor: pointer;
+    transition: all 0.2s;
+    letter-spacing: 1px;
+}
+
+.stats-filter-container .pill-tab:hover {
+    background: rgba(255,255,255,0.1);
+    color: #fff;
+}
+
+.stats-filter-container .pill-tab.active {
+    background: var(--primary);
+    color: #000;
+    border-color: var(--primary);
+    box-shadow: 0 0 10px var(--primary-glow);
+}
+
+.cell-center {
+    display: flex;
+    justify-content: center;
+    text-align: center;
+}
+
+.stat-cell {
+    font-weight: 900;
+    color: #fff;
+    font-size: 0.85rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+    font-family: 'Inter', sans-serif;
+    letter-spacing: 0.5px;
+}
+
+.player-pos-badge {
+    color: #000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 12px;
+    font-weight: 800;
+    font-size: 0.8rem;
+}
+
+/* Colores DinÃƒÆ’Ã‚Â¡micos de PosiciÃƒÆ’Ã‚Â³n */
+.pos-gk  { background-color: #2196F3 !important; color: #fff !important; }
+.pos-def { background-color: #FFC107 !important; color: #000 !important; }
+.pos-mid { background-color: #4CAF50 !important; color: #fff !important; }
+.pos-fwd { background-color: #F44336 !important; color: #fff !important; }
+
+/* Botón de Borrado de Fila */
+.btn-delete-row {
+    background: transparent;
+    color: rgba(244, 67, 54, 0.6);
+    border: none;
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.9rem;
+    transition: all 0.2s;
+    margin-left: auto;
+    opacity: 0.6;
+}
+
+.btn-delete-row:hover {
+    background: #F44336;
+    color: #fff;
+    transform: scale(1.1);
+}
+
+.btn-gold:active {
+    transform: scale(0.98);
+}
+
+.goal-btn.sub, .rival-btn.sub {
+    background: rgba(255, 255, 255, 0.05);
+    border-color: rgba(255, 255, 255, 0.1);
+    color: var(--text-muted);
+    padding: 10px;
+    font-size: 0.65rem;
+    margin-top: 5px;
+}
+
+.goal-btn.sub:hover, .rival-btn.sub:hover {
+    background: rgba(244, 67, 54, 0.1);
+    color: #ef9a9a;
+}
+
+.btn-cancel {
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.2);
+    color: #fff;
+    padding: 12px;
+    border-radius: 8px;
+    font-weight: 800;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.btn-delete-row:hover {
+    background: #F44336;
+    color: #fff;
+}
+
+/* --- Sistema de TÃƒÆ’Ã‚Â¡cticas & Pitch v2.5.0 --- */
+.pitch-container {
+    background: #1a4d1a;
+    background-image: repeating-linear-gradient(90deg, 
+        rgba(255,255,255,0.03) 0px, 
+        rgba(255,255,255,0.03) 40px, 
+        transparent 40px, 
+        transparent 80px
+    );
+    width: 100%;
+    height: 100%;
+    min-height: 400px;
+    max-width: 800px; /* Aumentado para que ocupe mÃƒÆ’Ã‚Â¡s espacio horizontal */
+    max-height: 75vh; /* Evita que al crecer se cree un scroll vertical inmenso */
+    aspect-ratio: 1 / 1.35; /* ProporciÃƒÆ’Ã‚Â³n elegante */
+    flex: 1 1 auto;
+    border-radius: var(--radius-md);
+    position: relative;
+    overflow: hidden;
+    border: 2px solid rgba(255,255,255,0.1);
+    box-shadow: inset 0 0 80px rgba(0,0,0,0.9), 0 10px 30px rgba(0,0,0,0.5);
+    margin: 0 auto;
+    container-type: inline-size;
+}
+
+/* LÃƒÆ’Ã‚Â­neas del campo Refinadas */
+.pitch-lines {
+    position: absolute;
+    top: 50%; left: 50%; transform: translate(-50%, -50%);
+    width: 92%; height: 94%;
+    border: 1px solid rgba(255,255,255,0.15);
+}
+
+.pitch-midline {
+    position: absolute;
+    top: 50%; left: 0; width: 100%; height: 1px;
+    background: rgba(255,255,255,0.15);
+}
+
+.pitch-circle {
+    position: absolute;
+    top: 50%; left: 50%; transform: translate(-50%, -50%);
+    width: 70px; height: 70px;
+    border: 1px solid rgba(255,255,255,0.15);
+    border-radius: 50%;
+}
+
+.pitch-penalty {
+    position: absolute;
+    left: 50%; transform: translateX(-50%);
+    width: 130px; height: 60px;
+    border: 1px solid rgba(255,255,255,0.15);
+}
+
+/* Slots TÃƒÆ’Ã‚Â¡cticos Premium Escalables */
+.tactical-slot {
+    position: absolute;
+    width: 12cqw;  /* Escala segÃƒÆ’Ã‚Âºn el ancho */
+    height: 16cqw; /* ProporciÃƒÆ’Ã‚Â³n ideal */
+    min-width: 45px;
+    min-height: 60px;
+    max-width: 90px;
+    max-height: 120px;
+    background: rgba(0,0,0,0.7);
+    backdrop-filter: blur(8px);
+    border: 1px solid var(--glass-border);
+    border-radius: 6px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    transform: translate(-50%, -50%);
+    transition: var(--transition);
+    cursor: pointer;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.6);
+}
+
+.tactical-slot:hover { border-color: var(--primary); }
+
+.tactical-slot .plus-icon {
+    font-size: 3cqw;
+    color: var(--primary);
+    opacity: 0.4;
+}
+
+@media (max-width: 1023px) {
+    .tactical-slot {
+        width: 16cqw;
+        height: 22cqw;
+    }
+    .dorsal-small, .dorsal {
+        display: none !important;
+    }
+}
+
+.tactical-slot.filled {
+    background: linear-gradient(135deg, rgba(8,8,8,0.9), rgba(20,20,20,0.95));
+    border: 1px solid var(--primary-glow);
+    padding: 0;
+    justify-content: center;
+    box-shadow: 0 0 15px rgba(240, 165, 0, 0.1);
+}
+
+.slot-player-rating {
+    font-size: 3cqw;
+    font-weight: 800;
+    color: var(--primary);
+    margin-bottom: 2px;
+}
+
+.slot-player-name {
+    font-size: 2cqw;
+    text-transform: uppercase;
+    font-weight: 600;
+    text-align: center;
+    width: 100%;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin-bottom: auto;
+}
+
+.slot-pos {
+    background: #000;
+    padding: 3px 8px;
+    border-radius: 4px;
+    font-size: 0.65rem;
+    font-weight: 800;
+    border: 1px solid var(--primary);
+    color: #fff;
+    position: absolute;
+    bottom: -10px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.8);
+}
+
+.tactical-slot.filled::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; width: 100%; height: 50%;
+    background: linear-gradient(180deg, rgba(240, 165, 0, 0.15) 0%, transparent 100%);
+}
+
+.tactical-slot.filled .dorsal-small {
+    font-weight: 900;
+    font-size: 1.6rem;
+    color: var(--primary);
+    line-height: 1;
+}
+
+/* GalerÃƒÆ’Ã‚Â­a de Avatares */
+.avatar-grid-selector {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+    margin-top: 10px;
+    padding: 10px;
+    background: rgba(0,0,0,0.3);
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--glass-border);
+}
+
+.avatar-item {
+    aspect-ratio: 1/1;
+    border-radius: var(--radius-sm);
+    border: 2px solid transparent;
+    cursor: pointer;
+    transition: var(--transition);
+    padding: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255,255,255,0.05);
+}
+
+.avatar-item svg {
+    width: 80%;
+    height: 80%;
+    filter: drop-shadow(0 0 5px rgba(240, 165, 0, 0.3));
+}
+
+.avatar-item:hover {
+    background: rgba(240, 165, 0, 0.1);
+    border-color: rgba(240, 165, 0, 0.3);
+}
+
+.avatar-item.selected {
+    background: rgba(240, 165, 0, 0.2);
+    border-color: var(--primary);
+    box-shadow: 0 0 15px var(--primary-glow);
+}
+
+/* RediseÃƒÆ’Ã‚Â±o Tarjeta TÃƒÆ’Ã‚Â¡ctica Filled (FUT Style) */
+.tactical-slot.filled {
+    background: linear-gradient(135deg, #1a1a1a 0%, #0a0a0a 100%);
+    border: 1.5px solid var(--primary);
+    overflow: visible;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end; /* Nombre abajo */
+    padding: 0;
+}
+
+.tactical-slot.filled .dorsal-small {
+    position: absolute;
+    top: 5px;
+    left: 8px;
+    font-size: 1.2rem;
+    font-weight: 900;
+    color: var(--primary);
+    z-index: 10;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.8);
+}
+
+.player-card-img {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 5;
+    pointer-events: none;
+}
+
+.player-card-img svg, 
+.player-card-img img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    object-position: center top;
+    filter: drop-shadow(0 5px 15px rgba(0,0,0,0.5));
+    mask-image: linear-gradient(to bottom, black 80%, transparent 100%);
+    -webkit-mask-image: linear-gradient(to bottom, black 80%, transparent 100%);
+}
+
+/* Efecto desvanecido inferior para la imagen */
+.player-card-img::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 30%;
+    background: linear-gradient(to top, #0a0a0a 0%, transparent 100%);
+    z-index: 3;
+}
+
+.tactical-slot.filled h4 {
+    position: absolute;
+    bottom: 5px;
+    left: 0;
+    z-index: 10;
+    background: linear-gradient(to right, transparent 0%, rgba(0,0,0,0.9) 20%, rgba(0,0,0,0.9) 80%, transparent 100%);
+    width: 100% !important;
+    padding: 3px 0;
+    margin: 0;
+    text-align: center;
+    color: #fff;
+    font-weight: 800;
+    text-transform: uppercase;
+}
+
+.tactical-slot.filled .slot-pos {
+    bottom: -22px;
+    z-index: 15;
+    background: var(--primary);
+    color: #000;
+}
+
+/* Mobile Optimizations for Tactical Field Detalle */
+@media (max-width: 1023px) {
+    /* Roster Banquillo en Rejilla de 4 */
+    .roster-grid {
+        display: grid !important;
+        grid-template-columns: repeat(4, 1fr) !important;
+        gap: 8px !important;
+    }
+
+    .roster-group-header {
+        grid-column: 1 / -1;
+        margin-top: 5px;
+        font-size: 0.5rem;
+    }
+
+    .player-roster-card {
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: center !important;
+        justify-content: center !important;
+        padding: 6px 4px !important;
+        text-align: center;
+        gap: 4px !important;
+        height: auto !important;
+        min-height: 90px;
+    }
+
+    .player-roster-card::before {
+        display: none; /* Eliminar banda lateral en mÃƒÆ’Ã‚Â³vil */
+    }
+
+    .player-roster-card .roster-card-avatar {
+        width: 45px !important;
+        height: 45px !important;
+        margin-bottom: 2px;
+    }
+
+    .player-roster-card .roster-card-name {
+        font-size: 0.55rem !important;
+        width: 100%;
+        text-align: center;
+    }
+
+    .player-roster-card .roster-card-pos-badge {
+        position: relative !important;
+        order: 3; /* Mandar al final (debajo) */
+        font-size: 0.5rem !important;
+        padding: 1px 4px !important;
+        width: auto !important;
+        min-width: 30px;
+    }
+
+    /* Ocultar detalles secundarios en rejilla mÃƒÆ’Ã‚Â³vil */
+    .player-roster-card .roster-card-substats,
+    .player-roster-card .roster-card-rating {
+        display: none !important;
+    }
+}
+
+
+
+/* --- REJILLA MODAL DE JUGADORES (v35.2.0) --- */
+.modal-player-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+    gap: 12px;
+    max-height: 450px;
+    overflow-y: auto;
+    padding: 10px 5px;
+}
+
+/* Forzar aspecto de tarjeta (IDÃƒÆ’Ã¢â‚¬Â°NTICO A MÃƒÆ’Ã¢â‚¬Å“VIL) dentro del modal para escritorio */
+.modal-player-grid .player-roster-card {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+    padding: 10px 6px !important;
+    text-align: center;
+    gap: 6px !important;
+    height: auto !important;
+    min-height: 140px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.modal-player-grid .player-roster-card::before {
+    display: none !important;
+}
+
+.modal-player-grid .player-roster-card .roster-card-avatar {
+    width: 60px !important;
+    height: 60px !important;
+    margin-right: 0 !important;
+    margin-bottom: 8px;
+    border-radius: 8px;
+}
+
+.modal-player-grid .player-roster-card .roster-card-name {
+    font-size: 0.75rem !important;
+    width: 100%;
+    margin-bottom: 4px;
+}
+
+.modal-player-grid .player-roster-card .roster-card-pos {
+    order: 3;
+    background: var(--primary);
+    color: #000;
+    font-weight: 900;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 0.65rem;
+}
+
+/* ==========================================================================
+   MOBILE PLANTILLA TABLE -> CARDS
+   ========================================================================== */
+@media (max-width: 768px) {
+    /* Hide the header */
+    .player-table-header {
+        display: none !important;
+    }
+    
+    /* Transform row into a card */
+    .player-table-row {
+        min-width: 0 !important; /* Remove horizontal scroll */
+        grid-template-columns: 45px 1fr 1fr 1fr 1fr 30px !important;
+        grid-template-rows: auto auto;
+        padding: 12px 10px !important;
+        gap: 10px 5px !important;
+    }
+
+    /* Avatar */
+    .player-table-row > div:nth-child(1) { 
+        grid-column: 1 / 2; 
+        grid-row: 1 / 3; 
+        align-self: center; 
+    }
+    
+    /* Name and Pos */
+    .player-table-row > div:nth-child(2) { 
+        grid-column: 2 / 6; 
+        grid-row: 1 / 2; 
+        align-self: center; 
+        padding-bottom: 2px;
+    }
+    
+    /* Stats */
+    .player-table-row > div.stat-cell:nth-child(3) { grid-column: 2 / 3; grid-row: 2 / 3; }
+    .player-table-row > div.stat-cell:nth-child(4) { grid-column: 3 / 4; grid-row: 2 / 3; }
+    .player-table-row > div.stat-cell:nth-child(5) { grid-column: 4 / 5; grid-row: 2 / 3; }
+    .player-table-row > div.stat-cell:nth-child(6) { grid-column: 5 / 6; grid-row: 2 / 3; }
+    
+    /* Actions */
+    .player-table-row > div:nth-child(7) { 
+        grid-column: 6 / 7; 
+        grid-row: 1 / 3; 
+        justify-content: center !important; 
+        align-self: center; 
+    }
+
+    /* Style the stats cells as little blocks */
+    .player-table-row > .stat-cell {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        background: rgba(255,255,255,0.02);
+        border: 1px solid rgba(255,255,255,0.05);
+        border-radius: 6px;
+        padding: 4px 2px;
+        font-size: 0.95rem !important;
+        font-weight: 900;
+        color: #fff;
+    }
+
+    /* Add the label using data-label attribute */
+    .player-table-row > .stat-cell::before {
+        content: attr(data-label);
+        font-size: 0.5rem;
+        color: var(--text-muted);
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        font-weight: 800;
+        margin-bottom: 1px;
+    }
+
+    /* Delete Button - Discreet & Elegant */
+    .player-table-row .btn-delete-row {
+        background: transparent;
+        border: none;
+        width: 28px;
+        height: 28px;
+        font-size: 0.8rem;
+        opacity: 0.4;
+        margin-left: auto;
+        box-shadow: none;
+        padding: 0;
+    }
+
+    .player-table-row .btn-delete-row:hover {
+        background: rgba(244, 67, 54, 0.1);
+        opacity: 1;
+        transform: scale(1.1);
+    }
+}
+
+/* Ocultar elementos que molestan en el selector visual */
+.modal-player-grid .player-roster-card .roster-card-stats,
+.modal-player-grid .player-roster-card .roster-card-rating {
+    display: none !important;
+}
+
+.modal-player-grid .player-roster-card:hover {
+    transform: translateY(-5px);
+    border-color: var(--primary);
+}
+

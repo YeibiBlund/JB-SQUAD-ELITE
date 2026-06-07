@@ -1,0 +1,673 @@
+/* --- Perfil Editor & Preview v4.0.0 --- */
+.profile-editor-layout {
+    display: grid;
+    grid-template-columns: 1.2fr 0.8fr;
+    gap: 30px;
+    align-items: start;
+}
+
+@media (max-width: 900px) {
+    .profile-editor-layout {
+        grid-template-columns: 1fr;
+    }
+    .preview-card-container {
+        order: -1; /* Preview arriba en mÃƒÆ’Ã‚Â³vil */
+        margin-bottom: 20px;
+    }
+}
+
+.preview-card-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: sticky;
+    top: 0;
+}
+
+/* Tarjeta FUT Gigante (Detail & Preview) */
+.player-card-fut.large {
+    width: 260px;
+    height: 100%;
+    min-height: 320px;
+    background: 
+        radial-gradient(circle at top right, rgba(240, 165, 0, 0.15) 0%, transparent 60%),
+        linear-gradient(135deg, #1f1f1f 0%, #0a0a0a 100%);
+    border: 2px solid rgba(255, 215, 0, 0.6);
+    border-radius: 12px;
+    position: relative;
+    box-shadow: 
+        0 20px 50px rgba(0,0,0,0.9), 
+        inset 0 0 0 1px rgba(255, 255, 255, 0.1), 
+        inset 0 0 20px rgba(240, 165, 0, 0.2);
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    overflow: hidden;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.player-card-fut.large:hover {
+    transform: translateY(-5px);
+    box-shadow: 
+        0 25px 60px rgba(0,0,0,0.9), 
+        0 0 30px rgba(240, 165, 0, 0.3),
+        inset 0 0 0 2px rgba(240, 165, 0, 0.4);
+}
+
+.player-card-fut.large::after {
+    content: '';
+    position: absolute;
+    top: 0; left: -100%; width: 50%; height: 100%;
+    background: linear-gradient(to right, transparent, rgba(255,255,255,0.1), transparent);
+    transform: skewX(-25deg);
+    transition: 0.5s;
+    z-index: 20;
+    pointer-events: none;
+}
+
+.player-card-fut.large:hover::after {
+    left: 200%;
+}
+
+.player-card-fut.large .dorsal-large {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    font-size: 3.2rem;
+    font-weight: 900;
+    color: #ffd700;
+    background: linear-gradient(to bottom, #ffe866 0%, #f0a500 50%, #b37700 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    line-height: 0.8;
+    z-index: 10;
+    filter: drop-shadow(2px 4px 6px rgba(0,0,0,0.8));
+    font-family: 'Outfit', sans-serif;
+}
+
+.player-card-fut.large .pos-large {
+    position: absolute;
+    top: 74px;
+    left: 20px;
+    font-size: 0.95rem;
+    font-weight: 900;
+    color: #222;
+    z-index: 10;
+    background: linear-gradient(135deg, #ffe866 0%, #f0a500 100%);
+    padding: 3px 10px;
+    border-radius: 4px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.6), inset 0 1px 1px rgba(255,255,255,0.6);
+    border: 1px solid rgba(255,255,255,0.2);
+    letter-spacing: 1px;
+}
+
+.player-card-fut.large .player-img-large {
+    position: absolute;
+    top: 2%;
+    left: 0;
+    width: 100%;
+    height: 90%;
+    z-index: 5;
+    pointer-events: none;
+}
+
+.player-card-fut.large .player-img-large svg, 
+.player-card-fut.large .player-img-large img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    object-position: center top;
+    filter: drop-shadow(0 15px 30px rgba(0,0,0,0.8));
+    transition: transform 0.2s ease-out;
+    mask-image: linear-gradient(to bottom, black 85%, transparent 100%);
+    -webkit-mask-image: linear-gradient(to bottom, black 85%, transparent 100%);
+}
+
+.player-card-fut.large .name-banner-large {
+    position: absolute;
+    bottom: 20px;
+    left: 5%;
+    width: 90%;
+    background: rgba(10, 10, 10, 0.7);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    padding: 8px 0;
+    z-index: 15;
+    text-align: center;
+    border-radius: 8px;
+    border: 1px solid rgba(240, 165, 0, 0.3);
+    border-bottom: 2px solid rgba(240, 165, 0, 0.8);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.8);
+}
+
+.player-card-fut.large .name-banner-large h2 {
+    font-size: 1.6rem;
+    font-weight: 900;
+    color: #fff;
+    text-transform: uppercase;
+    margin: 0;
+    letter-spacing: 2px;
+    text-shadow: 0 2px 10px rgba(0,0,0,0.8);
+}
+
+/* AnimaciÃƒÆ’Ã‚Â³n Pulse para Preview */
+.pulse-border {
+    animation: pulseGlow 2s infinite;
+}
+
+@keyframes pulseGlow {
+    0% { box-shadow: 0 0 10px var(--primary-glow); }
+    50% { box-shadow: 0 0 30px var(--primary-glow); }
+    100% { box-shadow: 0 0 10px var(--primary-glow); }
+}
+
+/* Profile Info Grid Layout (v67.1) */
+.profile-info-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+}
+
+.profile-col-left {
+    border-right: 1px solid rgba(255,255,255,0.05);
+}
+
+@media (max-width: 800px) {
+    .profile-info-grid {
+        grid-template-columns: 1fr;
+    }
+    .profile-col-left {
+        border-right: none;
+        border-bottom: 1px solid rgba(255,255,255,0.05);
+        padding-right: 0 !important;
+        padding-bottom: 25px;
+        margin-bottom: 25px;
+    }
+    .profile-col-right {
+        padding-left: 0 !important;
+    }
+}
+
+/* Mini Achievement Card (Profile Top) */
+.mini-ach-card {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: rgba(255,255,255,0.02);
+    border: 1px solid rgba(255,255,255,0.05);
+    padding: 8px 10px;
+    border-radius: 10px;
+    transition: all 0.2s ease;
+}
+
+.mini-ach-card:hover {
+    background: rgba(240, 165, 0, 0.05);
+    transform: translateX(5px);
+    border-color: rgba(240, 165, 0, 0.2);
+}
+
+.mini-ach-icon {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: rgba(0,0,0,0.4);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.mini-ach-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.mini-ach-title {
+    font-size: 0.75rem;
+    font-weight: 800;
+    color: #fff;
+    margin: 0 0 2px 0;
+}
+
+.mini-ach-desc {
+    font-size: 0.6rem;
+    color: var(--text-muted);
+    margin: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 180px;
+}
+
+/* Tier Colors and Glow Animations for Mini Cards */
+@keyframes glowBronze {
+    0% { box-shadow: 0 0 5px rgba(205,127,50,0.3); }
+    50% { box-shadow: 0 0 15px rgba(205,127,50,0.6); }
+    100% { box-shadow: 0 0 5px rgba(205,127,50,0.3); }
+}
+@keyframes glowSilver {
+    0% { box-shadow: 0 0 8px rgba(192,192,192,0.4); }
+    50% { box-shadow: 0 0 20px rgba(192,192,192,0.7); }
+    100% { box-shadow: 0 0 8px rgba(192,192,192,0.4); }
+}
+@keyframes glowGold {
+    0% { box-shadow: 0 0 10px rgba(255,215,0,0.5); }
+    50% { box-shadow: 0 0 25px rgba(255,215,0,0.8); }
+    100% { box-shadow: 0 0 10px rgba(255,215,0,0.5); }
+}
+@keyframes glowPlatinum {
+    0% { box-shadow: 0 0 12px rgba(229,228,226,0.6), 0 0 20px rgba(0, 255, 255, 0.2); }
+    50% { box-shadow: 0 0 30px rgba(229,228,226,0.9), 0 0 40px rgba(0, 255, 255, 0.4); }
+    100% { box-shadow: 0 0 12px rgba(229,228,226,0.6), 0 0 20px rgba(0, 255, 255, 0.2); }
+}
+@keyframes glowRuby {
+    0% { box-shadow: 0 0 15px rgba(224, 17, 95, 0.5), 0 0 25px rgba(255, 0, 85, 0.3); }
+    50% { box-shadow: 0 0 35px rgba(224, 17, 95, 0.8), 0 0 50px rgba(255, 0, 85, 0.5); }
+    100% { box-shadow: 0 0 15px rgba(224, 17, 95, 0.5), 0 0 25px rgba(255, 0, 85, 0.3); }
+}
+
+.mini-ach-card.tier-bronze { border-left: 4px solid #cd7f32; background: linear-gradient(90deg, rgba(205,127,50,0.1) 0%, rgba(255,255,255,0.02) 100%); }
+.mini-ach-card.tier-bronze .mini-ach-icon { border: 1px solid #cd7f32; color: #cd7f32; animation: glowBronze 2.5s infinite; }
+
+.mini-ach-card.tier-silver { border-left: 4px solid #c0c0c0; background: linear-gradient(90deg, rgba(192,192,192,0.1) 0%, rgba(255,255,255,0.02) 100%); }
+.mini-ach-card.tier-silver .mini-ach-icon { border: 1px solid #c0c0c0; color: #c0c0c0; animation: glowSilver 2.5s infinite; }
+
+.mini-ach-card.tier-gold { border-left: 4px solid #ffd700; background: linear-gradient(90deg, rgba(255,215,0,0.1) 0%, rgba(255,255,255,0.02) 100%); }
+.mini-ach-card.tier-gold .mini-ach-icon { border: 1px solid #ffd700; color: #ffd700; animation: glowGold 2s infinite; }
+
+.mini-ach-card.tier-platinum { border-left: 4px solid #00ffff; background: linear-gradient(90deg, rgba(0,255,255,0.15) 0%, rgba(255,255,255,0.02) 100%); }
+.mini-ach-card.tier-platinum .mini-ach-icon { border: 1px solid #00ffff; color: #00ffff; animation: glowPlatinum 1.5s infinite; }
+
+.mini-ach-card.tier-ruby { border-left: 4px solid #e0115f; background: linear-gradient(90deg, rgba(224,17,95,0.2) 0%, rgba(255,255,255,0.02) 100%); }
+.mini-ach-card.tier-ruby .mini-ach-icon { border: 1px solid #e0115f; color: #e0115f; animation: glowRuby 1.5s infinite; }
+
+/* Stats Table Elite */
+.stats-table-wrapper {
+    overflow-x: auto;
+    border-radius: 8px;
+    background: rgba(0,0,0,0.2);
+}
+
+.stats-elite-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0 8px; /* Tablas flotantes */
+    font-family: 'Outfit', sans-serif;
+    color: #fff;
+}
+
+.stats-elite-table th {
+    background: transparent;
+    color: var(--text-muted);
+    text-align: left;
+    padding: 12px 15px;
+    font-size: 0.7rem;
+    letter-spacing: 1.5px;
+    font-weight: 800;
+    text-transform: uppercase;
+}
+
+.stats-elite-table td {
+    padding: 15px;
+    background: rgba(255,255,255,0.015);
+    border-top: 1px solid rgba(255,255,255,0.03);
+    border-bottom: 1px solid rgba(255,255,255,0.01);
+    font-size: 0.9rem;
+    font-weight: 600;
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.stats-elite-table td:first-child {
+    border-top-left-radius: 8px;
+    border-bottom-left-radius: 8px;
+    border-left: 1px solid rgba(255,255,255,0.03);
+}
+
+.stats-elite-table td:last-child {
+    border-top-right-radius: 8px;
+    border-bottom-right-radius: 8px;
+    border-right: 1px solid rgba(255,255,255,0.03);
+}
+
+.stats-elite-table tbody tr {
+    transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.stats-elite-table tbody tr:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.4), 0 0 15px rgba(240, 165, 0, 0.1);
+}
+
+.stats-elite-table tbody tr:hover td {
+    background: rgba(240, 165, 0, 0.05);
+    border-color: rgba(240, 165, 0, 0.2);
+}
+
+.stats-elite-table .row-official td:first-child {
+    border-left: 3px solid var(--primary);
+}
+
+.stats-elite-table .row-friendly td:first-child {
+    border-left: 3px solid #888;
+}
+
+.stats-elite-table tfoot td {
+    background: rgba(255,255,255,0.02);
+    font-weight: 900;
+    color: var(--primary);
+    border-top: 1.5px solid rgba(240,165,0,0.3);
+}
+
+.stat-category-badge {
+    padding: 3px 8px;
+    border-radius: 4px;
+    font-size: 0.65rem;
+    font-weight: 800;
+}
+.badge-official { background: var(--primary); color: #000; }
+.badge-friendly { background: #333; color: #fff; }
+
+/* Modal de Perfil EspecÃƒÆ’Ã‚Â­fico */
+#profile-modal .jb-dialog {
+    background: radial-gradient(circle at top, #222, #050505);
+    border: 1px solid var(--primary);
+}
+
+.modal-stat-box {
+    background: rgba(255,255,255,0.03);
+    border: 1px solid var(--glass-border);
+    padding: 15px;
+    border-radius: 12px;
+}
+
+.modal-stat-box span {
+    display: block;
+    font-size: 1.5rem;
+    font-weight: 900;
+    color: var(--primary);
+}
+
+.modal-stat-box label {
+    font-size: 0.6rem;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    font-weight: 700;
+}
+
+/* --- ESTADO DE FORMA (RACHAS ACTIVAS) --- */
+.active-streak-badge {
+    background: linear-gradient(135deg, rgba(255, 71, 87, 0.1), rgba(255, 107, 129, 0.05));
+    border: 1px solid rgba(255, 71, 87, 0.3);
+    border-radius: 8px;
+    padding: 8px 12px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    box-shadow: 0 0 10px rgba(255, 71, 87, 0.1), inset 0 1px 0 rgba(255,255,255,0.1);
+    animation: activeStreakPulse 2s infinite alternate;
+}
+
+.active-streak-badge.assist {
+    background: linear-gradient(135deg, rgba(0, 210, 211, 0.1), rgba(72, 219, 251, 0.05));
+    border-color: rgba(0, 210, 211, 0.3);
+    box-shadow: 0 0 10px rgba(0, 210, 211, 0.1), inset 0 1px 0 rgba(255,255,255,0.1);
+    animation: activeStreakPulseAssist 2s infinite alternate;
+}
+
+.active-streak-badge.shield {
+    background: linear-gradient(135deg, rgba(255, 159, 67, 0.1), rgba(254, 202, 87, 0.05));
+    border-color: rgba(255, 159, 67, 0.3);
+    box-shadow: 0 0 10px rgba(255, 159, 67, 0.1), inset 0 1px 0 rgba(255,255,255,0.1);
+    animation: activeStreakPulseShield 2s infinite alternate;
+}
+
+.active-streak-badge .streak-icon {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.75rem;
+    color: #fff;
+    background: rgba(0,0,0,0.5);
+}
+
+.active-streak-badge .streak-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.active-streak-badge .streak-title {
+    font-size: 0.7rem;
+    font-weight: 800;
+    color: #fff;
+    margin: 0;
+}
+
+.active-streak-badge .streak-desc {
+    font-size: 0.55rem;
+    color: var(--text-muted);
+    margin: 0;
+}
+
+@keyframes activeStreakPulse {
+    0% { border-color: rgba(255, 71, 87, 0.3); box-shadow: 0 0 10px rgba(255, 71, 87, 0.1); }
+    100% { border-color: rgba(255, 71, 87, 0.8); box-shadow: 0 0 20px rgba(255, 71, 87, 0.3); }
+}
+
+    0% { box-shadow: 0 0 15px rgba(224, 17, 95, 0.5), 0 0 25px rgba(255, 0, 85, 0.3); }
+    50% { box-shadow: 0 0 35px rgba(224, 17, 95, 0.8), 0 0 50px rgba(255, 0, 85, 0.5); }
+    100% { box-shadow: 0 0 15px rgba(224, 17, 95, 0.5), 0 0 25px rgba(255, 0, 85, 0.3); }
+}
+
+.mini-ach-card.tier-bronze { border-left: 4px solid #cd7f32; background: linear-gradient(90deg, rgba(205,127,50,0.1) 0%, rgba(255,255,255,0.02) 100%); }
+.mini-ach-card.tier-bronze .mini-ach-icon { border: 1px solid #cd7f32; color: #cd7f32; animation: glowBronze 2.5s infinite; }
+
+.mini-ach-card.tier-silver { border-left: 4px solid #c0c0c0; background: linear-gradient(90deg, rgba(192,192,192,0.1) 0%, rgba(255,255,255,0.02) 100%); }
+.mini-ach-card.tier-silver .mini-ach-icon { border: 1px solid #c0c0c0; color: #c0c0c0; animation: glowSilver 2.5s infinite; }
+
+.mini-ach-card.tier-gold { border-left: 4px solid #ffd700; background: linear-gradient(90deg, rgba(255,215,0,0.1) 0%, rgba(255,255,255,0.02) 100%); }
+.mini-ach-card.tier-gold .mini-ach-icon { border: 1px solid #ffd700; color: #ffd700; animation: glowGold 2s infinite; }
+
+.mini-ach-card.tier-platinum { border-left: 4px solid #00ffff; background: linear-gradient(90deg, rgba(0,255,255,0.15) 0%, rgba(255,255,255,0.02) 100%); }
+.mini-ach-card.tier-platinum .mini-ach-icon { border: 1px solid #00ffff; color: #00ffff; animation: glowPlatinum 1.5s infinite; }
+
+.mini-ach-card.tier-ruby { border-left: 4px solid #e0115f; background: linear-gradient(90deg, rgba(224,17,95,0.2) 0%, rgba(255,255,255,0.02) 100%); }
+.mini-ach-card.tier-ruby .mini-ach-icon { border: 1px solid #e0115f; color: #e0115f; animation: glowRuby 1.5s infinite; }
+
+/* Stats Table Elite */
+.stats-table-wrapper {
+    overflow-x: auto;
+    border-radius: 8px;
+    background: rgba(0,0,0,0.2);
+}
+
+.stats-elite-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0 8px; /* Tablas flotantes */
+    font-family: 'Outfit', sans-serif;
+    color: #fff;
+}
+
+.stats-elite-table th {
+    background: transparent;
+    color: var(--text-muted);
+    text-align: left;
+    padding: 12px 15px;
+    font-size: 0.7rem;
+    letter-spacing: 1.5px;
+    font-weight: 800;
+    text-transform: uppercase;
+}
+
+.stats-elite-table td {
+    padding: 15px;
+    background: rgba(255,255,255,0.015);
+    border-top: 1px solid rgba(255,255,255,0.03);
+    border-bottom: 1px solid rgba(255,255,255,0.01);
+    font-size: 0.9rem;
+    font-weight: 600;
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.stats-elite-table td:first-child {
+    border-top-left-radius: 8px;
+    border-bottom-left-radius: 8px;
+    border-left: 1px solid rgba(255,255,255,0.03);
+}
+
+.stats-elite-table td:last-child {
+    border-top-right-radius: 8px;
+    border-bottom-right-radius: 8px;
+    border-right: 1px solid rgba(255,255,255,0.03);
+}
+
+.stats-elite-table tbody tr {
+    transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.stats-elite-table tbody tr:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.4), 0 0 15px rgba(240, 165, 0, 0.1);
+}
+
+.stats-elite-table tbody tr:hover td {
+    background: rgba(240, 165, 0, 0.05);
+    border-color: rgba(240, 165, 0, 0.2);
+}
+
+.stats-elite-table .row-official td:first-child {
+    border-left: 3px solid var(--primary);
+}
+
+.stats-elite-table .row-friendly td:first-child {
+    border-left: 3px solid #888;
+}
+
+.stats-elite-table tfoot td {
+    background: rgba(255,255,255,0.02);
+    font-weight: 900;
+    color: var(--primary);
+    border-top: 1.5px solid rgba(240,165,0,0.3);
+}
+
+.stat-category-badge {
+    padding: 3px 8px;
+    border-radius: 4px;
+    font-size: 0.65rem;
+    font-weight: 800;
+}
+.badge-official { background: var(--primary); color: #000; }
+.badge-friendly { background: #333; color: #fff; }
+
+/* Modal de Perfil EspecÃƒÆ’Ã‚Â­fico */
+#profile-modal .jb-dialog {
+    background: radial-gradient(circle at top, #222, #050505);
+    border: 1px solid var(--primary);
+}
+
+.modal-stat-box {
+    background: rgba(255,255,255,0.03);
+    border: 1px solid var(--glass-border);
+    padding: 15px;
+    border-radius: 12px;
+}
+
+.modal-stat-box span {
+    display: block;
+    font-size: 1.5rem;
+    font-weight: 900;
+    color: var(--primary);
+}
+
+.modal-stat-box label {
+    font-size: 0.6rem;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    font-weight: 700;
+}
+
+/* --- ESTADO DE FORMA (RACHAS ACTIVAS) --- */
+.active-streak-badge {
+    background: linear-gradient(135deg, rgba(255, 71, 87, 0.1), rgba(255, 107, 129, 0.05));
+    border: 1px solid rgba(255, 71, 87, 0.3);
+    border-radius: 8px;
+    padding: 8px 12px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    box-shadow: 0 0 10px rgba(255, 71, 87, 0.1), inset 0 1px 0 rgba(255,255,255,0.1);
+    animation: activeStreakPulse 2s infinite alternate;
+}
+
+.active-streak-badge.assist {
+    background: linear-gradient(135deg, rgba(0, 210, 211, 0.1), rgba(72, 219, 251, 0.05));
+    border-color: rgba(0, 210, 211, 0.3);
+    box-shadow: 0 0 10px rgba(0, 210, 211, 0.1), inset 0 1px 0 rgba(255,255,255,0.1);
+    animation: activeStreakPulseAssist 2s infinite alternate;
+}
+
+.active-streak-badge.shield {
+    background: linear-gradient(135deg, rgba(255, 159, 67, 0.1), rgba(254, 202, 87, 0.05));
+    border-color: rgba(255, 159, 67, 0.3);
+    box-shadow: 0 0 10px rgba(255, 159, 67, 0.1), inset 0 1px 0 rgba(255,255,255,0.1);
+    animation: activeStreakPulseShield 2s infinite alternate;
+}
+
+.active-streak-badge .streak-icon {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.75rem;
+    color: #fff;
+    background: rgba(0,0,0,0.5);
+}
+
+.active-streak-badge .streak-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.active-streak-badge .streak-title {
+    font-size: 0.7rem;
+    font-weight: 800;
+    color: #fff;
+    margin: 0;
+}
+
+.active-streak-badge .streak-desc {
+    font-size: 0.55rem;
+    color: var(--text-muted);
+    margin: 0;
+}
+
+@keyframes activeStreakPulse {
+    0% { border-color: rgba(255, 71, 87, 0.3); box-shadow: 0 0 10px rgba(255, 71, 87, 0.1); }
+    100% { border-color: rgba(255, 71, 87, 0.8); box-shadow: 0 0 20px rgba(255, 71, 87, 0.3); }
+}
+
+@keyframes activeStreakPulseAssist {
+    0% { border-color: rgba(0, 210, 211, 0.3); box-shadow: 0 0 10px rgba(0, 210, 211, 0.1); }
+    100% { border-color: rgba(0, 210, 211, 0.8); box-shadow: 0 0 20px rgba(0, 210, 211, 0.3); }
+}
+
+@keyframes activeStreakPulseShield {
+    0% { border-color: rgba(255, 159, 67, 0.3); box-shadow: 0 0 10px rgba(255, 159, 67, 0.1); }
+    100% { border-color: rgba(255, 159, 67, 0.8); box-shadow: 0 0 20px rgba(255, 159, 67, 0.3); }
+}
+
+.active-streak-badge.attendance {
+    background: linear-gradient(135deg, rgba(162, 155, 254, 0.1), rgba(108, 92, 231, 0.05));
+    border-color: rgba(108, 92, 231, 0.3);
+    box-shadow: 0 0 10px rgba(108, 92, 231, 0.1), inset 0 1px 0 rgba(255,255,255,0.1);
+    animation: activeStreakPulseAttendance 2s infinite alternate;
+}
+
+@keyframes activeStreakPulseAttendance {
+    0% { border-color: rgba(108, 92, 231, 0.3); box-shadow: 0 0 10px rgba(108, 92, 231, 0.1); }
+    100% { border-color: rgba(108, 92, 231, 0.8); box-shadow: 0 0 20px rgba(108, 92, 231, 0.3); }
+}

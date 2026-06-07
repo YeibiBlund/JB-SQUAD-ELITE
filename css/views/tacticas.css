@@ -1,0 +1,121 @@
+/* Tactic Option Selection */
+.tactic-option {
+    padding: 16px;
+    border-radius: var(--radius-md);
+    background: var(--bg-surface);
+    border: 1px solid var(--glass-border);
+    margin-bottom: 15px;
+    text-align: center;
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.tactic-option.selected { 
+    border-color: var(--primary); 
+    background: linear-gradient(45deg, var(--bg-surface), var(--primary-glow));
+    box-shadow: 0 0 20px var(--primary-glow);
+}
+/* Drag and Drop Visual Feedback */
+.tactical-slot.drag-over {
+    border-color: var(--primary);
+    box-shadow: 0 0 15px var(--primary-glow);
+    background: rgba(255, 170, 0, 0.2);
+    transform: translate(-50%, -50%) scale(1.05);
+}
+
+/* Split View & Roster Panel */
+.tacticas-split-layout {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: 100%;
+    gap: 10px;
+}
+
+/* Premium Roster Sidebar */
+.roster-panel {
+    background: linear-gradient(180deg, rgba(15,15,15,0.9) 0%, rgba(5,5,5,0.95) 100%);
+    backdrop-filter: blur(15px);
+    border: 1px solid var(--glass-border);
+    border-left: 2px solid var(--primary); /* Glow vibe */
+    border-radius: var(--radius-md);
+    padding: 15px 10px;
+    height: auto;
+    max-height: 200px; /* Expand on mobile a bit */
+    display: flex;
+    flex-direction: column;
+    box-shadow: -5px 0 30px rgba(0,0,0,0.5), inset 0 0 20px rgba(240, 165, 0, 0.05);
+    transition: all 0.4s ease;
+}
+
+.roster-panel.locked {
+    opacity: 0.4;
+    filter: grayscale(1);
+    pointer-events: none;
+    position: relative;
+}
+
+.roster-panel.locked::after {
+    content: 'GESTIÓN BLOQUEADA';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) rotate(-5deg);
+    background: rgba(244, 67, 54, 0.9);
+    color: #fff;
+    padding: 10px 20px;
+    font-size: 0.8rem;
+    font-weight: 900;
+    border-radius: 4px;
+    letter-spacing: 2px;
+    box-shadow: 0 0 20px rgba(244, 67, 54, 0.4);
+    z-index: 100;
+}
+
+.roster-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    overflow-y: auto;
+    padding-right: 5px;
+}
+
+/* Desktop: layout horizontal + roster scrollable */
+@media (min-width: 1024px) {
+    .tacticas-split-layout {
+        flex-direction: row;
+        align-items: stretch;
+        justify-content: flex-start;
+        gap: 20px;
+        height: 88vh;
+    }
+
+    .roster-panel {
+        order: -1;
+        height: 100%;
+        max-height: 100%;
+        min-height: unset;
+        overflow-y: auto;
+        max-width: 480px;
+        min-width: 350px;
+        flex: 0 0 380px;
+        border-left: none;
+        border-right: 2px solid var(--primary);
+        position: relative;
+    }
+
+    .roster-grid {
+        flex-direction: column;
+        overflow-y: visible;
+        flex: 1;
+    }
+
+    /* El pitch respeta el espacio del roster y crece verticalmente */
+    #view-tacticas .pitch-container {
+        flex: 1 1 auto;
+        max-width: 680px;
+        max-height: 100%;
+        height: 100%;
+        margin: 0;
+    }
+}

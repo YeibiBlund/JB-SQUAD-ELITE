@@ -1,0 +1,96 @@
+/* css/base.css */
+
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;700;800&display=swap');
+
+:root {
+    /* Nueva Paleta: Elite Obsidian & Electric Amber */
+    --bg-deep: #050505;
+    --bg-surface: #111111;
+    --bg-card: #1a1a1a;
+    
+    --primary: #f0a500; /* Oro / Ámbar Eléctrico */
+    --primary-glow: rgba(240, 165, 0, 0.3);
+    --secondary: #222222;
+    --text-main: #ffffff;
+    --text-muted: #888888;
+    --success: #4CAF50;
+    --success-glow: rgba(76, 175, 80, 0.3);
+    --error: #F44336;
+    --error-glow: rgba(244, 67, 54, 0.3);
+    
+    --glass: rgba(255, 255, 255, 0.03);
+    --glass-border: rgba(255, 255, 255, 0.08);
+    
+    --transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    --radius-sm: 10px;
+    --radius-md: 16px;
+    --radius-lg: 24px;
+    
+    /* Layout Tokens */
+    --nav-height: 85px;
+    --nav-height-mobile: 65px;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Outfit', sans-serif;
+    -webkit-tap-highlight-color: transparent;
+}
+
+body {
+    /* ESTILO ORIGINAL (guardado en memoria por si quieres revertirlo):
+    background-color: var(--bg-deep); 
+    */
+    /* NUEVA PRUEBA DE PROFUNDIDAD: Gradiente radial suave desde el centro */
+    background: radial-gradient(circle at center, #1f1f1f 0%, var(--bg-deep) 100%);
+    background-attachment: fixed;
+    color: var(--text-main);
+    height: 100vh; /* Fixed height for the app */
+    overflow: hidden; /* No global scroll */
+    display: flex;
+    flex-direction: column;
+}
+
+/* Scrollbar Premium */
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: var(--bg-deep); }
+::-webkit-scrollbar-thumb { background: var(--primary); border-radius: 10px; }
+
+/* Mobile-First Layout Core */
+.app-wrapper {
+    width: 100%;
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 10px 15px 0 15px; /* Reducción de padding lateral/superior en móvil */
+    height: calc(100vh - var(--nav-height-mobile) - 20px); /* Usar nueva altura móvil */
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+}
+
+#content-container {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    width: 100%;
+}
+
+/* El area de tacticas es especial: NO SCROLL */
+#view-tacticas {
+    height: 100%;
+    /* No usar display: flex aquí directo para permitir que display: none de .view funcione.
+       Se activa en #view-tacticas.active-view más abajo */
+}
+
+@media (min-width: 1024px) {
+    .app-wrapper {
+        max-width: 1400px; /* Evita el estiramiento infinito de la app en ultrawide */
+        margin: 0 auto;
+        padding-left: 110px; /* Espacio para el sidebar fijo */
+        padding-right: 40px;
+        width: 100%;
+    }
+}

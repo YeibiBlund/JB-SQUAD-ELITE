@@ -18,7 +18,7 @@ async function loadTeamData() {
         if (state.user && state.user.auth) {
             const { data: myPlayer } = await supabase
                 .from('players')
-                .select('id, user_id, team_id, name, console_id, avatar_id, primary_pos, secondary_pos, dorsal, photo_url, photo_scale, photo_x, photo_y, stats, always_available')
+                .select('id, user_id, team_id, name, console_id, avatar_id, primary_pos, secondary_pos, dorsal, photo_url, photo_scale, photo_x, photo_y, stats, always_available, twitter, twitch')
                 .eq('user_id', state.user.auth.id)
                 .maybeSingle();
 
@@ -46,7 +46,9 @@ async function loadTeamData() {
                     photo_x: myPlayer.photo_x,
                     photo_y: myPlayer.photo_y,
                     stats: myPlayer.stats,
-                    alwaysAvailable: myPlayer.always_available
+                    alwaysAvailable: myPlayer.always_available,
+                    twitter: myPlayer.twitter,
+                    twitch: myPlayer.twitch
                 };
                 // Añadir a la lista general para que las vistas funcionen
                 window.state.players = [window.state.userPlayer];
@@ -58,7 +60,7 @@ async function loadTeamData() {
             // 1. Cargar Jugadores (Excluyendo al usuario si ya se cargó para evitar duplicados)
             const { data: dbPlayers } = await supabase
                 .from('players')
-                .select('id, user_id, name, console_id, avatar_id, primary_pos, secondary_pos, dorsal, photo_url, photo_scale, photo_x, photo_y, stats, always_available')
+                .select('id, user_id, name, console_id, avatar_id, primary_pos, secondary_pos, dorsal, photo_url, photo_scale, photo_x, photo_y, stats, always_available, twitter, twitch')
                 .eq('team_id', state.team.id)
                 .neq('user_id', state.user.auth.id);
 
@@ -78,7 +80,9 @@ async function loadTeamData() {
                     photo_x: p.photo_x,
                     photo_y: p.photo_y,
                     stats: p.stats,
-                    alwaysAvailable: p.always_available
+                    alwaysAvailable: p.always_available,
+                    twitter: p.twitter,
+                    twitch: p.twitch
                 }));
                 window.state.players = [...window.state.players, ...otherPlayers];
             }
@@ -126,28 +130,30 @@ async function loadTeamData() {
         }
 
         // --- ACTUALIZACIÓN DE UI (SIEMPRE DISPONIBLE) ---
-        if (typeof updateTeamHeader === 'function') updateTeamHeader();
-        if (typeof applyRolePermissions === 'function') applyRolePermissions();
-        if (typeof renderHomeDashboard === 'function') renderHomeDashboard();
+        if (typeof window.updateTeamHeader === 'function') window.updateTeamHeader();
+        if (typeof window.applyRolePermissions === 'function') window.applyRolePermissions();
+        if (typeof window.renderHomeDashboard === 'function') window.renderHomeDashboard();
         
         // Estas funciones deben ejecutarse aunque no haya equipo (para crear ficha)
-        if (typeof populatePositionSelects === 'function') populatePositionSelects();
-        if (typeof renderAvatarGallery === 'function') renderAvatarGallery();
+        if (typeof window.populatePositionSelects === 'function') window.populatePositionSelects();
+        if (typeof window.renderAvatarGallery === 'function') window.renderAvatarGallery();
         
         if (state.team) {
-            if (typeof renderPlayers === 'function') renderPlayers();
-            if (typeof renderSessions === 'function') renderSessions();
-            if (typeof renderTacticsList === 'function') renderTacticsList();
-            if (typeof renderAvailabilityBanner === 'function') renderAvailabilityBanner();
-            if (typeof setupTacticHandlers === 'function') setupTacticHandlers();
-            if (typeof setupSessionHandlers === 'function') setupSessionHandlers();
+            if (typeof window.renderPlayers === 'function') window.renderPlayers();
+            if (typeof window.renderSessions === 'function') window.renderSessions();
+            if (typeof window.renderTacticsList === 'function') window.renderTacticsList();
+            if (typeof window.renderAvailabilityBanner === 'function') window.renderAvailabilityBanner();
+            if (typeof window.setupTacticHandlers === 'function') window.setupTacticHandlers();
+            if (typeof window.setupSessionHandlers === 'function') window.setupSessionHandlers();
+            if (typeof window.setupAvailabilityHandlers === 'function') window.setupAvailabilityHandlers();
+            if (typeof window.setupCalendarioListeners === 'function') window.setupCalendarioListeners();
         }
 
         // Setup base
-        if (typeof setupNavigation === 'function') setupNavigation();
-        if (typeof setupFormHandlers === 'function') setupFormHandlers();
-        if (typeof setupTableSorting === 'function') setupTableSorting();
-        if (typeof setupEventListeners === 'function') setupEventListeners();
+        if (typeof window.setupNavigation === 'function') window.setupNavigation();
+        if (typeof window.setupFormHandlers === 'function') window.setupFormHandlers();
+        if (typeof window.setupTableSorting === 'function') window.setupTableSorting();
+        if (typeof window.setupEventListeners === 'function') window.setupEventListeners();
 
     } catch (err) {
         console.error(">>> [ERROR] loadTeamData:", err);
@@ -562,6 +568,11 @@ async function recalculateAllStats() {
             await new Promise(r => setTimeout(r, 100)); // Delay de seguridad
         }
 
+        // 5. RECALCULAR LOGROS EN BACKGROUND (v69.0)
+        if (typeof window.recalculateAllAchievements === 'function') {
+            window.recalculateAllAchievements(); // Sin await para no bloquear UI
+        }
+
         window.jbLoading.hide();
         window.jbToast('¡Estadísticas sincronizadas con éxito!', 'success');
         return { success: true };
@@ -756,7 +767,7 @@ async function fetchTeamRequests(teamId) {
 /**
  * Acepta una solicitud de fichaje.
  */
-async function acceptTeamRequest(requestId) {
+async function acceptTeamRequest(requestId, resetStats = false, ghostPlayerId = null) {
     if (!supabase) return;
     try {
         // 1. Obtener la solicitud para tener user_id y team_id
@@ -779,19 +790,29 @@ async function acceptTeamRequest(requestId) {
         // 3. Eliminar la solicitud
         await supabase.from('team_requests').delete().eq('id', requestId);
 
-        // 4. Vincular ficha técnica al club (v48.0 fix)
-        // Buscamos si el jugador ya tiene ficha para no sobrescribir sus stats/dorsal
-        const { data: existingPlayer } = await supabase.from('players').select('id').eq('user_id', req.user_id).maybeSingle();
-        
-        if (existingPlayer) {
-            await supabase.from('players').update({ team_id: req.team_id }).eq('user_id', req.user_id);
+        // 4. Vincular ficha técnica al club
+        const { data: profile } = await supabase.from('profiles').select('full_name').eq('id', req.user_id).single();
+        const playerName = profile?.full_name || 'Nuevo Jugador';
+
+        // Buscar si el usuario ya tiene su ficha real (creada al abandonar o al registrarse)
+        const { data: existingRealPlayer } = await supabase.from('players').select('id').eq('user_id', req.user_id).maybeSingle();
+
+        if (ghostPlayerId && !resetStats) {
+            // MANTENER HISTORIAL: Recuperar stats de la leyenda huérfana y borrarla
+            const { data: ghost } = await supabase.from('players').select('stats, dorsal').eq('id', ghostPlayerId).single();
+            if (existingRealPlayer) {
+                await supabase.from('players').update({ team_id: req.team_id, stats: ghost.stats, dorsal: ghost.dorsal }).eq('user_id', req.user_id);
+            } else {
+                await supabase.from('players').upsert({ user_id: req.user_id, team_id: req.team_id, name: playerName, stats: ghost.stats, dorsal: ghost.dorsal }, { onConflict: 'user_id' });
+            }
+            await supabase.from('players').delete().eq('id', ghostPlayerId);
         } else {
-            const { data: profile } = await supabase.from('profiles').select('full_name').eq('id', req.user_id).single();
-            await supabase.from('players').insert({
-                user_id: req.user_id,
-                team_id: req.team_id,
-                name: profile?.full_name || 'Nuevo Jugador'
-            });
+            // EMPEZAR DE CERO O JUGADOR NUEVO
+            if (existingRealPlayer) {
+                await supabase.from('players').update({ team_id: req.team_id }).eq('user_id', req.user_id);
+            } else {
+                await supabase.from('players').upsert({ user_id: req.user_id, team_id: req.team_id, name: playerName }, { onConflict: 'user_id' });
+            }
         }
         
         window.jbToast('Jugador aceptado en el club', 'success');

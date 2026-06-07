@@ -1,0 +1,1939 @@
+/* --- SECCIÓN JORNADAS Y PARTIDOS --- */
+.session-card {
+    background: linear-gradient(135deg, rgba(30, 30, 30, 0.8) 0%, rgba(10, 10, 10, 0.95) 100%);
+    border: 1px solid var(--glass-border);
+    border-left: 4px solid #444; /* Color neutral por defecto */
+    border-radius: 12px;
+    padding: 18px 20px;
+    margin-bottom: 15px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    position: relative;
+    overflow: hidden;
+    cursor: pointer;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+}
+
+.session-card:hover {
+    transform: translateX(5px);
+    border-color: var(--primary);
+    box-shadow: 0 10px 25px rgba(240, 165, 0, 0.15);
+}
+
+.session-card.win-trend { border-left-color: var(--primary); }
+.session-card.draw-trend { border-left-color: #AAA; }
+.session-card.loss-trend { border-left-color: #ef5350; }
+
+.session-card.active {
+    border: 1px solid var(--primary);
+    background: linear-gradient(135deg, rgba(240, 165, 0, 0.08) 0%, rgba(10, 10, 10, 0.95) 100%);
+    box-shadow: 0 0 20px rgba(240, 165, 0, 0.1);
+}    /* ====================================================================
+       BROADCAST LAYOUT - DOS COLUMNAS (v62.0)
+       Izquierda: Marcador + Eventos | Derecha: Campo (60%)
+       ==================================================================== */
+
+    .match-broadcast-layout {
+        display: flex;
+        flex-direction: row;
+        align-items: flex-start;
+        justify-content: center;
+        gap: 20px;
+        margin-top: 5px;
+        height: auto;
+        max-height: none;
+        overflow: visible;
+        background: linear-gradient(135deg, rgba(22, 22, 22, 0.7) 0%, rgba(8, 8, 8, 0.92) 100%);
+        border: 2px solid rgba(240, 165, 0, 0.45) !important;
+        border-radius: 18px;
+        padding: 18px 22px;
+        box-shadow: 0 20px 50px rgba(0,0,0,0.85), 0 0 20px rgba(240, 165, 0, 0.15), inset 0 0 30px rgba(240, 165, 0, 0.05);
+        backdrop-filter: blur(15px);
+        -webkit-backdrop-filter: blur(15px);
+    }
+
+    /* ---- Columna Izquierda: Marcador + Eventos (40%) ---- */
+    .live-left-column {
+        flex: 0 0 38%;
+        max-width: 38%;
+        display: flex;
+        flex-direction: column;
+        gap: 14px;
+        align-self: stretch;
+    }
+
+    /* ---- Tarjeta del Marcador ---- */
+    .live-scoreboard-card {
+        background: rgba(10, 10, 10, 0.55);
+        border: 1px solid rgba(0, 210, 255, 0.25); /* Borde distintivo azul cibernético */
+        border-top: 3px solid rgba(0, 210, 255, 0.75);
+        border-radius: 14px;
+        padding: 0;
+        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.6), inset 0 0 15px rgba(0, 210, 255, 0.05);
+        backdrop-filter: blur(15px);
+        -webkit-backdrop-filter: blur(15px);
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+    }
+
+    /* Cabecera: Etiqueta Tipo de Partido */
+    .scoreboard-match-header {
+        padding: 8px 16px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: rgba(0, 0, 0, 0.2);
+    }
+
+    #live-match-header {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0;
+    }
+
+    #match-type-label {
+        font-size: 0.6rem;
+        color: var(--primary) !important;
+        background: rgba(240, 165, 0, 0.08) !important;
+        border: 1px solid rgba(240, 165, 0, 0.25) !important;
+        padding: 3px 10px !important;
+        border-radius: 20px;
+        text-transform: uppercase;
+        font-weight: 900;
+        letter-spacing: 1.5px;
+        margin: 0;
+        text-shadow: 0 0 6px rgba(240, 165, 0, 0.3);
+    }
+
+    /* Fila principal: Escudos + Resultado */
+    .scoreboard-main-row {
+        display: flex;
+        flex-direction: row;
+        align-items: flex-start; /* Alinea los elementos arriba para que los escudos y nombres coincidan exactos */
+        justify-content: space-between;
+        padding: 16px 14px 14px;
+        gap: 8px;
+    }
+
+    /* Bloque de equipo: escudo arriba, nombre abajo centrado */
+    .score-team-block {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 7px;
+        flex: 1;
+        min-width: 0;
+    }
+
+    .score-team-block .crest-container {
+        width: 66px !important;
+        height: 66px !important;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: rgba(0, 0, 0, 0.3) !important;
+        border-radius: 50%;
+        padding: 6px !important;
+        border: 1.5px solid rgba(255, 255, 255, 0.15) !important;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5), 0 0 10px rgba(240, 165, 0, 0.1) !important;
+        transition: all 0.3s ease;
+    }
+
+    .score-team-block:hover .crest-container {
+        transform: scale(1.06);
+        border-color: rgba(240, 165, 0, 0.3) !important;
+        box-shadow: 0 6px 16px rgba(0, 0, 0, 0.5), 0 0 12px rgba(240, 165, 0, 0.15) !important;
+    }
+
+    .score-team-block .crest-container img {
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+    }
+
+    /* Nombre del equipo debajo del escudo */
+    .team-name-label {
+        font-family: 'Outfit', sans-serif;
+        font-size: 0.65rem;
+        font-weight: 800;
+        letter-spacing: 0.8px;
+        color: rgba(255, 255, 255, 0.7);
+        text-transform: uppercase;
+        text-align: center;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        max-width: 100%;
+    }
+
+    /* Controles de gol del rival minimalistas */
+    .rival-micro-controls {
+        display: flex;
+        flex-direction: row;
+        gap: 6px;
+        align-items: center;
+        justify-content: center;
+        margin-top: 4px;
+    }
+
+    /* Resultado Central */
+    .score-result-center {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        gap: 6px;
+        flex-shrink: 0;
+        padding: 0 10px;
+    }
+
+    .score-result-center .score-number {
+        font-family: 'Outfit', sans-serif;
+        font-size: 2.8rem !important;
+        font-weight: 900;
+        color: #ffffff;
+        line-height: 1;
+        text-shadow: 0 0 16px rgba(255, 255, 255, 0.25), 0 2px 4px rgba(0, 0, 0, 0.5) !important;
+        min-width: 1.8ch;
+        text-align: center;
+    }
+
+    .score-result-center .score-divider {
+        font-size: 1.8rem !important;
+        font-weight: 900;
+        color: rgba(255, 255, 255, 0.15) !important;
+        line-height: 1;
+    }
+
+    /* Fila del botón Finalizar (empujado siempre abajo) */
+    .scoreboard-finish-row {
+        padding: 0;
+        margin-top: auto; /* Mantiene el botón al fondo aunque se comprima eventos */
+        border-top: none;
+    }
+
+    /* Botón Finalizar Partido - ancho completo, al fondo */
+    .btn-finish-live {
+        width: 100% !important;
+        padding: 9px 14px !important;
+        border-radius: 9px;
+        font-size: 0.65rem !important;
+        letter-spacing: 0.8px;
+        background: rgba(76, 175, 80, 0.07) !important;
+        border: 1.5px solid rgba(76, 175, 80, 0.28) !important;
+        color: #81c784 !important;
+        font-weight: 900;
+        cursor: pointer;
+        transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1) !important;
+        text-transform: uppercase;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 7px;
+        font-family: 'Outfit', sans-serif;
+    }
+
+    .btn-finish-live:hover {
+        background: rgba(76, 175, 80, 0.2) !important;
+        border-color: #4CAF50 !important;
+        color: #fff !important;
+        transform: translateY(-1px) !important;
+        box-shadow: 0 5px 15px rgba(76, 175, 80, 0.22) !important;
+    }
+
+    /* ---- Panel de Eventos ---- */
+    .live-events-panel {
+        background: rgba(12, 12, 12, 0.5);
+        border: 1px solid rgba(255, 255, 255, 0.05);
+        border-top: 2.5px solid rgba(240, 165, 0, 0.3);
+        border-radius: 14px;
+        padding: 12px 14px;
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.45), inset 0 0 12px rgba(255, 255, 255, 0.01);
+        backdrop-filter: blur(15px);
+        -webkit-backdrop-filter: blur(15px);
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        /* flex: 1 eliminado para que se comprima según contenido */
+    }
+
+    .events-panel-header {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        gap: 7px;
+        padding-bottom: 8px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .events-panel-icon {
+        font-size: 0.85rem;
+    }
+
+    .events-panel-title {
+        font-family: 'Outfit', sans-serif;
+        font-size: 0.7rem;
+        color: var(--primary);
+        text-transform: uppercase;
+        font-weight: 900;
+        letter-spacing: 1.5px;
+        margin: 0;
+        text-shadow: 0 0 5px rgba(240, 165, 0, 0.2);
+    }
+
+    /* ---- Columna Derecha: Campo (60%) ---- */
+    .live-right-column {
+        flex: 0 0 60%;
+        max-width: 60%;
+        display: flex;
+        align-items: flex-start;
+        justify-content: center;
+    }
+
+    /* El campo de fútbol dentro de la columna derecha */
+    .live-right-column .pitch-container {
+        margin: 0 auto;
+        transform: none;
+        width: 100%;
+        height: 100%;
+        min-height: auto !important;
+        max-height: 700px !important;
+        max-width: 100% !important;
+        aspect-ratio: 1 / 1.25 !important;
+        container-type: size !important;
+
+        /* Consola de estadio deportiva 3D premium */
+        border: 6px solid #161616 !important;
+        border-radius: 16px !important;
+        outline: 2px solid rgba(240, 165, 0, 0.45) !important;
+        outline-offset: 1px !important;
+
+        /* Sombras perimetrales con resplandor dorado */
+        box-shadow: 0 0 0 6px rgba(0, 0, 0, 0.8),
+                    0 15px 35px rgba(0, 0, 0, 0.7),
+                    0 0 25px rgba(240, 165, 0, 0.18),
+                    inset 0 0 50px rgba(0, 0, 0, 0.95) !important;
+        position: relative !important;
+    }
+
+    #rival-name-display {
+        font-size: 1.15rem;
+        color: var(--primary);
+        margin-top: 3px;
+        font-weight: 900;
+        letter-spacing: 0.5px;
+    }
+
+
+    .rival-micro-btn {
+        background: rgba(244, 67, 54, 0.06) !important;
+        border: 1px solid rgba(244, 67, 54, 0.28) !important;
+        color: #ff8a80 !important;
+        width: 25px;
+        height: 25px;
+        border-radius: 6px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.68rem;
+        cursor: pointer;
+        transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1) !important;
+    }
+
+    .rival-micro-btn:hover {
+        background: rgba(244, 67, 54, 0.2) !important;
+        border-color: #f44336 !important;
+        color: #fff !important;
+        transform: scale(1.1);
+    }
+
+    .rival-micro-btn.plus {
+        background: rgba(76, 175, 80, 0.06) !important;
+        border-color: rgba(76, 175, 80, 0.28) !important;
+        color: #81c784 !important;
+    }
+
+    .rival-micro-btn.plus:hover {
+        background: rgba(76, 175, 80, 0.2) !important;
+        border-color: #4caf50 !important;
+        color: #fff !important;
+    }
+
+    /* Controls Grid Sizing & Premium Buttons */
+    .match-controls-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 8px !important;
+        margin-top: 2px;
+    }
+
+    .match-control-column {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+    }
+
+    .control-btn {
+        background: rgba(20, 20, 20, 0.3) !important; /* Base translúcida sutil */
+        border: 1px solid rgba(255, 255, 255, 0.06) !important;
+        color: rgba(255, 255, 255, 0.9) !important; /* Texto en blanco de alta visibilidad */
+        padding: 8px 10px !important; /* Más compacto */
+        border-radius: 8px !important;
+        font-weight: 800 !important;
+        cursor: pointer;
+        transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1) !important;
+        font-size: 0.68rem !important; /* Más elegante */
+        font-family: 'Outfit', sans-serif !important;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px !important;
+        box-shadow: none !important;
+    }
+
+    /* Primary Active Gold Button */
+    .goal-btn {
+        background: rgba(240, 165, 0, 0.02) !important; /* Translúcido sutil dorado */
+        border: 1px solid rgba(240, 165, 0, 0.28) !important; /* Borde dorado pulido y sutil */
+        color: rgba(255, 255, 255, 0.9) !important; /* Texto en blanco nítido para máxima legibilidad */
+        font-weight: 900 !important;
+        box-shadow: none !important;
+        text-shadow: none !important;
+    }
+
+    .goal-btn .btn-goal-icon {
+        display: inline-block;
+        font-size: 0.85rem !important;
+        animation: spinBall 6s linear infinite;
+        filter: drop-shadow(1px 1px 1px rgba(0,0,0,0.2));
+    }
+
+    @keyframes spinBall {
+        from { transform: rotate(0deg); }
+        to { transform: rotate(360deg); }
+    }
+
+    .goal-btn:hover {
+        background: rgba(240, 165, 0, 0.12) !important;
+        border-color: var(--primary) !important;
+        color: #fff !important;
+        transform: translateY(-2px) !important;
+        box-shadow: 0 4px 12px rgba(240, 165, 0, 0.15) !important;
+    }
+
+    /* Active Crimson Red Button */
+    .rival-btn {
+        background: rgba(244, 67, 54, 0.02) !important; /* Translúcido sutil carmesí */
+        border: 1px solid rgba(244, 67, 54, 0.28) !important; /* Borde carmesí sutil */
+        color: rgba(255, 255, 255, 0.9) !important; /* Texto en blanco nítido */
+        box-shadow: none !important;
+    }
+
+    .rival-btn:hover {
+        background: rgba(244, 67, 54, 0.12) !important;
+        border-color: #f44336 !important;
+        color: #fff !important;
+        transform: translateY(-2px) !important;
+        box-shadow: 0 4px 12px rgba(244, 67, 54, 0.15) !important;
+    }
+
+    .control-btn.sub {
+        font-size: 0.55rem !important; /* Aún más pequeño y discreto */
+        padding: 4px 8px !important;
+        border-color: rgba(255,255,255,0.04) !important;
+        background: rgba(255,255,255,0.005) !important;
+        color: var(--text-muted) !important;
+        margin-top: 0;
+    }
+
+    .control-btn.sub:hover {
+        background: rgba(255,255,255,0.04) !important;
+        color: #fff !important;
+        border-color: rgba(255,255,255,0.12) !important;
+        transform: none !important;
+        box-shadow: none !important;
+    }
+
+    /* Match Events Log (Sleek Vertical Container in Sidebar) */
+    #match-events-log.events-vertical-premium {
+        background: rgba(0, 0, 0, 0.25) !important;
+        border: 1px solid rgba(255, 255, 255, 0.03) !important;
+        border-radius: 10px !important;
+        margin-top: 0px;
+        width: 100%;
+        max-width: 100% !important;
+        padding: 10px !important;
+        display: flex;
+        flex-direction: column;
+        align-items: stretch;
+        gap: 6px;
+        box-shadow: inset 0 0 12px rgba(0,0,0,0.55) !important;
+        box-sizing: border-box;
+        flex-grow: 1; /* Crece para ocupar todo el espacio intermedio del panel derecho */
+    }
+    
+    #match-events-log .events-strip-title {
+        display: none !important; /* Ocultamos el título antiguo redundante */
+    }
+
+    .events-vertical-container {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+        width: 100%;
+        max-height: 360px !important; /* Ampliado significativamente para lucir majestuoso en vertical */
+        overflow-y: auto;
+        scrollbar-width: thin;
+        scrollbar-color: rgba(240, 165, 0, 0.3) transparent;
+    }
+
+    .events-vertical-container::-webkit-scrollbar {
+        width: 4px;
+    }
+
+    .events-vertical-container::-webkit-scrollbar-thumb {
+        background: rgba(240, 165, 0, 0.35);
+        border-radius: 10px;
+    }
+
+    /* Live Pitch & Cards Adaptations - FUT ÉLITE GOLD STYLE COMPACT CON ZERO-OVERLAP */
+    #live-football-pitch .tactical-slot {
+        width: auto !important;
+        height: 14.5cqh !important; /* Aumentado sustancialmente para cartas más grandes e impactantes */
+        aspect-ratio: 3.2 / 4.1 !important; /* Proporción premium de carta FUT */
+        max-width: 95px !important; /* Más presencia visual */
+        max-height: 120px !important;
+        border-radius: 8px !important;
+        transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) !important;
+        transform: translate(-50%, -50%) !important;
+        transform-style: preserve-3d !important;
+        perspective: 500px !important;
+        z-index: 10 !important; /* Eleva las cartas sobre la iluminación del campo y el z-index: 2 */
+        pointer-events: auto !important; /* Restaura la recepción del sistema de clics para marcar goles/asistencias */
+    }
+
+    /* Slots Vacíos Holográficos Premium */
+    #live-football-pitch .tactical-slot:not(.filled) {
+        background: radial-gradient(circle, rgba(240, 165, 0, 0.05) 0%, rgba(0, 0, 0, 0.5) 100%) !important;
+        border: 1.5px dashed rgba(240, 165, 0, 0.35) !important;
+        box-shadow: 0 4px 8px rgba(0,0,0,0.3), inset 0 0 10px rgba(240, 165, 0, 0.08) !important;
+        backdrop-filter: blur(4px) !important;
+        -webkit-backdrop-filter: blur(4px) !important;
+    }
+
+    #live-football-pitch .tactical-slot:not(.filled) .plus-icon {
+        font-size: 1.8rem !important;
+        color: var(--primary) !important;
+        opacity: 0.5 !important;
+        animation: pulsePlus 2s infinite ease-in-out !important;
+        text-shadow: 0 0 8px rgba(240, 165, 0, 0.4);
+    }
+
+    @keyframes pulsePlus {
+        0% { transform: scale(1); opacity: 0.3; }
+        50% { transform: scale(1.15); opacity: 0.7; }
+        100% { transform: scale(1); opacity: 0.3; }
+    }
+
+    #live-football-pitch .tactical-slot:not(.filled) .slot-pos {
+        bottom: -18px !important; /* Posicionado flotando DEBAJO de la carta */
+        left: 50% !important;
+        transform: translateX(-50%) !important;
+        top: auto !important;
+        right: auto !important;
+        background: rgba(0,0,0,0.75) !important;
+        border: 1px solid rgba(240, 165, 0, 0.3) !important;
+        color: var(--primary) !important;
+        font-size: 0.52rem !important;
+        padding: 1.5px 5px !important;
+        border-radius: 3px !important;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.5) !important;
+        width: max-content;
+        position: absolute !important;
+    }
+
+    #live-football-pitch .tactical-slot.filled {
+        background: linear-gradient(135deg, #121212 0%, #201708 60%, #100b03 100%) !important;
+        border: 2px solid var(--primary) !important;
+        backdrop-filter: blur(10px) !important;
+        -webkit-backdrop-filter: blur(10px) !important;
+        box-shadow: 0 6px 15px rgba(0,0,0,0.6), 0 0 10px rgba(240, 165, 0, 0.28), inset 0 0 8px rgba(240, 165, 0, 0.2) !important;
+        overflow: visible !important; /* Habilitado visible para permitir que la posición flote abajo */
+        
+        /* Doble borde dorado metalizado premium tipo carta FUT Elite */
+        outline: 1.5px solid rgba(255, 215, 0, 0.45) !important;
+        outline-offset: -3.5px !important;
+    }
+
+    #live-football-pitch .tactical-slot[data-slot-id="GK"] {
+        transform: translate(-50%, -90%) !important; /* Coloca al portero elegantemente en la base con margen de césped */
+    }
+ 
+    #live-football-pitch .tactical-slot[data-slot-id^="DFC"],
+    #live-football-pitch .tactical-slot[data-slot-id="LD"],
+    #live-football-pitch .tactical-slot[data-slot-id="LI"] {
+        transform: translate(-50%, -135%) !important; /* Posiciona la línea defensiva más arriba, bien separada del GK */
+    }
+ 
+    #live-football-pitch .tactical-slot[data-slot-id^="MC"],
+    #live-football-pitch .tactical-slot[data-slot-id^="MD"],
+    #live-football-pitch .tactical-slot[data-slot-id^="MI"],
+    #live-football-pitch .tactical-slot[data-slot-id^="MCD"] {
+        transform: translate(-50%, -140%) !important; /* Posiciona la línea de mediocampistas y MCD más arriba en bloque */
+    }
+ 
+    #live-football-pitch .tactical-slot[data-slot-id^="DC"],
+    #live-football-pitch .tactical-slot[data-slot-id^="ED"],
+    #live-football-pitch .tactical-slot[data-slot-id^="EI"] {
+        transform: translate(-50%, -95%) !important; /* Posiciona la línea delantera más arriba de forma premium */
+    }
+
+    /* Brillo de barrido holográfico translúcido (shimmer glare) - Estático y Contenido */
+    #live-football-pitch .tactical-slot.filled::before {
+        content: '' !important;
+        position: absolute !important;
+        top: 0 !important;
+        left: 0 !important; /* Siempre estático dentro de los límites de la carta */
+        width: 100% !important;
+        height: 100% !important;
+        background: linear-gradient(
+            115deg,
+            transparent 35%,
+            rgba(255, 215, 0, 0.12) 45%,
+            rgba(255, 255, 255, 0.25) 50%,
+            rgba(255, 215, 0, 0.12) 55%,
+            transparent 65%
+        ) !important;
+        background-size: 300% 100% !important; /* Permite mover el degradado por dentro */
+        background-position: 150% 0 !important; /* Posición inicial oculta */
+        transition: none !important;
+        z-index: 8 !important;
+        animation: holographicGlare 4s infinite linear !important;
+        pointer-events: none !important;
+        clip-path: inset(0 0 0 0 round 8px) !important; /* Recorta exactamente al contorno de la carta */
+        border-radius: 8px !important;
+    }
+
+    @keyframes holographicGlare {
+        0% { background-position: 150% 0; }
+        30% { background-position: -150% 0; } /* Barrido interno */
+        100% { background-position: -150% 0; } /* Pausa para mayor realismo */
+    }
+
+    /* Hover de perspectiva 3D adaptado a la distribución de cada rol */
+    #live-football-pitch .tactical-slot.filled[data-slot-id="GK"]:hover {
+        transform: translate(-50%, -95%) perspective(500px) rotateX(12deg) scale(1.1) !important;
+        box-shadow: 0 12px 25px rgba(0,0,0,0.7), 0 0 20px rgba(240, 165, 0, 0.6), inset 0 0 10px rgba(240, 165, 0, 0.3) !important;
+        border-color: #ffd700 !important;
+        z-index: 150 !important;
+    }
+
+    #live-football-pitch .tactical-slot.filled[data-slot-id^="DFC"]:hover,
+    #live-football-pitch .tactical-slot.filled[data-slot-id="LD"]:hover,
+    #live-football-pitch .tactical-slot.filled[data-slot-id="LI"]:hover {
+        transform: translate(-50%, -140%) perspective(500px) rotateX(12deg) scale(1.1) !important;
+        box-shadow: 0 12px 25px rgba(0,0,0,0.7), 0 0 20px rgba(240, 165, 0, 0.6), inset 0 0 10px rgba(240, 165, 0, 0.3) !important;
+        border-color: #ffd700 !important;
+        z-index: 150 !important;
+    }
+
+    #live-football-pitch .tactical-slot.filled[data-slot-id^="MC"]:hover,
+    #live-football-pitch .tactical-slot.filled[data-slot-id^="MD"]:hover,
+    #live-football-pitch .tactical-slot.filled[data-slot-id^="MI"]:hover,
+    #live-football-pitch .tactical-slot.filled[data-slot-id^="MCD"]:hover {
+        transform: translate(-50%, -145%) perspective(500px) rotateX(12deg) scale(1.1) !important;
+        box-shadow: 0 12px 25px rgba(0,0,0,0.7), 0 0 20px rgba(240, 165, 0, 0.6), inset 0 0 10px rgba(240, 165, 0, 0.3) !important;
+        border-color: #ffd700 !important;
+        z-index: 150 !important;
+    }
+
+    #live-football-pitch .tactical-slot.filled[data-slot-id^="DC"]:hover,
+    #live-football-pitch .tactical-slot.filled[data-slot-id^="ED"]:hover,
+    #live-football-pitch .tactical-slot.filled[data-slot-id^="EI"]:hover {
+        transform: translate(-50%, -100%) perspective(500px) rotateX(12deg) scale(1.1) !important;
+        box-shadow: 0 12px 25px rgba(0,0,0,0.7), 0 0 20px rgba(240, 165, 0, 0.6), inset 0 0 10px rgba(240, 165, 0, 0.3) !important;
+        border-color: #ffd700 !important;
+        z-index: 150 !important;
+    }
+
+    #live-football-pitch .tactical-slot.filled .dorsal-small {
+        font-size: 0.82rem !important; /* Más pequeño y estilizado */
+        top: 3px !important;
+        left: 5px !important; /* Más hacia la esquina top-left */
+        color: #ffffff !important; /* Blanco puro de gran contraste */
+        font-weight: 900 !important;
+        font-family: 'Outfit', sans-serif !important;
+        text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.95), 0 0 4px rgba(0, 0, 0, 0.5) !important;
+        z-index: 10 !important;
+    }
+
+    #live-football-pitch .tactical-slot.filled h4 {
+        font-size: 0.52rem !important;
+        padding: 2.5px 0 !important;
+        bottom: 3px !important;
+        font-weight: 800 !important;
+        color: #fff !important;
+        background: rgba(0, 0, 0, 0.85) !important;
+        border-top: 1px solid rgba(240, 165, 0, 0.25) !important;
+        border-bottom: 1px solid rgba(240, 165, 0, 0.25) !important;
+        width: 100% !important;
+        z-index: 11 !important;
+        letter-spacing: -0.1px;
+    }
+
+    /* Badge de Posición EXTERNO en Carta Llena (Debajo de la carta) */
+    #live-football-pitch .tactical-slot.filled .slot-pos {
+        bottom: -18px !important; /* Posicionado flotando DEBAJO de la carta */
+        top: auto !important;
+        right: auto !important;
+        left: 50% !important;
+        transform: translateX(-50%) !important;
+        background: linear-gradient(135deg, #FFD700 0%, #B8860B 100%) !important;
+        color: #000 !important;
+        font-size: 0.55rem !important;
+        font-weight: 900 !important;
+        padding: 1.5px 5px !important;
+        border-radius: 3px !important;
+        border: 1px solid rgba(0, 0, 0, 0.4) !important;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.5) !important;
+        z-index: 12 !important;
+        width: max-content;
+        position: absolute !important;
+    }
+
+    #live-football-pitch .tactical-slot .plus-icon {
+        font-size: 1.5rem !important;
+        color: var(--primary) !important;
+        opacity: 0.3 !important;
+    }
+
+    /* Assistant Pulse Animation */
+    @keyframes assistantPulse {
+        0% { transform: translate(-50%, -50%) scale(1); }
+        50% { transform: translate(-50%, -50%) scale(1.05); }
+        100% { transform: translate(-50%, -50%) scale(1); }
+    }
+
+    .tactical-slot.pending-assistant {
+        border-color: #00d2ff !important;
+        background: rgba(0, 210, 255, 0.1) !important;
+        box-shadow: 0 0 20px rgba(0, 210, 255, 0.45) !important;
+        animation: assistantPulse 1.4s infinite ease-in-out !important;
+    }
+
+
+    /* El btn-finish-match se gestiona con .btn-finish-live, estas son reglas de fallback */
+    #btn-finish-match {
+        padding: 6px 12px !important;
+        border-radius: 8px;
+        font-size: 0.62rem !important;
+        letter-spacing: 0.8px;
+        background: rgba(76, 175, 80, 0.08) !important;
+        border: 1.5px solid rgba(76, 175, 80, 0.32) !important;
+        color: #81c784 !important;
+        font-weight: 900;
+        cursor: pointer;
+        transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1) !important;
+        text-transform: uppercase;
+        white-space: nowrap;
+    }
+ 
+    #btn-finish-match:hover {
+        background: rgba(76, 175, 80, 0.22) !important;
+        border-color: #4CAF50 !important;
+        color: #fff !important;
+        transform: translateY(-1px) !important;
+        box-shadow: 0 4px 12px rgba(76, 175, 80, 0.2) !important;
+    }
+ 
+    #btn-finish-match:active {
+        transform: translateY(1px);
+    }
+
+
+    /* Volumetría de Iluminación 3D del Césped (Stadium Lighting Vignette) */
+    .live-right-column .pitch-container::after {
+        content: '' !important;
+        position: absolute !important;
+        top: 0 !important; left: 0 !important;
+        width: 100% !important; height: 100% !important;
+        background: radial-gradient(circle at 50% 25%, rgba(255,255,255,0.06) 0%, transparent 65%),
+                    radial-gradient(circle, transparent 40%, rgba(0, 0, 0, 0.45) 100%) !important;
+        z-index: 2 !important;
+        pointer-events: none !important;
+    }
+
+    #live-football-pitch .pitch-lines {
+        z-index: 1 !important;
+        border-color: rgba(255, 255, 255, 0.32) !important;
+        box-shadow: 0 0 8px rgba(255, 255, 255, 0.18), inset 0 0 8px rgba(255, 255, 255, 0.08) !important;
+        filter: drop-shadow(0 0 2px rgba(255, 255, 255, 0.1));
+    }
+
+    /* ==========================================================================
+       MEDIA QUERIES PARA PANTALLAS DE ALTA RESOLUCIÓN (1440p, 2K, 4K)
+       ========================================================================== */
+    @media (min-width: 1440px) {
+        .match-broadcast-layout {
+            max-width: 1340px !important;
+            padding: 22px 30px !important;
+            gap: 24px !important;
+        }
+
+        .live-left-column {
+            flex: 0 0 36% !important;
+            max-width: 36% !important;
+        }
+
+        .live-right-column {
+            flex: 0 0 62% !important;
+            max-width: 62% !important;
+        }
+
+        .live-right-column .pitch-container {
+            max-height: 720px !important;
+        }
+
+        #live-football-pitch .tactical-slot {
+            max-width: 105px !important;
+            max-height: 135px !important;
+        }
+    }
+
+    @media (min-width: 1920px) {
+        .match-broadcast-layout {
+            max-width: 1540px !important;
+            padding: 28px 38px !important;
+            gap: 28px !important;
+        }
+
+        .live-right-column .pitch-container {
+            max-height: 840px !important;
+        }
+
+        #live-football-pitch .tactical-slot {
+            max-width: 120px !important;
+            max-height: 155px !important;
+        }
+    }
+
+
+@media (max-width: 1023px) {
+    .match-broadcast-layout {
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+        max-height: none;
+        overflow: visible;
+        background: transparent !important;
+        border: none !important;
+        padding: 0 !important;
+        box-shadow: none !important;
+        backdrop-filter: none !important;
+    }
+    
+    .live-left-column {
+        flex: none !important;
+        max-width: 100% !important;
+        width: 100% !important;
+    }
+
+    .live-right-column {
+        flex: none !important;
+        max-width: 100% !important;
+        width: 100% !important;
+    }
+
+    .live-events-panel {
+        max-width: 100% !important;
+        flex: none !important;
+    }
+
+    .events-vertical-container {
+        max-height: 180px !important;
+    }
+    
+    .live-right-column .pitch-container {
+        min-height: 350px !important;
+        max-height: 480px !important;
+    }
+
+    #global-header {
+        margin-bottom: 10px !important;
+        padding: 5px 0 !important;
+    }
+    .header-crest-container {
+        width: 44px !important;
+        height: 44px !important;
+    }
+    #display-team-name {
+        font-size: 1.1rem !important;
+    }
+    #display-user-name {
+        font-size: 0.6rem !important;
+    }
+    #header-tactic-info {
+        padding-left: 8px !important;
+        margin-left: 5px !important;
+    }
+    #current-formation-label {
+        font-size: 1.1rem !important;
+    }
+    #current-formation-sub {
+        font-size: 0.7rem !important;
+    }
+    #btn-save-tactic {
+        padding: 8px 12px !important;
+        font-size: 0.7rem !important;
+    }
+    #btn-export-tactic {
+        padding: 8px 10px !important;
+        font-size: 0.65rem !important;
+    }
+}
+
+/* --- Reportes de Jornada Elite v34.0 --- */
+.report-layout-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 30px;
+}
+
+@media (min-width: 1024px) {
+    .report-layout-grid {
+        grid-template-columns: 1.2fr 1fr;
+    }
+}
+
+.report-pitch-column {
+    background: rgba(0,0,0,0.2);
+    padding: 15px;
+    border-radius: 15px;
+    border: 1px solid rgba(255,255,255,0.03);
+}
+
+.report-voters-scroll {
+    max-height: 400px;
+    overflow-y: auto;
+    padding-right: 10px;
+}
+
+/* Scrollbar personalizada para el reporte */
+.report-voters-scroll::-webkit-scrollbar { width: 4px; }
+.report-voters-scroll::-webkit-scrollbar-thumb { background: var(--primary); border-radius: 10px; }
+
+.poll-history-item {
+    background: rgba(255,255,255,0.03);
+    border: 1px solid var(--glass-border);
+    padding: 12px 15px;
+    border-radius: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.poll-history-item:hover {
+    background: rgba(240, 165, 0, 0.08);
+    border-color: var(--primary);
+    transform: translateX(5px);
+}
+
+.poll-history-item:active {
+    transform: scale(0.98);
+}
+
+/* --- Reporte HistÃƒÆ’Ã‚Â³rico: Filtros de Asistencia v36.2 --- */
+.stat-pill {
+    cursor: pointer;
+    transition: var(--transition);
+    user-select: none;
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 10px;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 8px;
+}
+
+.stat-pill:hover {
+    background: rgba(255, 255, 255, 0.08) !important;
+    transform: translateY(-2px);
+}
+
+.stat-pill:active { transform: scale(0.95); }
+
+.stat-pill.active {
+    background: rgba(255, 255, 255, 0.1) !important;
+    border-color: var(--primary) !important;
+    box-shadow: 0 0 15px var(--primary-glow);
+}
+
+.stat-pill.active label {
+    color: var(--primary);
+    opacity: 1 !important;
+}
+
+.stat-pill.active::after {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 0; width: 100%; height: 2px;
+    background: var(--primary);
+}
+
+/* --- Calendario de Asistencia Elite v36.3 --- */
+.calendar-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 25px;
+    gap: 15px;
+}
+
+.calendar-title {
+    font-size: 1.1rem !important;
+    border-left: 3px solid #00d2ff !important; /* Azul Eléctrico en lugar de Oro */
+    padding-left: 15px !important;
+    margin: 0 !important;
+    letter-spacing: 1.5px !important;
+    font-weight: 900 !important;
+    text-transform: uppercase !important;
+    color: #ffffff !important;
+    text-shadow: 0 0 10px rgba(0, 210, 255, 0.1) !important;
+}
+
+.calendar-nav {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+#sessions-calendar-month-label,
+#calendar-month-label {
+    font-size: 0.95rem !important;
+    font-weight: 900 !important;
+    text-transform: uppercase !important;
+    text-align: center !important;
+    white-space: nowrap !important;
+    letter-spacing: 2px !important;
+    color: #ffffff !important; /* Blanco premium */
+    min-width: 140px !important;
+    text-shadow: 0 0 10px rgba(255, 255, 255, 0.1) !important;
+}
+
+@media (max-width: 480px) {
+    .calendar-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
+    }
+    
+    .calendar-nav {
+        width: 100%;
+        justify-content: space-between;
+    }
+    
+    #sessions-calendar-month-label,
+    #calendar-month-label {
+        font-size: 0.8rem !important;
+        min-width: 110px;
+        flex: 1;
+    }
+}
+
+.calendar-grid-header {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 5px;
+    text-align: center;
+    font-size: 0.65rem;
+    font-weight: 800;
+    color: var(--text-muted);
+    margin-bottom: 10px;
+}
+
+.calendar-days-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 5px;
+}
+
+.calendar-day {
+    aspect-ratio: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.75rem;
+    border-radius: 6px;
+    background: rgba(255,255,255,0.02);
+    border: 1px solid rgba(255,255,255,0.05);
+    transition: var(--transition);
+    color: rgba(255,255,255,0.3);
+    position: relative; /* v52.1 */
+}
+
+.calendar-day-number {
+    position: absolute;
+    top: 5px;
+    right: 8px;
+    font-size: 0.65rem;
+    font-weight: 800;
+    opacity: 0.6;
+}
+
+.calendar-day-stats-column {
+    position: absolute;
+    bottom: 4px;
+    left: 4px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1px;
+    font-size: 0.65rem;
+    font-weight: 900;
+}
+
+.calendar-day-stats-column .stat-v { color: var(--success); }
+.calendar-day-stats-column .stat-e { color: #FFC107; }
+.calendar-day-stats-column .stat-d { color: var(--error); }
+
+@media (max-width: 768px) {
+    .calendar-day-stats-column {
+        display: none;
+    }
+}
+
+.calendar-day.has-date {
+    color: var(--text-main);
+}
+
+.calendar-day.today {
+    border-color: var(--primary);
+    background: rgba(240, 165, 0, 0.1);
+}
+
+.calendar-day.day-yes {
+    background: rgba(76, 175, 80, 0.2);
+    border-color: var(--success);
+    color: var(--success);
+    font-weight: 900;
+    box-shadow: inset 0 0 10px rgba(76, 175, 80, 0.1);
+}
+
+.calendar-day.day-late {
+    background: rgba(255, 152, 0, 0.2);
+    border-color: var(--primary);
+    color: var(--primary);
+    font-weight: 900;
+}
+
+.calendar-day.day-no {
+    background: rgba(244, 67, 54, 0.2);
+    border-color: var(--error);
+    color: var(--error);
+    font-weight: 900;
+}
+
+/* --- ESTILOS DE CABECERA JORNADAS --- */
+.jornadas-header-layout {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+    padding-bottom: 15px;
+    margin-bottom: 25px;
+}
+
+.jornadas-action-buttons {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+}
+
+/* Botón Principal: Nueva Jornada en Ciber-Azul Glow Premium */
+#btn-new-session {
+    background: linear-gradient(135deg, rgba(0, 112, 243, 0.9) 0%, rgba(0, 210, 255, 0.9) 100%) !important;
+    border: 1px solid #00d2ff !important;
+    color: #ffffff !important;
+    font-weight: 800 !important;
+    letter-spacing: 1px !important;
+    text-transform: uppercase !important;
+    padding: 12px 24px !important;
+    border-radius: 8px !important;
+    cursor: pointer !important;
+    box-shadow: 0 4px 15px rgba(0, 210, 255, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.25) !important;
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1) !important;
+    font-size: 0.75rem !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 6px !important;
+}
+
+#btn-new-session:hover {
+    transform: translateY(-3px) !important;
+    box-shadow: 0 8px 25px rgba(0, 210, 255, 0.65), inset 0 1px 0 rgba(255, 255, 255, 0.4) !important;
+    border-color: #00d2ff !important;
+    filter: brightness(1.15);
+}
+
+#btn-new-session:active {
+    transform: translateY(1px) scale(0.97) !important;
+}
+
+/* Botones Secundarios: Cristal Plata Satinado con Glow Ciber-Azul */
+#btn-create-matchday-graphic,
+#btn-rivals-history {
+    background: rgba(20, 20, 20, 0.4) !important;
+    border: 1px solid rgba(0, 210, 255, 0.18) !important;
+    color: #ffffff !important;
+    font-weight: 800 !important;
+    letter-spacing: 0.8px !important;
+    text-transform: uppercase !important;
+    padding: 12px 22px !important;
+    border-radius: 8px !important;
+    cursor: pointer !important;
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1) !important;
+    font-size: 0.7rem !important;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.25) !important;
+    backdrop-filter: blur(10px) !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 6px !important;
+}
+
+#btn-create-matchday-graphic:hover,
+#btn-rivals-history:hover {
+    background: rgba(0, 112, 243, 0.1) !important;
+    border-color: #00d2ff !important;
+    color: #00d2ff !important;
+    transform: translateY(-2px) !important;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.35), 0 0 15px rgba(0, 210, 255, 0.25), inset 0 0 8px rgba(0, 210, 255, 0.1) !important;
+}
+
+#btn-create-matchday-graphic:active,
+#btn-rivals-history:active {
+    transform: translateY(1px) scale(0.98) !important;
+}
+
+@media (max-width: 768px) {
+    .jornadas-header-layout {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 15px;
+    }
+    
+    .jornadas-action-buttons {
+        width: 100%;
+        gap: 8px;
+        flex-wrap: wrap;
+    }
+    
+    #btn-new-session,
+    #btn-create-matchday-graphic,
+    #btn-rivals-history {
+        flex: 1 1 calc(50% - 4px);
+        padding: 12px 0 !important;
+        font-size: 0.65rem !important;
+        justify-content: center !important;
+    }
+    
+    #btn-new-session {
+        flex: 1 1 100%; /* El principal ocupa todo el ancho abajo */
+        order: 3;
+    }
+}
+
+.calendar-day.today-highlight {
+    border: 2px solid #2196F3 !important;
+    background: rgba(33, 150, 243, 0.15); /* Sin !important para que ganen los estados */
+    box-shadow: 0 0 15px rgba(33, 150, 243, 0.3);
+    z-index: 2;
+}
+
+.calendar-day.day-played {
+    background: linear-gradient(135deg, rgba(240, 165, 0, 0.3), rgba(240, 165, 0, 0.1));
+    border-color: var(--primary);
+    color: #fff;
+    font-weight: 900;
+    box-shadow: 0 0 15px rgba(240, 165, 0, 0.2);
+    cursor: pointer;
+}
+
+.calendar-day.day-win {
+    background: linear-gradient(135deg, rgba(76, 175, 80, 0.4), rgba(76, 175, 80, 0.15)) !important;
+    border-color: var(--success) !important;
+    box-shadow: 0 0 15px rgba(76, 175, 80, 0.15) !important;
+}
+
+.calendar-day.day-loss {
+    background: linear-gradient(135deg, rgba(244, 67, 54, 0.4), rgba(244, 67, 54, 0.15)) !important;
+    border-color: var(--error) !important;
+    box-shadow: 0 0 15px rgba(244, 67, 54, 0.15) !important;
+}
+
+.calendar-day.day-draw {
+    background: linear-gradient(135deg, rgba(255, 193, 7, 0.3), rgba(255, 193, 7, 0.1)) !important;
+    border-color: #FFC107 !important;
+    box-shadow: 0 0 15px rgba(255, 193, 7, 0.15) !important;
+}
+
+/* Hover effect */
+.calendar-day.day-played:hover {
+    transform: scale(1.05);
+    filter: brightness(1.2);
+    z-index: 5;
+}
+
+.calendar-day.clickable {
+    cursor: pointer;
+}
+
+/* Ajuste PC Calendario (v52.2) */
+@media (min-width: 1024px) {
+    #sessions-month-summary, 
+    #polls-month-summary {
+        display: block !important;
+    }
+    #sessions-calendar-container,
+    #polls-calendar-container {
+        /* Permitir crecimiento flexible */
+        max-width: none !important;
+    }
+}
+
+/* Clases SemÃ¡nticas para Convocatorias (v53.0) */
+.calendar-day.poll-day-success {
+    background: linear-gradient(135deg, rgba(76, 175, 80, 0.2), rgba(76, 175, 80, 0.05)) !important;
+    border-color: var(--success) !important;
+    color: #fff !important;
+    cursor: pointer;
+}
+
+.calendar-day.poll-day-cancel {
+    background: linear-gradient(135deg, rgba(244, 67, 54, 0.2), rgba(244, 67, 54, 0.05)) !important;
+    border-color: var(--error) !important;
+    color: #fff !important;
+    cursor: pointer;
+}
+
+.calendar-day.poll-day-active {
+    border: 2px dashed var(--primary) !important;
+    animation: pulse-border 2s infinite;
+}
+
+/* OptimizaciÃ³n Hoy con Convocatoria (v53.9) */
+.calendar-day.today-highlight.poll-day-active {
+    background: rgba(30, 136, 229, 0.5) !important; /* Azul mÃ¡s intenso */
+    box-shadow: inset 0 0 15px rgba(30, 136, 229, 0.6), 0 0 20px rgba(240, 165, 0, 0.4);
+    border: 2px dashed var(--primary) !important;
+}
+
+@keyframes pulse-border {
+    0% { border-color: rgba(240, 165, 0, 0.3); }
+    50% { border-color: rgba(240, 165, 0, 1); }
+    100% { border-color: rgba(240, 165, 0, 0.3); }
+}
+
+/* Mobile fix para calendario de convocatorias (v53.1) */
+@media (max-width: 768px) {
+    #polls-calendar-layout {
+        flex-direction: column !important;
+        gap: 0 !important;
+    }
+    #polls-calendar-container {
+        min-width: 0 !important;
+        width: 100% !important;
+        max-width: 100% !important;
+        padding: 15px !important;
+        box-sizing: border-box !important;
+        overflow: hidden !important;
+    }
+    #polls-calendar-container .calendar-days-grid {
+        width: 100% !important;
+        max-width: 100% !important;
+    }
+    #polls-calendar-container .calendar-day {
+        aspect-ratio: 1;
+        font-size: 0.65rem;
+    }
+    #polls-calendar-container .calendar-day-number {
+        font-size: 0.55rem;
+        top: 3px;
+        right: 4px;
+    }
+    #polls-month-summary {
+        display: none !important;
+    }
+    #polls-history-container {
+        overflow: hidden;
+    }
+}
+
+/* --- Bento Box de Estadísticas del Mes (Derecha) --- */
+#sessions-calendar-container,
+#polls-calendar-container,
+#sessions-month-summary,
+#polls-month-summary {
+    background: linear-gradient(135deg, rgba(20, 20, 20, 0.65) 0%, rgba(10, 10, 10, 0.98) 100%) !important;
+    border: 1px solid rgba(0, 112, 243, 0.25) !important;
+    border-radius: 16px !important;
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.55), 0 0 15px rgba(0, 112, 243, 0.05) !important;
+    backdrop-filter: blur(10px) !important;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease !important;
+}
+
+#sessions-calendar-container:hover,
+#polls-calendar-container:hover,
+#sessions-month-summary:hover,
+#polls-month-summary:hover {
+    border-color: rgba(0, 210, 255, 0.45) !important;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6), 0 0 25px rgba(0, 210, 255, 0.15) !important;
+}
+
+#summary-month-name {
+    font-size: 0.75rem !important;
+    font-weight: 800 !important;
+    letter-spacing: 1.5px !important;
+    color: #ffffff !important; /* Blanco premium */
+    text-transform: uppercase !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05) !important;
+    padding-bottom: 12px !important;
+    margin-bottom: 20px !important;
+    text-shadow: 0 0 10px rgba(255, 255, 255, 0.1) !important;
+}
+
+/* Tarjeta Base de Partidos Jugados: Borde Fino Ciber-Azul */
+.month-stat-card {
+    background: rgba(255,255,255,0.02) !important;
+    border: 1px solid rgba(0, 112, 243, 0.18) !important;
+    border-left: 4px solid #0070f3 !important;
+    padding: 16px 20px !important;
+    border-radius: 12px !important;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1) !important;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2) !important;
+}
+
+.month-stat-card:hover {
+    transform: translateX(6px) !important;
+    background: linear-gradient(90deg, rgba(0, 112, 243, 0.08) 0%, rgba(255, 255, 255, 0.02) 100%) !important;
+    border-color: rgba(0, 210, 255, 0.45) !important;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.35), 0 0 12px rgba(0, 210, 255, 0.15) !important;
+}
+
+/* Victorias (Glow Verde) con Borde Fino */
+.month-stat-card[style*="border-left: 3px solid var(--success)"],
+.month-stat-card[style*="border-left-color: var(--success)"],
+.month-stat-card[style*="var(--success)"] {
+    border: 1px solid rgba(76, 175, 80, 0.22) !important;
+    border-left: 4px solid var(--success) !important;
+}
+.month-stat-card[style*="border-left: 3px solid var(--success)"]:hover,
+.month-stat-card[style*="border-left-color: var(--success)"]:hover,
+.month-stat-card[style*="var(--success)"]:hover {
+    background: linear-gradient(90deg, rgba(76, 175, 80, 0.08) 0%, rgba(255, 255, 255, 0.02) 100%) !important;
+    border-color: rgba(76, 175, 80, 0.45) !important;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.35), 0 0 12px rgba(76, 175, 80, 0.15) !important;
+}
+
+/* Empates (Glow Amarillo) con Borde Fino */
+.month-stat-card[style*="border-left: 3px solid #FFC107"],
+.month-stat-card[style*="border-left-color: #FFC107"],
+.month-stat-card[style*="#FFC107"] {
+    border: 1px solid rgba(255, 193, 7, 0.22) !important;
+    border-left: 4px solid #FFC107 !important;
+}
+.month-stat-card[style*="border-left: 3px solid #FFC107"]:hover,
+.month-stat-card[style*="border-left-color: #FFC107"]:hover,
+.month-stat-card[style*="#FFC107"]:hover {
+    background: linear-gradient(90deg, rgba(255, 193, 7, 0.08) 0%, rgba(255, 255, 255, 0.02) 100%) !important;
+    border-color: rgba(255, 193, 7, 0.45) !important;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.35), 0 0 12px rgba(255, 193, 7, 0.15) !important;
+}
+
+/* Derrotas (Glow Rojo) con Borde Fino */
+.month-stat-card[style*="border-left: 3px solid var(--error)"],
+.month-stat-card[style*="border-left-color: var(--error)"],
+.month-stat-card[style*="var(--error)"] {
+    border: 1px solid rgba(244, 67, 54, 0.22) !important;
+    border-left: 4px solid var(--error) !important;
+}
+.month-stat-card[style*="border-left: 3px solid var(--error)"]:hover,
+.month-stat-card[style*="border-left-color: var(--error)"]:hover,
+.month-stat-card[style*="var(--error)"]:hover {
+    background: linear-gradient(90deg, rgba(244, 67, 54, 0.08) 0%, rgba(255, 255, 255, 0.02) 100%) !important;
+    border-color: rgba(244, 67, 54, 0.45) !important;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.35), 0 0 12px rgba(244, 67, 54, 0.15) !important;
+}
+
+.month-stat-card .label {
+    font-size: 0.65rem !important;
+    font-weight: 800 !important;
+    color: var(--text-muted) !important;
+    text-transform: uppercase !important;
+    letter-spacing: 1.2px !important;
+}
+
+.month-stat-card .value {
+    font-size: 1.6rem !important;
+    font-weight: 900 !important;
+    color: #ffffff !important;
+    text-shadow: 0 0 15px rgba(255, 255, 255, 0.15) !important;
+}
+
+/* --- Botones Navegadores de Meses de Cristal --- */
+.btn-cal-nav {
+    background: rgba(255, 255, 255, 0.03) !important;
+    border: 1px solid rgba(255, 255, 255, 0.08) !important;
+    color: #ffffff !important;
+    width: 38px !important;
+    height: 38px !important;
+    border-radius: 50% !important; /* Circular táctil */
+    cursor: pointer !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1) !important;
+    font-size: 0.95rem !important;
+    font-weight: 800 !important;
+}
+
+.btn-cal-nav:hover {
+    background: rgba(0, 210, 255, 0.1) !important; /* Sutil azul eléctrico en hover */
+    border-color: rgba(0, 210, 255, 0.4) !important;
+    color: #00d2ff !important; /* Azul eléctrico cibernético */
+    transform: scale(1.08) !important;
+    box-shadow: 0 0 15px rgba(0, 210, 255, 0.2) !important;
+}
+
+.btn-cal-nav:active {
+    transform: scale(0.92) !important;
+}
+
+@media (max-width: 480px) {
+    .btn-cal-nav {
+        width: 32px !important;
+        height: 32px !important;
+        font-size: 0.8rem !important;
+    }
+}
+
+/* --- Ajuste de DiseÃƒÆ’Ã‚Â±o Dual Asistencia v36.4 --- */
+@media (min-width: 1024px) {
+    #profile-attendance-container {
+        max-width: 100%;
+        margin: 2rem 0;
+        padding: 25px !important;
+    }
+    .attendance-dual-layout {
+        display: grid;
+        grid-template-columns: 1.2fr 0.8fr;
+        gap: 40px;
+        align-items: start;
+    }
+    .attendance-stats-column {
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+        padding: 20px;
+        background: rgba(255,255,255,0.01);
+        border-radius: 16px;
+        border: 1px solid rgba(255,255,255,0.03);
+    }
+    .month-stat-card {
+        background: rgba(255,255,255,0.03);
+        border-radius: 12px;
+        padding: 15px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border: 1px solid rgba(255,255,255,0.05);
+    }
+    .month-stat-card .label {
+        font-size: 0.7rem;
+        font-weight: 800;
+        text-transform: uppercase;
+        color: var(--text-muted);
+    }
+    .month-stat-card .value {
+        font-size: 1.5rem;
+        font-weight: 900;
+    }
+}
+
+@media (max-width: 1023px) {
+    .attendance-stats-column {
+        display: none;
+    }
+}
+
+/* --- HISTORIAL DE CONVOCATORIAS: TABLA ELITE v50.0 --- */
+.poll-history-table-container {
+    width: 100%;
+    background: rgba(15, 15, 15, 0.4);
+    backdrop-filter: blur(10px);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius-md);
+    overflow: hidden;
+    margin-bottom: 20px;
+}
+
+.poll-history-table-header {
+    display: grid;
+    grid-template-columns: 65px 1fr 1fr 1fr; /* MÃƒÂ³vil: Fecha reducida */
+    gap: 8px;
+
+    padding: 15px;
+    background: rgba(255, 255, 255, 0.03);
+    border-bottom: 1px solid var(--glass-border);
+    font-size: 0.65rem;
+    font-weight: 800;
+    color: var(--text-muted);
+    letter-spacing: 1px;
+}
+
+.poll-history-table-body {
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+    max-height: calc(5 * 55px); /* MÃƒÂ³vil: 5 filas aprox */
+}
+
+@media (min-width: 1024px) {
+    .poll-history-table-body {
+        max-height: calc(15 * 55px); /* PC: 15 filas aprox */
+    }
+    .poll-history-table-header {
+        grid-template-columns: 120px 1fr 60px 60px 60px 40px;
+    }
+}
+
+.poll-history-row {
+    display: grid;
+    grid-template-columns: 65px 1fr 1fr 1fr; /* MÃƒÂ³vil: Fecha reducida */
+    gap: 8px;
+
+    padding: 8px 10px;
+    align-items: center;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+    transition: all 0.3s ease;
+    cursor: pointer;
+    min-height: 55px;
+}
+
+@media (min-width: 1024px) {
+    .poll-history-row {
+        grid-template-columns: 120px 1fr 60px 60px 60px 40px;
+    }
+}
+
+
+.poll-history-row:hover {
+    background: rgba(240, 165, 0, 0.05);
+}
+
+.pht-col-date {
+    font-family: 'Outfit', sans-serif;
+    font-weight: 800;
+    font-size: 0.75rem;
+    color: var(--primary);
+}
+
+.pht-col-title {
+    font-size: 0.8rem;
+    font-weight: 600;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    color: #fff;
+}
+
+.pht-col-stat {
+    text-align: center;
+    font-weight: 800;
+    font-size: 0.85rem;
+    background: rgba(255, 255, 255, 0.03);
+    padding: 4px 0;
+    border-radius: 6px;
+    color: #fff;
+    min-width: 40px;
+}
+
+.pht-col-stat.stat-yes { color: var(--success); background: rgba(76, 175, 80, 0.05); }
+.pht-col-stat.stat-late { color: var(--primary); background: rgba(255, 152, 0, 0.05); }
+.pht-col-stat.stat-no { color: var(--error); background: rgba(244, 67, 54, 0.05); }
+
+.pht-col-actions {
+    display: flex;
+    justify-content: flex-end;
+    opacity: 0.4;
+}
+
+.month-filter-elite {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.premium-select-mini {
+    background: rgba(0, 0, 0, 0.3);
+    border: 1px solid var(--glass-border);
+    color: #fff;
+    padding: 5px 10px;
+    border-radius: 6px;
+    font-size: 0.7rem;
+    font-weight: 800;
+    outline: none;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+}
+
+.premium-select-mini:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 10px var(--primary-glow);
+}
+
+/* Ajuste de visibilidad de columnas */
+.pht-col-title, 
+.pht-col-actions {
+    display: none;
+}
+
+@media (min-width: 1024px) {
+    .pht-col-title, 
+    .pht-col-actions {
+        display: block;
+    }
+    .pht-col-actions {
+        display: flex;
+    }
+}
+
+
+
+
+
+
+/* --- Registro Interactivo de Goles Premium (v67.0) --- */
+.tactical-slot.pending-scorer {
+    border-color: var(--primary) !important;
+    background: rgba(240, 165, 0, 0.25) !important;
+    box-shadow: 0 0 30px rgba(240, 165, 0, 0.75), 0 0 0 2px var(--primary) !important;
+    animation: slotPulseScorer 1.2s infinite ease-in-out !important;
+    z-index: 100 !important;
+}
+
+@keyframes slotPulseScorer {
+    0% { transform: translate(-50%, -50%) scale(1); box-shadow: 0 0 20px rgba(240, 165, 0, 0.5), inset 0 0 8px rgba(240, 165, 0, 0.2) !important; }
+    50% { transform: translate(-50%, -50%) scale(1.06); box-shadow: 0 0 35px rgba(240, 165, 0, 0.85), inset 0 0 15px rgba(240, 165, 0, 0.4) !important; }
+    100% { transform: translate(-50%, -50%) scale(1); box-shadow: 0 0 20px rgba(240, 165, 0, 0.5), inset 0 0 8px rgba(240, 165, 0, 0.2) !important; }
+}
+
+.tactical-slot.pending-assistant {
+    border-color: #00d2ff !important;
+    background: rgba(0, 210, 255, 0.12) !important;
+    box-shadow: 0 0 25px rgba(0, 210, 255, 0.55), inset 0 0 8px rgba(0, 210, 255, 0.2) !important;
+    animation: slotPulseAssistant 1.4s infinite ease-in-out !important;
+    z-index: 90 !important;
+}
+
+@keyframes slotPulseAssistant {
+    0% { transform: translate(-50%, -50%) scale(1); box-shadow: 0 0 15px rgba(0, 210, 255, 0.35) !important; }
+    50% { transform: translate(-50%, -50%) scale(1.04); box-shadow: 0 0 28px rgba(0, 210, 255, 0.65) !important; }
+    100% { transform: translate(-50%, -50%) scale(1); box-shadow: 0 0 15px rgba(0, 210, 255, 0.35) !important; }
+}
+
+/* Event log elements override (for dynamic HTML in vertical layout) */
+.event-item {
+    background: rgba(20, 20, 20, 0.6) !important;
+    border: 1px solid rgba(255, 255, 255, 0.04) !important;
+    border-left: 3px solid var(--primary) !important;
+    border-radius: 8px !important;
+    padding: 7px 10px !important;
+    margin-bottom: 5px !important;
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    gap: 6px !important;
+    font-size: 0.72rem !important;
+    color: #ffffff !important;
+    width: 100% !important;
+    box-shadow: 0 3px 8px rgba(0,0,0,0.45) !important;
+    box-sizing: border-box !important;
+    animation: slideInEvent 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards !important;
+    transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1) !important;
+    min-height: 36px !important;
+}
+
+.event-item:hover {
+    background: rgba(30, 30, 30, 0.75) !important;
+    border-left-color: var(--primary) !important;
+    box-shadow: 0 4px 12px rgba(240, 165, 0, 0.1), 0 3px 8px rgba(0,0,0,0.45) !important;
+}
+
+/* Lado izquierdo: ⚽ + nombre goleador */
+.event-scorer-side {
+    display: flex !important;
+    align-items: center !important;
+    gap: 5px !important;
+    flex: 1 !important;
+    min-width: 0 !important;
+    overflow: hidden !important;
+}
+
+.event-ball-icon {
+    font-size: 0.8rem !important;
+    flex-shrink: 0 !important;
+}
+
+.event-scorer-name {
+    font-family: 'Outfit', sans-serif !important;
+    font-size: 0.72rem !important;
+    font-weight: 800 !important;
+    color: var(--primary) !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.3px !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+}
+
+/* Lado derecho: asistente + botón × */
+.event-right-side {
+    display: flex !important;
+    align-items: center !important;
+    gap: 6px !important;
+    flex-shrink: 0 !important;
+}
+
+/* Bloque asistente */
+.event-assist-block {
+    display: flex !important;
+    align-items: center !important;
+    gap: 3px !important;
+    background: rgba(0, 210, 255, 0.06) !important;
+    border: 1px solid rgba(0, 210, 255, 0.18) !important;
+    border-radius: 5px !important;
+    padding: 2px 6px !important;
+}
+
+.event-assist-icon {
+    font-size: 0.65rem !important;
+    line-height: 1 !important;
+}
+
+.event-assist-name {
+    font-family: 'Outfit', sans-serif !important;
+    font-size: 0.6rem !important;
+    font-weight: 800 !important;
+    color: #00d2ff !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.3px !important;
+    white-space: nowrap !important;
+    max-width: 70px !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+}
+
+/* Botón eliminar evento */
+.event-remove-btn {
+    background: rgba(244, 67, 54, 0.08) !important;
+    border: 1px solid rgba(244, 67, 54, 0.22) !important;
+    color: #ff8a80 !important;
+    border-radius: 50% !important;
+    width: 18px !important;
+    height: 18px !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    font-size: 0.75rem !important;
+    cursor: pointer !important;
+    flex-shrink: 0 !important;
+    transition: all 0.2s ease !important;
+    padding: 0 !important;
+    line-height: 1 !important;
+}
+
+.event-remove-btn:hover {
+    background: rgba(244, 67, 54, 0.8) !important;
+    color: #fff !important;
+    border-color: #f44336 !important;
+    transform: scale(1.15) !important;
+}
+
+/* Estado vacío */
+.events-empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 24px 10px;
+    gap: 8px;
+    color: rgba(255, 255, 255, 0.18);
+    font-family: 'Outfit', sans-serif;
+    font-size: 0.62rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1.2px;
+}
+
+.events-empty-icon {
+    font-size: 1.6rem;
+    opacity: 0.2;
+}
+
+@keyframes slideInEvent {
+    from {
+        opacity: 0;
+        transform: translateY(8px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.floating-action-bar {
+    position: fixed;
+    bottom: 110px;
+    left: 50%;
+    transform: translateX(-50%) translateY(30px);
+    background: linear-gradient(145deg, #1a1a1a 0%, #050505 100%);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255,255,255,0.1);
+    padding: 10px 20px;
+    border-radius: 50px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    z-index: 2000;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.6), 0 0 20px rgba(240, 165, 0, 0.1);
+    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    opacity: 0;
+    pointer-events: none;
+}
+
+.floating-action-bar.active {
+    transform: translateX(-50%) translateY(0);
+    opacity: 1;
+    pointer-events: all;
+}
+
