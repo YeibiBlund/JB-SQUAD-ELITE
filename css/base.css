@@ -9,7 +9,8 @@
     --bg-card: #1a1a1a;
     
     --primary: #f0a500; /* Oro / Ámbar Eléctrico */
-    --primary-glow: rgba(240, 165, 0, 0.3);
+    --primary-rgb: 240, 165, 0;
+    --primary-glow: rgba(var(--primary-rgb), 0.3);
     --secondary: #222222;
     --text-main: #ffffff;
     --text-muted: #888888;
@@ -94,3 +95,4 @@ body {
         width: 100%;
     }
 }
+

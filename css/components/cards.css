@@ -17,7 +17,7 @@
     background: linear-gradient(135deg, rgba(22, 22, 22, 0.75) 0%, rgba(8, 8, 8, 0.98) 100%) !important;
     backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
-    border: 1px solid rgba(240, 165, 0, 0.08) !important;
+    border: 1px solid rgba(var(--primary-rgb), 0.08) !important;
     border-radius: 14px;
     box-shadow: 0 10px 40px rgba(0, 0, 0, 0.6);
     transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
@@ -25,8 +25,8 @@
 
 .card-elite-premium:hover {
     transform: translateY(-4px);
-    border-color: rgba(240, 165, 0, 0.25) !important;
-    box-shadow: 0 15px 45px rgba(240, 165, 0, 0.12);
+    border-color: rgba(var(--primary-rgb), 0.25) !important;
+    box-shadow: 0 15px 45px rgba(var(--primary-rgb), 0.12);
 }
 
 /* Navegación de Rankings en Móvil */
@@ -59,10 +59,10 @@
 }
 
 .mobile-ranking-nav-btn.active {
-    background: rgba(240, 165, 0, 0.18) !important;
-    border-color: rgba(240, 165, 0, 0.4) !important;
+    background: rgba(var(--primary-rgb), 0.18) !important;
+    border-color: rgba(var(--primary-rgb), 0.4) !important;
     color: #fff !important;
-    box-shadow: 0 0 12px rgba(240, 165, 0, 0.15);
+    box-shadow: 0 0 12px rgba(var(--primary-rgb), 0.15);
 }
 
 /* Efectos de Hover y Diseño Bento para Escritorio */
@@ -151,7 +151,7 @@
 
 .player-roster-card.match-primary {
     border-color: var(--primary);
-    background: linear-gradient(90deg, rgba(240, 165, 0, 0.1), rgba(10,10,10,0.9));
+    background: linear-gradient(90deg, rgba(var(--primary-rgb), 0.1), rgba(10,10,10,0.9));
     box-shadow: 0 0 12px var(--primary-glow);
 }
 .player-roster-card.match-primary::before { background: var(--primary); }
@@ -203,7 +203,7 @@
     padding: 15px 5px 5px 5px;
     text-transform: uppercase;
     opacity: 0.7;
-    border-bottom: 1px solid rgba(240,165,0,0.2);
+    border-bottom: 1px solid rgba(var(--primary-rgb),0.2);
     margin-bottom: 10px;
     display: flex;
     justify-content: space-between;
@@ -500,7 +500,7 @@
 
 /* --- Botones Elite v5.1 --- */
 .btn-elite {
-    background: linear-gradient(135deg, #F0A500 0%, #C49102 100%);
+    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
     border: 1px solid rgba(255, 255, 255, 0.2);
     color: #000 !important;
     padding: 10px 20px;
@@ -521,7 +521,7 @@
 
 .btn-elite:hover {
     transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(240, 165, 0, 0.4);
+    box-shadow: 0 6px 20px rgba(var(--primary-rgb), 0.4);
     filter: brightness(1.1);
 }
 
@@ -532,7 +532,7 @@
 /* --- Botones Header Acciones (Premium Glassmorphism) --- */
 .btn-header-action {
     background: rgba(20, 20, 20, 0.6);
-    border: 1px solid rgba(240, 165, 0, 0.3);
+    border: 1px solid rgba(var(--primary-rgb), 0.3);
     color: #fff !important;
     padding: 8px 16px;
     border-radius: 8px;
@@ -542,7 +542,7 @@
     letter-spacing: 1px;
     cursor: pointer;
     transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3), inset 0 0 10px rgba(240, 165, 0, 0.05);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3), inset 0 0 10px rgba(var(--primary-rgb), 0.05);
     backdrop-filter: blur(10px);
     display: inline-flex;
     align-items: center;
@@ -553,9 +553,9 @@
 
 .btn-header-action:hover {
     transform: translateY(-2px);
-    background: rgba(240, 165, 0, 0.15);
+    background: rgba(var(--primary-rgb), 0.15);
     border-color: var(--primary);
-    box-shadow: 0 6px 20px rgba(240, 165, 0, 0.3), inset 0 0 15px rgba(240, 165, 0, 0.2);
+    box-shadow: 0 6px 20px rgba(var(--primary-rgb), 0.3), inset 0 0 15px rgba(var(--primary-rgb), 0.2);
     color: var(--primary) !important;
 }
 
@@ -585,7 +585,7 @@
     border-left: 3px solid var(--primary);
     padding-left: 12px;
     text-transform: uppercase;
-    text-shadow: 0 0 10px rgba(240, 165, 0, 0.2);
+    text-shadow: 0 0 10px rgba(var(--primary-rgb), 0.2);
     font-family: 'Outfit', sans-serif;
 }
 
@@ -660,7 +660,7 @@
     transform: rotateY(180deg);
     background: linear-gradient(135deg, rgba(15, 15, 15, 0.98) 0%, rgba(5, 5, 5, 0.99) 100%);
     border: 2px solid var(--primary);
-    box-shadow: 0 20px 40px rgba(0,0,0,0.8), 0 0 25px rgba(240, 165, 0, 0.15);
+    box-shadow: 0 20px 40px rgba(0,0,0,0.8), 0 0 25px rgba(var(--primary-rgb), 0.15);
     display: flex;
     flex-direction: column;
     padding: 15px;
@@ -704,7 +704,7 @@
         transform: translateY(-6px) scale(1.015) !important;
         box-shadow: 0 15px 35px rgba(0, 0, 0, 0.85), 
                     0 28px 70px rgba(245, 200, 83, 0.8),  /* Espectacular baño de luz dorada */
-                    0 12px 35px rgba(240, 165, 0, 0.55),  /* Núcleo de calor naranja */
+                    0 12px 35px rgba(var(--primary-rgb), 0.55),  /* Núcleo de calor naranja */
                     0 5px 18px rgba(255, 255, 255, 0.5) !important;  /* Destello focal blanco en la base */
     }
 
@@ -730,7 +730,7 @@
 /* Dorsal Premium Outlined Style */
 .cards-squad-grid .dorsal-large {
     font-family: 'Outfit', sans-serif !important;
-    color: #f5c853 !important;
+    color: var(--primary-light) !important;
     text-shadow: 2px 2px 0px #000, 
                  -2px -2px 0px #000, 
                  2px -2px 0px #000, 
@@ -753,7 +753,7 @@
     border: 1px solid var(--primary) !important;
     color: var(--primary) !important;
     font-weight: 900 !important;
-    text-shadow: 0 0 4px rgba(240, 165, 0, 0.3) !important;
+    text-shadow: 0 0 4px rgba(var(--primary-rgb), 0.3) !important;
     box-shadow: 0 4px 8px rgba(0,0,0,0.6) !important;
     backdrop-filter: blur(2px) !important;
     -webkit-backdrop-filter: blur(2px) !important;
@@ -786,7 +786,7 @@
 }
 
 .cards-squad-grid .name-banner-large h2 {
-    background: linear-gradient(to bottom, #ffffff 0%, #f5c853 100%) !important;
+    background: linear-gradient(to bottom, #ffffff 0%, var(--primary-light) 100%) !important;
     -webkit-background-clip: text !important;
     -webkit-text-fill-color: transparent !important;
     font-family: 'Outfit', sans-serif !important;
@@ -832,7 +832,7 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    border-bottom: 1px solid rgba(240, 165, 0, 0.2);
+    border-bottom: 1px solid rgba(var(--primary-rgb), 0.2);
     padding-bottom: 8px;
     margin-bottom: 6px;
 }
@@ -998,4 +998,5 @@
     color: rgba(255,255,255,0.2);
     border: 1px dashed rgba(255,255,255,0.1);
 }
+
 

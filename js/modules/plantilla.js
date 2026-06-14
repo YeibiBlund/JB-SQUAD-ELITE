@@ -2,22 +2,42 @@
 
 // --- Renderizado de Jugadores y Tabla ---
 
-window.plantillaFilter = 'official'; // official, friendly, global
+window.plantillaFilter = 'global'; // official, friendly, global
 
 function getStatsByFilter(player) {
-    if (!player.stats) return { matches: 0, goals: 0, assists: 0, cleanSheets: 0, mvps: 0 };
+    if (!player.stats) return { matches: 0, goals: 0, assists: 0, cleanSheets: 0, mvps: 0, passes: 0, tackles: 0, rating: 0 };
+    let off = player.stats.official || {};
+    let fri = player.stats.friendly || {};
+    
     if (window.plantillaFilter === 'global') {
-        const off = player.stats.official || {};
-        const fri = player.stats.friendly || {};
+        let ratingSum = (off.rating_sum || 0) + (fri.rating_sum || 0);
+        let ratingCount = (off.rating_count || 0) + (fri.rating_count || 0);
         return {
             matches: (off.matches || 0) + (fri.matches || 0),
             goals: (off.goals || 0) + (fri.goals || 0),
             assists: (off.assists || 0) + (fri.assists || 0),
             cleanSheets: (off.cleanSheets || 0) + (fri.cleanSheets || 0),
-            mvps: (off.mvps || 0) + (fri.mvps || 0)
+            mvps: (off.mvps || 0) + (fri.mvps || 0) + (player.mvp_count || 0),
+            passes: (off.passesCompleted || 0) + (fri.passesCompleted || 0),
+            tackles: (off.tacklesCompleted || 0) + (fri.tacklesCompleted || 0),
+            rating: ratingCount > 0 ? (ratingSum / ratingCount) : 0
         };
     }
-    return player.stats[window.plantillaFilter] || { matches: 0, goals: 0, assists: 0, cleanSheets: 0, mvps: 0 };
+    
+    let active = player.stats[window.plantillaFilter] || {};
+    let mvps = (active.mvps || 0);
+    if (window.plantillaFilter === 'official') mvps += (player.mvp_count || 0); // fallback for legacy MVP
+    
+    return {
+        matches: active.matches || 0,
+        goals: active.goals || 0,
+        assists: active.assists || 0,
+        cleanSheets: active.cleanSheets || 0,
+        mvps: mvps,
+        passes: active.passesCompleted || 0,
+        tackles: active.tacklesCompleted || 0,
+        rating: (active.rating_count && active.rating_count > 0) ? (active.rating_sum / active.rating_count) : 0
+    };
 }
 
 function sortPlayersData(playersArray) {
@@ -37,14 +57,14 @@ function sortPlayersData(playersArray) {
             return sortConfig.desc ? (rankB - rankA) : (rankA - rankB);
         }
 
-        if (['matches', 'goals', 'assists', 'cleanSheets'].includes(sortConfig.key)) {
+        if (['matches', 'goals', 'assists', 'cleanSheets', 'mvps', 'passes', 'tackles', 'rating'].includes(sortConfig.key)) {
             valA = getStatsByFilter(a)[sortConfig.key] || 0;
             valB = getStatsByFilter(b)[sortConfig.key] || 0;
         }
 
-        if (['matches', 'goals', 'assists', 'cleanSheets', 'dorsal'].includes(sortConfig.key)) {
-            valA = parseInt(valA) || 0;
-            valB = parseInt(valB) || 0;
+        if (['matches', 'goals', 'assists', 'cleanSheets', 'mvps', 'passes', 'tackles', 'rating', 'dorsal'].includes(sortConfig.key)) {
+            valA = parseFloat(valA) || 0;
+            valB = parseFloat(valB) || 0;
         } else {
             valA = (valA || '').toString().toLowerCase();
             valB = (valB || '').toString().toLowerCase();
@@ -83,15 +103,26 @@ window.setupTableSorting = function() {
             renderPlayers();
         });
     });
+
+    const btnToggle = document.getElementById('btn-toggle-actions');
+    if (btnToggle) {
+        btnToggle.addEventListener('click', () => {
+            const container = document.querySelector('.player-table-container');
+            if (container) container.classList.toggle('edit-mode');
+        });
+    }
 }
 
 function updateSortHeaders() {
     document.querySelectorAll('.th-sortable').forEach(th => {
-        let originalText = th.innerText.replace(' ▲', '').replace(' ▼', '');
+        // Asegurarnos de limpiar cualquier flecha residual antigua
+        th.innerText = th.innerText.replace(' ▲', '').replace(' ▼', '');
+        
         if (th.getAttribute('data-sort') === sortConfig.key) {
-            originalText += sortConfig.desc ? ' ▼' : ' ▲';
+            th.classList.add('active-sort');
+        } else {
+            th.classList.remove('active-sort');
         }
-        th.innerText = originalText;
     });
 }
 
@@ -124,10 +155,19 @@ window.renderPlayers = function() {
         const badgeColor = getPositionColorClass(player.primaryPos);
         
         const stats = getStatsByFilter(player);
+        const nota = stats.rating > 0 ? stats.rating.toFixed(1) : '-';
         const pj = stats.matches || 0;
         const gl = stats.goals || 0;
         const ast = stats.assists || 0;
         const p0 = stats.cleanSheets || 0;
+        const pas = stats.passes || 0;
+        const rob = stats.tackles || 0;
+        const mvp = stats.mvps || 0;
+
+        let ratingColor = '#fff';
+        if (stats.rating >= 8.0) ratingColor = '#00ff88';
+        else if (stats.rating >= 6.0) ratingColor = '#f0a500';
+        else if (stats.rating > 0) ratingColor = '#ff4444';
 
         const avatar = AVATARS.find(av => av.id === (player.avatarId || player.avatar_id || 1));
         const photo = player.photo_url;
@@ -149,13 +189,15 @@ window.renderPlayers = function() {
                     ${escapeHTML(player.consoleID || '')}
                 </span>
             </div>
+            <div class="stat-cell cell-center" style="font-size: 0.85rem; color: ${ratingColor};" data-label="NOTA">${nota}</div>
             <div class="stat-cell cell-center" style="font-size: 0.85rem;" data-label="PJ">${pj}</div>
             <div class="stat-cell cell-center" style="font-size: 0.85rem;" data-label="G">${gl}</div>
             <div class="stat-cell cell-center" style="font-size: 0.85rem;" data-label="A">${ast}</div>
             <div class="stat-cell cell-center" style="font-size: 0.85rem;" data-label="P0">${p0}</div>
-            <div style="display: flex; justify-content: flex-end;">
-                ${(isAdmin || isSelf) ? `<button class="btn-delete-row" title="Abandonar/Expulsar" onclick="window.confirmDelete('${player.id}')">🗑️</button>` : ''}
-            </div>
+            <div class="stat-cell cell-center" style="font-size: 0.85rem;" data-label="PAS">${pas}</div>
+            <div class="stat-cell cell-center" style="font-size: 0.85rem;" data-label="ROB">${rob}</div>
+            <div class="stat-cell cell-center" style="font-size: 0.85rem; color: var(--primary);" data-label="MVP">${mvp}</div>
+            ${(isAdmin || isSelf) ? `<div class="row-actions-overlay"><button class="btn-delete-row" title="Abandonar/Expulsar" onclick="window.confirmDelete('${player.id}')">🗑️</button></div>` : ''}
         `;
         playerList.appendChild(playerRow);
     });

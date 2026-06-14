@@ -126,6 +126,12 @@ async function loadTeamData() {
                     customPositions: t.custom_positions || {},
                     isActive: t.is_active
                 }));
+                const activeT = window.state.savedTactics.find(t => t.isActive);
+                if (activeT) {
+                    window.state.activeTacticId = activeT.id;
+                } else if (window.state.savedTactics.length > 0) {
+                    window.state.activeTacticId = window.state.savedTactics[0].id;
+                }
             }
         }
 
@@ -356,7 +362,10 @@ async function savePlayerCloud(player) {
             photo_scale: player.photo_scale,
             photo_x: player.photo_x,
             photo_y: player.photo_y,
-            stats: player.stats || { official: { goals: 0, assists: 0, matches: 0, wins: 0 }, friendly: { goals: 0, assists: 0, matches: 0, wins: 0 } },
+            stats: player.stats || { 
+                official: { goals: 0, assists: 0, matches: 0, wins: 0, passesAttempted: 0, passesCompleted: 0, tacklesAttempted: 0, tacklesCompleted: 0, rating_sum: 0, rating_count: 0 }, 
+                friendly: { goals: 0, assists: 0, matches: 0, wins: 0, passesAttempted: 0, passesCompleted: 0, tacklesAttempted: 0, tacklesCompleted: 0, rating_sum: 0, rating_count: 0 } 
+            },
             always_available: player.alwaysAvailable || false
         };
 
@@ -433,8 +442,8 @@ async function recalculateAllStats() {
         // 1. Resetear estadísticas locales de todos los jugadores
         state.players.forEach(p => {
             p.stats = {
-                official: { goals: 0, assists: 0, matches: 0, wins: 0, mvps: 0, cleanSheets: 0 },
-                friendly: { goals: 0, assists: 0, matches: 0, wins: 0, mvps: 0, cleanSheets: 0 }
+                official: { goals: 0, assists: 0, matches: 0, wins: 0, mvps: 0, cleanSheets: 0, saves: 0, passesAttempted: 0, passesCompleted: 0, tacklesAttempted: 0, tacklesCompleted: 0, rating_sum: 0, rating_count: 0 },
+                friendly: { goals: 0, assists: 0, matches: 0, wins: 0, mvps: 0, cleanSheets: 0, saves: 0, passesAttempted: 0, passesCompleted: 0, tacklesAttempted: 0, tacklesCompleted: 0, rating_sum: 0, rating_count: 0 }
             };
             p.mvp_count = 0;
         });
@@ -538,6 +547,41 @@ async function recalculateAllStats() {
                         
                         if (scorer) scorer.stats[mType].goals++;
                         if (assistant) assistant.stats[mType].assists++;
+                    });
+                }
+                
+                // 3.2.5. Sumar Estadísticas Avanzadas EA (si existen)
+                if (match.eaPlayers && typeof match.eaPlayers === 'object') {
+                    Object.keys(match.eaPlayers).forEach(pId => {
+                        const player = state.players.find(p => p.id.toString() === pId.toString() || p.consoleID === pId.toString());
+                        if (player) {
+                            const eaData = match.eaPlayers[pId];
+                            
+                            // Goles y asistencias si vienen directamente de EA (y no por eventos manuales)
+                            if (!match.events || match.events.length === 0) {
+                                player.stats[mType].goals += (parseInt(eaData.goals) || 0);
+                                player.stats[mType].assists += (parseInt(eaData.assists) || 0);
+                            }
+
+                            // Analíticas avanzadas
+                            player.stats[mType].passesAttempted = (player.stats[mType].passesAttempted || 0) + (parseInt(eaData.passattempts) || 0);
+                            player.stats[mType].passesCompleted = (player.stats[mType].passesCompleted || 0) + (parseInt(eaData.passesmade) || 0);
+                            player.stats[mType].tacklesAttempted = (player.stats[mType].tacklesAttempted || 0) + (parseInt(eaData.tackleattempts) || 0);
+                            player.stats[mType].tacklesCompleted = (player.stats[mType].tacklesCompleted || 0) + (parseInt(eaData.tacklesmade) || 0);
+                            player.stats[mType].saves = (player.stats[mType].saves || 0) + (parseInt(eaData.saves) || 0);
+                            
+                            // Rating (Sumar y contar para luego hacer media)
+                            const rating = parseFloat(eaData.rating);
+                            if (!isNaN(rating) && rating > 0) {
+                                player.stats[mType].rating_sum = (player.stats[mType].rating_sum || 0) + rating;
+                                player.stats[mType].rating_count = (player.stats[mType].rating_count || 0) + 1;
+                            }
+                            
+                            // MVP de EA
+                            if (eaData.mom === "1") {
+                                player.stats[mType].mvps = (player.stats[mType].mvps || 0) + 1;
+                            }
+                        }
                     });
                 }
                 // 3.3. MVP de partido (si existiera en el futuro)

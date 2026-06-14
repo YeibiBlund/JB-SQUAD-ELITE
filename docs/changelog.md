@@ -1,3 +1,22 @@
+## [v69.0.0] - 2026-06-14 | 19:35
+### 🎨 Optimización Móvil y Selector de Temas Globales (Mi Perfil)
+- **Expansión de Área Útil Móvil**: Ajuste de los márgenes en la vista `#view-my-profile` para aprovechar todo el ancho de las pantallas móviles (márgenes negativos que eliminan espacios vacíos laterales).
+- **Rediseño del Bloque Identidad (Gamer ID)**:
+  - Imagen de jugador redimensionada y ampliada a 110x110px.
+  - Tipografía del Gamer ID reducida levemente para equilibrar el protagonismo visual hacia la fotografía.
+- **Roles Secundarios Minimalistas**: Eliminación del contenedor masivo de "Roles Secundarios". Los badges de posiciones secundarias ahora se insertan de manera compacta justo debajo del Gamer ID y las redes sociales, utilizando tipografías ultra pequeñas (`0.5rem`) que no interfieren visualmente.
+- **Header de Acciones Adaptativo (`flex: 1`)**: Los botones de acción de cabecera ("Panel Master", "Mi Equipo", "Editar Ficha") ahora comparten obligatoriamente la misma línea horizontal en dispositivos móviles. Usan un modelo flex equitativo (`33/33/33` o `50/50`) con autoescalado de texto para garantizar que siempre entren independientemente del rango del usuario.
+- **Selector de Temas Dinámico Premium**:
+  - Creación de un sistema de temas para toda la aplicación que permite personalizar el color "amarillo" por defecto.
+  - Reubicación del "Theme Picker" a un discreto botón vectorial (🎨) directamente en el menú de acciones superior del perfil.
+  - Al pulsar, despliega un Popover elegante con efecto *glassmorphism* que lista las opciones de paletas de color (Oro Leyenda, Azul Neón, Rojo Carmesí, Verde Esmeralda, Violeta Twitch).
+  - Aplicación inteligente a toda la UI: Refactorización masiva en miles de líneas de código (HTML, CSS y JS). Se sustituyeron todos los colores estáticos (`#f0a500`, `rgba(240,165,0)`) por variables inyectables (`--primary`, `--primary-rgb`, `--primary-glow`). Esto transforma dinámicamente **todos** los brillos, bordes de tarjetas, nombres de jugador, textos e iconos de la aplicación, garantizando una inmersión absoluta sin rastros del color por defecto.
+
+### 📊 Mejoras en Historial de Partidos y Convocatorias
+- **Detalle de Goles y Asistencias en Móvil**: Optimizado el layout del panel de detalle de partido en pantallas móviles. Ahora el Goleador (con su icono del balón) se alinea a la izquierda y el Asistente (con la flecha verde) se alinea a la derecha ocupando la misma línea, optimizando drásticamente la altura de la tarjeta.
+- **Retrocompatibilidad de Partidos Legacy**: Solucionado un problema donde los partidos muy antiguos guardados con un formato de datos antiguo no permitían expandir el detalle de goles y asistencias. Se implementó una lógica de `fallback` que mapea correctamente los arrays de estadísticas (`stats` vs `legacy`) para que el historial sea 100% consultable independientemente de la fecha en que se jugó.
+- **Limpieza de UI de Convocatorias**: En la versión móvil, si no hay ninguna convocatoria ("poll") activa o pendiente en el club, ahora simplemente desaparece el bloque completo, eliminando el texto residual "No hay convocatoria activa" para ahorrar espacio valioso en el Dashboard principal.
+
 ## [v68.0.0] - 2026-05-25 | 11:30
 ### 🎨 Renovación Premium de UI (Dashboard & Navbar) y Accesos Rápidos
 - **Rediseño Estructural del Dashboard**: Las tablas de métricas y componentes del inicio se han encapsulado en nuevas "tarjetas" con mucho más flow y diseño premium. El "Rendimiento del Club", "Racha en curso", "Jugadores" y "Jornadas" ahora viven en contenedores propios para mejorar la lectura y estética.

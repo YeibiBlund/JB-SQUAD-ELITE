@@ -504,7 +504,7 @@ function renderPitch(targetPitch = pitch, forcedTactic = null) {
         validForcedTactic = null;
     }
 
-    const activeTactic = validForcedTactic || state.savedTactics.find(t => t.id === state.activeTacticId);
+    const activeTactic = validForcedTactic || state.savedTactics.find(t => t.id === state.activeTacticId) || state.savedTactics.find(t => t.isActive) || (state.savedTactics.length > 0 ? state.savedTactics[0] : null);
     if (!activeTactic) {
         if (targetPitch === pitch) {
             return handleTacticViewDisplay();

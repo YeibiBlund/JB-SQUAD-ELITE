@@ -1,223 +1,169 @@
-# Plan de Remodelación Arquitectónica: JB-SQUAD ELITE 🚀
+# Investigación y Conexión con Telemetría de EA Sports (PRO CLUBS) 🎮
 
-Este documento detalla el plan de remodelación y refactorización a gran escala para **JB-SQUAD ELITE**. El objetivo es limpiar la arquitectura actual, eliminar el código espagueti y separar los archivos monolíticos en un sistema modular y escalable de alto rendimiento **sin romper ninguna funcionalidad existente y garantizando la total integridad del sistema de roles**.
+Hemos logrado penetrar las barreras de EA Sports y obtener acceso directo a los datos de los partidos de Clubes Pro (FC 24 / FC 25). Aquí está TODO el contexto y descubrimientos técnicos para poder continuar el desarrollo.
 
----
+### 1. El Problema del CORS y la Solución (Edge Function)
+La API de EA (`https://proclubs.ea.com/api/fc/clubs/matches`) es pública, pero bloquea las peticiones desde el navegador (CORS) a menos que se hagan desde `ea.com`. 
+- **Solución:** Creamos una *Edge Function* en Supabase llamada `ea-fetcher` escrita en Deno/TypeScript. Esta función actúa como un puente (Proxy). Nuestro Front-End llama a Supabase, y Supabase llama a EA falsificando las cabeceras (`Referer` y `User-Agent`), saltándose el bloqueo CORS.
+- **Autenticación:** Para facilitar el acceso desde la app, deshabilitamos el "Enforce JWT" en Supabase para esta función y utilizamos la clave pública `anon` (`eyJ...`) en la cabecera `Authorization`.
 
-## 📋 PANEL DE SEGUIMIENTO (ROADMAP CHECKLIST)
+### 2. La Estructura de Datos de EA
+Cuando llamamos a la API enviando `clubId` (Ej: 3597) y `matchType` (Ej: `friendlyMatch`), EA devuelve un Array de los últimos partidos. Cada partido incluye:
+- `matchId`: ID único del partido (vital para evitar duplicados).
+- `timestamp` y `timeAgo`: Fecha y hora exacta.
+- `clubs`: Diccionario con ambos equipos. Contiene los resultados, goles (`goals`), goles en contra (`goalsAgainst`), y resultados brutos (`wins`, `ties`, `losses`).
+- `players`: Diccionario dividido por equipo, que contiene todos los jugadores que participaron y sus estadísticas súper detalladas.
 
-> [!IMPORTANT]
-> **REGLA DE ORO ACTIVADA:** No se realizará ningún Git Push a producción hasta completar y verificar el 100% de la refactorización para evitar interrupciones de servicio.
+### 3. Estadísticas Individuales Descubiertas (¡El Tesoro!)
+Para cada jugador, EA devuelve un objeto gigantesco. Hasta ahora hemos procesado y extraído:
+- `playername`: El nombre de usuario en la consola (GamerTag / PSN ID). **Este es nuestro puente de enlace con la base de datos de JB-SQUAD (columna `console_id`).**
+- `pos`: Posición que jugó (midfielder, forward, defender, goalkeeper).
+- `rating`: La nota oficial del jugador en ese partido (Ej: "7.30").
+- `goals` y `assists`: Goles y Asistencias directas.
+- `passattempts` y `passesmade`: Pases intentados y completados (Ideal para calcular el % de pases).
+- `tackleattempts` y `tacklesmade`: Entradas intentadas y completadas (Balones recuperados).
+#### 3.1. Listado Exhaustivo de Datos Potenciales (Diccionario Completo EA)
+Analizando el JSON bruto de EA, hemos detectado que devuelven todo este abanico de métricas individuales. Aunque de momento no usemos la mayoría, este es el "Diccionario de Datos" completo que podríamos explotar en el futuro:
 
-*   [x] **Fase 0: Copia de Seguridad Local** *(Completado por el usuario)*
-*   [x] **Fase 1: Limpieza de Archivos Huérfanos** *(Completado)*
-*   [x] **Fase 2: Consolidación de Configuración Base & Utilidades** *(Completado)*
-*   [x] **Fase 3: Modularización de CSS (Importación jerárquica ordenada)** *(Completado)*
-*   [x] **Fase 4: Extracción de Módulos IIFE Funcionales** *(Completado)*
-    *   [x] `navigation.js` (Estructura de roles RBAC central)
-    *   [x] `calendario.js` (Los tres calendarios de UI)
-    *   [x] `plantilla.js` (Jugadores, FUT Cards y ordenación)
-    *   [x] `perfil.js` (Edición de fichas y fotos)
-    *   [x] `dashboard.js` (Widgets de home y filtros)
-    *   [x] `tacticas.js` (Pizarra de juego responsiva)
-    *   [x] `jornadas.js` (Partidos, FAB y Getters/Setters)
-    *   [x] `convocatorias.js` (Check-in y banner dinámico)
-    *   [x] `equipo.js` (Ajustes de club y membresías)
-    *   [x] `matchday.js` (Generador de carteles de difusión)
-    *   [x] `rivales.js` (Agregación e historial H2H)
-*   [x] **Fase 5: Conexión Final de scripts y limpieza en `index.html`** *(Completado)*
-*   [ ] **Fase 6: Suite Completa de Verificación de Funcionalidades & Roles** *(Pendiente)*
+**⚽ Ofensiva y Generación de Juego:**
+- `goals`: Goles marcados.
+- `assists`: Asistencias dadas.
+- `shots`: Tiros totales realizados.
+- `passattempts`: Pases intentados.
+- `passesmade`: Pases completados con éxito (Ideal para % de precisión).
+- `SCORE`: Puntuación bruta ofensiva acumulada.
 
----
+**🛡️ Defensiva y Destrucción:**
+- `tackleattempts`: Entradas intentadas.
+- `tacklesmade`: Entradas con éxito (Balones recuperados).
+- `cleansheetsdef`: Portería a cero (Booleano exclusivo para Defensas).
+- `cleansheetsany`: Portería a cero global.
 
+**🧤 Métricas Exclusivas de Porteros (Goalkeepers):**
+- `saves`: Paradas totales.
+- `ballDiveSaves`: Paradas con estirada o palomita.
+- `crossSaves`: Salidas por alto completadas (centros).
+- `goodDirectionSaves`: Paradas por buena colocación/dirección.
+- `parrySaves`: Desvíos o rechaces exitosos.
+- `punchSaves`: Despejes de puños.
+- `reflexSaves`: Paradas de reflejos puros.
+- `cleansheetsgk`: Portería a cero (Exclusivo de Portero).
+- `goalsconceded`: Goles encajados por el portero.
 
-## 1. Análisis del Estado Actual 🔍
+**⚖️ Disciplina, Resultados y MVP:**
+- `mom`: Man of the Match (MVP del partido, devuelve `1` o `0`).
+- `rating`: Nota o valoración del partido (Ej. `7.30`).
+- `redcards`: Tarjetas rojas directas o por doble amarilla.
+- `vprohackreason`: Código de razón de desconexión o expulsión del jugador.
+- `userResult`, `wins`, `losses`: Resultados asignados a ese usuario individualmente.
 
-Actualmente, el proyecto se encuentra en un estado funcional óptimo pero arquitectónicamente frágil:
-- **`app.js` (429.7 KB, 8,651 líneas):** Un archivo monolítico gigante que contiene la lógica de todas las vistas. Todo el código vive dentro de un **único closure `DOMContentLoaded`** (línea 4 a 8650).
-- **`index.html` (159.2 KB, 1,975 líneas):** Contiene la estructura de todas las vistas de la app, estilos CSS embebidos en múltiples bloques `<style>`, y estructuras repetitivas.
-- **`style.css` (187.7 KB):** Archivo de estilo gigante sin modularizar.
-- **Archivos Huérfanos/Temporales:** Existen múltiples archivos en la raíz del proyecto (`calibration_probe.html`, `session_recovery.tmp`, `restore.css`, `temp_styles.css`, scripts `.sql` descolocados) que ensucian el workspace.
+**⏱️ Tiempos y Ritmo de Juego:**
+- `gameTime`: Tiempo de partido virtual.
+- `secondsPlayed`: Segundos exactos que el jugador ha estado en el campo.
+- `realtimegame`: Segundos en tiempo real de juego activo.
+- `realtimeidle`: Segundos en tiempo real inactivo (Pausas, menús).
+- `match_event_aggregate_0` al `3`: Agregadores de eventos temporales (posiblemente zonas del campo o momentos de calor).
 
----
+**⚙️ Metadatos Virtual Pro (Técnicos):**
+- `archetypeid`: ID del arquetipo físico/habilidad del jugador.
+- `pos`: Posición ocupada en el campo.
+- `namespace` y `vproattr`: Atributos técnicos internos de progresión del jugador en el juego.
 
-## ⚠️ 2. HALLAZGOS CRÍTICOS Y AJUSTES DE DISEÑO ⚠️
+### 4. El "Modo Exploratorio" Actual (Panel Master)
+Actualmente, el código de extracción se encuentra en `js/modules/ea_sync.js`. 
+- Se ha implementado un botón en el **Panel Master -> Pestaña "TEST EA API"** que permite introducir un `clubId` y obtener los últimos partidos renderizados en tiempo real.
+- Este código *no guarda nada* en la base de datos de momento, solo sirve para visualizar qué estadísticas existen y probar la estabilidad del puente.
 
-La revisión profunda de la arquitectura revela riesgos estructurales y de flujos de datos. Estas soluciones deben aplicarse de forma estricta para garantizar una migración exitosa:
+### 5. Hoja de Ruta para Automatizar en Producción (Pendiente)
+Cuando queramos que esto sea 100% automático y guarde los datos en JB-SQUAD:
+1. **Tabla de Control (`ea_sync_history`):** Ya tenemos el código SQL escrito para crear esta tabla. Servirá para registrar cada `matchId` de EA y evitar importar el mismo partido dos veces.
+2. **Auto-Conciliación (Mapping):** En `ea_sync.js`, al obtener los datos, se buscará a los jugadores en la tabla `players` de JB-SQUAD comparando el `playername` de EA con el `console_id` o `name`.
+3. **Inyección en la Jornada:** Los datos parseados se volcarán automáticamente dentro del JSON `matches` de la sesión (Jornada) activa de nuestro equipo.
+4. **Cálculo Global:** Una vez guardados, las estadísticas globales de JB-SQUAD (el ranking Elite) se actualizarán solas gracias a nuestra lógica existente.
+5. **Nuevos Modos de Juego (`matchType`):** Averiguar cuál es el código exacto para extraer partidos de Liga, Copas o Playoffs (generalmente suele ser `gameType9` o `gameType13`).
+6. **Nuevos Títulos / Premios (Logros):** Aprovechando los datos extraídos, crear nuevas métricas en la UI como "Mejor Pasador de la Temporada" o "Muro Infranqueable (Tackles)".
 
-### 2.1 El Gran Closure y Gestión de Variables
-Todo el código de `app.js` está envuelto en `DOMContentLoaded`. Al extraer los módulos a archivos independientes (`IIFEs`), las variables declaradas con `const`/`let` al inicio de `app.js` perderán visibilidad.
-*   **Solución (Getter/Setter):** Las variables mutables críticas compartidas entre módulos se encapsularán mediante funciones de acceso en `window` para evitar colisiones y proteger el estado.
+### 6. Código Fuente de la Edge Function (`ea-fetcher`)
+Este es el código exacto en Deno/TypeScript que hemos desplegado en Supabase. Actúa como el Proxy maestro con el "Disfraz Élite" para saltarnos el bloqueo de CORS de EA Sports:
 
-### 2.2 Validación Total del Control de Accesos por Rol (RBAC)
-Se confirma la total preservación del sistema de permisos diferenciales (Jugador / Mánager / Master Admin):
-*   **Membresía del Club (`state.user.role`):** Controla el acceso a nivel de equipo. Los roles de `manager` (acceso a todos los paneles, solicitudes y ajustes), `capitan` (acceso a votaciones y convocatorias) y `jugador` (rol de consulta y autogestión de ficha) son leídos de `window.state` de manera persistente.
-*   **Administrador de la Plataforma (`state.user.profile.is_admin`):** Concede acceso exclusivo al panel de control global de ligas e invitaciones (`view-admin`).
-*   **Orquestación en `navigation.js`:** La función `switchView()` y `applyRolePermissions()` serán trasladadas a `navigation.js`, manteniendo los selectores `[data-role-required]` y aplicando bloqueos lógicos duros en el cambio de vistas para evitar la navegación no autorizada.
+```typescript
+import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
 
-### 2.3 Gotcha de DOM Dinámico vs Estático
-*   **El Riesgo:** Intentar obtener referencias a elementos dinámicos (inyectados mediante `innerHTML` después de llamadas a Supabase) durante el inicializador `_init*Module()` resultará en valores `null` y fallos de ejecución.
-*   **Solución:** Los inicializadores solo capturarán elementos estáticos de `index.html`. Para elementos creados en tiempo de ejecución, se usará **Delegación de Eventos** sobre sus contenedores padres estáticos (ej. `events-container`, `modal-player-list`).
+const corsHeaders = {
+  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+}
 
-### 2.4 Composición de UI limpia para el Dashboard
-*   **El Riesgo:** La redefinición (monkey-patching) de `renderHomeDashboard` para inyectar el banner de convocatorias introduce fragilidad y dificulta la depuración.
-*   **Solución:** `dashboard.js` llamará de forma explícita y segura a `window.renderAvailabilityBanner()` tras renderizar sus widgets principales, logrando una arquitectura más limpia y sin efectos secundarios.
+serve(async (req) => {
+  if (req.method === 'OPTIONS') {
+    return new Response('ok', { headers: corsHeaders })
+  }
 
-### 2.5 Gotcha de Orden de CSS
-*   **El Riesgo:** Las variables de tema y resets en CSS son sensibles al orden de carga.
-*   **Solución:** Mantener `style.css` en la raíz de la aplicación como el único punto de entrada en `index.html`, encargándose de importar de manera ordenada y secuencial los sub-archivos modulares usando `@import`.
+  try {
+    const { clubId, matchType } = await req.json()
+    if (!clubId) throw new Error("El ID del club es obligatorio");
 
----
+    const type = matchType || 'friendlyMatch';
+    const eaUrl = `https://proclubs.ea.com/api/fc/clubs/matches?platform=common-gen5&clubIds=${clubId}&matchType=${type}`;
 
-## 3. Nueva Propuesta de Arquitectura Modular 🏗️
+    // EL DISFRAZ ÉLITE (Spoofing de navegador completo)
+    const eaResponse = await fetch(eaUrl, {
+      method: 'GET',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+        'Referer': 'https://www.ea.com/',
+        'Origin': 'https://www.ea.com',
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/148.0.0.0 Safari/537.36',
+        'Sec-Ch-Ua': '"Chromium";v="148", "Google Chrome";v="148", "Not/A)Brand";v="99"',
+        'Sec-Ch-Ua-Mobile': '?0',
+        'Sec-Ch-Ua-Platform': '"Windows"',
+        'Sec-Fetch-Dest': 'empty',
+        'Sec-Fetch-Mode': 'cors',
+        'Sec-Fetch-Site': 'same-site'
+      }
+    });
 
-### 3.1 Estructura de Carpetas
+    if (!eaResponse.ok) {
+      throw new Error(`Error de EA: ${eaResponse.status} - ${eaResponse.statusText}`);
+    }
 
-```
-JB-SQUAD/
-├── index.html                  # Punto de entrada optimizado (sin estilos inline)
-├── style.css                   # Hoja de estilos principal (importa sub-archivos)
-├── css/                        # Estilos modulares
-│   ├── base.css                # Variables, fuentes, resets y root tokens (CARGAR PRIMERO)
-│   ├── components/
-│   │   ├── cards.css           # Cartas FUT y tarjetas
-│   │   ├── modals.css          # Ventanas flotantes y overlays
-│   │   └── toast.css           # Notificaciones premium
-│   └── views/
-│       ├── dashboard.css
-│       ├── tactics.css
-│       └── matchday.css
-├── js/
-│   ├── config.js               # Constantes y formaciones (Existente, AMPLIADO con neutralCrest)
-│   ├── state.js                # Estado global y Supabase (Existente)
-│   ├── utils.js                # Utilidades compartidas (Existente)
-│   ├── auth.js                 # Login/registro (Existente)
-│   ├── data.js                 # Queries Supabase (Existente)
-│   ├── modules/                # Módulos extraídos de app.js
-│   │   ├── navigation.js       # switchView, setupNavigation, applyRolePermissions (Enfoque RBAC)
-│   │   ├── dashboard.js        # Dashboard home, rankings y filtros (Composición limpia de banners)
-│   │   ├── plantilla.js        # Tabla de plantilla, ordenación, álbum de cartas
-│   │   ├── perfil.js           # Perfil de jugador, formulario de ficha, preview
-│   │   ├── tacticas.js         # Pizarra, drag-and-drop, roster panel, exportación (window.renderPitch)
-│   │   ├── jornadas.js         # Partidos en vivo, goles, MVP, FAB interactivo (Getters/Setters)
-│   │   ├── convocatorias.js    # Votaciones, alineación inteligente, WhatsApp, banner de disponibilidad
-│   │   ├── equipo.js           # Miembros, solicitudes, ajustes, admin de ligas, asistencia
-│   │   ├── calendario.js       # Los tres calendarios (asistencia, jornadas, convocatorias)
-│   │   ├── matchday.js         # Creador de carteles HD
-│   │   └── rivales.js          # Historial de rivales, H2H, tabla de enfrentamientos
-│   └── app.js                  # Orquestador ligero (~200 líneas máx)
-├── db/
-│   └── migrations/             # Scripts SQL organizados
-└── img/
-```
+    const data = await eaResponse.json();
 
-### 3.2 Patrón de Módulo Estándar
-
-Cada módulo seguirá esta plantilla encapsulada de diseño:
-
-```javascript
-// js/modules/jornadas.js
-(function() {
-    'use strict';
-
-    // 1. VARIABLES PRIVADAS Y ESTADOS INTERNOS
-    let currentMatch = null;
-    let selectedGoalScorerId = null;
-    let selectedAssistantId = null;
-    let selectedGoalSide = 'home';
-    let pendingScorerId = null;
-
-    // 2. REFERENCIAS DOM ESTÁTICAS (Se inicializan en _init)
-    let scoreHomeDisplay, scoreAwayDisplay, btnAddGoalHome;
-
-    // 3. GETTERS Y SETTERS PÚBLICOS PARA SCOPES COMPARTIDOS
-    window.getCurrentMatch = () => currentMatch;
-    window.setCurrentMatch = (val) => { currentMatch = val; };
-
-    // 4. FUNCIONES DEL MÓDULO
-    function updateLiveMatchUI() { /* ... */ }
-    window.startLiveMatch = function(rival, type, rivalCrest, matchCondition) { /* ... */ };
-
-    // 5. INICIALIZADOR DE EVENTOS Y BINDINGS DE DOM
-    window._initJornadasModule = function() {
-        scoreHomeDisplay = document.getElementById('score-home');
-        scoreAwayDisplay = document.getElementById('score-away');
-        btnAddGoalHome = document.getElementById('btn-add-goal-home');
-        
-        // Delegación de eventos para elementos dinámicos
-        const eventsContainer = document.getElementById('events-container');
-        if (eventsContainer) {
-            eventsContainer.addEventListener('click', (e) => {
-                if (e.target.classList.contains('btn-remove-event')) {
-                    const idx = e.target.dataset.index;
-                    window.removeMatchEvent(idx);
-                }
-            });
-        }
-    };
-})();
+    return new Response(JSON.stringify(data), {
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      status: 200,
+    })
+  } catch (error) {
+    return new Response(JSON.stringify({ error: error.message }), {
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      status: 400,
+    })
+  }
+})
 ```
 
-### 3.3 Manejo de Variables Compartidas Entre Módulos
-
-| Variable/Función | Estrategia Definitiva |
-|---|---|
-| `state`, `supabase` | Ya son globales en `window`. Sin cambios. |
-| `escapeHTML()`, `getPlayerNameById()`, `getPlayerTransform()`, `getPositionColorClass()` | Definidas en `js/utils.js` y expuestas en `window`. |
-| `neutralCrest` | Movida a `js/config.js` expuesta globalmente. |
-| `renderPitch()` | Definida en `tacticas.js`, expuesta como `window.renderPitch()`. |
-| `switchView()`, `applyRolePermissions()` | Definida en `navigation.js`, expuesta como `window.*`. Enfoque de seguridad por roles. |
-| `currentMatch` | Privada en `jornadas.js`. Acceso por `window.getCurrentMatch()` / `window.setCurrentMatch()`. |
-
 ---
 
-## 4. Plan de Acción Paso a Paso 🛠Lineal
+## 7. Nuevo Flujo de Trabajo Élite (Post-Automatización) 🚀
 
-### Fase 0: Backup de Seguridad (OBLIGATORIO) 🔐
-1. Crear una copia completa del proyecto en `JB-SQUAD-BACKUP-PRE-REFACTOR/`.
-2. Verificar que la app funciona perfectamente ANTES de empezar.
+Con la integración de la Telemetría de EA, el trabajo del Mánager se reduce un 90% y la aplicación se vuelve mucho más autónoma. Este será el nuevo ciclo de vida de una Jornada:
 
-### Fase 1: Limpieza del Workspace 🧹
-1. Mover `database_delete_policy.sql` y `update_sessions_table.sql` a `db/migrations/`.
-2. Mover archivos temporales y huérfanos (`calibration_probe.html`, `session_recovery.tmp`, `temp_styles.css`, `restore.css`, `matchday_poster_new.css`) a `docs/archive/`.
+### 1. La Convocatoria (Planificación)
+- **El flujo se mantiene:** El mánager abre convocatoria para medir el *hype* y saber quién está disponible. 
+- **La táctica es orientativa:** La alineación inicial en la pizarra sirve como estrategia y planteamiento táctico, pero ya no será inamovible (si alguien se cae o llega tarde, la realidad la mandará EA).
 
-### Fase 2: Configuración Base y Utilidades 🔧
-1. Mover `neutralCrest` a `js/config.js`.
-2. Consolidar utilidades globales (`escapeHTML`, `getPlayerNameById`, `getPlayerTransform`, `getPositionColorClass`) asegurando que estén presentes en `js/utils.js` y no duplicadas en ningún otro script.
+### 2. El "Modo Live" (A jugar sin estrés)
+- Se juega la noche de Clubes Pro.
+- **Cambio Radical:** El Mánager *ya no necesita apuntar nada*. Se acabó crear la jornada antes de jugar y apuntar goleadores 1 a 1 a mano. Solo toca centrarse en ganar los partidos.
 
-### Fase 3: Modularización Estética (CSS) 🎨
-1. Extraer estilos de `index.html` a sus correspondientes archivos en `css/components/` y `css/views/`.
-2. Reorganizar `style.css` usando `@import` de forma secuencial iniciando con `css/base.css`.
+### 3. El Volcado Mágico (Cierre de Sesión)
+- Al terminar de jugar (o al día siguiente), el Mánager entra en JB-SQUAD.
+- Entra a la pestaña de "Jornadas" y pulsa un gran botón **"📥 SINCRONIZAR JORNADA DE HOY"**.
+- El sistema busca en EA todos los partidos jugados en el último día y crea un **Borrador de Jornada** automático.
+- Este borrador ya detecta el 11 inicial real (EA nos chiva quién jugó de verdad), los resultados, el MVP, los goles y las asistencias.
 
-### Fase 4: Extracción de Módulos Funcionales (Uno a Uno) 🧩
-**Regla de Oro:** Extraer un módulo, ejecutar la suite de verificación del rol correspondiente y, solo si no hay regresiones, proceder con el siguiente.
-
-1.  **`navigation.js`**: Implementa `switchView`, `setupNavigation`, y el control duro de roles (`applyRolePermissions`).
-2.  **`calendario.js`**: Implementa la lógica para los tres calendarios.
-3.  **`plantilla.js`**: Extrae la tabla de jugadores y generación de cartas FUT.
-4.  **`perfil.js`**: Gestión de perfiles, avatares, carga de fotos y validación de formularios.
-5.  **`dashboard.js`**: rankings, filtros oficiales/amistosos y enlace directo a los banners de convocatorias.
-6.  **`tacticas.js`**: Pizarra interactiva y sistema de exportaciones. Expone `window.renderPitch`.
-7.  **`jornadas.js`**: Motor de partidos en vivo. Implementa Getters/Setters para `currentMatch`.
-8.  **`convocatorias.js`**: Votaciones, alineación inteligente, compartir WA y banner dinámico.
-9.  **`equipo.js`**: Pestañas de administración del club y asignación/edición de membresías y roles.
-10. **`matchday.js`**: Generador de carteles promocionales.
-11. **`rivales.js`**: H2H e historial comparativo.
-
-### Fase 5: Reducción e Integración Final 📄
-1. Limpiar todos los tags `<style>` antiguos de `index.html`.
-2. Cargar en `index.html` los archivos en el orden jerárquico correcto, manteniendo a `app.js` como el orquestador final encargado de llamar secuencialmente a los inicializadores `window._init*Module()`.
-
----
-
-## 5. Plan de Verificación de Roles y Seguridad (RBAC) 🔒
-
-Para certificar que el sistema de roles no sufre regresiones, se debe validar:
-
-| Rol Testeado | Flujo a Probar | Resultado Esperado |
-|---|---|---|
-| **Manager** | Solicitudes, ajustes de equipo, recalcular stats, editar rangos | Acceso total y visibilidad completa del menú "Mi Equipo". |
-| **Capitán** | Panel de tácticas, iniciar jornada, programar convocatorias | Modificación táctica habilitada; menú "Mi Equipo" oculto. |
-| **Jugador** | Autogestión de ficha, álbum de cartas, votaciones | Solo puede editar su propio perfil; no puede iniciar jornadas ni alterar tácticas de la pizarra. |
-| **Master Admin** | Panel de administración global (`view-admin`) | Botón "Panel Master" visible en perfil; acceso a creación de ligas y códigos. |
-| **Sin Club** | Dashboard e Inicio de sesión | Solo visibilidad en "Dashboard" y "Mi Perfil". El resto del menú está bloqueado y oculto hasta ser aceptado. |
+### 4. La Aprobación Final
+- El Mánager solo tiene que echar un vistazo visual al borrador: *"Vale, jugamos 4 partidos, todo cuadra"*.
+- Pulsa el botón **"✅ APROBAR JORNADA"**.
+- En ese momento, todas las estadísticas caen de golpe a la Base de Datos, actualizando el Ránking Elite de forma instantánea.

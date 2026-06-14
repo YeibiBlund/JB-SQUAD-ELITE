@@ -130,9 +130,10 @@ window.renderRivalsHistory = function() {
     sessionsToScan.forEach(sess => {
         const matches = sess.matches || [];
         matches.forEach(m => {
-            if (!m.rival || m.rival.trim() === '') return;
+            const rivalStr = m.rivalName || m.rival;
+            if (!rivalStr || rivalStr.trim() === '') return;
             
-            const rawRivalName = m.rival.trim();
+            const rawRivalName = rivalStr.trim();
             const rivalKey = rawRivalName.toUpperCase(); // Consolidar sin duplicados
 
             if (!globalRivalsData[rivalKey]) {
@@ -171,9 +172,12 @@ window.renderRivalsHistory = function() {
 
             rData.winRatio = rData.pj > 0 ? Math.round((rData.v / rData.pj) * 100) : 0;
 
+            const uniqueMatchId = m.id || m.eaMatchId || `match_${Math.random().toString(36).substr(2, 9)}`;
+            
             // Guardar metadatos del partido para el desglose detallado con fecha
             rData.matches.push({
                 ...m,
+                _tempId: uniqueMatchId,
                 sessionDate: sess.date || null,
                 sessionName: sess.name || (sess.date ? `Jornada del ${sess.date}` : `Jornada #${sess.id.toString().substring(0, 8)}`)
             });
@@ -307,7 +311,7 @@ window.selectRivalDetail = function(rivalKey) {
                     const typeLabel = m.type === 'official' ? 'Oficial' : 'Amistoso';
 
                     return `
-                        <div class="rival-match-item" onclick="toggleMatchEventsExpansion(${m.id})">
+                        <div class="rival-match-item" onclick="toggleMatchEventsExpansion('${m._tempId}')">
                             <div style="display: flex; align-items: center; gap: 12px; overflow: hidden; max-width: 75%;">
                                 <span style="width: 24px; height: 24px; border-radius: 4px; background: ${outcomeColor}; color: ${outcomeSymbol === 'E' ? '#000' : '#fff'}; display: flex; align-items: center; justify-content: center; font-size: 0.65rem; font-weight: 900; flex-shrink: 0;">
                                     ${outcomeSymbol}
@@ -325,12 +329,12 @@ window.selectRivalDetail = function(rivalKey) {
                                 <span style="font-weight: 900; font-size: 1rem; color: var(--primary); letter-spacing: 0.5px;">
                                     ${m.scoreHome} - ${m.scoreAway}
                                 </span>
-                                <svg id="arrow-match-${m.id}" viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" style="transition: transform 0.2s; color: var(--text-muted);">
+                                <svg id="arrow-match-${m._tempId}" viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" style="transition: transform 0.2s; color: var(--text-muted);">
                                     <polyline points="9 18 15 12 9 6"></polyline>
                                 </svg>
                             </div>
                         </div>
-                        <div id="events-match-${m.id}" class="rival-match-events">
+                        <div id="events-match-${m._tempId}" class="rival-match-events">
                             <!-- Inyectado dinámicamente por JS -->
                         </div>
                     `;
@@ -344,9 +348,9 @@ window.selectRivalDetail = function(rivalKey) {
     detailPanel.style.display = 'flex';
 };
 
-window.toggleMatchEventsExpansion = function(matchId) {
-    const eventsEl = document.getElementById(`events-match-${matchId}`);
-    const arrowEl = document.getElementById(`arrow-match-${matchId}`);
+window.toggleMatchEventsExpansion = function(tempId) {
+    const eventsEl = document.getElementById(`events-match-${tempId}`);
+    const arrowEl = document.getElementById(`arrow-match-${tempId}`);
     if (!eventsEl) return;
 
     const isVisible = window.getComputedStyle(eventsEl).display !== 'none';
@@ -358,50 +362,116 @@ window.toggleMatchEventsExpansion = function(matchId) {
         let selectedMatch = null;
         const allRivals = Object.values(globalRivalsData);
         for (let rival of allRivals) {
-            selectedMatch = rival.matches.find(m => m.id === matchId);
+            selectedMatch = rival.matches.find(m => String(m._tempId) === String(tempId));
             if (selectedMatch) break;
         }
 
         if (!selectedMatch) return;
 
-        const events = selectedMatch.events || [];
-        if (events.length === 0) {
+        const events = selectedMatch.events ? selectedMatch.events.filter(e => e.side === 'home') : [];
+        const eaPlayers = selectedMatch.eaPlayers || {};
+        const eaPlayersList = Object.keys(eaPlayers).map(pid => {
+            const st = eaPlayers[pid];
+            return {
+                pid,
+                goals: parseInt(st.goals) || 0,
+                assists: parseInt(st.assists) || 0,
+                ...st
+            };
+        });
+        const hasEAEvents = eaPlayersList.some(p => p.goals > 0 || p.assists > 0);
+
+        if (events.length === 0 && !hasEAEvents) {
             eventsEl.innerHTML = `
                 <div style="font-size: 0.65rem; color: var(--text-muted); text-align: center; padding: 6px 0; font-style: italic;">
                     No hay detalles de goles o asistencias registrados en este partido.
                 </div>
             `;
         } else {
-            eventsEl.innerHTML = events.map(ev => {
-                const scorer = getPlayerNameById(ev.scorerId) || 'JUGADOR';
-                const assistant = ev.assistantId ? getPlayerNameById(ev.assistantId) : null;
+            let eventsHtml = '';
+            
+            if (hasEAEvents) {
+                const scorersList = [];
+                const assistersList = [];
                 
-                const goalSvg = `
-                    <svg class="icon-match-event" viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="var(--primary)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: middle; margin-right: 6px; filter: drop-shadow(0 0 2px rgba(240,165,0,0.4));">
-                        <circle cx="12" cy="12" r="10"></circle>
-                        <path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"></path>
-                        <path d="M2 12h20"></path>
-                    </svg>
-                `;
+                eaPlayersList.forEach(p => {
+                    const playerName = getPlayerNameById(p.pid) || 'JUGADOR';
+                    if (p.goals > 0) scorersList.push({ name: playerName, count: p.goals });
+                    if (p.assists > 0) assistersList.push({ name: playerName, count: p.assists });
+                });
                 
-                const assistSvg = assistant ? `
-                    <span style="opacity: 0.85; font-style: italic; display: inline-flex; align-items: center; gap: 4px; color: #fff;">
-                        <svg viewBox="0 0 24 24" width="11" height="11" fill="none" stroke="#2ecc71" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M5 12h14M12 5l7 7-7 7"></path>
-                        </svg>
-                        ${assistant}
-                    </span>
-                ` : '';
+                // Ordenar ambos por cantidad
+                scorersList.sort((a, b) => b.count - a.count);
+                assistersList.sort((a, b) => b.count - a.count);
 
-                return `
-                    <div class="match-event-detail" style="margin-bottom: 5px; padding: 6px 10px; border-radius: 6px; background: rgba(255,255,255,0.015); border: 1px solid rgba(255,255,255,0.02); display: flex; justify-content: space-between; align-items: center; font-size: 0.68rem;">
+                const maxRows = Math.max(scorersList.length, assistersList.length);
+                const combinedRows = [];
+                for (let i = 0; i < maxRows; i++) {
+                    combinedRows.push({ scorer: scorersList[i], assister: assistersList[i] });
+                }
+
+                eventsHtml = combinedRows.map(row => {
+                    const scorerHtml = row.scorer ? `
                         <span style="display: inline-flex; align-items: center; font-weight: 800; color: #fff;">
-                            ${goalSvg} ${scorer}
+                            <svg class="icon-match-event" viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="var(--primary)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: middle; margin-right: 6px; filter: drop-shadow(0 0 2px rgba(240,165,0,0.4));">
+                                <circle cx="12" cy="12" r="10"></circle>
+                                <path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"></path>
+                                <path d="M2 12h20"></path>
+                            </svg>
+                            ${row.scorer.name.toUpperCase()}${row.scorer.count > 1 ? ` <span style="color:var(--primary); font-size:0.6rem; margin-left:3px;">x${row.scorer.count}</span>` : ''}
                         </span>
-                        ${assistSvg}
-                    </div>
-                `;
-            }).join('');
+                    ` : '<span></span>';
+
+                    const assisterHtml = row.assister ? `
+                        <span style="opacity: 0.85; font-style: italic; display: inline-flex; align-items: center; gap: 4px; color: #fff;">
+                            <svg viewBox="0 0 24 24" width="11" height="11" fill="none" stroke="#2ecc71" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M5 12h14M12 5l7 7-7 7"></path>
+                            </svg>
+                            ${row.assister.name.toUpperCase()}${row.assister.count > 1 ? ` <span style="color:var(--success); font-size:0.6rem; margin-left:3px;">x${row.assister.count}</span>` : ''}
+                        </span>
+                    ` : '<span></span>';
+
+                    return `
+                        <div class="match-event-detail" style="margin-bottom: 5px; padding: 6px 10px; border-radius: 6px; background: rgba(255,255,255,0.015); border: 1px solid rgba(255,255,255,0.02); display: flex; justify-content: space-between; align-items: center; font-size: 0.68rem;">
+                            ${scorerHtml}
+                            ${assisterHtml}
+                        </div>
+                    `;
+                }).join('');
+            } else {
+                eventsHtml = events.map(ev => {
+                    const scorer = getPlayerNameById(ev.scorerId) || 'JUGADOR';
+                    const assistant = ev.assistantId ? getPlayerNameById(ev.assistantId) : null;
+                    
+                    const goalSvg = `
+                        <svg class="icon-match-event" viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="var(--primary)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: middle; margin-right: 6px; filter: drop-shadow(0 0 2px rgba(240,165,0,0.4));">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"></path>
+                            <path d="M2 12h20"></path>
+                        </svg>
+                    `;
+                    
+                    const assistSvg = assistant ? `
+                        <span style="opacity: 0.85; font-style: italic; display: inline-flex; align-items: center; gap: 4px; color: #fff;">
+                            <svg viewBox="0 0 24 24" width="11" height="11" fill="none" stroke="#2ecc71" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M5 12h14M12 5l7 7-7 7"></path>
+                            </svg>
+                            ${assistant}
+                        </span>
+                    ` : '';
+
+                    return `
+                        <div class="match-event-detail" style="margin-bottom: 5px; padding: 6px 10px; border-radius: 6px; background: rgba(255,255,255,0.015); border: 1px solid rgba(255,255,255,0.02); display: flex; justify-content: space-between; align-items: center; font-size: 0.68rem;">
+                            <span style="display: inline-flex; align-items: center; font-weight: 800; color: #fff;">
+                                ${goalSvg} ${scorer}
+                            </span>
+                            ${assistSvg}
+                        </div>
+                    `;
+                }).join('');
+            }
+            
+            eventsEl.innerHTML = eventsHtml;
         }
 
         eventsEl.style.display = 'block';

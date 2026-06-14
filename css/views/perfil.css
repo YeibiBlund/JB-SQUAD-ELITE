@@ -30,15 +30,15 @@
     height: 100%;
     min-height: 320px;
     background: 
-        radial-gradient(circle at top right, rgba(240, 165, 0, 0.15) 0%, transparent 60%),
+        radial-gradient(circle at top right, rgba(var(--primary-rgb), 0.15) 0%, transparent 60%),
         linear-gradient(135deg, #1f1f1f 0%, #0a0a0a 100%);
-    border: 2px solid rgba(255, 215, 0, 0.6);
+    border: 2px solid var(--primary);
     border-radius: 12px;
     position: relative;
     box-shadow: 
         0 20px 50px rgba(0,0,0,0.9), 
         inset 0 0 0 1px rgba(255, 255, 255, 0.1), 
-        inset 0 0 20px rgba(240, 165, 0, 0.2);
+        inset 0 0 20px rgba(var(--primary-rgb), 0.2);
     display: flex;
     flex-direction: column;
     justify-content: flex-end;
@@ -50,8 +50,8 @@
     transform: translateY(-5px);
     box-shadow: 
         0 25px 60px rgba(0,0,0,0.9), 
-        0 0 30px rgba(240, 165, 0, 0.3),
-        inset 0 0 0 2px rgba(240, 165, 0, 0.4);
+        0 0 30px rgba(var(--primary-rgb), 0.3),
+        inset 0 0 0 2px rgba(var(--primary-rgb), 0.4);
 }
 
 .player-card-fut.large::after {
@@ -75,8 +75,8 @@
     left: 20px;
     font-size: 3.2rem;
     font-weight: 900;
-    color: #ffd700;
-    background: linear-gradient(to bottom, #ffe866 0%, #f0a500 50%, #b37700 100%);
+    color: var(--primary);
+    background: linear-gradient(to bottom, var(--primary-light) 0%, var(--primary) 50%, var(--primary-dark) 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     line-height: 0.8;
@@ -93,7 +93,7 @@
     font-weight: 900;
     color: #222;
     z-index: 10;
-    background: linear-gradient(135deg, #ffe866 0%, #f0a500 100%);
+    background: linear-gradient(135deg, var(--primary-light) 0%, var(--primary) 100%);
     padding: 3px 10px;
     border-radius: 4px;
     box-shadow: 0 4px 10px rgba(0,0,0,0.6), inset 0 1px 1px rgba(255,255,255,0.6);
@@ -135,8 +135,8 @@
     z-index: 15;
     text-align: center;
     border-radius: 8px;
-    border: 1px solid rgba(240, 165, 0, 0.3);
-    border-bottom: 2px solid rgba(240, 165, 0, 0.8);
+    border: 1px solid rgba(var(--primary-rgb), 0.3);
+    border-bottom: 2px solid rgba(var(--primary-rgb), 0.8);
     box-shadow: 0 10px 20px rgba(0,0,0,0.8);
 }
 
@@ -179,8 +179,8 @@
         border-right: none;
         border-bottom: 1px solid rgba(255,255,255,0.05);
         padding-right: 0 !important;
-        padding-bottom: 25px;
-        margin-bottom: 25px;
+        padding-bottom: 15px;
+        margin-bottom: 10px;
     }
     .profile-col-right {
         padding-left: 0 !important;
@@ -200,9 +200,9 @@
 }
 
 .mini-ach-card:hover {
-    background: rgba(240, 165, 0, 0.05);
+    background: rgba(var(--primary-rgb), 0.05);
     transform: translateX(5px);
-    border-color: rgba(240, 165, 0, 0.2);
+    border-color: rgba(var(--primary-rgb), 0.2);
 }
 
 .mini-ach-icon {
@@ -334,12 +334,12 @@
 
 .stats-elite-table tbody tr:hover {
     transform: translateY(-3px);
-    box-shadow: 0 8px 20px rgba(0,0,0,0.4), 0 0 15px rgba(240, 165, 0, 0.1);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.4), 0 0 15px rgba(var(--primary-rgb), 0.1);
 }
 
 .stats-elite-table tbody tr:hover td {
-    background: rgba(240, 165, 0, 0.05);
-    border-color: rgba(240, 165, 0, 0.2);
+    background: rgba(var(--primary-rgb), 0.05);
+    border-color: rgba(var(--primary-rgb), 0.2);
 }
 
 .stats-elite-table .row-official td:first-child {
@@ -354,7 +354,7 @@
     background: rgba(255,255,255,0.02);
     font-weight: 900;
     color: var(--primary);
-    border-top: 1.5px solid rgba(240,165,0,0.3);
+    border-top: 1.5px solid rgba(var(--primary-rgb),0.3);
 }
 
 .stat-category-badge {
@@ -529,12 +529,12 @@
 
 .stats-elite-table tbody tr:hover {
     transform: translateY(-3px);
-    box-shadow: 0 8px 20px rgba(0,0,0,0.4), 0 0 15px rgba(240, 165, 0, 0.1);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.4), 0 0 15px rgba(var(--primary-rgb), 0.1);
 }
 
 .stats-elite-table tbody tr:hover td {
-    background: rgba(240, 165, 0, 0.05);
-    border-color: rgba(240, 165, 0, 0.2);
+    background: rgba(var(--primary-rgb), 0.05);
+    border-color: rgba(var(--primary-rgb), 0.2);
 }
 
 .stats-elite-table .row-official td:first-child {
@@ -549,7 +549,7 @@
     background: rgba(255,255,255,0.02);
     font-weight: 900;
     color: var(--primary);
-    border-top: 1.5px solid rgba(240,165,0,0.3);
+    border-top: 1.5px solid rgba(var(--primary-rgb),0.3);
 }
 
 .stat-category-badge {
@@ -670,4 +670,75 @@
 @keyframes activeStreakPulseAttendance {
     0% { border-color: rgba(108, 92, 231, 0.3); box-shadow: 0 0 10px rgba(108, 92, 231, 0.1); }
     100% { border-color: rgba(108, 92, 231, 0.8); box-shadow: 0 0 20px rgba(108, 92, 231, 0.3); }
+}
+
+/* Ajustes tabla rendimiento temporada en móvil */
+@media (max-width: 768px) {
+    #profile-stats-container {
+        padding: 15px 10px !important;
+    }
+    .stats-elite-table {
+        border-spacing: 0 4px;
+        width: 100%;
+    }
+    .stats-elite-table th {
+        padding: 6px 2px;
+        font-size: 0.45rem;
+        letter-spacing: 0px;
+        text-align: center;
+    }
+    .stats-elite-table td {
+        padding: 6px 2px;
+        font-size: 0.65rem;
+        text-align: center;
+    }
+    .stats-elite-table th:first-child,
+    .stats-elite-table td:first-child {
+        text-align: left;
+        padding-left: 6px;
+        font-size: 0.6rem; /* Aún más pequeño para la palabra CATEGORIA / OFICIAL */
+    }
+}
+
+/* --- Ajustes Móvil Petición Usuario (v70.0) --- */
+@media (max-width: 768px) {
+    /* Aprovechar más ancho de pantalla */
+    #view-my-profile {
+        margin-left: -10px;
+        margin-right: -10px;
+    }
+    
+    /* Hacer la imagen del jugador más grande */
+    #gamer-id-photo-mobile {
+        width: 110px !important;
+        height: 110px !important;
+        border-radius: 20px !important;
+    }
+    
+    /* Gamer ID más pequeño */
+    #profile-console-id {
+        font-size: 1.2rem !important;
+        margin-top: 5px !important;
+    }
+    
+    /* Roles secundarios más pequeños */
+    .secondary-pos-badge {
+        font-size: 0.5rem !important;
+        padding: 2px 6px !important;
+        letter-spacing: 0.5px !important;
+    }
+    
+    /* Adaptar botones del header a 1 sola línea */
+    .profile-header-actions {
+        flex-wrap: nowrap !important;
+    }
+    
+    .header-btn-text {
+        font-size: 0.55rem !important;
+        letter-spacing: 0px !important;
+    }
+    
+    .btn-header-action {
+        padding: 6px 4px !important;
+    }
 }

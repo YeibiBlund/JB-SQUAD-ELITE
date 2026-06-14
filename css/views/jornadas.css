@@ -19,7 +19,7 @@
 .session-card:hover {
     transform: translateX(5px);
     border-color: var(--primary);
-    box-shadow: 0 10px 25px rgba(240, 165, 0, 0.15);
+    box-shadow: 0 10px 25px rgba(var(--primary-rgb), 0.15);
 }
 
 .session-card.win-trend { border-left-color: var(--primary); }
@@ -28,8 +28,8 @@
 
 .session-card.active {
     border: 1px solid var(--primary);
-    background: linear-gradient(135deg, rgba(240, 165, 0, 0.08) 0%, rgba(10, 10, 10, 0.95) 100%);
-    box-shadow: 0 0 20px rgba(240, 165, 0, 0.1);
+    background: linear-gradient(135deg, rgba(var(--primary-rgb), 0.08) 0%, rgba(10, 10, 10, 0.95) 100%);
+    box-shadow: 0 0 20px rgba(var(--primary-rgb), 0.1);
 }    /* ====================================================================
        BROADCAST LAYOUT - DOS COLUMNAS (v62.0)
        Izquierda: Marcador + Eventos | Derecha: Campo (60%)
@@ -46,10 +46,10 @@
         max-height: none;
         overflow: visible;
         background: linear-gradient(135deg, rgba(22, 22, 22, 0.7) 0%, rgba(8, 8, 8, 0.92) 100%);
-        border: 2px solid rgba(240, 165, 0, 0.45) !important;
+        border: 2px solid rgba(var(--primary-rgb), 0.45) !important;
         border-radius: 18px;
         padding: 18px 22px;
-        box-shadow: 0 20px 50px rgba(0,0,0,0.85), 0 0 20px rgba(240, 165, 0, 0.15), inset 0 0 30px rgba(240, 165, 0, 0.05);
+        box-shadow: 0 20px 50px rgba(0,0,0,0.85), 0 0 20px rgba(var(--primary-rgb), 0.15), inset 0 0 30px rgba(var(--primary-rgb), 0.05);
         backdrop-filter: blur(15px);
         -webkit-backdrop-filter: blur(15px);
     }
@@ -99,15 +99,15 @@
     #match-type-label {
         font-size: 0.6rem;
         color: var(--primary) !important;
-        background: rgba(240, 165, 0, 0.08) !important;
-        border: 1px solid rgba(240, 165, 0, 0.25) !important;
+        background: rgba(var(--primary-rgb), 0.08) !important;
+        border: 1px solid rgba(var(--primary-rgb), 0.25) !important;
         padding: 3px 10px !important;
         border-radius: 20px;
         text-transform: uppercase;
         font-weight: 900;
         letter-spacing: 1.5px;
         margin: 0;
-        text-shadow: 0 0 6px rgba(240, 165, 0, 0.3);
+        text-shadow: 0 0 6px rgba(var(--primary-rgb), 0.3);
     }
 
     /* Fila principal: Escudos + Resultado */
@@ -140,14 +140,14 @@
         border-radius: 50%;
         padding: 6px !important;
         border: 1.5px solid rgba(255, 255, 255, 0.15) !important;
-        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5), 0 0 10px rgba(240, 165, 0, 0.1) !important;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5), 0 0 10px rgba(var(--primary-rgb), 0.1) !important;
         transition: all 0.3s ease;
     }
 
     .score-team-block:hover .crest-container {
         transform: scale(1.06);
-        border-color: rgba(240, 165, 0, 0.3) !important;
-        box-shadow: 0 6px 16px rgba(0, 0, 0, 0.5), 0 0 12px rgba(240, 165, 0, 0.15) !important;
+        border-color: rgba(var(--primary-rgb), 0.3) !important;
+        box-shadow: 0 6px 16px rgba(0, 0, 0, 0.5), 0 0 12px rgba(var(--primary-rgb), 0.15) !important;
     }
 
     .score-team-block .crest-container img {
@@ -249,7 +249,7 @@
     .live-events-panel {
         background: rgba(12, 12, 12, 0.5);
         border: 1px solid rgba(255, 255, 255, 0.05);
-        border-top: 2.5px solid rgba(240, 165, 0, 0.3);
+        border-top: 2.5px solid rgba(var(--primary-rgb), 0.3);
         border-radius: 14px;
         padding: 12px 14px;
         box-shadow: 0 8px 25px rgba(0, 0, 0, 0.45), inset 0 0 12px rgba(255, 255, 255, 0.01);
@@ -282,7 +282,7 @@
         font-weight: 900;
         letter-spacing: 1.5px;
         margin: 0;
-        text-shadow: 0 0 5px rgba(240, 165, 0, 0.2);
+        text-shadow: 0 0 5px rgba(var(--primary-rgb), 0.2);
     }
 
     /* ---- Columna Derecha: Campo (60%) ---- */
@@ -309,13 +309,13 @@
         /* Consola de estadio deportiva 3D premium */
         border: 6px solid #161616 !important;
         border-radius: 16px !important;
-        outline: 2px solid rgba(240, 165, 0, 0.45) !important;
+        outline: 2px solid rgba(var(--primary-rgb), 0.45) !important;
         outline-offset: 1px !important;
 
         /* Sombras perimetrales con resplandor dorado */
         box-shadow: 0 0 0 6px rgba(0, 0, 0, 0.8),
                     0 15px 35px rgba(0, 0, 0, 0.7),
-                    0 0 25px rgba(240, 165, 0, 0.18),
+                    0 0 25px rgba(var(--primary-rgb), 0.18),
                     inset 0 0 50px rgba(0, 0, 0, 0.95) !important;
         position: relative !important;
     }
@@ -399,8 +399,8 @@
 
     /* Primary Active Gold Button */
     .goal-btn {
-        background: rgba(240, 165, 0, 0.02) !important; /* Translúcido sutil dorado */
-        border: 1px solid rgba(240, 165, 0, 0.28) !important; /* Borde dorado pulido y sutil */
+        background: rgba(var(--primary-rgb), 0.02) !important; /* Translúcido sutil dorado */
+        border: 1px solid rgba(var(--primary-rgb), 0.28) !important; /* Borde dorado pulido y sutil */
         color: rgba(255, 255, 255, 0.9) !important; /* Texto en blanco nítido para máxima legibilidad */
         font-weight: 900 !important;
         box-shadow: none !important;
@@ -420,11 +420,11 @@
     }
 
     .goal-btn:hover {
-        background: rgba(240, 165, 0, 0.12) !important;
+        background: rgba(var(--primary-rgb), 0.12) !important;
         border-color: var(--primary) !important;
         color: #fff !important;
         transform: translateY(-2px) !important;
-        box-shadow: 0 4px 12px rgba(240, 165, 0, 0.15) !important;
+        box-shadow: 0 4px 12px rgba(var(--primary-rgb), 0.15) !important;
     }
 
     /* Active Crimson Red Button */
@@ -490,7 +490,7 @@
         max-height: 360px !important; /* Ampliado significativamente para lucir majestuoso en vertical */
         overflow-y: auto;
         scrollbar-width: thin;
-        scrollbar-color: rgba(240, 165, 0, 0.3) transparent;
+        scrollbar-color: rgba(var(--primary-rgb), 0.3) transparent;
     }
 
     .events-vertical-container::-webkit-scrollbar {
@@ -498,7 +498,7 @@
     }
 
     .events-vertical-container::-webkit-scrollbar-thumb {
-        background: rgba(240, 165, 0, 0.35);
+        background: rgba(var(--primary-rgb), 0.35);
         border-radius: 10px;
     }
 
@@ -520,9 +520,9 @@
 
     /* Slots Vacíos Holográficos Premium */
     #live-football-pitch .tactical-slot:not(.filled) {
-        background: radial-gradient(circle, rgba(240, 165, 0, 0.05) 0%, rgba(0, 0, 0, 0.5) 100%) !important;
-        border: 1.5px dashed rgba(240, 165, 0, 0.35) !important;
-        box-shadow: 0 4px 8px rgba(0,0,0,0.3), inset 0 0 10px rgba(240, 165, 0, 0.08) !important;
+        background: radial-gradient(circle, rgba(var(--primary-rgb), 0.05) 0%, rgba(0, 0, 0, 0.5) 100%) !important;
+        border: 1.5px dashed rgba(var(--primary-rgb), 0.35) !important;
+        box-shadow: 0 4px 8px rgba(0,0,0,0.3), inset 0 0 10px rgba(var(--primary-rgb), 0.08) !important;
         backdrop-filter: blur(4px) !important;
         -webkit-backdrop-filter: blur(4px) !important;
     }
@@ -532,7 +532,7 @@
         color: var(--primary) !important;
         opacity: 0.5 !important;
         animation: pulsePlus 2s infinite ease-in-out !important;
-        text-shadow: 0 0 8px rgba(240, 165, 0, 0.4);
+        text-shadow: 0 0 8px rgba(var(--primary-rgb), 0.4);
     }
 
     @keyframes pulsePlus {
@@ -548,7 +548,7 @@
         top: auto !important;
         right: auto !important;
         background: rgba(0,0,0,0.75) !important;
-        border: 1px solid rgba(240, 165, 0, 0.3) !important;
+        border: 1px solid rgba(var(--primary-rgb), 0.3) !important;
         color: var(--primary) !important;
         font-size: 0.52rem !important;
         padding: 1.5px 5px !important;
@@ -563,7 +563,7 @@
         border: 2px solid var(--primary) !important;
         backdrop-filter: blur(10px) !important;
         -webkit-backdrop-filter: blur(10px) !important;
-        box-shadow: 0 6px 15px rgba(0,0,0,0.6), 0 0 10px rgba(240, 165, 0, 0.28), inset 0 0 8px rgba(240, 165, 0, 0.2) !important;
+        box-shadow: 0 6px 15px rgba(0,0,0,0.6), 0 0 10px rgba(var(--primary-rgb), 0.28), inset 0 0 8px rgba(var(--primary-rgb), 0.2) !important;
         overflow: visible !important; /* Habilitado visible para permitir que la posición flote abajo */
         
         /* Doble borde dorado metalizado premium tipo carta FUT Elite */
@@ -629,7 +629,7 @@
     /* Hover de perspectiva 3D adaptado a la distribución de cada rol */
     #live-football-pitch .tactical-slot.filled[data-slot-id="GK"]:hover {
         transform: translate(-50%, -95%) perspective(500px) rotateX(12deg) scale(1.1) !important;
-        box-shadow: 0 12px 25px rgba(0,0,0,0.7), 0 0 20px rgba(240, 165, 0, 0.6), inset 0 0 10px rgba(240, 165, 0, 0.3) !important;
+        box-shadow: 0 12px 25px rgba(0,0,0,0.7), 0 0 20px rgba(var(--primary-rgb), 0.6), inset 0 0 10px rgba(var(--primary-rgb), 0.3) !important;
         border-color: #ffd700 !important;
         z-index: 150 !important;
     }
@@ -638,7 +638,7 @@
     #live-football-pitch .tactical-slot.filled[data-slot-id="LD"]:hover,
     #live-football-pitch .tactical-slot.filled[data-slot-id="LI"]:hover {
         transform: translate(-50%, -140%) perspective(500px) rotateX(12deg) scale(1.1) !important;
-        box-shadow: 0 12px 25px rgba(0,0,0,0.7), 0 0 20px rgba(240, 165, 0, 0.6), inset 0 0 10px rgba(240, 165, 0, 0.3) !important;
+        box-shadow: 0 12px 25px rgba(0,0,0,0.7), 0 0 20px rgba(var(--primary-rgb), 0.6), inset 0 0 10px rgba(var(--primary-rgb), 0.3) !important;
         border-color: #ffd700 !important;
         z-index: 150 !important;
     }
@@ -648,7 +648,7 @@
     #live-football-pitch .tactical-slot.filled[data-slot-id^="MI"]:hover,
     #live-football-pitch .tactical-slot.filled[data-slot-id^="MCD"]:hover {
         transform: translate(-50%, -145%) perspective(500px) rotateX(12deg) scale(1.1) !important;
-        box-shadow: 0 12px 25px rgba(0,0,0,0.7), 0 0 20px rgba(240, 165, 0, 0.6), inset 0 0 10px rgba(240, 165, 0, 0.3) !important;
+        box-shadow: 0 12px 25px rgba(0,0,0,0.7), 0 0 20px rgba(var(--primary-rgb), 0.6), inset 0 0 10px rgba(var(--primary-rgb), 0.3) !important;
         border-color: #ffd700 !important;
         z-index: 150 !important;
     }
@@ -657,7 +657,7 @@
     #live-football-pitch .tactical-slot.filled[data-slot-id^="ED"]:hover,
     #live-football-pitch .tactical-slot.filled[data-slot-id^="EI"]:hover {
         transform: translate(-50%, -100%) perspective(500px) rotateX(12deg) scale(1.1) !important;
-        box-shadow: 0 12px 25px rgba(0,0,0,0.7), 0 0 20px rgba(240, 165, 0, 0.6), inset 0 0 10px rgba(240, 165, 0, 0.3) !important;
+        box-shadow: 0 12px 25px rgba(0,0,0,0.7), 0 0 20px rgba(var(--primary-rgb), 0.6), inset 0 0 10px rgba(var(--primary-rgb), 0.3) !important;
         border-color: #ffd700 !important;
         z-index: 150 !important;
     }
@@ -680,8 +680,8 @@
         font-weight: 800 !important;
         color: #fff !important;
         background: rgba(0, 0, 0, 0.85) !important;
-        border-top: 1px solid rgba(240, 165, 0, 0.25) !important;
-        border-bottom: 1px solid rgba(240, 165, 0, 0.25) !important;
+        border-top: 1px solid rgba(var(--primary-rgb), 0.25) !important;
+        border-bottom: 1px solid rgba(var(--primary-rgb), 0.25) !important;
         width: 100% !important;
         z-index: 11 !important;
         letter-spacing: -0.1px;
@@ -941,7 +941,7 @@
 }
 
 .poll-history-item:hover {
-    background: rgba(240, 165, 0, 0.08);
+    background: rgba(var(--primary-rgb), 0.08);
     border-color: var(--primary);
     transform: translateX(5px);
 }
@@ -1121,7 +1121,7 @@
 
 .calendar-day.today {
     border-color: var(--primary);
-    background: rgba(240, 165, 0, 0.1);
+    background: rgba(var(--primary-rgb), 0.1);
 }
 
 .calendar-day.day-yes {
@@ -1264,11 +1264,11 @@
 }
 
 .calendar-day.day-played {
-    background: linear-gradient(135deg, rgba(240, 165, 0, 0.3), rgba(240, 165, 0, 0.1));
+    background: linear-gradient(135deg, rgba(var(--primary-rgb), 0.3), rgba(var(--primary-rgb), 0.1));
     border-color: var(--primary);
     color: #fff;
     font-weight: 900;
-    box-shadow: 0 0 15px rgba(240, 165, 0, 0.2);
+    box-shadow: 0 0 15px rgba(var(--primary-rgb), 0.2);
     cursor: pointer;
 }
 
@@ -1337,14 +1337,14 @@
 /* OptimizaciÃ³n Hoy con Convocatoria (v53.9) */
 .calendar-day.today-highlight.poll-day-active {
     background: rgba(30, 136, 229, 0.5) !important; /* Azul mÃ¡s intenso */
-    box-shadow: inset 0 0 15px rgba(30, 136, 229, 0.6), 0 0 20px rgba(240, 165, 0, 0.4);
+    box-shadow: inset 0 0 15px rgba(30, 136, 229, 0.6), 0 0 20px rgba(var(--primary-rgb), 0.4);
     border: 2px dashed var(--primary) !important;
 }
 
 @keyframes pulse-border {
-    0% { border-color: rgba(240, 165, 0, 0.3); }
-    50% { border-color: rgba(240, 165, 0, 1); }
-    100% { border-color: rgba(240, 165, 0, 0.3); }
+    0% { border-color: rgba(var(--primary-rgb), 0.3); }
+    50% { border-color: rgba(var(--primary-rgb), 1); }
+    100% { border-color: rgba(var(--primary-rgb), 0.3); }
 }
 
 /* Mobile fix para calendario de convocatorias (v53.1) */
@@ -1644,7 +1644,7 @@
 
 
 .poll-history-row:hover {
-    background: rgba(240, 165, 0, 0.05);
+    background: rgba(var(--primary-rgb), 0.05);
 }
 
 .pht-col-date {
@@ -1733,16 +1733,16 @@
 /* --- Registro Interactivo de Goles Premium (v67.0) --- */
 .tactical-slot.pending-scorer {
     border-color: var(--primary) !important;
-    background: rgba(240, 165, 0, 0.25) !important;
-    box-shadow: 0 0 30px rgba(240, 165, 0, 0.75), 0 0 0 2px var(--primary) !important;
+    background: rgba(var(--primary-rgb), 0.25) !important;
+    box-shadow: 0 0 30px rgba(var(--primary-rgb), 0.75), 0 0 0 2px var(--primary) !important;
     animation: slotPulseScorer 1.2s infinite ease-in-out !important;
     z-index: 100 !important;
 }
 
 @keyframes slotPulseScorer {
-    0% { transform: translate(-50%, -50%) scale(1); box-shadow: 0 0 20px rgba(240, 165, 0, 0.5), inset 0 0 8px rgba(240, 165, 0, 0.2) !important; }
-    50% { transform: translate(-50%, -50%) scale(1.06); box-shadow: 0 0 35px rgba(240, 165, 0, 0.85), inset 0 0 15px rgba(240, 165, 0, 0.4) !important; }
-    100% { transform: translate(-50%, -50%) scale(1); box-shadow: 0 0 20px rgba(240, 165, 0, 0.5), inset 0 0 8px rgba(240, 165, 0, 0.2) !important; }
+    0% { transform: translate(-50%, -50%) scale(1); box-shadow: 0 0 20px rgba(var(--primary-rgb), 0.5), inset 0 0 8px rgba(var(--primary-rgb), 0.2) !important; }
+    50% { transform: translate(-50%, -50%) scale(1.06); box-shadow: 0 0 35px rgba(var(--primary-rgb), 0.85), inset 0 0 15px rgba(var(--primary-rgb), 0.4) !important; }
+    100% { transform: translate(-50%, -50%) scale(1); box-shadow: 0 0 20px rgba(var(--primary-rgb), 0.5), inset 0 0 8px rgba(var(--primary-rgb), 0.2) !important; }
 }
 
 .tactical-slot.pending-assistant {
@@ -1785,7 +1785,7 @@
 .event-item:hover {
     background: rgba(30, 30, 30, 0.75) !important;
     border-left-color: var(--primary) !important;
-    box-shadow: 0 4px 12px rgba(240, 165, 0, 0.1), 0 3px 8px rgba(0,0,0,0.45) !important;
+    box-shadow: 0 4px 12px rgba(var(--primary-rgb), 0.1), 0 3px 8px rgba(0,0,0,0.45) !important;
 }
 
 /* Lado izquierdo: ⚽ + nombre goleador */
@@ -1925,7 +1925,7 @@
     align-items: center;
     gap: 12px;
     z-index: 2000;
-    box-shadow: 0 20px 40px rgba(0,0,0,0.6), 0 0 20px rgba(240, 165, 0, 0.1);
+    box-shadow: 0 20px 40px rgba(0,0,0,0.6), 0 0 20px rgba(var(--primary-rgb), 0.1);
     transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
     opacity: 0;
     pointer-events: none;
@@ -1936,4 +1936,160 @@
     opacity: 1;
     pointer-events: all;
 }
+
+/* --- RESPONSIVE MODAL JORNADA --- */
+/* --- RESPONSIVE MODAL JORNADA --- */
+@media (max-width: 768px) {
+    #session-day-modal {
+        padding: 5px !important;
+    }
+    #session-day-panel {
+        padding: 12px !important;
+        gap: 12px !important;
+    }
+
+    /* Cabecera del Modal */
+    .modal-session-header {
+        gap: 10px !important;
+        padding-bottom: 10px !important;
+    }
+    .modal-session-title-wrap h3 {
+        font-size: 1.1rem !important;
+    }
+    .modal-session-title-wrap span {
+        font-size: 0.55rem !important;
+    }
+    .modal-session-header .btn-recalc-ea {
+        padding: 6px 10px !important;
+        font-size: 0.65rem !important;
+    }
+    
+    .modal-session-header > div:first-child {
+        width: 40px !important;
+        height: 40px !important;
+        padding: 8px !important;
+        border-radius: 12px !important;
+    }
+    .modal-session-header > div:first-child svg {
+        width: 20px !important;
+        height: 20px !important;
+    }
+
+    /* Botón cerrar modal cabecera */
+    .btn-close-modal {
+        width: 30px !important;
+        height: 30px !important;
+    }
+    .btn-close-modal svg {
+        width: 16px !important;
+        height: 16px !important;
+    }
+
+    /* Resumen grid (V E D) */
+    .modal-session-summary-grid {
+        gap: 6px !important;
+        margin-top: 10px !important;
+    }
+    .modal-session-summary-grid > div {
+        padding: 8px 5px !important;
+        border-radius: 8px !important;
+    }
+    .modal-session-summary-grid span:first-child {
+        font-size: 0.5rem !important;
+        margin-bottom: 2px !important;
+    }
+    .modal-session-summary-grid .summary-val {
+        font-size: 1.1rem !important;
+    }
+
+    /* Tarjetas de partido */
+    .session-match-card-grid {
+        grid-template-columns: 1fr auto 1fr !important;
+        gap: 5px !important;
+        padding: 10px 8px !important;
+    }
+
+    /* Lado Izquierdo (Mi Equipo) */
+    .match-card-left {
+        gap: 6px !important;
+    }
+    .match-card-left > span {
+        width: 20px !important;
+        height: 20px !important;
+        font-size: 0.65rem !important;
+        border-radius: 4px !important;
+    }
+    .match-card-left > div > span:first-child {
+        font-size: 0.45rem !important;
+    }
+    .match-card-left > div > span:last-child {
+        font-size: 0.7rem !important;
+        max-width: 65px;
+    }
+
+    /* Centro (Marcador) */
+    .match-card-center > span {
+        font-size: 0.9rem !important;
+        padding: 4px 8px !important;
+        min-width: 60px !important;
+        letter-spacing: 1px !important;
+        border-radius: 6px !important;
+    }
+
+    /* Lado Derecho (Rival y botones) */
+    .match-card-right {
+        gap: 6px !important;
+    }
+    .match-card-right > div:first-child > span:first-child {
+        font-size: 0.45rem !important;
+    }
+    .match-card-right > div:first-child > span:last-child {
+        font-size: 0.7rem !important;
+        max-width: 65px;
+    }
+    
+    /* Botón Editar y Flecha en móvil */
+    .match-card-right button {
+        padding: 4px !important;
+        font-size: 0.75rem !important;
+        border-radius: 4px !important;
+    }
+    .match-card-right > div:last-child {
+        width: 20px !important;
+        height: 20px !important;
+    }
+    .match-card-right > div:last-child svg {
+        width: 12px !important;
+        height: 12px !important;
+    }
+
+    /* Tabla de Eventos (Estadísticas Jugadores) */
+    .match-events-table-wrapper {
+        margin: 0 -10px !important; /* Estirar un poco a los bordes para ganar espacio */
+    }
+    .match-events-table th, 
+    .match-events-table td {
+        padding: 6px 5px !important;
+    }
+    .match-events-table th {
+        font-size: 0.5rem !important;
+        letter-spacing: 0.5px !important;
+    }
+    .match-events-table td:nth-child(1) {
+        font-size: 0.65rem !important;
+        max-width: 90px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+    .match-events-table td:nth-child(2) span {
+        padding: 2px 4px !important;
+        font-size: 0.65rem !important;
+    }
+    .match-events-table td:nth-child(3) span,
+    .match-events-table td:nth-child(4) span {
+        font-size: 0.75rem !important;
+    }
+}
+
 

@@ -34,4 +34,20 @@ window.state = {
     requestsBadgeCache: { count: 0, timestamp: 0 }
 };
 
-
+// --- SISTEMA DE TEMAS PERSONALIZADOS ---
+(function initTheme() {
+    const savedTheme = localStorage.getItem('jb_theme_color');
+    if (savedTheme) {
+        document.documentElement.style.setProperty('--primary', savedTheme);
+        let r = 240, g = 165, b = 0; // Default Oro
+        if (savedTheme.length === 7) {
+            r = parseInt(savedTheme.slice(1, 3), 16);
+            g = parseInt(savedTheme.slice(3, 5), 16);
+            b = parseInt(savedTheme.slice(5, 7), 16);
+        }
+        document.documentElement.style.setProperty('--primary-rgb', `${r}, ${g}, ${b}`);
+        document.documentElement.style.setProperty('--primary-glow', `rgba(${r}, ${g}, ${b}, 0.3)`);
+        document.documentElement.style.setProperty('--primary-dark', `color-mix(in srgb, ${savedTheme}, black 40%)`);
+        document.documentElement.style.setProperty('--primary-light', `color-mix(in srgb, ${savedTheme}, white 40%)`);
+    }
+})();

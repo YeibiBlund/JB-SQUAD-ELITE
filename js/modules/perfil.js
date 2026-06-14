@@ -583,6 +583,14 @@ async function renderPlayerProfileDetail(player) {
         `;
     }
 
+    const mobilePhotoContainer = document.getElementById('gamer-id-photo-mobile');
+    if (mobilePhotoContainer) {
+        const photo = player.photo_url;
+        const avatar = AVATARS.find(av => av.id === (player.avatarID || player.avatar_id || 1));
+        const transform = getPlayerTransform(player);
+        mobilePhotoContainer.innerHTML = photo ? `<img src="${photo}" style="width: 150%; height: 150%; object-fit: contain; object-position: top; transform: ${transform}; transform-origin: top center;">` : (avatar ? `<div style="transform:scale(0.5); transform-origin: top left;">${avatar.svg}</div>` : '');
+    }
+
     // Renderizar Posiciones Secundarias
     if (secondaryPosContainer) {
         secondaryPosContainer.innerHTML = '';
@@ -597,6 +605,91 @@ async function renderPlayerProfileDetail(player) {
                 secondaryPosContainer.appendChild(badge);
             });
         }
+    }
+
+    // --- THEME PICKER HEADER (v71.0) ---
+    const themeBtnToggle = document.getElementById('btn-header-theme-toggle');
+    const themePopover = document.getElementById('header-theme-popover');
+    
+    if (themeBtnToggle && themePopover && state.userPlayer && player.id === state.userPlayer.id) {
+        themeBtnToggle.style.display = 'inline-flex';
+        themePopover.innerHTML = '';
+        
+        themeBtnToggle.onclick = (e) => {
+            e.stopPropagation();
+            const isHidden = themePopover.style.display === 'none';
+            themePopover.style.display = isHidden ? 'flex' : 'none';
+        };
+
+        // Cerrar al clickear fuera
+        document.addEventListener('click', (e) => {
+            if (!themeBtnToggle.contains(e.target) && !themePopover.contains(e.target)) {
+                themePopover.style.display = 'none';
+            }
+        });
+
+        const themes = [
+            { name: 'Oro Leyenda', color: '#f0a500' },
+            { name: 'Azul Neón', color: '#00e5ff' },
+            { name: 'Rojo Carmesí', color: '#ff4757' },
+            { name: 'Verde Esmeralda', color: '#2ecc71' },
+            { name: 'Violeta Twitch', color: '#9b59b6' }
+        ];
+
+        const savedTheme = localStorage.getItem('jb_theme_color') || '#f0a500';
+
+        themes.forEach(t => {
+            const btn = document.createElement('button');
+            btn.style.width = '35px';
+            btn.style.height = '35px';
+            btn.style.borderRadius = '50%';
+            btn.style.border = '2px solid transparent';
+            btn.style.backgroundColor = t.color;
+            btn.style.cursor = 'pointer';
+            btn.style.transition = 'all 0.2s';
+            btn.title = t.name;
+            
+            if (savedTheme.toLowerCase() === t.color.toLowerCase()) {
+                btn.style.border = '2px solid #fff';
+                btn.style.transform = 'scale(1.1)';
+                btn.style.boxShadow = `0 0 15px ${t.color}`;
+            }
+            
+            btn.onclick = () => {
+                document.documentElement.style.setProperty('--primary', t.color);
+                
+                let r = 240, g = 165, b = 0; 
+                if (t.color.length === 7) {
+                    r = parseInt(t.color.slice(1, 3), 16);
+                    g = parseInt(t.color.slice(3, 5), 16);
+                    b = parseInt(t.color.slice(5, 7), 16);
+                }
+                document.documentElement.style.setProperty('--primary-rgb', `${r}, ${g}, ${b}`);
+                document.documentElement.style.setProperty('--primary-glow', `rgba(${r}, ${g}, ${b}, 0.3)`);
+                document.documentElement.style.setProperty('--primary-dark', `color-mix(in srgb, ${t.color}, black 40%)`);
+                document.documentElement.style.setProperty('--primary-light', `color-mix(in srgb, ${t.color}, white 40%)`);
+                localStorage.setItem('jb_theme_color', t.color);
+                
+                Array.from(themePopover.children).forEach(c => {
+                    c.style.border = '2px solid transparent';
+                    c.style.transform = 'scale(1)';
+                    c.style.boxShadow = 'none';
+                });
+                btn.style.border = '2px solid #fff';
+                btn.style.transform = 'scale(1.1)';
+                btn.style.boxShadow = `0 0 15px ${t.color}`;
+                
+                themeBtnToggle.style.background = `rgba(${r}, ${g}, ${b}, 0.1)`;
+                themeBtnToggle.style.borderColor = `rgba(${r}, ${g}, ${b}, 0.5)`;
+                
+                window.jbToast('Tema visual actualizado', 'success');
+                themePopover.style.display = 'none'; // Auto cerrar
+            };
+            themePopover.appendChild(btn);
+        });
+    } else if (themeBtnToggle) {
+        themeBtnToggle.style.display = 'none';
+        if(themePopover) themePopover.style.display = 'none';
     }
 
     renderPlayerStats(player);
@@ -615,11 +708,44 @@ async function renderPlayerProfileDetail(player) {
         const hydratedAchs = window.getHydratedAchievements(unlockedIds, player, ctx);
         
         if (topContainer) {
-            // Filtrar solo los desbloqueados, ordenar por peso (rareza) desc, tomar top 4
-            const top4 = hydratedAchs
-                .filter(a => a.unlocked)
-                .sort((a, b) => b.weight - a.weight)
-                .slice(0, 4);
+            // Filtrar solo los desbloqueados y ordenar por peso
+            const unlockedAchs = hydratedAchs.filter(a => a.unlocked).sort((a, b) => b.weight - a.weight);
+            
+            // Función auxiliar para agrupar familias similares y buscar variedad
+            const getSuperCategory = (achId) => {
+                if (achId.startsWith('com_')) return 'commitment';
+                if (achId.startsWith('ea_pass') || achId.startsWith('ea_prec') || achId.startsWith('ea_mid')) return 'playmaking';
+                if (achId.startsWith('g_') || achId.startsWith('off_g') || achId.includes('goals')) return 'goals';
+                if (achId.startsWith('a_') || achId.startsWith('off_a') || achId.includes('ast_')) return 'assists';
+                if (achId.includes('mvp') || achId.includes('god')) return 'mvp';
+                if (achId.startsWith('ea_tack') || achId.startsWith('ea_def')) return 'defense';
+                if (achId.startsWith('ea_gk') || achId.includes('cs_')) return 'goalkeeping';
+                return achId; // default fallback
+            };
+
+            const top4 = [];
+            const usedSuperCategories = new Set();
+            
+            // Primera pasada: Intentar meter 1 logro de cada super-categoría
+            unlockedAchs.forEach(ach => {
+                const superCat = getSuperCategory(ach.id);
+                if (!usedSuperCategories.has(superCat) && top4.length < 4) {
+                    top4.push(ach);
+                    usedSuperCategories.add(superCat);
+                }
+            });
+
+            // Segunda pasada: Si no hemos llegado a 4 (porque no tiene suficiente variedad), rellenar con los de más peso que falten
+            if (top4.length < 4) {
+                unlockedAchs.forEach(ach => {
+                    if (!top4.find(a => a.id === ach.id) && top4.length < 4) {
+                        top4.push(ach);
+                    }
+                });
+            }
+
+            // Re-ordenar por peso final
+            top4.sort((a, b) => b.weight - a.weight);
 
             topContainer.innerHTML = '';
             
@@ -727,7 +853,13 @@ async function renderPlayerProfileDetail(player) {
             if (!modalContainer) return;
             
             const unlockedList = hydratedAchs.filter(a => a.unlocked).sort((a, b) => b.weight - a.weight);
-            const lockedList = hydratedAchs.filter(a => !a.unlocked).sort((a, b) => b.weight - a.weight);
+            const lockedList = hydratedAchs.filter(a => !a.unlocked).sort((a, b) => {
+                const getPct = (ach) => ach.progressData ? (ach.progressData.cur / ach.progressData.max) * 100 : 0;
+                const pctA = getPct(a);
+                const pctB = getPct(b);
+                if (pctB !== pctA) return pctB - pctA; // Ordenar por porcentaje de progreso descendentemente
+                return b.weight - a.weight; // En caso de empate, usar el peso por defecto
+            });
 
             let html = '';
 
@@ -984,4 +1116,58 @@ function renderPlayerStats(player) {
         <td style="font-weight: 800; color: var(--primary);">${totalWinRate}</td>
         <td style="color:var(--primary); font-weight:900;">⭐ ${mvp}</td>
     `;
+
+    // --- ESTADÍSTICAS AVANZADAS EA ---
+    const totalPassesAttempted = (off.passesAttempted || 0) + (fri.passesAttempted || 0);
+    const totalPassesCompleted = (off.passesCompleted || 0) + (fri.passesCompleted || 0);
+    const totalTacklesAttempted = (off.tacklesAttempted || 0) + (fri.tacklesAttempted || 0);
+    const totalTacklesCompleted = (off.tacklesCompleted || 0) + (fri.tacklesCompleted || 0);
+    const totalRatingSum = (off.rating_sum || 0) + (fri.rating_sum || 0);
+    const totalRatingCount = (off.rating_count || 0) + (fri.rating_count || 0);
+
+    let avgRating = "--";
+    let ratingColor = "var(--text-muted)";
+    if (totalRatingCount > 0) {
+        const calc = (totalRatingSum / totalRatingCount).toFixed(1);
+        avgRating = calc;
+        if (calc >= 8.0) ratingColor = "#00ff88";
+        else if (calc >= 6.0) ratingColor = "#f0a500";
+        else ratingColor = "#ff4444";
+    }
+
+    let passRate = "--%";
+    if (totalPassesAttempted > 0) passRate = Math.round((totalPassesCompleted / totalPassesAttempted) * 100) + "%";
+
+    const elRating = document.getElementById('adv-rating');
+    if (elRating) { elRating.textContent = avgRating; elRating.style.color = ratingColor; }
+
+    const elPasses = document.getElementById('adv-passes');
+    if (elPasses) elPasses.textContent = passRate;
+
+    const elPassesDet = document.getElementById('adv-passes-detail');
+    if (elPassesDet) elPassesDet.textContent = `${totalPassesCompleted} / ${totalPassesAttempted} completados`;
+
+    // Tarjeta Dinámica según Posición Principal
+    const mainPos = player.primary_pos || player.primaryPos || (player.positions && player.positions.length > 0 ? player.positions[0] : '');
+    const elDynTitle = document.getElementById('adv-dynamic-title');
+    const elDynValue = document.getElementById('adv-dynamic-value');
+    const elDynDetail = document.getElementById('adv-dynamic-detail');
+
+    if (['DFC', 'LI', 'LD', 'MCD', 'CAI', 'CAD'].includes(mainPos)) {
+        if (elDynTitle) elDynTitle.textContent = "ROBOS / RECUPERACIONES";
+        if (elDynValue) elDynValue.textContent = totalTacklesCompleted;
+        if (elDynDetail) elDynDetail.textContent = "robos conseguidos";
+    } else if (['DC', 'EI', 'ED', 'SD'].includes(mainPos)) {
+        if (elDynTitle) elDynTitle.textContent = "PROMEDIO GOLEADOR";
+        const totalMatches = (off.matches || 0) + (fri.matches || 0);
+        const totalGoals = (off.goals || 0) + (fri.goals || 0);
+        let goalAvg = "0.00";
+        if (totalMatches > 0) goalAvg = (totalGoals / totalMatches).toFixed(2);
+        if (elDynValue) elDynValue.textContent = goalAvg;
+        if (elDynDetail) elDynDetail.textContent = "goles por partido";
+    } else {
+        if (elDynTitle) elDynTitle.textContent = "TOTAL PASES DADOS";
+        if (elDynValue) elDynValue.textContent = totalPassesCompleted;
+        if (elDynDetail) elDynDetail.textContent = "pases completados";
+    }
 }

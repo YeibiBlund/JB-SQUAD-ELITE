@@ -948,6 +948,17 @@ window.renderSessionsCalendar = function() {
             `;
         } else {
             cell.innerHTML = `<span class="calendar-day-number">${d}</span>`;
+            const isManagerOrCap = state.user && (state.user.role === 'manager' || state.user.role === 'capitan');
+            if (isManagerOrCap) {
+                cell.style.cursor = 'pointer';
+                cell.onclick = () => {
+                    if (window.EASync && window.EASync.openSyncModalForDate) {
+                        window.EASync.openSyncModalForDate(dateObj, null);
+                    } else {
+                        window.jbToast('Módulo EA Sync no disponible', 'error');
+                    }
+                };
+            }
         }
         
         grid.appendChild(cell);
@@ -1045,7 +1056,7 @@ window.renderSessionDayDetails = function(dateString, sessions) {
 
     // Generar el HTML del panel
     let html = `
-        <div style="display: flex; align-items: center; gap: 20px; border-bottom: 1px solid rgba(240, 165, 0, 0.2); padding-bottom: 20px; position: relative;">
+        <div class="modal-session-header" style="display: flex; align-items: center; gap: 20px; border-bottom: 1px solid rgba(240, 165, 0, 0.2); padding-bottom: 20px; position: relative;">
             <div style="width: 56px; height: 56px; background: linear-gradient(135deg, rgba(240, 165, 0, 0.15) 0%, rgba(10, 10, 10, 0.95) 100%); border-radius: 16px; padding: 12px; flex-shrink: 0; border: 1px solid var(--primary); display: flex; align-items: center; justify-content: center; box-shadow: 0 0 20px rgba(240, 165, 0, 0.2);">
                 <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="var(--primary)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
@@ -1054,11 +1065,18 @@ window.renderSessionDayDetails = function(dateString, sessions) {
                     <line x1="3" y1="10" x2="21" y2="10"></line>
                 </svg>
             </div>
-            <div>
+            <div class="modal-session-title-wrap">
                 <span style="font-size: 0.65rem; color: var(--primary); text-transform: uppercase; font-weight: 900; letter-spacing: 2px; display: block; margin-bottom: 4px; text-shadow: 0 0 8px rgba(240, 165, 0, 0.4);">RESUMEN DE JORNADA</span>
                 <h3 style="margin: 0; font-size: 1.5rem; color: #fff; font-weight: 900; line-height: 1.1; letter-spacing: 0.5px;">${formattedDate}</h3>
             </div>
-            <button onclick="window.closeSessionDayModal()" class="btn-cancel" style="margin-left: auto; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; padding: 0; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); color: #fff; cursor: pointer; transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);">
+            
+            ${(state.user && (state.user.role === 'manager' || state.user.role === 'capitan')) ? `
+            <button onclick="window.closeSessionDayModal(); window.EASync.openSyncModalForDate(new Date('${dateString}'), state.sessions.find(s => s.date === '${sessions[0]?.date}'));" class="btn-recalc-ea" style="margin-left: auto; margin-right: 10px; background: rgba(0, 255, 136, 0.1); border: 1px solid rgba(0, 255, 136, 0.3); color: #00ff88; padding: 8px 15px; border-radius: 8px; font-weight: 800; font-size: 0.75rem; cursor: pointer; transition: all 0.2s;">
+                <i class="fa-solid fa-rotate"></i> RECALCULAR (EA)
+            </button>
+            ` : `<div style="margin-left: auto;" class="modal-spacer"></div>`}
+            
+            <button onclick="window.closeSessionDayModal()" class="btn-cancel btn-close-modal" style="${(state.user && (state.user.role === 'manager' || state.user.role === 'capitan')) ? '' : 'margin-left: auto;'} width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; padding: 0; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); color: #fff; cursor: pointer; transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);">
                 <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                     <line x1="18" y1="6" x2="6" y2="18"></line>
                     <line x1="6" y1="6" x2="18" y2="18"></line>
@@ -1066,10 +1084,10 @@ window.renderSessionDayDetails = function(dateString, sessions) {
             </button>
         </div>
 
-        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-top: 20px; margin-bottom: 10px;">
+        <div class="modal-session-summary-grid" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-top: 20px; margin-bottom: 10px;">
             <div style="background: linear-gradient(135deg, rgba(46, 204, 113, 0.1) 0%, rgba(0,0,0,0.4) 100%); border: 1px solid rgba(46, 204, 113, 0.2); border-radius: 12px; padding: 15px 10px; text-align: center; box-shadow: 0 8px 20px rgba(0,0,0,0.2); transition: transform 0.2s; cursor: default;" onmouseover="this.style.transform='translateY(-2px)'; this.style.borderColor='rgba(46, 204, 113, 0.5)'" onmouseout="this.style.transform='none'; this.style.borderColor='rgba(46, 204, 113, 0.2)'">
                 <span style="display: block; font-size: 0.6rem; color: rgba(255,255,255,0.5); text-transform: uppercase; font-weight: 900; letter-spacing: 1px; margin-bottom: 6px;">VICTORIAS</span>
-                <span style="font-size: 1.6rem; font-weight: 900; color: #2ecc71; text-shadow: 0 0 15px rgba(46, 204, 113, 0.4); line-height: 1;">${v}</span>
+                <span class="summary-val" style="font-size: 1.6rem; font-weight: 900; color: #2ecc71; text-shadow: 0 0 15px rgba(46, 204, 113, 0.4); line-height: 1;">${v}</span>
             </div>
             <div style="background: linear-gradient(135deg, rgba(241, 196, 15, 0.1) 0%, rgba(0,0,0,0.4) 100%); border: 1px solid rgba(241, 196, 15, 0.2); border-radius: 12px; padding: 15px 10px; text-align: center; box-shadow: 0 8px 20px rgba(0,0,0,0.2); transition: transform 0.2s; cursor: default;" onmouseover="this.style.transform='translateY(-2px)'; this.style.borderColor='rgba(241, 196, 15, 0.5)'" onmouseout="this.style.transform='none'; this.style.borderColor='rgba(241, 196, 15, 0.2)'">
                 <span style="display: block; font-size: 0.6rem; color: rgba(255,255,255,0.5); text-transform: uppercase; font-weight: 900; letter-spacing: 1px; margin-bottom: 6px;">EMPATES</span>
@@ -1120,50 +1138,120 @@ window.renderSessionDayDetails = function(dateString, sessions) {
 
                 const homeGoals = m.events ? m.events.filter(e => e.side === 'home') : [];
                 
-                const eventsHtml = homeGoals.map(g => {
-                    const scorer = getPlayerNameById(g.scorerId) || 'Jugador';
-                    const assist = g.assistantId ? getPlayerNameById(g.assistantId) : null;
-                    return `
-                        <div style="display: flex; justify-content: space-between; align-items: center; padding: 12px 16px; border-bottom: 1px solid rgba(255,255,255,0.03); transition: background 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.02)'" onmouseout="this.style.background='transparent'">
-                            <div style="display: flex; align-items: center; gap: 12px;">
-                                <div style="width: 28px; height: 28px; border-radius: 50%; background: rgba(240, 165, 0, 0.1); border: 1px solid rgba(240, 165, 0, 0.2); display: flex; align-items: center; justify-content: center;">
-                                    <span style="font-size: 0.8rem;">⚽</span>
-                                </div>
-                                <span style="font-weight: 800; color: #fff; font-size: 0.85rem; letter-spacing: 0.5px;">${scorer.toUpperCase()}</span>
-                            </div>
-                            ${assist ? `
-                                <div style="display: flex; align-items: center; gap: 8px; opacity: 0.8;">
-                                    <span style="font-size: 0.6rem; text-transform: uppercase; font-weight: 800; color: var(--success); letter-spacing: 1px;">ASISTENCIA</span>
-                                    <span style="font-size: 0.8rem; color: #fff; font-style: italic; font-weight: 700;">${assist.toUpperCase()}</span>
-                                </div>
-                            ` : ''}
-                        </div>
-                    `;
-                }).join('');
+                let eventsHtml = '';
+                
+                if (m.eaPlayers && Object.keys(m.eaPlayers).length > 0 && homeGoals.length === 0) {
+                    const playersWithStats = [];
+                    for (const pid in m.eaPlayers) {
+                        const st = m.eaPlayers[pid];
+                        const g = parseInt(st.goals) || 0;
+                        const a = parseInt(st.assists) || 0;
+                        const motm = st.mom === "1";
+                        const r = parseFloat(st.rating) || 0;
+                        // Incluir a todos los jugadores que tengan un registro en eaPlayers
+                        playersWithStats.push({ pid, g, a, motm, r });
+                    }
+                    
+                    // Ordenar por MVP, luego goles, luego asistencias, luego rating
+                    playersWithStats.sort((a, b) => (b.motm ? 1 : 0) - (a.motm ? 1 : 0) || b.g - a.g || b.a - a.a || b.r - a.r);
 
-                const noEventsHtml = homeGoals.length === 0 ? `<div style="font-size: 0.8rem; color: rgba(255,255,255,0.3); text-align: center; padding: 25px 0; font-style: italic; letter-spacing: 0.5px;">No se registraron goles de JB Squad en este encuentro.</div>` : '';
+                    if (playersWithStats.length > 0) {
+                        const rowsHtml = playersWithStats.map(p => {
+                            const scorer = getPlayerNameById(p.pid) || 'Jugador';
+                            // Colores para el rating
+                            const ratingColor = p.r >= 8.5 ? '#2ecc71' : (p.r >= 7.0 ? '#f1c40f' : '#fff');
+                            
+                            return `
+                                <tr style="border-bottom: 1px solid rgba(255,255,255,0.03); transition: background 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.02)'" onmouseout="this.style.background='transparent'">
+                                    <td style="padding: 10px 15px; font-weight: 800; color: #fff; font-size: 0.8rem; letter-spacing: 0.5px; display: flex; align-items: center; gap: 8px;">
+                                        ${p.motm ? '<span style="font-size: 0.9rem;" title="MVP del Partido">⭐</span>' : ''}
+                                        ${scorer.toUpperCase()}
+                                    </td>
+                                    <td style="padding: 10px 15px; text-align: center;">
+                                        <span style="font-size: 0.75rem; font-weight: 900; background: rgba(255,255,255,0.05); padding: 3px 6px; border-radius: 4px; color: ${ratingColor}; border: 1px solid rgba(255,255,255,0.05);">${p.r.toFixed(1)}</span>
+                                    </td>
+                                    <td style="padding: 10px 15px; text-align: center;">
+                                        ${p.g > 0 ? `<span style="font-weight: 900; color: var(--primary); font-size: 0.85rem;">${p.g}</span>` : '<span style="color: rgba(255,255,255,0.2);">-</span>'}
+                                    </td>
+                                    <td style="padding: 10px 15px; text-align: center;">
+                                        ${p.a > 0 ? `<span style="font-weight: 900; color: var(--success); font-size: 0.85rem;">${p.a}</span>` : '<span style="color: rgba(255,255,255,0.2);">-</span>'}
+                                    </td>
+                                </tr>
+                            `;
+                        }).join('');
+
+                        eventsHtml = `
+                            <div class="match-events-table-wrapper" style="overflow-x: auto; margin-top: 5px;">
+                                <table class="match-events-table" style="width: 100%; border-collapse: collapse;">
+                                    <thead>
+                                        <tr style="border-bottom: 1px solid rgba(255,255,255,0.1); color: rgba(255,255,255,0.4); font-size: 0.6rem; text-transform: uppercase; letter-spacing: 1.5px; text-align: left;">
+                                            <th style="padding: 8px 15px;">Jugador</th>
+                                            <th style="padding: 8px 15px; text-align: center;">Nota</th>
+                                            <th style="padding: 8px 15px; text-align: center;" title="Goles">⚽</th>
+                                            <th style="padding: 8px 15px; text-align: center;" title="Asistencias">👟</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        ${rowsHtml}
+                                    </tbody>
+                                </table>
+                            </div>
+                        `;
+                    } else {
+                        eventsHtml = `<div style="font-size: 0.8rem; color: rgba(255,255,255,0.3); text-align: center; padding: 25px 0; font-style: italic; letter-spacing: 0.5px;">Sin datos de jugadores para este partido.</div>`;
+                    }
+                } else {
+                    eventsHtml = homeGoals.map(g => {
+                        const scorer = getPlayerNameById(g.scorerId) || 'Jugador';
+                        const assist = g.assistantId ? getPlayerNameById(g.assistantId) : null;
+                        return `
+                            <div style="display: flex; justify-content: space-between; align-items: center; padding: 12px 16px; border-bottom: 1px solid rgba(255,255,255,0.03); transition: background 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.02)'" onmouseout="this.style.background='transparent'">
+                                <div style="display: flex; align-items: center; gap: 12px;">
+                                    <div style="width: 28px; height: 28px; border-radius: 50%; background: rgba(240, 165, 0, 0.1); border: 1px solid rgba(240, 165, 0, 0.2); display: flex; align-items: center; justify-content: center;">
+                                        <span style="font-size: 0.8rem;">⚽</span>
+                                    </div>
+                                    <span style="font-weight: 800; color: #fff; font-size: 0.85rem; letter-spacing: 0.5px;">${scorer.toUpperCase()}</span>
+                                </div>
+                                ${assist ? `
+                                    <div style="display: flex; align-items: center; gap: 8px; opacity: 0.8;">
+                                        <span style="font-size: 0.6rem; text-transform: uppercase; font-weight: 800; color: var(--success); letter-spacing: 1px;">ASISTENCIA</span>
+                                        <span style="font-size: 0.8rem; color: #fff; font-style: italic; font-weight: 700;">${assist.toUpperCase()}</span>
+                                    </div>
+                                ` : ''}
+                            </div>
+                        `;
+                    }).join('');
+                }
+
+                const noEventsHtml = (!m.eaPlayers || Object.keys(m.eaPlayers).length === 0) && homeGoals.length === 0 
+                    ? `<div style="font-size: 0.8rem; color: rgba(255,255,255,0.3); text-align: center; padding: 25px 0; font-style: italic; letter-spacing: 0.5px;">No se registraron goles de JB Squad en este encuentro.</div>` 
+                    : '';
 
                 html += `
                     <div style="border: 1px solid rgba(255,255,255,0.08); border-radius: 12px; margin-bottom: 15px; overflow: hidden; background: linear-gradient(90deg, rgba(15,15,15,1) 0%, rgba(20,20,20,0.9) 100%); transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); box-shadow: 0 4px 15px rgba(0,0,0,0.3);" onmouseover="this.style.transform='translateY(-2px)'; this.style.borderColor='rgba(255,255,255,0.15)'; this.style.boxShadow='0 8px 25px rgba(0,0,0,0.4)'" onmouseout="this.style.transform='none'; this.style.borderColor='rgba(255,255,255,0.08)'; this.style.boxShadow='0 4px 15px rgba(0,0,0,0.3)'">
                         
-                        <div onclick="window.toggleSessionMatchAccordion('${session.id}-${idx}')" style="display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; padding: 18px 24px; cursor: pointer; border-left: 4px solid ${outcomeColor}; background: rgba(255,255,255,0.01);" onmouseover="this.style.background='rgba(255,255,255,0.03)'" onmouseout="this.style.background='rgba(255,255,255,0.01)'">
+                        <div onclick="window.toggleSessionMatchAccordion('${session.id}-${idx}')" class="session-match-card-grid" style="display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; padding: 18px 24px; cursor: pointer; border-left: 4px solid ${outcomeColor}; background: rgba(255,255,255,0.01);" onmouseover="this.style.background='rgba(255,255,255,0.03)'" onmouseout="this.style.background='rgba(255,255,255,0.01)'">
                             
-                            <div style="display: flex; align-items: center; gap: 15px;">
+                            <div class="match-card-left" style="display: flex; align-items: center; gap: 15px;">
                                 <span style="width: 32px; height: 32px; border-radius: 8px; background: ${outcomeBg}; border: 1px solid ${outcomeColor}; color: ${outcomeColor}; display: flex; align-items: center; justify-content: center; font-size: 0.9rem; font-weight: 900; flex-shrink: 0; box-shadow: 0 0 15px ${outcomeBg};">${outcomeSymbol}</span>
                                 <div style="display: flex; flex-direction: column; gap: 4px;">
-                                    <span style="font-size: 0.6rem; color: rgba(255,255,255,0.5); text-transform: uppercase; font-weight: 900; letter-spacing: 1px;">RIVAL</span>
-                                    <span style="font-weight: 900; font-size: 1rem; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; letter-spacing: 0.5px;">${escapeHTML(m.rival || 'Rival').toUpperCase()}</span>
+                                    <span style="font-size: 0.6rem; color: var(--primary); text-transform: uppercase; font-weight: 900; letter-spacing: 1px;">MI EQUIPO</span>
+                                    <span style="font-weight: 900; font-size: 1rem; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; letter-spacing: 0.5px;">${escapeHTML(state.team ? state.team.name : 'JB SQUAD').toUpperCase()}</span>
                                 </div>
                             </div>
                             
-                            <div style="display: flex; align-items: center; justify-content: center;">
+                            <div class="match-card-center" style="display: flex; align-items: center; justify-content: center;">
                                 <span style="font-weight: 900; font-size: 1.5rem; color: var(--primary); text-shadow: 0 0 15px rgba(240, 165, 0, 0.4); background: rgba(0,0,0,0.6); padding: 8px 20px; border-radius: 8px; border: 1px solid rgba(240,165,0,0.2); min-width: 90px; text-align: center; letter-spacing: 2px;">${m.scoreHome} - ${m.scoreAway}</span>
                             </div>
 
-                            <div style="display: flex; align-items: center; justify-content: flex-end; gap: 15px;">
+                            <div class="match-card-right" style="display: flex; align-items: center; justify-content: flex-end; gap: 15px;">
+                                <div style="display: flex; flex-direction: column; gap: 4px; text-align: right;">
+                                    <span style="font-size: 0.6rem; color: rgba(255,255,255,0.5); text-transform: uppercase; font-weight: 900; letter-spacing: 1px;">RIVAL</span>
+                                    <span style="font-weight: 900; font-size: 1rem; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; letter-spacing: 0.5px; max-width: 150px;">${escapeHTML(m.rivalName || m.rival || 'Rival').toUpperCase()}</span>
+                                </div>
                                 ${isAdmin ? `<button onclick="event.stopPropagation(); window.openEditMatchModal('${session.id}', ${idx})" style="background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 8px; cursor: pointer; color: var(--text-muted); font-size: 1rem; padding: 8px; display: flex; align-items: center; justify-content: center; transition: all 0.2s;" onmouseover="this.style.background='var(--primary)'; this.style.color='#000'; this.style.borderColor='var(--primary)'; this.style.transform='scale(1.1)'" onmouseout="this.style.background='rgba(255, 255, 255, 0.05)'; this.style.color='var(--text-muted)'; this.style.borderColor='rgba(255, 255, 255, 0.1)'; this.style.transform='none'" title="Editar Partido">✍️</button>` : ''}
                                 
-                                <div style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.05); border-radius: 50%; width: 36px; height: 36px; display: flex; align-items: center; justify-content: center;">
+                                <div style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.05); border-radius: 50%; width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
                                     <svg id="arrow-smatch-${session.id}-${idx}" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="rgba(255,255,255,0.6)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);">
                                         <polyline points="6 9 12 15 18 9"></polyline>
                                     </svg>

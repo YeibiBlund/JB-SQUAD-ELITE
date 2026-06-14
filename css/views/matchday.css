@@ -373,7 +373,7 @@
     font-weight: 700;
 }
 .bg-option:hover {
-    border-color: rgba(240, 165, 0, 0.5);
+    border-color: rgba(var(--primary-rgb), 0.5);
     transform: translateY(-2px);
 }
 .bg-option.selected {
@@ -614,4 +614,5 @@
 .poster-matches-list.count-5 .poster-team-name {
     font-size: 28px;
 }
+
 

@@ -34,6 +34,7 @@ window.switchView = function(viewId) {
 
     const targetView = document.getElementById(`view-${viewId}`);
     if (targetView) {
+        document.body.setAttribute('data-active-view', viewId);
         targetView.classList.add('active-view');
         
         // Layout específico por tipo de vista

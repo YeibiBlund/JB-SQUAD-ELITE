@@ -44,7 +44,7 @@
     max-height: 200px; /* Expand on mobile a bit */
     display: flex;
     flex-direction: column;
-    box-shadow: -5px 0 30px rgba(0,0,0,0.5), inset 0 0 20px rgba(240, 165, 0, 0.05);
+    box-shadow: -5px 0 30px rgba(0,0,0,0.5), inset 0 0 20px rgba(var(--primary-rgb), 0.05);
     transition: all 0.4s ease;
 }
 
@@ -119,3 +119,4 @@
         margin: 0;
     }
 }
+

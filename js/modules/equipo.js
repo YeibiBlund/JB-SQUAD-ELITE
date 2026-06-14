@@ -1040,7 +1040,7 @@ async function renderAvailabilityPanel() {
     state.activePoll = poll;
 
     if (!poll) {
-        activePollContainer.innerHTML = `<p style="text-align: center; opacity: 0.5; padding: 40px;">No hay ninguna convocatoria activa.</p>`;
+        activePollContainer.innerHTML = `<p class="empty-poll-msg" style="text-align: center; opacity: 0.5; padding: 40px;">No hay ninguna convocatoria activa.</p>`;
         renderPollHistory();
         return;
     }

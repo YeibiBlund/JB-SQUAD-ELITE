@@ -101,7 +101,67 @@
         { id: 'com_20_yes_streak', family: 'com_total', title: 'Sangre de Capitán', desc: 'Vota SÍ en 20 convocatorias seguidas.', tier: 'gold', iconSvg: ICON.CALENDAR, check: (p, ctx) => ctx.maxConsecutiveYes >= 20, progress: (p, ctx) => ({ cur: ctx.maxConsecutiveYes, max: 20 }) },
         { id: 'com_20_yes', family: 'com_total_global', title: 'Leyenda del Vestuario', desc: '30 convocatorias totales votando SÍ.', tier: 'gold', iconSvg: ICON.CALENDAR, check: (p, ctx) => ctx.totalYesVotes >= 30, progress: (p, ctx) => ({ cur: ctx.totalYesVotes, max: 30 }) },
         { id: 'com_fid_80', family: 'com_fid', title: 'Fidelidad Absoluta', desc: 'Asistencia > 80% (mín. 20 conv).', tier: 'gold', iconSvg: ICON.STAR, check: (p, ctx) => ctx.totalVotes >= 20 && (ctx.totalYesVotes / ctx.totalVotes >= 0.8) },
-        { id: 'com_fid_90', family: 'com_fid', title: 'Incondicional', desc: 'Asistencia > 90% (mín. 40 conv).', tier: 'platinum', iconSvg: ICON.CROWN, check: (p, ctx) => ctx.totalVotes >= 40 && (ctx.totalYesVotes / ctx.totalVotes >= 0.9) }
+        { id: 'com_fid_90', family: 'com_fid', title: 'Incondicional', desc: 'Asistencia > 90% (mín. 40 conv).', tier: 'platinum', iconSvg: ICON.CROWN, check: (p, ctx) => ctx.totalVotes >= 40 && (ctx.totalYesVotes / ctx.totalVotes >= 0.9) },
+
+        // --- 9. API EA: PASES Y PRECISIÓN ---
+        { id: 'ea_pass_500', family: 'ea_passes', title: 'Distribuidor', desc: 'Acumula 500 pases completados.', tier: 'bronze', iconSvg: ICON.STAR, check: (p, ctx) => ctx.totalPasses >= 500, progress: (p, ctx) => ({ cur: ctx.totalPasses, max: 500 }) },
+        { id: 'ea_pass_1000', family: 'ea_passes', title: 'El Metrónomo', desc: 'Acumula 1.000 pases completados.', tier: 'silver', iconSvg: ICON.STAR, check: (p, ctx) => ctx.totalPasses >= 1000, progress: (p, ctx) => ({ cur: ctx.totalPasses, max: 1000 }) },
+        { id: 'ea_pass_2500', family: 'ea_passes', title: 'Reloj Suizo', desc: 'Acumula 2.500 pases completados.', tier: 'gold', iconSvg: ICON.STAR, check: (p, ctx) => ctx.totalPasses >= 2500, progress: (p, ctx) => ({ cur: ctx.totalPasses, max: 2500 }) },
+        { id: 'ea_pass_5000', family: 'ea_passes', title: 'Arquitecto', desc: 'Acumula 5.000 pases completados.', tier: 'platinum', iconSvg: ICON.STAR, check: (p, ctx) => ctx.totalPasses >= 5000, progress: (p, ctx) => ({ cur: ctx.totalPasses, max: 5000 }) },
+        { id: 'ea_pass_10000', family: 'ea_passes', title: 'Dios del Pase', desc: 'Acumula 10.000 pases completados.', tier: 'ruby', iconSvg: ICON.STAR, check: (p, ctx) => ctx.totalPasses >= 10000, progress: (p, ctx) => ({ cur: ctx.totalPasses, max: 10000 }) },
+
+        { id: 'ea_prec_1', family: 'ea_prec', title: 'Pase Seguro', desc: '>90% precisión en 1 Jornada (mín. 15 pases).', tier: 'bronze', iconSvg: ICON.STAR, check: (p, ctx) => ctx.perfectPassSessions >= 1, progress: (p, ctx) => ({ cur: ctx.perfectPassSessions, max: 1 }) },
+        { id: 'ea_prec_5', family: 'ea_prec', title: 'Francotirador', desc: '>90% precisión en 5 Jornadas (mín. 15 pases).', tier: 'silver', iconSvg: ICON.STAR, check: (p, ctx) => ctx.perfectPassSessions >= 5, progress: (p, ctx) => ({ cur: ctx.perfectPassSessions, max: 5 }) },
+        { id: 'ea_prec_10', family: 'ea_prec', title: 'Cirujano', desc: '>90% precisión en 10 Jornadas (mín. 15 pases).', tier: 'gold', iconSvg: ICON.STAR, check: (p, ctx) => ctx.perfectPassSessions >= 10, progress: (p, ctx) => ({ cur: ctx.perfectPassSessions, max: 10 }) },
+        { id: 'ea_prec_20', family: 'ea_prec', title: 'Francotirador de Élite', desc: '>90% precisión en 20 Jornadas (mín. 15 pases).', tier: 'platinum', iconSvg: ICON.STAR, check: (p, ctx) => ctx.perfectPassSessions >= 20, progress: (p, ctx) => ({ cur: ctx.perfectPassSessions, max: 20 }) },
+        { id: 'ea_prec_30', family: 'ea_prec', title: 'Inmune a la Presión', desc: '>90% precisión en 30 Jornadas (mín. 15 pases).', tier: 'ruby', iconSvg: ICON.STAR, check: (p, ctx) => ctx.perfectPassSessions >= 30, progress: (p, ctx) => ({ cur: ctx.perfectPassSessions, max: 30 }) },
+
+        // --- 10. API EA: ENTRADAS (DEFENSA) ---
+        { id: 'ea_tack_30', family: 'ea_tackles', title: 'El Ladrón', desc: 'Acumula 30 entradas con éxito.', tier: 'bronze', iconSvg: ICON.DEF, check: (p, ctx) => ctx.totalTackles >= 30, progress: (p, ctx) => ({ cur: ctx.totalTackles, max: 30 }) },
+        { id: 'ea_tack_100', family: 'ea_tackles', title: 'El Muro', desc: 'Acumula 100 entradas con éxito.', tier: 'silver', iconSvg: ICON.DEF, check: (p, ctx) => ctx.totalTackles >= 100, progress: (p, ctx) => ({ cur: ctx.totalTackles, max: 100 }) },
+        { id: 'ea_tack_200', family: 'ea_tackles', title: 'Aspiradora', desc: 'Acumula 200 entradas con éxito.', tier: 'gold', iconSvg: ICON.DEF, check: (p, ctx) => ctx.totalTackles >= 200, progress: (p, ctx) => ({ cur: ctx.totalTackles, max: 200 }) },
+        { id: 'ea_tack_300', family: 'ea_tackles', title: 'Cortacésped', desc: 'Acumula 300 entradas con éxito.', tier: 'platinum', iconSvg: ICON.DEF, check: (p, ctx) => ctx.totalTackles >= 300, progress: (p, ctx) => ({ cur: ctx.totalTackles, max: 300 }) },
+        { id: 'ea_tack_400', family: 'ea_tackles', title: 'Muro de Hierro', desc: 'Acumula 400 entradas con éxito.', tier: 'ruby', iconSvg: ICON.DEF, check: (p, ctx) => ctx.totalTackles >= 400, progress: (p, ctx) => ({ cur: ctx.totalTackles, max: 400 }) },
+
+        // --- 11. API EA: CALIFICACIÓN PERFECTA ---
+        { id: 'ea_rat_3', family: 'ea_rating10', title: 'Partido Perfecto', desc: 'Lograr una nota de 10.0 en 3 partidos.', tier: 'bronze', iconSvg: ICON.STAR, check: (p, ctx) => ctx.totalRating10 >= 3, progress: (p, ctx) => ({ cur: ctx.totalRating10, max: 3 }) },
+        { id: 'ea_rat_10', family: 'ea_rating10', title: 'Clase Magistral', desc: 'Lograr una nota de 10.0 en 10 partidos.', tier: 'silver', iconSvg: ICON.STAR, check: (p, ctx) => ctx.totalRating10 >= 10, progress: (p, ctx) => ({ cur: ctx.totalRating10, max: 10 }) },
+        { id: 'ea_rat_15', family: 'ea_rating10', title: 'Profesor del Balón', desc: 'Lograr una nota de 10.0 en 15 partidos.', tier: 'gold', iconSvg: ICON.STAR, check: (p, ctx) => ctx.totalRating10 >= 15, progress: (p, ctx) => ({ cur: ctx.totalRating10, max: 15 }) },
+        { id: 'ea_rat_20', family: 'ea_rating10', title: 'Cátedra Futbolística', desc: 'Lograr una nota de 10.0 en 20 partidos.', tier: 'platinum', iconSvg: ICON.STAR, check: (p, ctx) => ctx.totalRating10 >= 20, progress: (p, ctx) => ({ cur: ctx.totalRating10, max: 20 }) },
+        { id: 'ea_rat_30', family: 'ea_rating10', title: 'Garganta Profunda', desc: 'Lograr una nota de 10.0 en 30 partidos.', tier: 'ruby', iconSvg: ICON.STAR, check: (p, ctx) => ctx.totalRating10 >= 30, progress: (p, ctx) => ({ cur: ctx.totalRating10, max: 30 }) },
+
+        // --- 12. MVP SILENCIOSO ---
+        { id: 'ea_mvp_sil_1', family: 'ea_silent_mvp', title: 'Héroe Anónimo', desc: 'Ser MVP sin marcar ni asistir (1 partido).', tier: 'bronze', iconSvg: ICON.CROWN, check: (p, ctx) => ctx.silentMvps >= 1, progress: (p, ctx) => ({ cur: ctx.silentMvps, max: 1 }) },
+        { id: 'ea_mvp_sil_5', family: 'ea_silent_mvp', title: 'Eje del Equipo', desc: 'Ser MVP sin marcar ni asistir (5 partidos).', tier: 'silver', iconSvg: ICON.CROWN, check: (p, ctx) => ctx.silentMvps >= 5, progress: (p, ctx) => ({ cur: ctx.silentMvps, max: 5 }) },
+        { id: 'ea_mvp_sil_10', family: 'ea_silent_mvp', title: 'Jugador de Club', desc: 'Ser MVP sin marcar ni asistir (10 partidos).', tier: 'gold', iconSvg: ICON.CROWN, check: (p, ctx) => ctx.silentMvps >= 10, progress: (p, ctx) => ({ cur: ctx.silentMvps, max: 10 }) },
+        { id: 'ea_mvp_sil_15', family: 'ea_silent_mvp', title: 'Motor Invisible', desc: 'Ser MVP sin marcar ni asistir (15 partidos).', tier: 'platinum', iconSvg: ICON.CROWN, check: (p, ctx) => ctx.silentMvps >= 15, progress: (p, ctx) => ({ cur: ctx.silentMvps, max: 15 }) },
+        { id: 'ea_mvp_sil_20', family: 'ea_silent_mvp', title: 'Leyenda en la Sombra', desc: 'Ser MVP sin marcar ni asistir (20 partidos).', tier: 'ruby', iconSvg: ICON.CROWN, check: (p, ctx) => ctx.silentMvps >= 20, progress: (p, ctx) => ({ cur: ctx.silentMvps, max: 20 }) },
+
+        // --- 13. API EA: PORTEROS (PARADAS) ---
+        { id: 'ea_gk_sv_50', family: 'ea_gk_saves', title: 'El Pulpo', desc: 'Acumula 50 paradas.', tier: 'bronze', iconSvg: ICON.SHIELD, check: (p, ctx) => ctx.totalSaves >= 50, progress: (p, ctx) => ({ cur: ctx.totalSaves, max: 50 }) },
+        { id: 'ea_gk_sv_150', family: 'ea_gk_saves', title: 'Reflejos Felinos', desc: 'Acumula 150 paradas.', tier: 'silver', iconSvg: ICON.SHIELD, check: (p, ctx) => ctx.totalSaves >= 150, progress: (p, ctx) => ({ cur: ctx.totalSaves, max: 150 }) },
+        { id: 'ea_gk_sv_300', family: 'ea_gk_saves', title: 'Araña Negra', desc: 'Acumula 300 paradas.', tier: 'gold', iconSvg: ICON.SHIELD, check: (p, ctx) => ctx.totalSaves >= 300, progress: (p, ctx) => ({ cur: ctx.totalSaves, max: 300 }) },
+        { id: 'ea_gk_sv_500', family: 'ea_gk_saves', title: 'Muro de Goma', desc: 'Acumula 500 paradas.', tier: 'platinum', iconSvg: ICON.SHIELD, check: (p, ctx) => ctx.totalSaves >= 500, progress: (p, ctx) => ({ cur: ctx.totalSaves, max: 500 }) },
+        { id: 'ea_gk_sv_1000', family: 'ea_gk_saves', title: 'San Pedro', desc: 'Acumula 1.000 paradas.', tier: 'ruby', iconSvg: ICON.SHIELD, check: (p, ctx) => ctx.totalSaves >= 1000, progress: (p, ctx) => ({ cur: ctx.totalSaves, max: 1000 }) },
+        
+        { id: 'ea_gk_match_8', family: 'ea_gk_match', title: 'Manos Mágicas', desc: 'Realiza 8 paradas en un solo partido.', tier: 'silver', iconSvg: ICON.SHIELD, check: (p, ctx) => ctx.maxSavesInOneMatch >= 8 },
+        { id: 'ea_gk_match_12', family: 'ea_gk_match', title: 'Modo Pulpo', desc: 'Realiza 12 paradas en un solo partido.', tier: 'gold', iconSvg: ICON.SHIELD, check: (p, ctx) => ctx.maxSavesInOneMatch >= 12 },
+        { id: 'ea_gk_match_15_cs', title: 'Milagro en la Portería', desc: '15+ paradas en un partido y Portería a Cero.', tier: 'platinum', iconSvg: ICON.SHIELD, check: (p, ctx) => ctx.hasSaves15AndCS },
+
+        // --- 14. API EA: DEFENSA EFICIENTE ---
+        { id: 'ea_def_prec_5', family: 'ea_def_prec', title: 'Corte Limpio', desc: '100% éxito en entradas en 5 jornadas (mín. 5/jornada).', tier: 'silver', iconSvg: ICON.DEF, check: (p, ctx) => ctx.perfectTackleSessions >= 5, progress: (p, ctx) => ({ cur: ctx.perfectTackleSessions, max: 5 }) },
+        { id: 'ea_def_prec_15', family: 'ea_def_prec', title: 'Cirujano Defensivo', desc: '100% éxito en entradas en 15 jornadas (mín. 5/jornada).', tier: 'gold', iconSvg: ICON.DEF, check: (p, ctx) => ctx.perfectTackleSessions >= 15, progress: (p, ctx) => ({ cur: ctx.perfectTackleSessions, max: 15 }) },
+        { id: 'ea_def_prec_30', family: 'ea_def_prec', title: 'El Elegante', desc: '100% éxito en entradas en 30 jornadas (mín. 5/jornada).', tier: 'ruby', iconSvg: ICON.DEF, check: (p, ctx) => ctx.perfectTackleSessions >= 30, progress: (p, ctx) => ({ cur: ctx.perfectTackleSessions, max: 30 }) },
+
+        // --- 15. API EA: CENTROCAMPISTAS ---
+        { id: 'ea_mid_pass_30', family: 'ea_mid_vol', title: 'Director de Orquesta', desc: 'Completa más de 30 pases en un partido.', tier: 'silver', iconSvg: ICON.MID, check: (p, ctx) => ctx.maxPassesInOneMatch >= 30 },
+        { id: 'ea_mid_pass_45', family: 'ea_mid_vol', title: 'Omnipresente', desc: 'Completa más de 45 pases en un partido.', tier: 'gold', iconSvg: ICON.MID, check: (p, ctx) => ctx.maxPassesInOneMatch >= 45 },
+        { id: 'ea_mid_pass_60', family: 'ea_mid_vol', title: 'Dueño del Balón', desc: 'Completa más de 60 pases en un partido.', tier: 'platinum', iconSvg: ICON.MID, check: (p, ctx) => ctx.maxPassesInOneMatch >= 60 },
+        { id: 'ea_mid_masterclass', title: 'Masterclass', desc: 'MVP y 100% de precisión de pase (mín. 15 intentos).', tier: 'platinum', iconSvg: ICON.CROWN, check: (p, ctx) => ctx.hasMasterclassMatch },
+
+        // --- 16. API EA: DELANTEROS EXÓTICOS ---
+        { id: 'ea_fwd_killer_3', family: 'ea_fwd_killer', title: 'Depredador Silencioso', desc: 'Marcar 3 goles dando 5 pases o menos en el partido.', tier: 'gold', iconSvg: ICON.FWD, check: (p, ctx) => ctx.hasSilentKillerMatch },
+        { id: 'ea_fwd_altruism_3', family: 'ea_fwd_alt', title: 'Solidaridad Ofensiva', desc: 'Como DC o Extremo: 3 asistencias y 0 goles.', tier: 'silver', iconSvg: ICON.FWD, check: (p, ctx) => ctx.hasExtremeAltruismMatch }
     ];
 
     /**
@@ -151,7 +211,24 @@
             // Rachas por JORNADA (Session)
             maxSessionGoalStreak: 0,
             maxSessionAssistStreak: 0,
-            maxSessionCSStreak: 0
+            maxSessionCSStreak: 0,
+
+            // Variables API EA
+            totalPasses: 0,
+            totalTackles: 0,
+            totalRating10: 0,
+            silentMvps: 0,
+            perfectPassSessions: 0,
+            
+            // Expandidas API EA
+            totalSaves: 0,
+            maxSavesInOneMatch: 0,
+            hasSaves15AndCS: false,
+            perfectTackleSessions: 0,
+            maxPassesInOneMatch: 0,
+            hasMasterclassMatch: false,
+            hasSilentKillerMatch: false,
+            hasExtremeAltruismMatch: false
         };
 
         // 1. Análisis de Convocatorias (Availability Votes)
@@ -230,6 +307,12 @@
                 let sessPlayedMatches = 0;
                 let sessCSMatches = 0;
 
+                // Nuevas variables para rastrear estadísticas EA a nivel de sesión
+                let sessionPassesMade = 0;
+                let sessionPassAttempts = 0;
+                let sessionTacklesMade = 0;
+                let sessionTackleAttempts = 0;
+
                 matches.forEach(m => {
                     const events = m.events || [];
                     let matchGoals = 0;
@@ -276,7 +359,51 @@
 
                         if (matchGoals >= 1 && matchAssists >= 1) ctx.hasMvpGoalAssistSameMatch = true;
                         if (matchGoals >= 3 && matchAssists >= 2) ctx.hasGodModeMvp = true;
+
+                        // MVP Silencioso
+                        if (matchGoals === 0 && matchAssists === 0) ctx.silentMvps++;
                     }
+
+                    // --- Extracción de Datos API EA ---
+                    if (m.eaPlayers && m.eaPlayers[player.id]) {
+                        const eaStats = m.eaPlayers[player.id];
+                        
+                        // Pases
+                        const passesMade = parseInt(eaStats.passesmade) || 0;
+                        const passAttempts = parseInt(eaStats.passattempts) || 0;
+                        ctx.totalPasses += passesMade;
+                        sessionPassesMade += passesMade;
+                        sessionPassAttempts += passAttempts;
+                        
+                        if (passesMade > ctx.maxPassesInOneMatch) ctx.maxPassesInOneMatch = passesMade;
+
+                        // Entradas
+                        const tacklesMade = parseInt(eaStats.tacklesmade) || 0;
+                        const tackleAttempts = parseInt(eaStats.tackleattempts) || 0;
+                        ctx.totalTackles += tacklesMade;
+                        sessionTacklesMade += tacklesMade;
+                        sessionTackleAttempts += tackleAttempts;
+
+                        // Paradas
+                        const saves = parseInt(eaStats.saves) || 0;
+                        ctx.totalSaves += saves;
+                        if (saves > ctx.maxSavesInOneMatch) ctx.maxSavesInOneMatch = saves;
+                        
+                        const rGoals = m.scoreAway || 0;
+                        if (saves >= 15 && rGoals === 0) ctx.hasSaves15AndCS = true;
+
+                        // Nota perfecta
+                        if (eaStats.rating === '10.0' || eaStats.rating === 10) {
+                            ctx.totalRating10++;
+                        }
+                        
+                        // Masterclass & Asesino Silencioso
+                        if (isMvp && passAttempts >= 15 && passesMade === passAttempts) ctx.hasMasterclassMatch = true;
+                        if (matchGoals >= 3 && passAttempts <= 5) ctx.hasSilentKillerMatch = true;
+                    }
+                    
+                    // Altruismo FWD
+                    if (isFwd && matchAssists >= 3 && matchGoals === 0) ctx.hasExtremeAltruismMatch = true;
 
                     // Porterías a cero
                     const rivalGoals = m.scoreAway || 0;
@@ -292,6 +419,22 @@
 
                 // Rachas por JORNADA (Sesión)
                 if (sessPlayedMatches > 0) {
+                    
+                    // Comprobar la precisión de pase de toda la sesión (mínimo 15 intentos)
+                    if (sessionPassAttempts >= 15) {
+                        const passAccuracy = sessionPassesMade / sessionPassAttempts;
+                        if (passAccuracy >= 0.90) {
+                            ctx.perfectPassSessions++;
+                        }
+                    }
+
+                    // Eficiencia de entradas de toda la sesión (mínimo 5 intentos)
+                    if (sessionTackleAttempts >= 5) {
+                        if (sessionTacklesMade === sessionTackleAttempts) {
+                            ctx.perfectTackleSessions++;
+                        }
+                    }
+
                     if (sessGoals > 0) {
                         currentSessGoalStreak++;
                         if (currentSessGoalStreak > ctx.maxSessionGoalStreak) ctx.maxSessionGoalStreak = currentSessGoalStreak;

@@ -110,6 +110,18 @@
     to { opacity: 1; transform: translateX(0); }
 }
 
+/* Transiciones más suaves en móvil (Native-like feel) */
+@media (max-width: 768px) {
+    .view {
+        animation: mobileViewEnter 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards !important;
+    }
+}
+
+@keyframes mobileViewEnter {
+    from { opacity: 0; transform: translateY(15px) scale(0.98); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
 @keyframes glowPulse {
     0% { opacity: 0.6; text-shadow: 0 0 5px var(--primary-glow); }
     50% { opacity: 1; text-shadow: 0 0 15px var(--primary-glow); }
@@ -119,7 +131,7 @@
 /* Botón premium de Ver Cartas Animado */
 .btn-view-cards-premium {
     position: relative;
-    background: linear-gradient(135deg, rgba(240, 165, 0, 0.15) 0%, rgba(10, 10, 10, 0.95) 100%) !important;
+    background: linear-gradient(135deg, rgba(var(--primary-rgb), 0.15) 0%, rgba(10, 10, 10, 0.95) 100%) !important;
     border: 1px solid var(--primary) !important;
     border-radius: 8px !important;
     color: var(--primary) !important;
@@ -130,7 +142,7 @@
     padding: 12px 24px !important;
     cursor: pointer !important;
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
-    box-shadow: 0 0 15px rgba(240, 165, 0, 0.3), inset 0 0 10px rgba(240, 165, 0, 0.1) !important;
+    box-shadow: 0 0 15px rgba(var(--primary-rgb), 0.3), inset 0 0 10px rgba(var(--primary-rgb), 0.1) !important;
     display: flex !important;
     align-items: center !important;
     gap: 10px !important;
@@ -138,14 +150,14 @@
     outline: none !important;
     overflow: hidden;
     z-index: 1;
-    text-shadow: 0 0 5px rgba(240, 165, 0, 0.5) !important;
+    text-shadow: 0 0 5px rgba(var(--primary-rgb), 0.5) !important;
 }
 
 .btn-view-cards-premium::before {
     content: '';
     position: absolute;
     top: 0; left: -100%; width: 50%; height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(240, 165, 0, 0.6), transparent);
+    background: linear-gradient(90deg, transparent, rgba(var(--primary-rgb), 0.6), transparent);
     transform: skewX(-20deg);
     transition: all 0.5s ease;
     z-index: -1;
@@ -159,16 +171,16 @@
 }
 
 .btn-view-cards-premium:hover {
-    background: linear-gradient(135deg, rgba(240, 165, 0, 0.3) 0%, rgba(20, 20, 20, 0.98) 100%) !important;
+    background: linear-gradient(135deg, rgba(var(--primary-rgb), 0.3) 0%, rgba(20, 20, 20, 0.98) 100%) !important;
     transform: translateY(-3px) scale(1.02) !important;
-    box-shadow: 0 0 25px rgba(240, 165, 0, 0.5), inset 0 0 20px rgba(240, 165, 0, 0.2) !important;
+    box-shadow: 0 0 25px rgba(var(--primary-rgb), 0.5), inset 0 0 20px rgba(var(--primary-rgb), 0.2) !important;
     color: #fff !important;
     text-shadow: 0 0 10px rgba(255, 255, 255, 0.8) !important;
 }
 
 .btn-view-cards-premium:active {
     transform: translateY(1px) !important;
-    box-shadow: 0 2px 10px rgba(240, 165, 0, 0.2) !important;
+    box-shadow: 0 2px 10px rgba(var(--primary-rgb), 0.2) !important;
 }
 
 /* ==========================================================================
@@ -344,4 +356,5 @@
 /* ==========================================================================
    SECCIÓN: HISTORIAL DE RIVALES H2H (v65.0)
    ========================================================================== */
+
 
