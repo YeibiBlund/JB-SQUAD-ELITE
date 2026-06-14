@@ -141,6 +141,7 @@ window.renderPlayers = function() {
     }
 
     const sortedPlayers = sortPlayersData([...state.players]);
+    const fragment = document.createDocumentFragment();
 
     sortedPlayers.forEach((player, index) => {
         const playerRow = document.createElement('div');
@@ -178,7 +179,7 @@ window.renderPlayers = function() {
 
         playerRow.innerHTML = `
             <div class="player-avatar-mini" style="width: 35px; height: 35px; margin: 0 auto; background: rgba(0,0,0,0.2); border-radius: 5px; border: 1px solid var(--glass-border); display: flex; align-items: center; justify-content: center; padding: 2px; overflow: hidden;">
-                ${photo ? `<img src="${photo}" style="width:100%; height:100%; object-fit:cover; object-position: top; transform:${transform}">` : (avatar ? avatar.svg : '')}
+                ${photo ? `<img src="${photo}" loading="lazy" style="width:100%; height:100%; object-fit:cover; object-position: top; transform:${transform}">` : (avatar ? avatar.svg : '')}
             </div>
             <div style="display:flex; flex-direction:column; justify-content:center; overflow:hidden;">
                 <div style="display: flex; align-items: center; gap: 6px; overflow:hidden;">
@@ -199,8 +200,10 @@ window.renderPlayers = function() {
             <div class="stat-cell cell-center" style="font-size: 0.85rem; color: var(--primary);" data-label="MVP">${mvp}</div>
             ${(isAdmin || isSelf) ? `<div class="row-actions-overlay"><button class="btn-delete-row" title="Abandonar/Expulsar" onclick="window.confirmDelete('${player.id}')">🗑️</button></div>` : ''}
         `;
-        playerList.appendChild(playerRow);
+        fragment.appendChild(playerRow);
     });
+    
+    playerList.appendChild(fragment);
     
     updateSortHeaders();
 }

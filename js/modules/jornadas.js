@@ -875,10 +875,12 @@ window.renderSessionsCalendar = function() {
     const daysInMonth = new Date(year, month + 1, 0).getDate();
     const offset = (firstDay === 0) ? 6 : firstDay - 1;
 
+    const fragment = document.createDocumentFragment();
+
     for (let i = 0; i < offset; i++) {
         const empty = document.createElement('div');
         empty.className = 'calendar-day';
-        grid.appendChild(empty);
+        fragment.appendChild(empty);
     }
 
     // 2. Mapear sesiones por fecha
@@ -961,8 +963,10 @@ window.renderSessionsCalendar = function() {
             }
         }
         
-        grid.appendChild(cell);
+        fragment.appendChild(cell);
     }
+    
+    grid.appendChild(fragment);
 
     // 4. Calcular estadísticas del mes visible (v52.2)
     let monthTotalMatches = 0;

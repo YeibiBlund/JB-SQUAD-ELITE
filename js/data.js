@@ -463,8 +463,10 @@ async function recalculateAllStats() {
             .select('id, scheduled_time, final_alignment')
             .eq('team_id', state.team.id);
 
-        // 3. Procesar cada sesión y partido
-        sessions.forEach(session => {
+        // 3. Procesar cada sesión y partido (con chunking asíncrono para no bloquear UI)
+        for (const session of sessions) {
+            await new Promise(r => requestAnimationFrame(r)); // Ceder control al UI
+            
             const matches = session.matches || [];
             
             // 3.0. Buscar la convocatoria (v51.0: Priorizar vinculación explícita poll_id)
@@ -604,7 +606,7 @@ async function recalculateAllStats() {
                     mvpS.mvp_count = (mvpS.mvp_count || 0) + 1;
                 }
             }
-        });
+        } // Fin del for...of de sessions
 
         // 4. Guardar todos los jugadores en la nube (Secuencial para evitar bloqueos)
         for (let p of state.players) {
